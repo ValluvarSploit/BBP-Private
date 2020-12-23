@@ -15,5 +15,15 @@ jobs:
          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
          CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
         run: |
-         echo "$CENSYS_API_ID"
-         echo "$CENSYS_API_SECRET"
+         git clone https://github.com/christophetd/censys-subdomain-finder.git
+         cd censys-subdomain-finder/
+         pip install -r requirements.txt
+         while read domain; do python censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$domain" | cut -d ' ' -f4 >> ../subdomain-output.txt ; done < ../domains.txt
+         rm -rf censys-subdomain-finder/
+      - name: Commit Output file
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add subdomain-output.txt
+          git commit -m "Update subdomain-output.txt"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
