@@ -12,8 +12,8 @@ jobs:
 
       - name: Clean-up
         run: |
-         rm subdomain-output.txt
-         touch subdomain-output.txt
+         rm subdomain-output.txt live-subdomains-output.txt
+         touch subdomain-output.txt live-subdomains-output.txt
       - name: Sublist3r
         run: |
          git clone https://github.com/aboul3la/Sublist3r.git
@@ -71,10 +71,14 @@ jobs:
          rm LICENSE.md README.md subfinder
       - name: Unique subdomains
         run: sort -u subdomain-output.txt -o subdomain-output.txt
+      - name: Resolve subdomains
+        run: |
+         go get -u github.com/tomnomnom/httprobe
+         cat subdomain-output.txt | httprobe  >> live-subdomains-output.txt
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add subdomain-output.txt
-          git commit -m "Update subdomain-output.txt"
+          git add subdomain-output.txt live-subdomains-output.txt
+          git commit -m "Update Output Files"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
