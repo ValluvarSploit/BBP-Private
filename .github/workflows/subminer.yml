@@ -20,7 +20,7 @@ jobs:
          pip install -r requirements.txt
          while read domain; do python censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$domain" | cut -d ' ' -f4 >> ../subdomain-output.txt ; done < ../domains.txt
          rm -rf censys-subdomain-finder/
-      - name: Security Trails
+      - name: Security Trails & Certspotter
         env:
          SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
         run: |
@@ -28,6 +28,7 @@ jobs:
          mv jq-linux64 jq
          chmod +x jq
          while read domain; do curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$domain"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$domain"/" test.txt | sed 's/ //g' && rm test.txt >> subdomain-output.txt ; done < domains.txt
+         while read domain; do curl -s https://certspotter.com/api/v0/certs\?domain\="$domain" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$domain" >> subdomain-output.txt ; done < domains.txt
          rm jq
       - name: RapidDNS
         run: |
