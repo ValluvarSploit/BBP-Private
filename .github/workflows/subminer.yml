@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Echo Secrets
+      - name: Censys
         env:
          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
          CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
@@ -20,6 +20,18 @@ jobs:
          pip install -r requirements.txt
          while read domain; do python censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$domain" | cut -d ' ' -f4 >> ../subdomain-output.txt ; done < ../domains.txt
          rm -rf censys-subdomain-finder/
+      - name: Security Trails
+        env:
+         SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
+        run: |
+         wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+         mv jq-linux64 jq
+         chmod +x jq
+         while read domain; do curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$domain"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$domain"/" test.txt | sed 's/ //g' && rm test.txt >> subdomain-output.txt ; done < domains.txt
+         rm jq
+      - name: RapidDNS
+        run: |
+         while read domain; do curl -s "https://rapiddns.io/subdomain/"$domain"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomain-output.txt ; done < domains.txt
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
