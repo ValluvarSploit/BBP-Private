@@ -39,6 +39,13 @@ jobs:
       - name: Amass
         run: |
          while read domain; do amass enum -passive -d "$domain" >> subdomain-output.txt ; done < domains.txt
+      - name: Findomain
+        run: |
+         wget https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux
+         mv findomain-linux findomain
+         chmod +x findomain
+         ./findomain -f domains.txt -q >> subdomain-output.txt
+         rm findomain
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
