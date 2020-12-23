@@ -69,6 +69,8 @@ jobs:
          tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
          ./subfinder -dL domains.txt --silent >> subdomain-output.txt
          rm LICENSE.md README.md subfinder
+      - name: Unique subdomains
+        run: sort -u subdomain-output.txt -o subdomain-output.txt
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
