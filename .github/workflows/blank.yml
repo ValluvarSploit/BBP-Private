@@ -1,0 +1,16 @@
+name: Subdomain Enumeration CI
+ 
+on:
+  workflow_dispatch:
+
+jobs:
+  enumeration:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Echo Secrets
+        run: |
+         echo {{ secrets.CENSYS_API_ID }}
+         echo {{ secrets.CENSYS_API_SECRET }}
