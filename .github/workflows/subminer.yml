@@ -33,6 +33,9 @@ jobs:
       - name: RapidDNS
         run: |
          while read domain; do curl -s "https://rapiddns.io/subdomain/"$domain"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomain-output.txt ; done < domains.txt
+      - name: Crt.sh
+        run: |
+         while read domain; do curl https://crt.sh/?q=%."$domain" | grep "$domain" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomain-output.txt ; done < domains.txt
       - name: Amass
         run: |
          while read domain; do amass enum -passive -d "$domain" >> subdomain-output.txt ; done < domains.txt
