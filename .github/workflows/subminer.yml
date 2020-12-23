@@ -32,6 +32,9 @@ jobs:
       - name: RapidDNS
         run: |
          while read domain; do curl -s "https://rapiddns.io/subdomain/"$domain"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomain-output.txt ; done < domains.txt
+      - name: Amass
+        run: |
+         while read domain; do amass enum -passive -d "$domain" >> subdomain-output.txt ; done < domains.txt
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
