@@ -46,6 +46,12 @@ jobs:
          chmod +x findomain
          ./findomain -f domains.txt -q >> subdomain-output.txt
          rm findomain
+      - name: Subfinder
+        run: |
+         wget https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
+         tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
+         ./subfinder -dL domains.txt --silent >> subdomain-output.txt
+         rm LICENSE.md README.md subfinder
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
