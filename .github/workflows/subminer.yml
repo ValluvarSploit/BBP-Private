@@ -11,6 +11,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Echo Secrets
+        env:
+         CENSYS_API_ID: secrets.CENSYS_API_ID
+         CENSYS_API_SECRET: secrets.CENSYS_API_SECRET
         run: |
-         echo {{ secrets.CENSYS_API_ID }}
-         echo {{ secrets.CENSYS_API_SECRET }}
+         echo "$CENSYS_API_ID"
+         echo "$CENSYS_API_SECRET"
