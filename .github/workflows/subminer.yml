@@ -10,6 +10,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Check Go version
+        run: |
+         go version
+      - name: Sublist3r
+        run: |
+         git clone https://github.com/aboul3la/Sublist3r.git
+         cd Sublist3r/
+         pip install -r requirements.txt
+         while read domain; do python sublist3r.py -d "$domain" -p 80,443,21,22 -o ../subdomain-output.txt >/dev/null ; done < ../domains.txt
+         cd ..
+         rm -rf Sublist3r/
       - name: Censys
         env:
          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
@@ -19,6 +30,7 @@ jobs:
          cd censys-subdomain-finder/
          pip install -r requirements.txt
          while read domain; do python censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$domain" | cut -d ' ' -f4 >> ../subdomain-output.txt ; done < ../domains.txt
+         cd ..
          rm -rf censys-subdomain-finder/
       - name: Security Trails & Certspotter
         env:
