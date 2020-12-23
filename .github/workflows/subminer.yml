@@ -14,9 +14,6 @@ jobs:
         run: |
          rm subdomain-output.txt
          touch subdomain-output.txt
-      - name: Check Go version
-        run: |
-         go version
       - name: Sublist3r
         run: |
          git clone https://github.com/aboul3la/Sublist3r.git
@@ -25,6 +22,10 @@ jobs:
          while read domain; do python sublist3r.py -d "$domain" -p 80,443,21,22 -o ../subdomain-output.txt >/dev/null ; done < ../domains.txt
          cd ..
          rm -rf Sublist3r/
+      - name: Assetfinder
+        run: |
+         go get -u github.com/tomnomnom/assetfinder
+         while read domain; do assetfinder --subs-only "$domain" -silent >> subdomain-output.txt ; done < domains.txt
       - name: Censys
         env:
          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
