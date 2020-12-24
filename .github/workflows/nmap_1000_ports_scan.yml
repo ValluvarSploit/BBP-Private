@@ -11,16 +11,15 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Clean-up
-        run: |
-         rm nmap-quick.nmap nmap-quick.xml nmap-quick.gnmap
-      - name: nmap scan
-        run: |
-         sudo apt-get update && sudo apt-get install nmap -y
-         nmap -sC -sV -iL live-host-output.txt -oA nmap-quick --reason
+        run: rm nmap-1000-ports.nmap nmap-1000-ports.xml nmap-1000-ports.gnmap
+      - name: Install nmap
+        run: sudo apt-get update && sudo apt-get install nmap -y
+      - name: Nmap scan
+        run: nmap -sC -sV -iL live-host-output.txt -oA nmap-1000-ports --reason
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add nmap-quick.nmap nmap-quick.xml nmap-quick.gnmap live-host-output.txt
-          git commit -m "Update Output Files"
+          git add nmap-1000-ports.nmap nmap-1000-ports.xml nmap-1000-ports.gnmap
+          git commit -m "Update nmap-1000-ports.nmap nmap-1000-ports.xml nmap-1000-ports.gnmap"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
