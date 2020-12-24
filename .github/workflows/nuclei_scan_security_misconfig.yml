@@ -1,0 +1,32 @@
+name: Nuclei Scan Security Misconfiguration CI
+ 
+on:
+  workflow_dispatch:
+
+jobs:
+  nuclei-security-misconfig-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Clean-up
+        run: |
+         rm nuclie-security-misconfig-output.txt
+         touch nuclie-security-misconfig-output.txt
+      - name: Nuclei Security Misconfiguration Scan
+        run: |
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
+         ./nuclei -l live-subdomains-output.txt -c 100 -stats -t nuclei-templates/security-misconfiguration/ -exclude nuclei-templates/cves/ -exclude nuclei-templates/technologies/ -exclude nuclei-templates/cves/default-credentials/ -exclude nuclei-templates/cves/dns/ -exclude nuclei-templates/cves/files/ -exclude nuclei-templates/cves/fuzzing/ -exclude nuclei-templates/cves/generic-detections/ -exclude nuclei-templates/misc/ -exclude nuclei-templates/panels/ -exclude nuclei-templates/payloads/ -exclude nuclei-templates/subdomain-takeover/ -exclude nuclei-templates/tokens/ -exclude nuclei-templates/vulnerabilities/ -exclude nuclei-templates/wordlists/ -exclude nuclei-templates/workflows/ -o nuclie-security-misconfig-output.txt
+         echo `date` | tee -a nuclie-security-misconfig-output.txt
+         rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz
+         rm -rf nuclei-templates/
+      - name: Commit Output file
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add nuclie-security-misconfig-output.txt
+          git commit -m "Update nuclie-security-misconfig-output.txt"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
