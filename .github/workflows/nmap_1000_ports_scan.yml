@@ -15,7 +15,7 @@ jobs:
       - name: Install nmap
         run: sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap scan
-        run: nmap -sC -sV -iL live-host-output.txt -oA nmap-1000-ports --reason
+        run: nmap -Pn -sC -sV -iL live-host-output.txt -oA nmap-1000-ports --reason -excludefile nmap-dont-scan-host.txt
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
