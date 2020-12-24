@@ -1,4 +1,4 @@
-name: Nmap Scan CI
+name: Nmap Top 1000 Ports Scan
  
 on:
   workflow_dispatch:
