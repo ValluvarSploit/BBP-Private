@@ -1,0 +1,34 @@
+name: Nuclei Scan CI
+ 
+on:
+  workflow_dispatch:
+
+jobs:
+  nuclei-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Clean-up
+        run: |
+         rm nuclie-exploit-output.txt nuclie-recon-output.txt
+         touch nuclie-exploit-output.txt nuclie-recon-output.txt
+      - name: Nuclei scan
+        run: |
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
+         ./nuclei -l live-subdomains-output.txt -c 100 -stats -t nuclei-templates -exclude nuclei-templates/fuzzing/ -exclude nuclei-templates/dns/ -exclude nuclei-templates/panels/ -exclude nuclei-templates/tokens/ -exclude nuclei-templates/misc/ -exclude nuclei-templates/security-misconfiguration/ -exclude nuclei-templates/technologies/ -exclude nuclei-templates/workflows/ -exclude nuclei-templates/default-credentials/ -o nuclie-exploit-output.txt
+         ./nuclei -l live-subdomains-output.txt -c 100 -stats -t nuclei-templates -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/cves/ -exclude nuclei-templates/vulnerabilities/ -exclude nuclei-templates/generic-detections/ -exclude nuclei-templates/subdomain-takeover/  -o nuclie-recon-output.txt
+         echo `date` | tee -a nuclie-exploit-output.txt
+         echo `date` | tee -a nuclie-recon-output.txt
+         rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz
+         rm -rf nuclei-templates/
+      - name: Commit Output file
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add nuclie-exploit-output.txt nuclie-recon-output.txt
+          git commit -m "Update Output Files"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
