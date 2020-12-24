@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  nmap-scan:
+  nmap-1000-ports-scan:
     runs-on: ubuntu-latest
     
     steps:
