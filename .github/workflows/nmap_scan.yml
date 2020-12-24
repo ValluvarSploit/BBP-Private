@@ -15,8 +15,7 @@ jobs:
          rm nmap-quick.nmap nmap-quick.xml nmap-quick.gnmap
       - name: nmap scan
         run: |
-         cat live-subdomains-output.txt | cut -d '/' -f 3 >> live-host-output.txt
-         apt-get install nmap -y
+         sudo apt-get update && sudo apt-get install nmap -y
          nmap -sC -sV -iL live-host-output.txt -oA nmap-quick --reason
       - name: Commit Output file
         run: |
