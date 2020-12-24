@@ -1,0 +1,27 @@
+name: Nmap Scan CI
+ 
+on:
+  workflow_dispatch:
+
+jobs:
+  nmap-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Clean-up
+        run: |
+         rm nmap-quick.nmap nmap-quick.xml nmap-quick.gnmap
+      - name: nmap scan
+        run: |
+         cat live-subdomains-output.txt | cut -d '/' -f 3 >> live-host-output.txt
+         apt-get install nmap -y
+         nmap -sC -sV -iL live-host-output.txt -oA nmap-quick --reason
+      - name: Commit Output file
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add nmap-quick.nmap nmap-quick.xml nmap-quick.gnmap live-host-output.txt
+          git commit -m "Update Output Files"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
