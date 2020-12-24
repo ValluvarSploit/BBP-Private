@@ -9,78 +9,76 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-
-#      - name: Amass
-#        run: |
-#         sudo snap install amass
-#         while read domain; do amass enum -passive -d "$domain" >> subdomain-output.txt ; done < domains.txt
-#      - name: Clean-up
-#        run: |
-#         rm subdomain-output.txt live-subdomains-output.txt live-host-output.txt
-#         touch subdomain-output.txt live-subdomains-output.txt live-host-output.txt
-#      - name: Sublist3r
-#        run: |
-#         git clone https://github.com/aboul3la/Sublist3r.git
-#         cd Sublist3r/
-#         pip install -r requirements.txt
-#         while read domain; do python sublist3r.py -d "$domain" -p 80,443,21,22 -o ../subdomain-output.txt >/dev/null ; done < ../domains.txt
-#         cd ..
-#         rm -rf Sublist3r/
-#      - name: Censys
-#        env:
-#         CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
-#         CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
-#        run: |
-#         git clone https://github.com/christophetd/censys-subdomain-finder.git
-#         cd censys-subdomain-finder/
-#         pip install -r requirements.txt
-#         while read domain; do python censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$domain" | cut -d ' ' -f4 >> ../subdomain-output.txt ; done < ../domains.txt
-#         cd ..
-#         rm -rf censys-subdomain-finder/
-#      - name: Security Trails & Certspotter
-#        env:
-#         SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
-#        run: |
-#         wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-#         mv jq-linux64 jq
-#         chmod +x jq
-#         while read domain; do curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$domain"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$domain"/" test.txt | sed 's/ //g' && rm test.txt >> subdomain-output.txt ; done < domains.txt
-#         while read domain; do curl -s https://certspotter.com/api/v0/certs\?domain\="$domain" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$domain" >> subdomain-output.txt ; done < domains.txt
-#         rm jq
-#      - name: RapidDNS
-#        run: |
-#         while read domain; do curl -s "https://rapiddns.io/subdomain/"$domain"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomain-output.txt ; done < domains.txt
+        
+      - name: Clean-up
+        run: |
+         rm subdomain-output.txt live-subdomains-output.txt live-host-output.txt
+         touch subdomain-output.txt live-subdomains-output.txt live-host-output.txt
+      - name: Amass
+        run: |
+         sudo snap install amass
+         while read domain; do amass enum -passive -d "$domain" >> subdomain-output.txt ; done < domains.txt
+      - name: Sublist3r
+        run: |
+         git clone https://github.com/aboul3la/Sublist3r.git
+         cd Sublist3r/
+         pip install -r requirements.txt
+         while read domain; do python sublist3r.py -d "$domain" -p 80,443,21,22 -o ../subdomain-output.txt >/dev/null ; done < ../domains.txt
+         cd ..
+         rm -rf Sublist3r/
+      - name: Censys
+        env:
+         CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
+         CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
+        run: |
+         git clone https://github.com/christophetd/censys-subdomain-finder.git
+         cd censys-subdomain-finder/
+         pip install -r requirements.txt
+         while read domain; do python censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$domain" | cut -d ' ' -f4 >> ../subdomain-output.txt ; done < ../domains.txt
+         cd ..
+         rm -rf censys-subdomain-finder/
+      - name: Security Trails & Certspotter
+        env:
+         SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
+        run: |
+         wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+         mv jq-linux64 jq
+         chmod +x jq
+         while read domain; do curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$domain"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$domain"/" test.txt | sed 's/ //g' && rm test.txt >> subdomain-output.txt ; done < domains.txt
+         while read domain; do curl -s https://certspotter.com/api/v0/certs\?domain\="$domain" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$domain" >> subdomain-output.txt ; done < domains.txt
+         rm jq
+      - name: RapidDNS
+        run: |
+         while read domain; do curl -s "https://rapiddns.io/subdomain/"$domain"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomain-output.txt ; done < domains.txt
       - name: Crt.sh
         run: |
          while read domain; do curl https://crt.sh/?q=%."$domain" | grep "$domain" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomain-output.txt ; done < domains.txt
-#      - name: Findomain
-#        run: |
-#         wget https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux
-#         mv findomain-linux findomain
-#         chmod +x findomain
-#         ./findomain -f domains.txt -q >> subdomain-output.txt
-#         rm findomain
-#      - name: Subfinder
-#        run: |
-#         wget https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
-#         tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
-#         ./subfinder -dL domains.txt --silent >> subdomain-output.txt
-#         rm LICENSE.md README.md subfinder
-#      - name: Unique subdomains
-#        run: sort -u subdomain-output.txt -o subdomain-output.txt
-#      - name: Resolve subdomains
-#        run: |
-#         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
-#         tar -xvf httpx_1.0.3_linux_amd64.tar.gz
-#         ./httpx -l subdomain-output.txt -o live-subdomains-output.txt
-#         rm LICENSE.md README.md httpx httpx_1.0.3_linux_amd64.tar.gz
-#         cat live-subdomains-output.txt | cut -d '/' -f 3 >> live-host-output.txt
+      - name: Findomain
+        run: |
+         wget https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux
+         mv findomain-linux findomain
+         chmod +x findomain
+         ./findomain -f domains.txt -q >> subdomain-output.txt
+         rm findomain
+      - name: Subfinder
+        run: |
+         wget https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
+         tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
+         ./subfinder -dL domains.txt --silent >> subdomain-output.txt
+         rm LICENSE.md README.md subfinder
+      - name: Unique subdomains
+        run: sort -u subdomain-output.txt -o subdomain-output.txt
+      - name: Resolve subdomains
+        run: |
+         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
+         tar -xvf httpx_1.0.3_linux_amd64.tar.gz
+         ./httpx -l subdomain-output.txt -o live-subdomains-output.txt
+         rm LICENSE.md README.md httpx httpx_1.0.3_linux_amd64.tar.gz
+         cat live-subdomains-output.txt | cut -d '/' -f 3 >> live-host-output.txt
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add subdomain-output.txt
+          git add subdomain-output.txt live-subdomains-output.txt live-host-output.txt
           git commit -m "Update Output Files"
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
-
-#       git add subdomain-output.txt live-subdomains-output.txt live-host-output.txt
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
