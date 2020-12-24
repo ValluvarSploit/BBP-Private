@@ -12,7 +12,7 @@ jobs:
 
       - name: Amass
         run: |
-         sudo apt-get update && sudo apt-get install amass -y
+         sudo snap install amass
          while read domain; do amass enum -passive -d "$domain" >> subdomain-output.txt ; done < domains.txt
       - name: Clean-up
         run: |
