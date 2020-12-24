@@ -22,10 +22,6 @@ jobs:
          while read domain; do python sublist3r.py -d "$domain" -p 80,443,21,22 -o ../subdomain-output.txt >/dev/null ; done < ../domains.txt
          cd ..
          rm -rf Sublist3r/
-      - name: Assetfinder
-        run: |
-         go get -u github.com/tomnomnom/assetfinder
-         while read domain; do assetfinder --subs-only "$domain" -silent >> subdomain-output.txt ; done < domains.txt
       - name: Censys
         env:
          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
@@ -73,8 +69,10 @@ jobs:
         run: sort -u subdomain-output.txt -o subdomain-output.txt
       - name: Resolve subdomains
         run: |
-         go get -u github.com/tomnomnom/httprobe
-         cat subdomain-output.txt | httprobe  >> live-subdomains-output.txt
+         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
+         tar -xvf httpx_1.0.3_linux_amd64.tar.gz
+         ./httpx -l subdomain-output.txt -o live-subdomains-output.txt
+         rm LICENSE.md README.md httpx httpx_1.0.3_linux_amd64.tar.gz
       - name: Commit Output file
         run: |
           git config --local user.email "action@github.com"
