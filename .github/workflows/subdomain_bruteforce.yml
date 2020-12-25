@@ -1,0 +1,33 @@
+name: Subdomain Bruteforce & DNS Enumeration
+
+on:
+  workflow_dispatch:
+
+jobs:       
+  bruteforce:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+      
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Tools Installation and Setup
+        run: |
+           sudo snap install amass
+       # wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+      - name: Create Wordlist
+        run: |
+          cp wordlists/top-vuln-subdomains.txt .
+          sed "s/$/.$TARGET_DOMAIN/" top-vuln-subdomains.txt > host-wordlist.txt
+          rm top-vuln-subdomains.txt
+      - name: Final Clean-up
+        run: |
+          rm resolvers.txt
+      - name: Commit Tool Output
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
+          git add host-wordlist.txt hosts-amass.txt ips-amass.txt
+          git commit -m "Update host-wordlist.txt"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/test-tools.git" HEAD:main --follow-tags
