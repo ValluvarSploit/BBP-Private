@@ -68,9 +68,10 @@ jobs:
          rm LICENSE.md README.md subfinder
       - name: Unique subdomains
         run: |
-         mv subdomain-output.txt temp_file.txt
-         cat temp_file.txt | sed 's/\*\.//g' > subdomain-output.txt
          sort -u subdomain-output.txt -o subdomain-output.txt
+         mv subdomain-output.txt temp_file1.txt
+         grep -vf ignore-hosts.txt temp_file1.txt > temp_file2.txt
+         cat temp_file2.txt | sed 's/\*\.//g' > subdomain-output.txt
       - name: Resolve subdomains
         run: |
          wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
