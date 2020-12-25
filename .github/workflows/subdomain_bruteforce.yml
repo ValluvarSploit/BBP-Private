@@ -1,3 +1,4 @@
+#Important Note: Change value of secrets variable TARGET_DOMAIN.
 name: Subdomain Bruteforce & DNS Enumeration
 
 on:
