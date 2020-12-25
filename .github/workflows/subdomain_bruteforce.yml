@@ -15,12 +15,10 @@ jobs:
 
       - name: Tools Installation and Setup
         run: |
+          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
           git clone https://github.com/blechschmidt/massdns.git
           cd massdns/
           make
-          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-           
-       # wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: Create Wordlist
         run: |
           sed "s/$/.$TARGET_DOMAIN/" top-vuln-subdomain.txt > hosts-wordlist.txt
