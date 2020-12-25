@@ -23,7 +23,6 @@ jobs:
        # wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: Create Wordlist
         run: |
-          cp wordlists/top-vuln-subdomain.txt .
           sed "s/$/.$TARGET_DOMAIN/" top-vuln-subdomain.txt > hosts-wordlist.txt
       - name: Combine Wordlists
         run: cat subdomain-output.txt hosts-wordlist.txt > massdns-input.txt
@@ -34,7 +33,7 @@ jobs:
          cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-online.txt
       - name: Final Clean-up
         run: |
-          rm resolvers.txt rm top-vuln-subdomain.txt
+          rm resolvers.txt
           rm -rf massdns/
       - name: Commit Tool Output
         run: |
