@@ -18,9 +18,9 @@ jobs:
        # wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: Create Wordlist
         run: |
-          cp wordlists/top-vuln-subdomains.txt .
-          sed "s/$/.$TARGET_DOMAIN/" top-vuln-subdomains.txt > host-wordlist.txt
-          rm top-vuln-subdomains.txt
+          cp wordlists/top-vuln-subdomain.txt .
+          sed "s/$/.$TARGET_DOMAIN/" top-vuln-subdomain.txt > hosts-wordlist.txt
+          rm top-vuln-subdomain.txt
       - name: Final Clean-up
         run: |
           rm resolvers.txt
