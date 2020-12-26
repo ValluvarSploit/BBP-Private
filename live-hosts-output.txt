@@ -9,7 +9,6 @@ ADMIN.bol.com
 API.bol.com
 APP.bol.com
 BETA.bol.com
-CHAT.bol.com
 Chat0.bol.com
 DAM.bol.com
 E.bol.com
@@ -322,11 +321,8 @@ cellar-c2.services.bol.com
 cg.www.bol.com
 cgi.www.bol.com
 charts.www.bol.com
-chat-staging.bol.com
 chat.bol.com
 chat0.bol.com
-chat1.bol.com
-chat2.bol.com
 chatr.bol.com
 checklogin.www.bol.com
 chorus-hubspot.services.bol.com
