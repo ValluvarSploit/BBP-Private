@@ -15,12 +15,12 @@ jobs:
 
       - name: Install Dependencies
         run: |
-        #go get -u -v github.com/lukasikic/subzy
-        #go install -v github.com/lukasikic/subzy
+         go get -u -v github.com/lukasikic/subzy
+         go install -v github.com/lukasikic/subzy
       - name: Subzy
         run: |
          go version
-         which go
+         ls -l /usr/bin/
 #      - name: Commit Tool Output
 #        run: |
 #          git config --local user.email "action@github.com"
