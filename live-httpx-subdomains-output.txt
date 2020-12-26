@@ -119,7 +119,6 @@ https://cg.www.bol.com
 https://cgi.www.bol.com
 https://charts.www.bol.com
 https://chat0.bol.com
-https://chat1.bol.com
 https://chatr.bol.com
 https://checklogin.www.bol.com
 https://cms.admin.bol.com
