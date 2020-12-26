@@ -29,14 +29,16 @@ jobs:
          cd /home/runner/go/bin/
          ls -l subjack
          ./subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o /home/runner/work/Test-Data/Test-Data/subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
-         cat /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         cd /home/runner/work/Test-Data/Test-Data/
+         if [[ ! -f subjack-output.txt ]]; then touch subjack-output.txt; fi
       - name: Nuclei
         run: |
          ./nuclei -l "$INPUT_FILE" -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
+         if [[ ! -f nuclie-output.txt ]]; then touch nuclie-output.txt; fi
       - name: Combine Outputs
         run: |
-          if [[ -f subjack-output.txt ]]; then cat subjack-output.txt | tee -a subdomain-takeover-output.txt; fi
-          if [[ -f nuclie-output.txt ]]; then cat nuclie-output.txt | tee -a subdomain-takeover-output.txt; fi
+         cat subjack-output.txt | tee -a subdomain-takeover-output.txt
+         cat nuclie-output.txt | tee -a subdomain-takeover-output.txt
       - name: Remove Temporary Files
         run: |
           rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz subjack-output.txt nuclie-output.txt
