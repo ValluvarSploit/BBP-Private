@@ -15,6 +15,8 @@ jobs:
           git clone https://github.com/FortyNorthSecurity/EyeWitness.git
           cd EyeWitness/Python/setup
           sudo ./setup.sh
+      - name: Remove Old files
+        run: rm -rf eyewitness_output 
       - name: Eyewitness
         run: |
           python3 EyeWitness/Python/EyeWitness.py --web -f test.txt --timeout 15 --no-prompt 
