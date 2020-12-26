@@ -20,7 +20,7 @@ jobs:
       - name: Subzy
         run: |
          go version
-         ls -l /usr/bin/
+         ls -l /home/runner/go/bin/
 #      - name: Commit Tool Output
 #        run: |
 #          git config --local user.email "action@github.com"
