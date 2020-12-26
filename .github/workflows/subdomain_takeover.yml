@@ -16,7 +16,7 @@ jobs:
       - name: Install Dependencies
         run: |
          go get -u -v github.com/lukasikic/subzy
-         go get github.com/haccer/subjack
+         go get -v github.com/haccer/subjack
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
          tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
