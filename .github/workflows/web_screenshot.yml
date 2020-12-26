@@ -1,0 +1,32 @@
+name: Web Screenshot - Eyewitness
+
+on:
+  workflow_dispatch:
+
+jobs:
+  screenshot-eyewitness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Tools Installation and Setup
+        run: |
+          git clone https://github.com/FortyNorthSecurity/EyeWitness.git
+          cd EyeWitness/Python/setup
+          sudo ./setup.sh
+      - name: Eyewitness
+        run: |
+          python3 EyeWitness/Python/EyeWitness.py --web -f live-httpx-subdomains-output.txt --timeout 15 --no-prompt 
+          mv `date +"%Y"`* eyewitness_output
+      - name: Final Clean-up
+        run: |
+          rm geckodriver.log
+          rm -rf EyeWitness
+      - name: Commit Tool Output
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
+          git add eyewitness_output/
+          git commit -m "Update Eyewitness Output"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
