@@ -17,7 +17,7 @@ jobs:
           sudo ./setup.sh
       - name: Eyewitness
         run: |
-          python3 EyeWitness/Python/EyeWitness.py --web -f live-httpx-subdomains-output.txt --timeout 15 --no-prompt 
+          python3 EyeWitness/Python/EyeWitness.py --web -f test.txt --timeout 15 --no-prompt 
           mv `date +"%Y"`* eyewitness_output
       - name: Final Clean-up
         run: |
