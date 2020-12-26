@@ -89,10 +89,20 @@ jobs:
         run: |
          rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
          rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt massdns-input.txt httpx httpx_1.0.3_linux_amd64.tar.gz
-      - name: Commit Output file
+      - name: Display Output Files
+        run: |
+         echo "subdomains-tools-output.txt"
+         cat subdomains-tools-output.txt | head
+         echo "---------------------------------------------------"
+         echo "live-httpx-subdomains-output.txt"
+         cat live-httpx-subdomains-output.txt | head
+         echo "---------------------------------------------------"
+         echo "massdns-output.txt"
+         cat massdns-output.txt | head
+      - name: Commit Output Files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add subdomains-tools-output.txt live-httpx-subdomains-output.txt massdns-output.txt hosts-online.txt live-ips-output.txt 
+          git add subdomains-tools-output.txt live-httpx-subdomains-output.txt hosts-online.txt live-ips-output.txt 
           git commit -m "Update Output Files"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
