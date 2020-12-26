@@ -81,7 +81,7 @@ jobs:
         run: |
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
-         cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-online.txt
+         cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output.txt
       - name: HTTP/HTTPS Resolver-httpx
         run: |
          ./httpx -l hosts-online.txt -o live-httpx-subdomains-output.txt
@@ -93,6 +93,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add subdomains-tools-output.txt live-httpx-subdomains-output.txt massdns-output.txt hosts-online.txt ips-online.txt 
+          git add subdomains-tools-output.txt live-httpx-subdomains-output.txt massdns-output.txt hosts-online.txt live-ips-output.txt 
           git commit -m "Update Output Files"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
