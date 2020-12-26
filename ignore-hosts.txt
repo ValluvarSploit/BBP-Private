@@ -1,0 +1,2 @@
+status.pickmycareer.in
+dashboard.internal.pickmycareer.in
