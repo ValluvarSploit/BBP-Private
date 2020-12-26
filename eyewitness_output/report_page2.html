@@ -1,0 +1,77 @@
+<html>
+        <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
+        <title>EyeWitness Report</title>
+        <script src="jquery-1.11.3.min.js"></script>
+        <script type="text/javascript">
+        function toggleUA(id, url){
+        idi = "." + id;
+        $(idi).toggle();
+        change = document.getElementById(id);
+        if (change.innerHTML.indexOf("expand") > -1){
+            change.innerHTML = "Click to collapse User Agents for " + url;
+        }else{
+            change.innerHTML = "Click to expand User Agents for " + url;
+        }
+        }
+
+        document.onkeydown = function(event){
+            event = event || window.event;
+            switch (event.keyCode){
+                case 37:
+                    leftArrow();
+                    break;
+                case 39:
+                    rightArrow();
+                    break;
+            }
+        };
+                
+        function leftArrow(){
+            $('#previous')[0].click();
+        };
+
+        function rightArrow(){
+            $('#next')[0].click();
+        };
+
+        </script>
+        </head>
+        <body>
+        <center>
+        <center>Report Generated on 2020/12/26 at 23:02:36</center><center><a href="report.html" id="previous"> Previous Page </a></center>
+<center><br><a href="report.html"> Page 1</a><a href="report_page2.html"> Page 2</a></center>
+<table border="1">
+        <tr>
+        <th>Web Request Info</th>
+        <th>Web Screenshot</th>
+        </tr><tr>
+            <td><div style="display: inline-block; width: 300px; word-wrap: break-word">
+            <a href="https://bol.com" target="_blank">https://bol.com</a><br>
+            <b>Resolved to:</b> 185.14.169.113<br>
+<br><b> Page Title: </b>bol.com | de winkel van ons allemaal
+<br><b> Date:</b> Sat, 26 Dec 2020 23:02:50 GMT
+<br><b> Server:</b> Apache
+<br><b> Strict-Transport-Security:</b> max-age=31536000
+<br><b> X-Content-Type-Options:</b> nosniff
+<br><b> X-Frame-Options:</b> SAMEORIGIN
+<br><b> X-XSS-Protection:</b> 1; mode=block
+<br><b> X-PS:</b> wspc134
+<br><b> Link:</b> &lt;//css.s-bol.com/nl/static/assets/css/wsp-catalog.min.22918c76715c85bdfcb2.css&gt;; rel=preload; as=style,&lt;//css.s-bol.com/nl/cms/css/ab-test-override-a2.css?202012270000&gt;; rel=preload; as=style,&lt;//js.s-bol.com/nl/static/assets/js/common-vendor.6f0fdec1ad8d702305ae.bundle.js&gt;; rel=preload; as=script; crossorigin=anonymous; integrity=sha512-dzkPVc5TTA5E9JTGnXMr6yT6V5TpzUlcf94P7BzAcSyqELQ2/X4S6qV7g6CdoGqm3BCl+BWaOCIhbMFV++NfwQ==,&lt;//js.s-bol.com/nl/static/assets/js/common-own.0e9c6d3b860b43680117.bundle.js&gt;; rel=preload; as=script; crossorigin=anonymous; integrity=sha512-5sRTlWIZ8QEAjCUGltMeLScNUiFH/M3XdtoBbYwIkb7K3tDP+bskJfHC7YwsR8L57KYnTJZ5wHe2bNAr3M8Jcg==,&lt;//js.s-bol.com/nl/static/assets/js/wsp-elements.810428255707c997056c.bundle.js&gt;; rel=preload; as=script; crossorigin=anonymous; integrity=sha512-sRaxWXV67AeCwpyZN2v5+E5iTcSG9g+zD1FmV4CFQR4LfRvhl3JuebAHXOrS/sC1p3G/BQtvjnc8RCKdqXv+9A==,&lt;//s.s-bol.com&gt;; rel=preconnect,&lt;//css.s-bol.com&gt;; rel=preconnect,&lt;//js.s-bol.com&gt;; rel=preconnect
+<br><b> Content-Language:</b> nl-NL
+<br><b> Vary:</b> Accept-Encoding,User-Agent
+<br><b> X-UA-Compatible:</b> IE=edge
+<br><b> Set-Cookie:</b> shopping_session_id=42564318f720067595cc101f5e78b3fed3aa895e2886502dfad76eb7a749cc1e;Version=0;Domain=www.bol.com;Path=/nl;Secure; HttpOnly; SameSite=None
+<br><b> Content-Security-Policy:</b> report-uri https://cspreport.bol.com/report/b/14100  ; default-src https://tpc.googlesyndication.com https://www.bol.com ; connect-src https://*.akstat.io https://*.doubleclick.net https://*.google-analytics.com https://*.google.com https://*.googlesyndication.com https://*.gstatic.com https://*.mpstat.us https://*.s-bol.com https://aai.bol.com https://c.go-mpulse.net https://chat1.bol.com https://chatr.bol.com https://fbstatic-a.akamaihd.net https://firefly.bol.com https://www.bol.com ; font-src data: https://*.s-bol.com https://fonts.gstatic.com https://secure.ogone.com https://www.bol.com ; frame-src https://*.2mdn.net https://*.adyen.com https://*.akstat.io https://*.doubleclick.net https://*.mpstat.us https://*.youtube-nocookie.com https://bolfelicitatie.b05-apps.nl https://chat1.bol.com https://chatr.bol.com https://info.bol.com https://platform.twitter.com https://s-static.ak.facebook.com https://secure.ogone.com https://tpc.googlesyndication.com https://view.publitas.com https://www.bol.com https://www.facebook.com https://www.google.com ; img-src blob: data: https://*.2mdn.net https://*.adyen.com https://*.akstat.io https://*.doubleclick.net https://*.google-analytics.com https://*.google.be https://*.google.nl https://*.krxd.net https://*.moatads.com https://*.mpstat.us https://*.s-bol.com https://adservice.google.be https://adservice.google.com https://adservice.google.nl https://bol.com https://bol.ugc.bazaarvoice.com https://cbks0.googleapis.com https://cbks1.googleapis.com https://csi.gstatic.com https://ds-aksb-a.akamaihd.net https://fbstatic-a.akamaihd.net https://img.youtube.com https://kbimages1-a.akamaihd.net https://khms0.googleapis.com https://khms1.googleapis.com https://m.bol.com https://maps.googleapis.com https://maps.gstatic.com https://mts0.googleapis.com https://mts1.googleapis.com https://pagead2.googlesyndication.com https://partner.bol.com https://photos-eu.bazaarvoice.com https://platform.twitter.com https://secure.ogone.com https://ssl.gstatic.com https://static.bol.com https://swa.bol.com https://syndication.twitter.com https://tpc.googlesyndication.com https://view.publitas.com https://weblog.bol.com https://www.bol.com https://www.facebook.com https://www.google.com https://www.googletagmanager.com https://www.ups.com ; media-src blob: https://*.kobo.com https://*.phononet.de https://*.s-bol.com https://bolfelicitatie.b05-apps.nl https://rovimusic.rovicorp.com https://static.bol.com https://www.bol.com ; object-src https://bolfelicitatie.b05-apps.nl https://st1.streamzilla.jet-stream.nl https://view.publitas.com https://www.bol.com ; script-src &#x27;unsafe-eval&#x27; &#x27;unsafe-inline&#x27; data: https://*.2mdn.net https://*.adyen.com https://*.doubleclick.net https://*.google-analytics.com https://*.krxd.net https://*.moatads.com https://*.s-bol.com https://*.youtube-nocookie.com https://aai.bol.com https://adservice.google.be https://adservice.google.com https://adservice.google.nl https://ajax.googleapis.com https://apis.google.com https://bol.com https://c.go-mpulse.net https://cbks0.googleapis.com https://cdn.ampproject.org https://cdn.syndication.twimg.com https://cdn.syndication.twitter.com https://chat1.bol.com https://connect.facebook.net https://d31qbv1cthcecs.cloudfront.net https://ds-aksb-a.akamaihd.net https://fbstatic-a.akamaihd.net https://firefly.bol.com https://maps.googleapis.com https://maps.gstatic.com https://mts0.googleapis.com https://mts1.googleapis.com https://pagead2.googlesyndication.com https://partner.bol.com https://partner.googleadservices.com https://platform.twitter.com https://s.ytimg.com https://secure.ogone.com https://static.bol.com https://tpc.googlesyndication.com https://translate.googleapis.com https://tu.tu-vms.com https://view.publitas.com https://weblog.bol.com https://www.bol.com https://www.google.com https://www.googletagmanager.com https://www.googletagservices.com https://www.gstatic.com ; style-src &#x27;unsafe-inline&#x27; https://*.s-bol.com https://bol.com https://fonts.googleapis.com https://partner.bol.com https://platform.twitter.com https://secure.ogone.com https://static.bol.com https://view.publitas.com https://www.bol.com ; worker-src blob: ; frame-ancestors &#x27;self&#x27;
+<br><b> Connection:</b> close
+<br><b> Transfer-Encoding:</b> chunked
+<br><b> Content-Type:</b> text/html;charset=UTF-8
+<br><b> Response Code:</b> 200
+<br><br><a href="source/https.bol.com.txt"
+                target="_blank">Source Code</a></div></td>
+                <td><div id="screenshot"><a href="screens/https.bol.com.png"
+                target="_blank"><img src="screens/https.bol.com.png"
+                height="400"></a></div></td></tr></div>
+        </div></table><br></table><br>
+<center><br><a href="report.html"> Page 1</a><a href="report_page2.html"> Page 2</a></center>
+<br><center><a href="report.html" id="previous"> Previous Page </a></center></body></html>
