@@ -19,8 +19,7 @@ jobs:
          go install -v github.com/lukasikic/subzy
       - name: Subzy
         run: |
-         go version
-         ls -l /home/runner/go/bin/
+         ./home/runner/go/bin/subzy --targets=live-httpx-subdomains-output.txt -concurrency 50
 #      - name: Commit Tool Output
 #        run: |
 #          git config --local user.email "action@github.com"
