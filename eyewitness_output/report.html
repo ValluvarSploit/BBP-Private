@@ -1,0 +1,77 @@
+<center><html>
+        <head>
+        <title>EyeWitness Report Table of Contents</title>
+        </head>
+        <h2>Table of Contents</h2><li><a href="report.html#uncat">Uncategorized (Page 1)</a></li></ul><br><br><table class="table"><tr><td>Uncategorized</td><td>1</td><tr><td>Errors</td><td>0</td></tr><tr><th>Total</th><td>1</td></tr></table><br><br></center><html>
+        <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
+        <title>EyeWitness Report</title>
+        <script src="jquery-1.11.3.min.js"></script>
+        <script type="text/javascript">
+        function toggleUA(id, url){
+        idi = "." + id;
+        $(idi).toggle();
+        change = document.getElementById(id);
+        if (change.innerHTML.indexOf("expand") > -1){
+            change.innerHTML = "Click to collapse User Agents for " + url;
+        }else{
+            change.innerHTML = "Click to expand User Agents for " + url;
+        }
+        }
+
+        document.onkeydown = function(event){
+            event = event || window.event;
+            switch (event.keyCode){
+                case 37:
+                    leftArrow();
+                    break;
+                case 39:
+                    rightArrow();
+                    break;
+            }
+        };
+                
+        function leftArrow(){
+            $('#previous')[0].click();
+        };
+
+        function rightArrow(){
+            $('#next')[0].click();
+        };
+
+        </script>
+        </head>
+        <body>
+        <center>
+        <center>Report Generated on 2020/12/26 at 22:56:54</center><h2 id="uncat">Uncategorized</h2><table border="1">
+        <tr>
+        <th>Web Request Info</th>
+        <th>Web Screenshot</th>
+        </tr><tr>
+            <td><div style="display: inline-block; width: 300px; word-wrap: break-word">
+            <a href="https://google.com" target="_blank">https://google.com</a><br>
+            <b>Resolved to:</b> 172.217.9.206<br>
+<br><b> Page Title: </b>Google
+<br><b> Date:</b> Sat, 26 Dec 2020 22:56:59 GMT
+<br><b> Expires:</b> -1
+<br><b> Cache-Control:</b> private, max-age=0
+<br><b> Content-Type:</b> text/html; charset=UTF-8
+<br><b> Strict-Transport-Security:</b> max-age=31536000
+<br><b> P3P:</b> CP=&quot;This is not a P3P policy! See g.co/p3phelp for more info.&quot;
+<br><b> Server:</b> gws
+<br><b> X-XSS-Protection:</b> 0
+<br><b> X-Frame-Options:</b> SAMEORIGIN
+<br><b> Set-Cookie:</b> 1P_JAR=2020-12-26-22; expires=Mon, 25-Jan-2021 22:56:59 GMT; path=/; domain=.google.com; Secure; SameSite=none
+<br><b> Alt-Svc:</b> h3-29=&quot;:443&quot;; ma=2592000,h3-T051=&quot;:443&quot;; ma=2592000,h3-Q050=&quot;:443&quot;; ma=2592000,h3-Q046=&quot;:443&quot;; ma=2592000,h3-Q043=&quot;:443&quot;; ma=2592000,quic=&quot;:443&quot;; ma=2592000; v=&quot;46,43&quot;
+<br><b> Accept-Ranges:</b> none
+<br><b> Vary:</b> Accept-Encoding
+<br><b> Connection:</b> close
+<br><b> Transfer-Encoding:</b> chunked
+<br><b> Response Code:</b> 200
+<br><br><a href="source/https.google.com.txt"
+                target="_blank">Source Code</a></div></td>
+                <td><div id="screenshot"><a href="screens/https.google.com.png"
+                target="_blank"><img src="screens/https.google.com.png"
+                height="400"></a></div></td></tr></div>
+        </div></table><br></table><br></body>
+</html>
