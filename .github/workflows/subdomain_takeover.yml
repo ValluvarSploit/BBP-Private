@@ -8,7 +8,7 @@ jobs:
   subdomain-takeover:
     runs-on: ubuntu-latest
     env:
-      INPUT_FILE: 'live-httpx-subdomains-output.txt'  
+      INPUT_FILE: '/home/runner/work/Test-Data/Test-Data/live-httpx-subdomains-output.txt'  
   
     steps:
       - uses: actions/checkout@v2
@@ -22,14 +22,13 @@ jobs:
          tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
       - name: Subzy
         run: |
-         pwd
-         ./home/runner/go/bin/subzy --targets="$INPUT_FILE" -concurrency 50 | tee subdomain-takeover-output.txt
+         cd /home/runner/go/bin/
+         ./subzy --targets="$INPUT_FILE" -concurrency 50 | tee /home/runner/work/Test-Data/Test-Data/subdomain-takeover-output.txt
       - name: Subjack
         run: |
          cd /home/runner/go/bin/
-         pwd
          ls -l subjack
-         ./subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         ./subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o /home/runner/work/Test-Data/Test-Data/subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
          cat /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
       - name: Nuclei
         run: |
