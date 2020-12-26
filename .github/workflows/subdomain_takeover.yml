@@ -25,8 +25,9 @@ jobs:
          ./home/runner/go/bin/subzy --targets="$INPUT_FILE" -concurrency 50 | tee subdomain-takeover-output.txt
       - name: Subjack
         run: |
-         ls -l /home/runner/go/bin/
-         ./home/runner/go/bin/subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         cd /home/runner/go/bin/
+         ls -l subjack
+         ./subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
          cat /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
       - name: Nuclei
         run: |
