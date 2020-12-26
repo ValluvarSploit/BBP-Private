@@ -1,3 +1,4 @@
+#important note: Before running this workflow, set secrets variable $TARGET_DOMAIN to your target domain in repository settings.
 name: Subdomain Enumeration CI
  
 on:
