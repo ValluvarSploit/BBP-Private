@@ -1,4 +1,3 @@
-#Important Note: Change value of secrets variable TARGET_DOMAIN.
 name: Subdomain Takeover
 
 on:
@@ -12,7 +11,8 @@ jobs:
   
     steps:
       - uses: actions/checkout@v2
-      # subzy, subjack
+        
+      # subzy, subjack, nuclei
       - name: Install Dependencies
         run: |
          go get -u -v github.com/lukasikic/subzy
@@ -23,11 +23,10 @@ jobs:
       - name: Subzy
         run: |
          cd /home/runner/go/bin/
-         ./subzy --targets="$INPUT_FILE" -concurrency 50 | tee /home/runner/work/Test-Data/Test-Data/subdomain-takeover-output.txt
+         ./subzy --targets="$INPUT_FILE" -concurrency 50 -hide_fails | tee /home/runner/work/Test-Data/Test-Data/subdomain-takeover-output.txt
       - name: Subjack
         run: |
          cd /home/runner/go/bin/
-         ls -l subjack
          ./subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o /home/runner/work/Test-Data/Test-Data/subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
          cd /home/runner/work/Test-Data/Test-Data/
          if [[ ! -f subjack-output.txt ]]; then touch subjack-output.txt; fi
@@ -48,5 +47,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "Github Action"
           git add subdomain-takeover-output.txt
-          git commit -m "Update host-wordlist.txt"
+          git commit -m "Update subdomain-takeover-output.txt"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
