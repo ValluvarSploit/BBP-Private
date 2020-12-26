@@ -33,8 +33,8 @@ jobs:
           cd massdns/ && make
       - name: Remove & Create Output Files
         run: |
-         rm subdomains-tools-output.txt live-subdomains-output.txt live-host-output.txt
-         touch live-subdomains-output.txt live-host-output.txt
+         rm subdomains-tools-output.txt live-httpx-subdomains-output.txt live-ips-output.txt live-hosts-output.txt
+         touch 
       - name: Sublist3r
         run: |
          python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -o subdomains-tools-output.txt >/dev/null
@@ -80,11 +80,11 @@ jobs:
       - name: DNS Resolver-MassDNS
         run: |
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
-         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
+         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output.txt
       - name: HTTP/HTTPS Resolver-httpx
         run: |
-         ./httpx -l hosts-online.txt -o live-httpx-subdomains-output.txt
+         ./httpx -l live-hosts-output.txt -o live-httpx-subdomains-output.txt
       - name: Remove Dependencies
         run: |
          rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
@@ -97,12 +97,20 @@ jobs:
          echo "live-httpx-subdomains-output.txt"
          cat live-httpx-subdomains-output.txt | head
          echo "---------------------------------------------------"
+         cat massdns-input.txt | head
+         echo "---------------------------------------------------"
          echo "massdns-output.txt"
          cat massdns-output.txt | head
+         echo "---------------------------------------------------"
+         echo "live-hosts-output.txt"
+         cat live-hosts-output.txt | head
+         echo "----------------------------------------------------"
+         echo "live-ips-output.txt"
+         cat live-ips-output.txt | head
       - name: Commit Output Files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add subdomains-tools-output.txt live-httpx-subdomains-output.txt hosts-online.txt live-ips-output.txt 
+          git add subdomains-tools-output.txt live-httpx-subdomains-output.txt live-hosts-output.txt live-ips-output.txt 
           git commit -m "Update Output Files"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
