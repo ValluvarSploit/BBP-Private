@@ -76,7 +76,8 @@ jobs:
       - name: Create Wordlists
         run: |
          sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
-         cat subdomains-tools-output.txt custom-wordlist.txt > massdns-input.txt
+         grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
+         cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
       - name: DNS Resolver-MassDNS
         run: |
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
@@ -95,7 +96,7 @@ jobs:
          echo "---------------------------------------------------"
          cat massdns-input.txt | head
          echo "---------------------------------------------------"
-         cat custom-wordlist.txt | head
+         cat custom2-wordlist.txt | head
          echo "---------------------------------------------------"
          echo "massdns-output.txt"
          cat massdns-output.txt | head
@@ -108,7 +109,7 @@ jobs:
       - name: Remove Dependencies
         run: |
          rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
-         rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt massdns-input.txt httpx httpx_1.0.3_linux_amd64.tar.gz temp_file1.txt temp_file2.txt massdns-output.txt
+         rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt httpx httpx_1.0.3_linux_amd64.tar.gz temp_file1.txt temp_file2.txt massdns-output.txt
       - name: Commit Output Files
         run: |
           git config --local user.email "action@github.com"
