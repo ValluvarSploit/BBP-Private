@@ -19,7 +19,7 @@ jobs:
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
          tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
-         ./nuclei -l live-httpx-subdomains-output.txt -c 100 -stats -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
+         ./nuclei -l live-httpx-subdomains-output.txt -c 500 -stats -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
          if [[ ! -f nuclie-output.txt ]]; then touch nuclie-output.txt; fi
          rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz
          rm -rf nuclei-templates/
