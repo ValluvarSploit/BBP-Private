@@ -99,6 +99,8 @@ jobs:
          echo "---------------------------------------------------"
          cat massdns-input.txt | head
          echo "---------------------------------------------------"
+         cat custom-wordlist.txt | head
+         echo "---------------------------------------------------"
          echo "massdns-output.txt"
          cat massdns-output.txt | head
          echo "---------------------------------------------------"
