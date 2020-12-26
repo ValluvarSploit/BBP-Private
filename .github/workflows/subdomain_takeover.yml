@@ -7,19 +7,24 @@ on:
 jobs:       
   subdomain-takeover:
     runs-on: ubuntu-latest
-#    env:
+    env:
+      INPUT_FILE_NAME: 'live-httpx-subdomains-output.txt'  
 #      TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
-      
+  
     steps:
       - uses: actions/checkout@v2
-
+      # subzy, subjack
       - name: Install Dependencies
         run: |
-         go get -u -v github.com/lukasikic/subzy
-         go install -v github.com/lukasikic/subzy
+          echo "$INPUT_FILE_NAME"
+       #go get -u -v github.com/lukasikic/subzy
+       #go get github.com/haccer/subjack
       - name: Subzy
         run: |
-         ./home/runner/go/bin/subzy --targets=live-httpx-subdomains-output.txt -concurrency 50
+      # ./home/runner/go/bin/subzy --targets=live-httpx-subdomains-output.txt -concurrency 50 | tee subdomain-takeover-output.txt
+      - name: subjack
+        run: |
+     #   ./home/runner/go/bin/subjack -w "$parameterl" -t 100 -timeout 30 -o "$parameterO".subjack -ssl -c /home/valluvarsploit/go/src/github.com/haccer/subjack/fingerprints.json
 #      - name: Commit Tool Output
 #        run: |
 #          git config --local user.email "action@github.com"
