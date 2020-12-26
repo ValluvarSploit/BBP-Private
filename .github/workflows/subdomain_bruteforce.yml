@@ -1,14 +1,14 @@
 #Important Note: Change value of secrets variable TARGET_DOMAIN.
-name: Subdomain Bruteforce & DNS Enumeration
+name: Subdomain Takeover
 
 on:
   workflow_dispatch:
 
 jobs:       
-  bruteforce:
+  subdomain-takeover:
     runs-on: ubuntu-latest
-    env:
-      TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+#    env:
+#      TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
       
     steps:
       - uses: actions/checkout@v2
