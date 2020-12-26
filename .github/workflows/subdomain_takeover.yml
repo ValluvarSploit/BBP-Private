@@ -22,10 +22,12 @@ jobs:
          tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
       - name: Subzy
         run: |
+         pwd
          ./home/runner/go/bin/subzy --targets="$INPUT_FILE" -concurrency 50 | tee subdomain-takeover-output.txt
       - name: Subjack
         run: |
          cd /home/runner/go/bin/
+         pwd
          ls -l subjack
          ./subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
          cat /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
