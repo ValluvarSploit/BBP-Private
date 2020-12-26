@@ -1,2 +1,4 @@
-status.pickmycareer.in
-dashboard.internal.pickmycareer.in
+chat-staging.bol.com
+chat.bol.com
+chat1.bol.com
+chat2.bol.com
