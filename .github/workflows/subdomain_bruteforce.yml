@@ -13,32 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Tools Installation and Setup
+      - name: Install Dependencies
         run: |
-          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-          git clone https://github.com/blechschmidt/massdns.git
-          cd massdns/
-          make
-      - name: Create Wordlist
+          go get -u -v github.com/lukasikic/subzy
+          go install -v github.com/lukasikic/subzy
+      - name: Subzy
         run: |
-          cp wordlists/2m-subdomains.txt .
-          cat 2m-subdomains.txt top-vuln-subdomain.txt >> wordlist.txt
-          sed "s/$/.$TARGET_DOMAIN/" wordlist.txt > hosts-wordlist.txt
-      - name: Combine Wordlists
-        run: cat subdomain-output.txt hosts-wordlist.txt > massdns-input.txt
-      - name: Run MassDNS
-        run: |
-         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
-         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
-         cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-online.txt
-      - name: Final Clean-up
-        run: |
-          rm resolvers.txt wordlist.txt
-          rm -rf massdns/
-      - name: Commit Tool Output
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "Github Action"
-          git add hosts-wordlist.txt massdns-input.txt hosts-online.txt ips-online.txt
-          git commit -m "Update host-wordlist.txt"
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+         subzy -h
+#      - name: Commit Tool Output
+#        run: |
+#          git config --local user.email "action@github.com"
+#          git config --local user.name "Github Action"
+#          git add hosts-wordlist.txt massdns-input.txt hosts-online.txt ips-online.txt
+#          git commit -m "Update host-wordlist.txt"
+#          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
