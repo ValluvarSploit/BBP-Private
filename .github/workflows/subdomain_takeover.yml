@@ -8,27 +8,40 @@ jobs:
   subdomain-takeover:
     runs-on: ubuntu-latest
     env:
-      INPUT_FILE_NAME: 'live-httpx-subdomains-output.txt'  
-#      TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+      INPUT_FILE: 'live-httpx-subdomains-output.txt'  
   
     steps:
       - uses: actions/checkout@v2
       # subzy, subjack
       - name: Install Dependencies
         run: |
-          echo "$INPUT_FILE_NAME"
-       #go get -u -v github.com/lukasikic/subzy
-       #go get github.com/haccer/subjack
+         go get -u -v github.com/lukasikic/subzy
+         go get github.com/haccer/subjack
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
       - name: Subzy
         run: |
-      # ./home/runner/go/bin/subzy --targets=live-httpx-subdomains-output.txt -concurrency 50 | tee subdomain-takeover-output.txt
-      - name: subjack
+         ./home/runner/go/bin/subzy --targets="$INPUT_FILE" -concurrency 50 | tee subdomain-takeover-output.txt
+      - name: Subjack
         run: |
-     #   ./home/runner/go/bin/subjack -w "$parameterl" -t 100 -timeout 30 -o "$parameterO".subjack -ssl -c /home/valluvarsploit/go/src/github.com/haccer/subjack/fingerprints.json
-#      - name: Commit Tool Output
-#        run: |
-#          git config --local user.email "action@github.com"
-#          git config --local user.name "Github Action"
-#          git add hosts-wordlist.txt massdns-input.txt hosts-online.txt ips-online.txt
-#          git commit -m "Update host-wordlist.txt"
-#          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+         ./home/runner/go/bin/subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         cat /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+      - name: Nuclei
+        run: |
+         ./nuclei -l "$INPUT_FILE" -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
+      - name: Combine Outputs
+        run: |
+          if [[ -f subjack-output.txt ]]; then cat subjack-output.txt | tee -a subdomain-takeover-output.txt; fi
+          if [[ -f nuclie-output.txt ]]; then cat nuclie-output.txt | tee -a subdomain-takeover-output.txt; fi
+      - name: Remove Temporary Files
+        run: |
+          rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz subjack-output.txt nuclie-output.txt
+          rm -rf nuclei-templates/
+      - name: Commit Tool Output
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
+          git add subdomain-takeover-output.txt
+          git commit -m "Update host-wordlist.txt"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
