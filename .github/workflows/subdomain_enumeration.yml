@@ -33,50 +33,50 @@ jobs:
           cd massdns/ && make
       - name: Remove & Create Output Files
         run: |
-         rm subdomain-output.txt live-subdomains-output.txt live-host-output.txt
-         touch subdomain-output.txt live-subdomains-output.txt live-host-output.txt
+         rm subdomains-tools-output.txt live-subdomains-output.txt live-host-output.txt
+         touch live-subdomains-output.txt live-host-output.txt
       - name: Sublist3r
         run: |
-         python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -o subdomain-output.txt >/dev/null
+         python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -o subdomains-tools-output.txt >/dev/null
       - name: Amass
         run: |
-         amass enum -passive -d "$TARGET_DOMAIN" >> subdomain-output.txt
+         amass enum -passive -d "$TARGET_DOMAIN" >> subdomains-tools-output.txt
       - name: Censys
         env:
          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
          CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
         run: |
-         python censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$TARGET_DOMAIN" | cut -d ' ' -f4 >> subdomain-output.txt
+         python censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$TARGET_DOMAIN" | cut -d ' ' -f4 >> subdomains-tools-output.txt
       - name: Security Trails
         env:
          SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
         run: |
-         curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$TARGET_DOMAIN"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$TARGET_DOMAIN"/" test.txt | sed 's/ //g' && rm test.txt >> subdomain-output.txt        
+         curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$TARGET_DOMAIN"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$TARGET_DOMAIN"/" test.txt | sed 's/ //g' && rm test.txt >> subdomains-tools-output.txt
       - name: Certspotter
         run: |
-         curl -s https://certspotter.com/api/v0/certs\?domain\="$TARGET_DOMAIN" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" >> subdomain-output.txt
+         curl -s https://certspotter.com/api/v0/certs\?domain\="$TARGET_DOMAIN" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" >> subdomains-tools-output.txt
       - name: RapidDNS
         run: |
-         curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomain-output.txt
+         curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomains-tools-output.txt
       - name: Crt.sh
         run: |
-         curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomain-output.txt
+         curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomains-tools-output.txt
       - name: Findomain
         run: |
-         ./findomain -t "$TARGET_DOMAIN" -q >> subdomain-output.txt
+         ./findomain -t "$TARGET_DOMAIN" -q >> subdomains-tools-output.txt
       - name: Subfinder
         run: |
-         ./subfinder -d "$TARGET_DOMAIN" --silent >> subdomain-output.txt
+         ./subfinder -d "$TARGET_DOMAIN" --silent >> subdomains-tools-output.txt
       - name: Unique subdomains
         run: |
-         mv subdomain-output.txt temp_file1.txt
+         mv subdomains-tools-output.txt temp_file1.txt
          cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
          sort -u temp_file2.txt -o temp_file2.txt
-         grep -vf ignore-hosts.txt temp_file2.txt > subdomain-output.txt
+         grep -vf ignore-hosts.txt temp_file2.txt > subdomains-tools-output.txt
       - name: Create Wordlists
         run: |
          sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
-         cat subdomain-output.txt custom-wordlist.txt > massdns-input.txt
+         cat subdomains-tools-output.txt custom-wordlist.txt > massdns-input.txt
       - name: DNS Resolver-MassDNS
         run: |
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
@@ -93,6 +93,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add subdomain-output.txt live-subdomains-output.txt live-host-output.txt massdns-output.txt hosts-online.txt ips-online.txt 
+          git add subdomains-tools-output.txt httpx-live-subdomains.txt live-host-output.txt massdns-output.txt hosts-online.txt ips-online.txt 
           git commit -m "Update Output Files"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
