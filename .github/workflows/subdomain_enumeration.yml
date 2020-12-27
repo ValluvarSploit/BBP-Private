@@ -13,9 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
        
-      # Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httpx, resolvers.txt, massdns
+      # Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httpx, resolvers.txt, massdns
       - name: Install Dependencies
         run: |
+          go get -u github.com/tomnomnom/assetfinder
           sudo snap install amass
           git clone https://github.com/aboul3la/Sublist3r.git
           pip install -r Sublist3r/requirements.txt
@@ -41,6 +42,10 @@ jobs:
       - name: Amass
         run: |
          amass enum -passive -d "$TARGET_DOMAIN" >> subdomains-tools-output.txt
+      - name: Assetfinder
+        run: |
+         cd /home/runner/go/bin/
+         ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> /home/runner/work/Test-Data/Test-Data/subdomains-tools-output.txt
       - name: Censys
         env:
          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
