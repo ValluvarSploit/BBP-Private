@@ -20,10 +20,8 @@ jobs:
       - name: Eyewitness
         run: |
           python3 EyeWitness/Python/EyeWitness.py --web -f test.txt --timeout 15 --no-prompt
-          ls -l 2020*
           mv `date +"%Y"`* eyewitness_output
-          ls -lh eyewitness_output/
-          zip eyewitness_output.zip eyewitness_output
+          zip -r eyewitness_output.zip eyewitness_output
           ls -lh eyewitness_output.zip
           xz eyewitness_output.zip
           ls -lh eyewitness_output.zip.xz
