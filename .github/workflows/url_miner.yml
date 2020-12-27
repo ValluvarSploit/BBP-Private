@@ -1,0 +1,51 @@
+name: URL Collector
+
+on:
+  workflow_dispatch:
+
+jobs:
+  url-collector:
+    runs-on: ubuntu-latest
+    env:
+            TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Tools Installation and Setup
+        run: |
+                go get github.com/tomnomnom/waybackurls
+                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
+                tar xvf gau_1.1.0_linux_amd64.tar.gz
+                
+      - name: Remove Old files
+        run: |
+                rm urls-output.txt
+
+      - name: waybackurls
+        run: |
+                waybackurls "$TARGET_DOMAIN" | tee temp-1.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee waybackurls-output.txt
+
+      - name: gau
+        run: |
+                echo "$TARGET_DOMAIN" | gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
+      - name: Combine Output Files
+        run: |
+                cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
+
+      - name: Remove Installation Files
+        run: |
+                rm LICENSE README.md gau gau_1.1.0_linux_amd64.tar.gz temp-1.txt temp-2.txt waybackurls-output.txt gau-output.txt
+
+      - name: Display Output Files
+        run: |
+                echo "urls-output.txt"
+                cat urls-output.txt | head
+
+      - name: Commit Tool Output
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
+          git add urls-output.txt 
+          git commit -m "Update urls-output.txt"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
