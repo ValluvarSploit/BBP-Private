@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  screenshot-eyewitness:
+  webshot-eyewitness:
     runs-on: ubuntu-latest
 
     steps:
