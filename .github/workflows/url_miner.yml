@@ -29,6 +29,7 @@ jobs:
       - name: gau
         run: |
                 echo "$TARGET_DOMAIN" | gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
+                
       - name: Combine Output Files
         run: |
                 cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
