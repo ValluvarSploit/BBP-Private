@@ -20,7 +20,7 @@ jobs:
                 
       - name: Remove Old files
         run: |
-                rm urls-output.txt.zip.xz
+                rm urls-output.txt.zip.xz urls-output.txt
 
       - name: waybackurls
         run: |
@@ -38,8 +38,12 @@ jobs:
                 
       - name: Compress Output File
         run: |
+                ls -lh
                 zip urls-output.txt.zip urls-output.txt
                 xz urls-output.txt.zip
+                ls -lh
+                xz -d urls-output.txt.zip.xz
+                unzip urls-output.txt.zip
 
       - name: Remove Installation Files
         run: |
@@ -49,6 +53,6 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add urls-output.txt.zip.xz
+                git add urls-output.txt.zip.xz urls-output.txt
                 git commit -m "Update urls-output.txt.zip.xz"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
