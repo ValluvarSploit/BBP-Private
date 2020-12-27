@@ -19,7 +19,7 @@ jobs:
         run: rm -rf screens/
       - name: Eyewitness
         run: |
-          python3 EyeWitness/Python/EyeWitness.py --web -f test.txt --timeout 15 --no-prompt 
+          python3 EyeWitness/Python/EyeWitness.py --web -f live-httpx-subdomains-output.txt --timeout 15 --no-prompt 
           mv `date +"%Y"`* eyewitness_output
           mv eyewitness_output/screens/ .
           rm -rf eyewitness_output
