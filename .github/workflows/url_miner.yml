@@ -8,13 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
             TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-            CURRENT_DIRECTORY: $(pwd)
  
     steps:
       - uses: actions/checkout@v2
         
-      - name: test
-        run: echo "$CURRENT_DIRECTORY"
       - name: Tools Installation and Setup
         run: |
                 go get github.com/tomnomnom/waybackurls
@@ -28,7 +25,7 @@ jobs:
       - name: waybackurls
         run: |
                 cd /home/runner/go/bin/
-                ./waybackurls "$TARGET_DOMAIN" | tee temp-1.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee waybackurls-output.txt
+                ./waybackurls "$TARGET_DOMAIN" | tee temp-1.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee /home/runner/work/Test-Data/Test-Data/waybackurls-output.txt
 
       - name: gau
         run: |
