@@ -21,6 +21,8 @@ jobs:
         run: |
           python3 EyeWitness/Python/EyeWitness.py --web -f live-httpx-subdomains-output.txt --timeout 15 --no-prompt 
           mv `date +"%Y"`* eyewitness_output
+          mv eyewitness_output/screens .
+          rm -rf eyewitness_output
       - name: Final Clean-up
         run: |
           rm geckodriver.log
@@ -29,6 +31,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Github Action"
-          git add eyewitness_output/
+          git add screens/
           git commit -m "Update Eyewitness Output"
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
