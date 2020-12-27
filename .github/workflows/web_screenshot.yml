@@ -1,4 +1,4 @@
-name: Web Screenshot - Eyewitness
+name: Webshot
 
 on:
   workflow_dispatch:
