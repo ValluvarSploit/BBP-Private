@@ -8,10 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
             TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-
+            CURRENT_DIRECTORY: pwd
+ 
     steps:
       - uses: actions/checkout@v2
-
+        
+      - name: test
+        run: echo "$CURRENT_DIRECTORY"
       - name: Tools Installation and Setup
         run: |
                 go get github.com/tomnomnom/waybackurls
