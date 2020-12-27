@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
             TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-            CURRENT_DIRECTORY: pwd
+            CURRENT_DIRECTORY: $(pwd)
  
     steps:
       - uses: actions/checkout@v2
