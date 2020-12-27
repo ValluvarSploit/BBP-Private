@@ -8,14 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       INPUT_FILE: '/home/runner/work/Test-Data/Test-Data/live-httpx-subdomains-output.txt'
-      CURRENT_DIRECTORY: pwd
+
   
     steps:
       - uses: actions/checkout@v2
         
       # subzy, subjack, nuclei
-      - name: test
-        run: echo "$CURRENT_DIRECTORY"
       - name: Install Dependencies
         run: |
          go get -u -v github.com/lukasikic/subzy
