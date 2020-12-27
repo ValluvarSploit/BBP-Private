@@ -33,20 +33,26 @@ jobs:
       - name: Combine Output Files
         run: |
                 cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
+                
+      - name: Display Output Files
+        run: |
+                echo "waybackurls-output.txt"
+                cat waybackurls-output.txt | head
+                echo "----------------------------------------"
+                echo "gau-output.txt"
+                cat gau-output.txt | head
+                echo "urls-output.txt"
+                cat urls-output.txt | head
+                echo "----------------------------------------"
 
       - name: Remove Installation Files
         run: |
                 rm LICENSE README.md gau gau_1.1.0_linux_amd64.tar.gz temp-1.txt temp-2.txt waybackurls-output.txt gau-output.txt
 
-      - name: Display Output Files
-        run: |
-                echo "urls-output.txt"
-                cat urls-output.txt | head
-
       - name: Commit Tool Output
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "Github Action"
-          git add urls-output.txt 
-          git commit -m "Update urls-output.txt"
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+                git config --local user.email "action@github.com"
+                git config --local user.name "Github Action"
+                git add urls-output.txt 
+                git commit -m "Update urls-output.txt"
+                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
