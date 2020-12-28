@@ -16,6 +16,8 @@ jobs:
         run: |
                  go get -u github.com/tomnomnom/gf
                  git clone https://github.com/1ndianl33t/Gf-Patterns
+                 mkdir ~/.gf
+                 cp -r Gf-Patterns/*.json ~/.gf/
                  wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz
                  tar xvf qsreplace-linux-386-0.0.1.tgz
 #                go get github.com/tomnomnom/waybackurls
@@ -25,8 +27,8 @@ jobs:
                 
       - name: Remove Old files
         run: |
-                 rm xss-params.txt
-#                rm urls-output.txt.zip.xz urls-output.txt
+                 
+#                rm urls-output.txt.zip.xz urls-output.txt rm xss-params.txt
 
       - name: waybackurls
         run: |
@@ -39,16 +41,19 @@ jobs:
                 
       - name: Combine Output Files
         run: |
-                 cat urls-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
+#                 cat urls-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
 #                cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
 #                sort -u urls-output.txt -o urls-output.txt
                 
-      - name: gf
+#      - name: XSS Pattern
+#        run: |
+#                cd /home/runner/go/bin/
+#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf xss | tee -a /home/runner/work/Test-Data/Test-Data/xss-params.txt
+                
+      - name: SQLi Pattern
         run: |
-                mkdir ~/.gf
-                cp -r Gf-Patterns/*.json ~/.gf/
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf xss | tee -a /home/runner/work/Test-Data/Test-Data/xss-params.txt
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf sqli | tee -a /home/runner/work/Test-Data/Test-Data/sqli-params.txt          
                 
       - name: Compress Output File
         run: |
@@ -68,6 +73,7 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add xss-params.txt unique-url-output.txt
+                git add xss-params.txt sqli-params.txt
                 git commit -m "Update urls-output.txt.zip.xz"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+#unique-url-output.txt
