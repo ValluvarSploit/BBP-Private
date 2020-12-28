@@ -22,7 +22,7 @@ jobs:
       - name: XSS Hunt
         run: |
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | kxss | awk '{print $9}' | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a /home/runner/work/Test-Data/Test-Data/xss-output.txt
+                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./kxss | awk '{print $9}' | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a /home/runner/work/Test-Data/Test-Data/xss-output.txt
                 
       - name: Commit Tool Output
         run: |
