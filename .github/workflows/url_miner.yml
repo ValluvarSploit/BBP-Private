@@ -6,8 +6,6 @@ on:
 jobs:
   url-collector:
     runs-on: ubuntu-latest
-    env:
-            TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
  
     steps:
       - uses: actions/checkout@v2
@@ -15,87 +13,48 @@ jobs:
       - name: Tools Installation and Setup
         run: |
                  go get -u github.com/tomnomnom/gf
-#                 git clone https://github.com/1ndianl33t/Gf-Patterns
-#                 mkdir ~/.gf
-#                 cp -r Gf-Patterns/*.json ~/.gf/
-#                 wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz
-#                 tar xvf qsreplace-linux-386-0.0.1.tgz
-#                go get github.com/tomnomnom/waybackurls
-#                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
-#                tar xvf gau_1.1.0_linux_amd64.tar.gz
-                
-                
+                 cp /home/runner/go/bin/gf .
+                 git clone https://github.com/1ndianl33t/Gf-Patterns
+                 mkdir ~/.gf && cp -r Gf-Patterns/*.json ~/.gf/
+                 wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz
+                 tar xvf qsreplace-linux-386-0.0.1.tgz
+                 go get github.com/tomnomnom/waybackurls
+                 cp /home/runner/go/bin/waybackurls .
+                 wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
+                 tar xvf gau_1.1.0_linux_amd64.tar.gz
+                              
       - name: Remove Old files
         run: |       
 #                rm urls-output.txt.zip.xz urls-output.txt rm xss-params.txt sqli-params.txt
 
       - name: waybackurls
         run: |
-#                 cd /home/runner/go/bin/
-#                 ./waybackurls "$TARGET_DOMAIN" | tee /home/runner/work/Test-Data/Test-Data/waybackurls-output.txt
-#                cd /home/runner/go/bin/
-#                ./waybackurls "$TARGET_DOMAIN" | tee temp-1.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee /home/runner/work/Test-Data/Test-Data/waybackurls-output.txt
-                 
+                 ./waybackurls "$TARGET_DOMAIN" | tee waybackurls-output.txt 
 
       - name: gau
         run: |
-#                 echo "$TARGET_DOMAIN" | ./gau | tee gau-output.txt
-#                echo "$TARGET_DOMAIN" | ./gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
+                 echo "$TARGET_DOMAIN" | ./gau | tee gau-output.txt
                 
       - name: Combine Output Files
         run: |
-                 mv /home/runner/go/bin/gf .
-                 ls -l gf
-                 ./gf -h
                  cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
+                 sort -u urls-output.txt -o urls-output.txt
                  cat urls-output.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
                  cat temp-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
-                 sort -u urls-output.txt -o urls-output.txt
                  rm temp-output.txt
  
       - name: Patterns
         run: |
-                cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./gf interestingEXT | tee -a /home/runner/work/Test-Data/Test-Data/interestingEXT-params.txt
-                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./gf jsvar | tee -a /home/runner/work/Test-Data/Test-Data/jsvar-params.txt          
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf interestingparams | tee -a /home/runner/work/Test-Data/Test-Data/interestingparams-params.txt
-               
-
-               
-#      - name: XSS Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf xss | tee -a /home/runner/work/Test-Data/Test-Data/xss-params.txt
-                
-#      - name: SQLi Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf sqli | tee -a /home/runner/work/Test-Data/Test-Data/sqli-params.txt          
-                
-#      - name: LFI Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf lfi | tee -a /home/runner/work/Test-Data/Test-Data/lfi-params.txt          
-
-#      - name: SSRF Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf ssrf | tee -a /home/runner/work/Test-Data/Test-Data/ssrf-params.txt          
-                
-#      - name: Redirect Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf redirect | tee -a /home/runner/work/Test-Data/Test-Data/redirect-params.txt          
- 
-#      - name: SSTI Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf ssti | tee -a /home/runner/work/Test-Data/Test-Data/ssti-params.txt          
-
-#      - name: RCE Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf rce | tee -a /home/runner/work/Test-Data/Test-Data/rce-params.txt          
+                cat urls-output.txt | ./gf interestingEXT | tee -a interestingEXT-params.txt
+                cat urls-output.txt | ./gf jsvar | tee -a jsvar-params.txt          
+                cat unique-url-output.txt | ./gf interestingparams | tee -a interestingparams-params.txt
+                cat unique-url-output.txt | ./gf xss | tee -a xss-params.txt
+                cat unique-url-output.txt | ./gf sqli | tee -a sqli-params.txt          
+                cat unique-url-output.txt | ./gf lfi | tee -a lfi-params.txt          
+                cat unique-url-output.txt | ./gf ssrf | tee -a ssrf-params.txt          
+                cat unique-url-output.txt | ./gf redirect | tee -a redirect-params.txt          
+                cat unique-url-output.txt | ./gf ssti | tee -a ssti-params.txt          
+                cat unique-url-output.txt | ./gf rce | tee -a rce-params.txt          
  
 
  
