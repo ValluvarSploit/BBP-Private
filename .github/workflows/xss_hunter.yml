@@ -19,15 +19,19 @@ jobs:
         run: |
                 rm xss-output.txt
                 
-      - name: XSS Hunt
+      - name: KXSS
         run: |
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./kxss | awk '{print $9}' | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a /home/runner/work/Test-Data/Test-Data/xss-output.txt
-                
+                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./kxss | awk '{print $9}' > tee /home/runner/work/Test-Data/Test-Data/xss-urls.txt
+                    
+      - name: Dalfox  
+        run: |
+                cat xss-urls.txt | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a xss-output.txt
+             
       - name: Commit Tool Output
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add xss-output.txt
+                git add xss-output.txt xss-urls.txt
                 git commit -m "XSS-Update Output Files"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
