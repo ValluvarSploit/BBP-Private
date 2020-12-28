@@ -39,7 +39,6 @@ jobs:
                 
       - name: Combine Output Files
         run: |
-                 ./qsreplace -h
                  cat urls-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
 #                cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
 #                sort -u urls-output.txt -o urls-output.txt
