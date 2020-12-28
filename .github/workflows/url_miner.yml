@@ -15,11 +15,11 @@ jobs:
       - name: Tools Installation and Setup
         run: |
                  go get -u github.com/tomnomnom/gf
-                 git clone https://github.com/1ndianl33t/Gf-Patterns
-                 mkdir ~/.gf
-                 cp -r Gf-Patterns/*.json ~/.gf/
-                 wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz
-                 tar xvf qsreplace-linux-386-0.0.1.tgz
+#                 git clone https://github.com/1ndianl33t/Gf-Patterns
+#                 mkdir ~/.gf
+#                 cp -r Gf-Patterns/*.json ~/.gf/
+#                 wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz
+#                 tar xvf qsreplace-linux-386-0.0.1.tgz
 #                go get github.com/tomnomnom/waybackurls
 #                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
 #                tar xvf gau_1.1.0_linux_amd64.tar.gz
