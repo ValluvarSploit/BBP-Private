@@ -31,19 +31,37 @@ jobs:
 
       - name: waybackurls
         run: |
+#                 cd /home/runner/go/bin/
+#                 ./waybackurls "$TARGET_DOMAIN" | tee /home/runner/work/Test-Data/Test-Data/waybackurls-output.txt
 #                cd /home/runner/go/bin/
 #                ./waybackurls "$TARGET_DOMAIN" | tee temp-1.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee /home/runner/work/Test-Data/Test-Data/waybackurls-output.txt
+                 
 
       - name: gau
         run: |
+#                 echo "$TARGET_DOMAIN" | ./gau | tee gau-output.txt
 #                echo "$TARGET_DOMAIN" | ./gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
                 
       - name: Combine Output Files
         run: |
-#                 cat urls-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
-#                cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
-#                sort -u urls-output.txt -o urls-output.txt
-                
+                 mv /home/runner/go/bin/gf .
+                 ls -l gf
+                 gf -h
+                 cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
+                 cat urls-output.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
+                 cat temp-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
+                 sort -u urls-output.txt -o urls-output.txt
+                 rm temp-output.txt
+ 
+      - name: Patterns
+        run: |
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./gf interestingEXT | tee -a /home/runner/work/Test-Data/Test-Data/interestingEXT-params.txt
+                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./gf jsvar | tee -a /home/runner/work/Test-Data/Test-Data/jsvar-params.txt          
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf interestingparams | tee -a /home/runner/work/Test-Data/Test-Data/interestingparams-params.txt
+               
+
+               
 #      - name: XSS Pattern
 #        run: |
 #                cd /home/runner/go/bin/
@@ -79,10 +97,7 @@ jobs:
 #                cd /home/runner/go/bin/
 #                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf rce | tee -a /home/runner/work/Test-Data/Test-Data/rce-params.txt          
  
-#      - name: jsvar Pattern
-#        run: |
-#                cd /home/runner/go/bin/
-#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf jsvar | tee -a /home/runner/work/Test-Data/Test-Data/jsvar-params.txt          
+
  
       - name: IDOR Pattern
         run: |
@@ -99,15 +114,9 @@ jobs:
                 cd /home/runner/go/bin/
                 cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf img-traversal | tee -a /home/runner/work/Test-Data/Test-Data/img-traversal-params.txt
  
-      - name: Intresting Extension Pattern
-        run: |
-                cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf interestingEXT | tee -a /home/runner/work/Test-Data/Test-Data/interestingEXT-params.txt
+
  
-      - name: Intresting Params Pattern
-        run: |
-                cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf interestingparams | tee -a /home/runner/work/Test-Data/Test-Data/interestingparams-params.txt
+
                 
       - name: Intresting Subdomains Pattern
         run: |
@@ -128,11 +137,11 @@ jobs:
                  rm qsreplace-linux-386-0.0.1.tgz
 #                rm LICENSE README.md gau gau_1.1.0_linux_amd64.tar.gz temp-2.txt waybackurls-output.txt gau-output.txt
                  
-      - name: Commit Tool Output
-        run: |
-                git config --local user.email "action@github.com"
-                git config --local user.name "Github Action"
-                git add idor-params.txt debug_logic-params.txt img-traversal-params.txt interestingEXT-params.txt interestingsubs-params.txt
-                git commit -m "Update urls-output.txt.zip.xz"
-                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+#      - name: Commit Tool Output
+#        run: |
+#                git config --local user.email "action@github.com"
+#                git config --local user.name "Github Action"
+#                git add idor-params.txt debug_logic-params.txt img-traversal-params.txt interestingEXT-params.txt interestingsubs-params.txt
+#                git commit -m "Update urls-output.txt.zip.xz"
+#                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
 #unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt ssrf-params.txt redirect-params.txt ssti-params.txt rce-params.txt jsvar-params.txt
