@@ -14,45 +14,51 @@ jobs:
         
       - name: Tools Installation and Setup
         run: |
-                go get github.com/tomnomnom/waybackurls
-                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
-                tar xvf gau_1.1.0_linux_amd64.tar.gz
+                 go get -u github.com/tomnomnom/gf
+#                go get github.com/tomnomnom/waybackurls
+#                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
+#                tar xvf gau_1.1.0_linux_amd64.tar.gz
+                
                 
       - name: Remove Old files
         run: |
-                rm urls-output.txt.zip.xz urls-output.txt
+#                rm urls-output.txt.zip.xz urls-output.txt
 
       - name: waybackurls
         run: |
-                cd /home/runner/go/bin/
-                ./waybackurls "$TARGET_DOMAIN" | tee temp-1.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee /home/runner/work/Test-Data/Test-Data/waybackurls-output.txt
+#                cd /home/runner/go/bin/
+#                ./waybackurls "$TARGET_DOMAIN" | tee temp-1.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee /home/runner/work/Test-Data/Test-Data/waybackurls-output.txt
 
       - name: gau
         run: |
-                echo "$TARGET_DOMAIN" | ./gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
+#                echo "$TARGET_DOMAIN" | ./gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
                 
       - name: Combine Output Files
         run: |
-                cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
-                sort -u urls-output.txt -o urls-output.txt
+#                cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
+#                sort -u urls-output.txt -o urls-output.txt
+                
+      - name: gf
+        run: |
+                gf -h
                 
       - name: Compress Output File
         run: |
-                ls -lh
-                zip urls-output.txt.zip urls-output.txt
-                xz urls-output.txt.zip
-                ls -lh
-                xz -d urls-output.txt.zip.xz
-                unzip urls-output.txt.zip
+#              ls -lh
+#               zip urls-output.txt.zip urls-output.txt
+#              xz urls-output.txt.zip
+#              ls -lh
+#                xz -d urls-output.txt.zip.xz
+#                unzip urls-output.txt.zip
 
       - name: Remove Installation Files
         run: |
-                rm LICENSE README.md gau gau_1.1.0_linux_amd64.tar.gz temp-2.txt waybackurls-output.txt gau-output.txt
+#                rm LICENSE README.md gau gau_1.1.0_linux_amd64.tar.gz temp-2.txt waybackurls-output.txt gau-output.txt
 
-      - name: Commit Tool Output
-        run: |
-                git config --local user.email "action@github.com"
-                git config --local user.name "Github Action"
-                git add urls-output.txt.zip.xz urls-output.txt
-                git commit -m "Update urls-output.txt.zip.xz"
-                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+#      - name: Commit Tool Output
+#        run: |
+#                git config --local user.email "action@github.com"
+#                git config --local user.name "Github Action"
+ #               git add urls-output.txt.zip.xz urls-output.txt
+#                git commit -m "Update urls-output.txt.zip.xz"
+#                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
