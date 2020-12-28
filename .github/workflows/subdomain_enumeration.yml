@@ -13,10 +13,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
        
-      # Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httpx, resolvers.txt, massdns
+      # unfurl, gau, Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httprobe, resolvers.txt, massdns
       - name: Install Dependencies
         run: |
+          wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
+          tar xvf gau_1.1.0_linux_amd64.tar.gz
+          wget --quiet https://github.com/tomnomnom/unfurl/releases/download/v0.0.1/unfurl-linux-amd64-0.0.1.tgz
+          tar xzf unfurl-linux-amd64-0.0.1.tgz
           go get -u github.com/tomnomnom/assetfinder
+          go get -u github.com/tomnomnom/httprobe
           sudo snap install amass
           git clone https://github.com/aboul3la/Sublist3r.git
           pip install -r Sublist3r/requirements.txt
@@ -29,8 +34,6 @@ jobs:
           wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
           tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
           wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-          wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
-          tar -xvf httpx_1.0.3_linux_amd64.tar.gz
           git clone https://github.com/blechschmidt/massdns.git
           cd massdns/ && make
       - name: Remove Output Files
@@ -68,57 +71,50 @@ jobs:
          curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomains-tools-output.txt
       - name: Findomain
         run: |
-         ./findomain -t "$TARGET_DOMAIN" -q >> subdomains-tools-output.txt
+                ./findomain -t "$TARGET_DOMAIN" -q >> subdomains-tools-output.txt
+                
       - name: Subfinder
         run: |
-         ./subfinder -d "$TARGET_DOMAIN" -all --silent >> subdomains-tools-output.txt
+                ./subfinder -d "$TARGET_DOMAIN" -all --silent >> subdomains-tools-output.txt
+                
+      - name: gau
+        run: |
+                echo "$TARGET_DOMAIN" | ./gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
+                cat gau-output.txt | ./unfurl --unique domains >> subdomains-tools-output.txt
+                rm temp-2.txt gau-output.txt unfurl-linux-amd64-0.0.1.tgz
+                
       - name: Unique subdomains
         run: |
-         mv subdomains-tools-output.txt temp_file1.txt
-         cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
-         sort -u temp_file2.txt -o temp_file2.txt
-         grep -vf ignore-hosts.txt temp_file2.txt > subdomains-tools-output.txt
+                mv subdomains-tools-output.txt temp_file1.txt
+                cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
+                sort -u temp_file2.txt -o temp_file2.txt
+                grep -vf ignore-hosts.txt temp_file2.txt > subdomains-tools-output.txt
+                
       - name: Create Wordlists
         run: |
-         sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
-         grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
-         cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
+                sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
+                grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
+                cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
+                
       - name: DNS Resolver-MassDNS
         run: |
-         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
-         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-output.txt
-         cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output.txt
-      - name: HTTP/HTTPS Resolver-httpx
+                ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
+                cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-output.txt
+                cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output.txt
+               
+      - name: HTTP/HTTPS Resolver-httprobe
         run: |
-         ./httpx -l live-hosts-output.txt -o live-httpx-subdomains-output.txt
-      - name: Display Output Files
-        run: |
-         echo "subdomains-tools-output.txt"
-         cat subdomains-tools-output.txt | head
-         echo "---------------------------------------------------"
-         echo "live-httpx-subdomains-output.txt"
-         cat live-httpx-subdomains-output.txt | head
-         echo "---------------------------------------------------"
-         cat massdns-input.txt | head
-         echo "---------------------------------------------------"
-         cat custom2-wordlist.txt | head
-         echo "---------------------------------------------------"
-         echo "massdns-output.txt"
-         cat massdns-output.txt | head
-         echo "---------------------------------------------------"
-         echo "live-hosts-output.txt"
-         cat live-hosts-output.txt | head
-         echo "----------------------------------------------------"
-         echo "live-ips-output.txt"
-         cat live-ips-output.txt | head
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/live-hosts-output.txt | ./httprobe > /home/runner/work/BBP-Public/BBP-Public/live-httpx-subdomains-output.txt
+              
       - name: Remove Dependencies
         run: |
-         rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
-         rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt httpx httpx_1.0.3_linux_amd64.tar.gz temp_file1.txt temp_file2.txt massdns-output.txt
+               rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
+               rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt temp_file1.txt temp_file2.txt massdns-output.txt
       - name: Commit Output Files
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add subdomains-tools-output.txt live-httpx-subdomains-output.txt live-hosts-output.txt live-ips-output.txt 
-          git commit -m "Update Output Files"
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
+               git config --local user.email "action@github.com"
+               git config --local user.name "GitHub Action"
+               git add subdomains-tools-output.txt live-httpx-subdomains-output.txt live-hosts-output.txt live-ips-output.txt 
+               git commit -m "Subdomain Enumeration-Output Files Updated"
+               git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
