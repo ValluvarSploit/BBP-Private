@@ -74,10 +74,15 @@ jobs:
 #                cd /home/runner/go/bin/
 #                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf ssti | tee -a /home/runner/work/Test-Data/Test-Data/ssti-params.txt          
 
-      - name: RCE Pattern
+#      - name: RCE Pattern
+#        run: |
+#                cd /home/runner/go/bin/
+#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf rce | tee -a /home/runner/work/Test-Data/Test-Data/rce-params.txt          
+ 
+      - name: jsvar Pattern
         run: |
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf rce | tee -a /home/runner/work/Test-Data/Test-Data/rce-params.txt          
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf jsvar | tee -a /home/runner/work/Test-Data/Test-Data/jsvar-params.txt          
  
       - name: Compress Output File
         run: |
@@ -97,7 +102,7 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add rce-params.txt
+                git add jsvar-params.txt
                 git commit -m "Update urls-output.txt.zip.xz"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
-#unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt ssrf-params.txt redirect-params.txt ssti-params.txt
+#unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt ssrf-params.txt redirect-params.txt ssti-params.txt rce-params.txt
