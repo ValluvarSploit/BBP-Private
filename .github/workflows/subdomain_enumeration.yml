@@ -112,7 +112,7 @@ jobs:
         run: |
                 cd /home/runner/go/bin/
                 cat /home/runner/work/Test-Data/Test-Data/live-hosts-output.txt | ./httprobe > /home/runner/work/BBP-Public/BBP-Public/live-httpx-subdomains-output.txt
-              
+                cat live-httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-subdomains-hosts-output.txt
       - name: Remove Dependencies
         run: |
                rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
@@ -122,6 +122,6 @@ jobs:
         run: |
                git config --local user.email "action@github.com"
                git config --local user.name "GitHub Action"
-               git add subdomains-tools-output.txt live-httpx-subdomains-output.txt live-hosts-output.txt live-ips-output.txt 
+               git add subdomains-tools-output.txt live-httpx-subdomains-output.txt live-hosts-output.txt live-ips-output.txt live-httpx-subdomains-hosts-output.txt
                git commit -m "Subdomain Enumeration-Output Files Updated"
                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
