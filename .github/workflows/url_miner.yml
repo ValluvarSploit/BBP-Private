@@ -15,6 +15,7 @@ jobs:
       - name: Tools Installation and Setup
         run: |
                  go get -u github.com/tomnomnom/gf
+                 git clone https://github.com/1ndianl33t/Gf-Patterns
 #                go get github.com/tomnomnom/waybackurls
 #                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
 #                tar xvf gau_1.1.0_linux_amd64.tar.gz
@@ -41,7 +42,7 @@ jobs:
       - name: gf
         run: |
                 mkdir ~/.gf
-                cp -r $GOPATH/src/github.com/tomnomnom/gf/examples ~/.gf
+                cp -r Gf-Patterns/*.json ~/.gf/
                 cd /home/runner/go/bin/
                 cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./gf xss | tee -a /home/runner/work/Test-Data/Test-Data/xss-params.txt
                 
