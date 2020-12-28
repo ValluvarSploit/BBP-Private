@@ -18,7 +18,7 @@ jobs:
                 
       - name: Remove Exisiting Output Files
         run: |
-        #  rm xss-vulnerable-urls.txt
+                rm xss-vulnerable-urls.txt
                 
       - name: KXSS
         run: |
