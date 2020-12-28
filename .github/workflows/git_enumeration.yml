@@ -1,0 +1,41 @@
+name: Git Enumeration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  git-enumeration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Install Dependencies
+        run: |
+                wget --quiet https://github.com/tillson/git-hound/releases/download/v1.3/git-hound_1.3_Linux_x86_64.tar.gz
+                tar xvf git-hound_1.3_Linux_x86_64.tar.gz
+                
+      - name: Remove Exisiting Output Files
+        run: |
+        # rm git-hound-output.txt
+                
+      - name: git-hound
+        run: |
+                ./git-hound --subdomain-file file.txt --results-only --dig-files --dig-commits --config-file ~/.githound/config.yml |  tee -a git-hound-output.txt
+            
+      - name: Display Output Files
+        run: |
+                echo "kxss-urls.txt"
+                cat kxss-urls.txt | head
+                
+      - name: Remove Installation Files  
+        run: |
+                rm LICENSE README.md git-hound git-hound_1.3_Linux_x86_64.tar.gz
+                             
+      - name: Commit Tool Output
+        run: |
+                git config --local user.email "action@github.com"
+                git config --local user.name "Github Action"
+                git add xss-vulnerable-urls.txt
+                git commit -m "XSS Vulnerable Urls"
+                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
