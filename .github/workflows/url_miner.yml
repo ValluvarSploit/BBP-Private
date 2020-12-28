@@ -59,10 +59,15 @@ jobs:
 #                cd /home/runner/go/bin/
 #                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf lfi | tee -a /home/runner/work/Test-Data/Test-Data/lfi-params.txt          
 
-      - name: SSRF Pattern
+#      - name: SSRF Pattern
+#        run: |
+#                cd /home/runner/go/bin/
+#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf ssrf | tee -a /home/runner/work/Test-Data/Test-Data/ssrf-params.txt          
+                
+      - name: Redirect Pattern
         run: |
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf ssrf | tee -a /home/runner/work/Test-Data/Test-Data/ssrf-params.txt          
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf redirect | tee -a /home/runner/work/Test-Data/Test-Data/redirect-params.txt          
                 
       - name: Compress Output File
         run: |
@@ -82,7 +87,7 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add ssrf-params.txt
+                git add redirect-params.txt
                 git commit -m "Update urls-output.txt.zip.xz"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
-#unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt
+#unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt ssrf-params.txt
