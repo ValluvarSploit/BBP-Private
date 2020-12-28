@@ -79,11 +79,41 @@ jobs:
 #                cd /home/runner/go/bin/
 #                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf rce | tee -a /home/runner/work/Test-Data/Test-Data/rce-params.txt          
  
-      - name: jsvar Pattern
+#      - name: jsvar Pattern
+#        run: |
+#                cd /home/runner/go/bin/
+#                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf jsvar | tee -a /home/runner/work/Test-Data/Test-Data/jsvar-params.txt          
+ 
+      - name: IDOR Pattern
         run: |
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf jsvar | tee -a /home/runner/work/Test-Data/Test-Data/jsvar-params.txt          
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf idor | tee -a /home/runner/work/Test-Data/Test-Data/idor-params.txt          
+                
+      - name: Debug Logic Pattern
+        run: |
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf debug_logic | tee -a /home/runner/work/Test-Data/Test-Data/debug_logic-params.txt
  
+      - name: Image Traversal Pattern
+        run: |
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf img-traversal | tee -a /home/runner/work/Test-Data/Test-Data/img-traversal-params.txt
+ 
+      - name: Intresting Extension Pattern
+        run: |
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf interestingEXT | tee -a /home/runner/work/Test-Data/Test-Data/interestingEXT-params.txt
+ 
+      - name: Intresting Params Pattern
+        run: |
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf interestingparams | tee -a /home/runner/work/Test-Data/Test-Data/interestingparams-params.txt
+                
+      - name: Intresting Subdomains Pattern
+        run: |
+                cd /home/runner/go/bin/
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf interestingsubs | tee -a /home/runner/work/Test-Data/Test-Data/interestingsubs-params.txt
+                          
       - name: Compress Output File
         run: |
 #              ls -lh
@@ -102,7 +132,7 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add jsvar-params.txt
+                git add idor-params.txt debug_logic-params.txt img-traversal-params.txt interestingEXT-params.txt interestingsubs-params.txt
                 git commit -m "Update urls-output.txt.zip.xz"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
-#unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt ssrf-params.txt redirect-params.txt ssti-params.txt rce-params.txt
+#unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt ssrf-params.txt redirect-params.txt ssti-params.txt rce-params.txt jsvar-params.txt
