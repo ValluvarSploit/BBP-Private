@@ -71,7 +71,7 @@ jobs:
          ./findomain -t "$TARGET_DOMAIN" -q >> subdomains-tools-output.txt
       - name: Subfinder
         run: |
-         ./subfinder -d "$TARGET_DOMAIN" --silent >> subdomains-tools-output.txt
+         ./subfinder -d "$TARGET_DOMAIN" -all --silent >> subdomains-tools-output.txt
       - name: Unique subdomains
         run: |
          mv subdomains-tools-output.txt temp_file1.txt
