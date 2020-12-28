@@ -13,25 +13,34 @@ jobs:
       - name: Install Dependencies
         run: |
                 go get -u github.com/tomnomnom/hacks/kxss
+                cp /home/runner/go/bin/kxss .
                 sudo snap install dalfox
                 
       - name: Remove Exisiting Output Files
         run: |
-                rm xss-output.txt
+        #  rm xss-vulnerable-urls.txt
                 
       - name: KXSS
         run: |
-                cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./kxss | awk '{print $9}' > tee /home/runner/work/Test-Data/Test-Data/xss-urls.txt
+                cat patterns/xss-params.txt | ./kxss | awk '{print $9}' | tee kxss-urls.txt
                     
       - name: Dalfox  
         run: |
-                cat xss-urls.txt | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a xss-output.txt
-             
+                cat kxss-urls.txt | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a xss-vulnerable-urls.txt
+            
+      - name: Display Output Files
+        run: |
+                echo "kxss-urls.txt"
+                cat kxss-urls.txt | head
+                
+      - name: Remove Temporary Files  
+        run: |
+                rm kxss-urls.txt
+                             
       - name: Commit Tool Output
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add xss-output.txt xss-urls.txt
-                git commit -m "XSS-Update Output Files"
+                git add xss-vulnerable-urls.txt
+                git commit -m "XSS Vulnerable Urls"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
