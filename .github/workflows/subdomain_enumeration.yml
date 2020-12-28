@@ -13,13 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
        
-      # unfurl, gau, Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httprobe, resolvers.txt, massdns
+      # gau, Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httprobe, resolvers.txt, massdns
       - name: Install Dependencies
         run: |
                 wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
                 tar xvf gau_1.1.0_linux_amd64.tar.gz
-                wget --quiet https://github.com/tomnomnom/unfurl/releases/download/v0.0.1/unfurl-linux-amd64-0.0.1.tgz
-                tar xzf unfurl-linux-amd64-0.0.1.tgz
                 go get -u github.com/tomnomnom/assetfinder
                 go get -u github.com/tomnomnom/httprobe
                 sudo snap install amass
@@ -89,9 +87,7 @@ jobs:
                 
       - name: gau
         run: |
-                echo "$TARGET_DOMAIN" | ./gau | tee temp-2.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee gau-output.txt
-                cat gau-output.txt | ./unfurl --unique domains >> subdomains-tools-output.txt
-                rm temp-2.txt gau-output.txt unfurl-linux-amd64-0.0.1.tgz
+                ./gau -subs "$TARGET_DOMAIN" | cut -d / -f 3 | sort -u >> subdomains-tools-output.txt
                 
       - name: Unique subdomains
         run: |
