@@ -14,7 +14,11 @@ jobs:
         run: |
                 go get -u github.com/tomnomnom/hacks/kxss
                 sudo snap install dalfox
-
+                
+      - name: Remove Exisiting Output Files
+        run: |
+                rm xss-output.txt
+                
       - name: XSS Hunt
         run: |
                 cd /home/runner/go/bin/
