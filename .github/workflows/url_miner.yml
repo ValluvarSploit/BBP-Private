@@ -26,9 +26,8 @@ jobs:
                 
                 
       - name: Remove Old files
-        run: |
-                 rm sqli-params.txt
-#                rm urls-output.txt.zip.xz urls-output.txt rm xss-params.txt
+        run: |       
+#                rm urls-output.txt.zip.xz urls-output.txt rm xss-params.txt sqli-params.txt
 
       - name: waybackurls
         run: |
@@ -53,7 +52,7 @@ jobs:
       - name: SQLi Pattern
         run: |
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf sqli | tee -a /home/runner/work/Test-Data/Test-Data/sqli-params.txt          
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf lfi | tee -a /home/runner/work/Test-Data/Test-Data/lfi-params.txt          
                 
       - name: Compress Output File
         run: |
@@ -73,7 +72,7 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add sqli-params.txt
+                git add lfi-params.txt
                 git commit -m "Update urls-output.txt.zip.xz"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
-#unique-url-output.txt xss-params.txt
+#unique-url-output.txt xss-params.txt sqli-params.txt
