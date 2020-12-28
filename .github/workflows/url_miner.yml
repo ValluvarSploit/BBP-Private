@@ -41,6 +41,8 @@ jobs:
       - name: gf
         run: |
                 gf -h
+                mkdir ~/.gf
+                cp -r $GOPATH/src/github.com/tomnomnom/gf/examples ~/.gf
                 
       - name: Compress Output File
         run: |
