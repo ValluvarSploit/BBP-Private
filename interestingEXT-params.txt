@@ -1,0 +1,1 @@
+http://www.bol.com:80/cgi-bin/more_book_info.cgi?ISBN=FUZZ

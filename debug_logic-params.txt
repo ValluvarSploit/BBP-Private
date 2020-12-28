@@ -1,0 +1,2 @@
+http://www.bol.com:80/jump/cdc_res_hp/;make=;model=;segment=;sect=hp;zipcode=null;sz=160x240;abr=!ie4;abr=!ie5;abr=!ie6;ord=1263070203731;environment=staging?
+http://www.bol.com:80/kjcYfnspgVhzl06yl5CdBg==
