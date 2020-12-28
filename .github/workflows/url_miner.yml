@@ -46,7 +46,7 @@ jobs:
         run: |
                  mv /home/runner/go/bin/gf .
                  ls -l gf
-                 gf -h
+                 ./gf -h
                  cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
                  cat urls-output.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
                  cat temp-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
