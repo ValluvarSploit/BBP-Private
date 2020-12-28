@@ -16,6 +16,8 @@ jobs:
         run: |
                  go get -u github.com/tomnomnom/gf
                  git clone https://github.com/1ndianl33t/Gf-Patterns
+                 wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz
+                 tar xvf qsreplace-linux-386-0.0.1.tgz
 #                go get github.com/tomnomnom/waybackurls
 #                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
 #                tar xvf gau_1.1.0_linux_amd64.tar.gz
@@ -23,6 +25,7 @@ jobs:
                 
       - name: Remove Old files
         run: |
+                 rm xss-params.txt
 #                rm urls-output.txt.zip.xz urls-output.txt
 
       - name: waybackurls
@@ -36,6 +39,8 @@ jobs:
                 
       - name: Combine Output Files
         run: |
+                 ./qsreplace -h
+                 cat urls-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
 #                cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
 #                sort -u urls-output.txt -o urls-output.txt
                 
@@ -44,7 +49,7 @@ jobs:
                 mkdir ~/.gf
                 cp -r Gf-Patterns/*.json ~/.gf/
                 cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/urls-output.txt | ./gf xss | tee -a /home/runner/work/Test-Data/Test-Data/xss-params.txt
+                cat /home/runner/work/Test-Data/Test-Data/unique-url-output.txt | ./gf xss | tee -a /home/runner/work/Test-Data/Test-Data/xss-params.txt
                 
       - name: Compress Output File
         run: |
@@ -57,12 +62,13 @@ jobs:
 
       - name: Remove Installation Files
         run: |
+                 rm qsreplace-linux-386-0.0.1.tgz
 #                rm LICENSE README.md gau gau_1.1.0_linux_amd64.tar.gz temp-2.txt waybackurls-output.txt gau-output.txt
-
+                 
       - name: Commit Tool Output
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add xss-params.txt
+                git add xss-params.txt unique-url-output.txt
                 git commit -m "Update urls-output.txt.zip.xz"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
