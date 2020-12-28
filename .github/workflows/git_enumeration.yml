@@ -21,7 +21,7 @@ jobs:
                 
       - name: git-hound
         run: |
-                ./git-hound --subdomain-file file.txt --results-only --dig-files --dig-commits --config-file ~/.githound/config.yml |  tee -a git-hound-output.txt
+                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --results-only --dig-files --dig-commits --config-file ~/.githound/config.yml |  tee -a git-hound-output.txt
             
       - name: Display Output Files
         run: |
