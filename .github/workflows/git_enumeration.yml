@@ -20,11 +20,12 @@ jobs:
       - name: Remove Exisiting Output Files
         run: |
         # rm git-hound-output.txt
+        #                  echo "github_username: "$GIT_USERNAME"" > config.yml
+         #       echo "github_password: "$GIT_PASSWORD"" >> config.yml
                 #echo -e "github_username: "$GIT_USERNAME"\ngithub_password: "$GIT_PASSWORD"" > config.yml
       - name: git-hound
         run: |
-                echo "github_username: "$GIT_USERNAME"" > config.yml
-                echo "github_password: "$GIT_PASSWORD"" >> config.yml
+                echo "I am Valluvarsploit" > file.txt
                 ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --dig-files --dig-commits --config-file config.yml >> git-hound-output.txt
             
       - name: Display Output Files
