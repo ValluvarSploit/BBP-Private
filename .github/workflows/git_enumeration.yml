@@ -16,6 +16,7 @@ jobs:
         run: |
                 wget --quiet https://github.com/tillson/git-hound/releases/download/v1.3/git-hound_1.3_Linux_x86_64.tar.gz
                 tar xvf git-hound_1.3_Linux_x86_64.tar.gz
+                mkdir ~/.githound
                 
       - name: Remove Exisiting Output Files
         run: |
@@ -25,9 +26,9 @@ jobs:
                 #echo -e "github_username: "$GIT_USERNAME"\ngithub_password: "$GIT_PASSWORD"" > config.yml
       - name: git-hound
         run: |
-                echo "github_username: "$GIT_USERNAME"" > file.txt
-                echo "github_password: "$GIT_PASSWORD"" >> file.txt
-                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --dig-files --dig-commits --config-file file.txt >> git-hound-output.txt
+                echo "github_username: "$GIT_USERNAME"" >  ~/.githound/config.yml
+                echo "github_password: "$GIT_PASSWORD"" >>  ~/.githound/config.yml
+                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --dig-files --dig-commits --config-file ~/.githound/config.yml >> git-hound-output.txt
             
       - name: Display Output Files
         run: |
