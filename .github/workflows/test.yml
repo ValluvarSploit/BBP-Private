@@ -1,0 +1,20 @@
+name: Test CI
+ 
+on:
+
+  workflow_dispatch:
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    env:
+               HOSTS_LIST: ${{ secrets.TARGET_HOSTS_LIST }}
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run Test Script
+        run: |
+                 echo "$HOSTS_LIST" | tee host.txt
+                 cat host.txt
+
