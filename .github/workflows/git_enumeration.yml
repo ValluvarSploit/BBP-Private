@@ -25,12 +25,13 @@ jobs:
                 #echo -e "github_username: "$GIT_USERNAME"\ngithub_password: "$GIT_PASSWORD"" > config.yml
       - name: git-hound
         run: |
-                echo "I am Valluvarsploit" > file.txt
-                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --dig-files --dig-commits --config-file config.yml >> git-hound-output.txt
+                echo "github_username: "$GIT_USERNAME"" > file.txt
+                echo "github_password: "$GIT_PASSWORD"" >> file.txt
+                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --dig-files --dig-commits --config-file file.txt >> git-hound-output.txt
             
       - name: Display Output Files
         run: |
-                echo "git-hound-output.txt"
+
                 cat git-hound-output.txt
                 
       - name: Remove Installation Files  
