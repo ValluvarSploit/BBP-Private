@@ -21,12 +21,12 @@ jobs:
                 
       - name: git-hound
         run: |
-                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --results-only --dig-files --dig-commits --config-file ~/.githound/config.yml |  tee -a git-hound-output.txt
+                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --results-only --dig-files --dig-commits --config-file config.yml |  tee -a git-hound-output.txt
             
       - name: Display Output Files
         run: |
-                echo "kxss-urls.txt"
-                cat kxss-urls.txt | head
+                echo "git-hound-output.txt"
+                cat git-hound-output.txt
                 
       - name: Remove Installation Files  
         run: |
@@ -36,6 +36,6 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add xss-vulnerable-urls.txt
-                git commit -m "XSS Vulnerable Urls"
+                git add git-hound-output.txt
+                git commit -m "git enumeration results"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
