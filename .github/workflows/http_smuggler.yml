@@ -1,0 +1,34 @@
+name: HTTP Smuggler
+
+on:
+  workflow_dispatch:
+
+jobs:
+  http-smuggler:
+    runs-on: ubuntu-latest
+    env:
+               HOSTS_LIST: ${{ secrets.TARGET_HOSTS_LIST }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+                 git clone https://github.com/defparam/smuggler.git
+                 echo "$HOSTS_LIST" > target-hosts.txt
+
+      - name: Remove Old files
+        run: |
+        #rm eyewitness_output.zip.xz
+          
+      - name: Smuggler
+        run: |
+                 cat target-hosts.txt | python3 smuggler/smuggler.py --log output.txt --quiet
+
+      - name: Commit Tool Output
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
+          git add output.txt
+          git commit -m "HTTP Smuggler"
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
