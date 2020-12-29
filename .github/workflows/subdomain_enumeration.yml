@@ -8,7 +8,10 @@ jobs:
   subdomain-enumeration:
     runs-on: ubuntu-latest
     env:
-          TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+                 GITHUB_TOKEN: ${{ secrets.TOKEN }}
     
     steps:
       - uses: actions/checkout@v2
@@ -16,112 +19,117 @@ jobs:
       # gau, Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httprobe, resolvers.txt, massdns
       - name: Install Dependencies
         run: |
-                wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
-                tar xvf gau_1.1.0_linux_amd64.tar.gz
-                go get -u github.com/tomnomnom/assetfinder
-                go get -u github.com/tomnomnom/httprobe
-                sudo snap install amass
-                git clone https://github.com/aboul3la/Sublist3r.git
-                pip install -r Sublist3r/requirements.txt
-                git clone https://github.com/christophetd/censys-subdomain-finder.git
-                pip install -r censys-subdomain-finder/requirements.txt
-                wget --quiet https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-                mv jq-linux64 jq && chmod +x jq
-                wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux
-                mv findomain-linux findomain && chmod +x findomain
-                wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
-                tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
-                wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-                git clone https://github.com/blechschmidt/massdns.git
-                cd massdns/ && make
+                 wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
+                 tar xvf gau_1.1.0_linux_amd64.tar.gz
+                 go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
+                 go get -u github.com/tomnomnom/httprobe && cp /home/runner/go/bin/httprobe .
+                 sudo snap install amass
+                 git clone https://github.com/aboul3la/Sublist3r.git
+                 pip install -r Sublist3r/requirements.txt
+                 git clone https://github.com/christophetd/censys-subdomain-finder.git
+                 pip install -r censys-subdomain-finder/requirements.txt
+                 wget --quiet https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+                 mv jq-linux64 jq && chmod +x jq
+                 wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux
+                 mv findomain-linux findomain && chmod +x findomain
+                 wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
+                 tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
+                 wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+                 git clone https://github.com/blechschmidt/massdns.git
+                 cd massdns/ && make
           
       - name: Remove Output Files
         run: |
-                rm subdomains-tools-output.txt live-httpx-subdomains-output.txt live-ips-output.txt live-hosts-output.txt
+                 rm subdomains-tools-output.txt live-httpx-subdomains-output.txt live-ips-output.txt live-hosts-output.txt
          
       - name: Sublist3r
         run: |
-                python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -o subdomains-tools-output.txt >/dev/null
+                 python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -o subdomains-tools-output.txt >/dev/null
          
       - name: Amass
         run: |
-                amass enum -passive -d "$TARGET_DOMAIN" >> subdomains-tools-output.txt
+                 amass enum -passive -d "$TARGET_DOMAIN" >> subdomains-tools-output.txt
          
       - name: Assetfinder
         run: |
-                cd /home/runner/go/bin/
-                ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> /home/runner/work/Test-Data/Test-Data/subdomains-tools-output.txt
+                 ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> subdomains-tools-output.txt
          
       - name: Censys
         env:
-                CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
-                CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
+                 CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
+                 CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
         run: |
-                python censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$TARGET_DOMAIN" | cut -d ' ' -f4 >> subdomains-tools-output.txt
+                 python censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$TARGET_DOMAIN" | cut -d ' ' -f4 >> subdomains-tools-output.txt
                 
       - name: Security Trails
         env:
-                SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
+                 SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
         run: |
-                curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$TARGET_DOMAIN"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$TARGET_DOMAIN"/" test.txt | sed 's/ //g' && rm test.txt >> subdomains-tools-output.txt
+                 curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$TARGET_DOMAIN"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$TARGET_DOMAIN"/" test.txt | sed 's/ //g' && rm test.txt >> subdomains-tools-output.txt
                 
       - name: Certspotter
         run: |
-                curl -s https://certspotter.com/api/v0/certs\?domain\="$TARGET_DOMAIN" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" >> subdomains-tools-output.txt
+                 curl -s https://certspotter.com/api/v0/certs\?domain\="$TARGET_DOMAIN" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" >> subdomains-tools-output.txt
                 
       - name: RapidDNS
         run: |
-                curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomains-tools-output.txt
+                 curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomains-tools-output.txt
          
       - name: Crt.sh
         run: |
-                curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomains-tools-output.txt
+                 curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomains-tools-output.txt
                 
       - name: Findomain
         run: |
-                ./findomain -t "$TARGET_DOMAIN" -q >> subdomains-tools-output.txt
+                 ./findomain -t "$TARGET_DOMAIN" -q >> subdomains-tools-output.txt
                 
       - name: Subfinder
         run: |
-                ./subfinder -d "$TARGET_DOMAIN" -all --silent >> subdomains-tools-output.txt
+                 ./subfinder -d "$TARGET_DOMAIN" -all --silent >> subdomains-tools-output.txt
                 
       - name: gau
         run: |
-                ./gau -subs "$TARGET_DOMAIN" | cut -d / -f 3 | sort -u >> subdomains-tools-output.txt
+                 ./gau -subs "$TARGET_DOMAIN" | cut -d / -f 3 | sort -u >> subdomains-tools-output.txt
                 
       - name: Unique subdomains
         run: |
-                mv subdomains-tools-output.txt temp_file1.txt
-                cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
-                sort -u temp_file2.txt -o temp_file2.txt
-                grep -vf ignore-hosts.txt temp_file2.txt > subdomains-tools-output.txt
+                 mv subdomains-tools-output.txt temp_file1.txt
+                 cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
+                 sort -u temp_file2.txt -o temp_file2.txt
+                 grep -vf ignore-hosts.txt temp_file2.txt > subdomains-tools-output.txt
                 
       - name: Create Wordlists
         run: |
-                sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
-                grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
-                cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
+                 sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
+                 grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
+                 cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
                 
       - name: DNS Resolver-MassDNS
         run: |
-                ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
-                cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-output.txt
-                cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output.txt
+                 ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
+                 cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-output.txt
+                 cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output.txt
                
       - name: HTTP/HTTPS Resolver-httprobe
         run: |
-                cd /home/runner/go/bin/
-                cat /home/runner/work/Test-Data/Test-Data/live-hosts-output.txt | ./httprobe > /home/runner/work/BBP-Public/BBP-Public/live-httpx-subdomains-output.txt
-                cat live-httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-subdomains-hosts-output.txt
+                 cat live-hosts-output.txt | ./httprobe > live-httpx-subdomains-output.txt
+                 cat live-httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-subdomains-hosts-output.txt
+                 
+      - name: Send Files to Slack Channel
+        run: |
+                 today=$(date +"%d_%m_%Y")
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data tools subdomain file-$today" -F filename="$TARGET_DOMAIN_subdomains-tools-output_$today.txt" -F file=@subdomains-tools-output.txt
+                 if [[ -f nuclie-output.txt ]]; then sort nuclie-output.txt; curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="BugBountyData-nuclie scan file-$today" -F filename="nuclei-output_$today.txt" -F file=@nuclie-output.txt; fi
+                 
       - name: Remove Dependencies
         run: |
                rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
-               rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt temp_file1.txt temp_file2.txt massdns-output.txt gau_1.1.0_linux_amd64.tar.gz
+               rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt temp_file1.txt temp_file2.txt massdns-output.txt gau_1.1.0_linux_amd64.tar.gz subdomains-tools-output.txt
                
       - name: Commit Output Files
         run: |
                git config --local user.email "action@github.com"
                git config --local user.name "GitHub Action"
-               git add subdomains-tools-output.txt live-httpx-subdomains-output.txt live-hosts-output.txt live-ips-output.txt live-httpx-subdomains-hosts-output.txt
+               git add live-httpx-subdomains-output.txt live-hosts-output.txt live-ips-output.txt live-httpx-subdomains-hosts-output.txt
                git commit -m "Subdomain Enumeration-Output Files Updated"
-               git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
+               git push "https://ValluvarSploit:"$GITHUB_TOKEN"@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags   
