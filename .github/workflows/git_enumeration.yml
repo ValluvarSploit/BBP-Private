@@ -6,7 +6,9 @@ on:
 jobs:
   git-enumeration:
     runs-on: ubuntu-latest
-
+    env:
+                GIT_USERNAME: ${{ GIT_USERNAME }}
+                GIT_PASSWORD: ${{ GIT_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
         
@@ -21,6 +23,7 @@ jobs:
                 
       - name: git-hound
         run: |
+                echo -e "github_username: "$GIT_USERNAME"\ngithub_password: "$GIT_PASSWORD"" > config.yml
                 ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --results-only --dig-files --dig-commits --config-file config.yml |  tee -a git-hound-output.txt
             
       - name: Display Output Files
@@ -36,6 +39,6 @@ jobs:
         run: |
                 git config --local user.email "action@github.com"
                 git config --local user.name "Github Action"
-                git add git-hound-output.txt
-                git commit -m "git enumeration results"
+                git add git-hound-output.txt config.yml
+                git commit -m "git enumeration"
                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
