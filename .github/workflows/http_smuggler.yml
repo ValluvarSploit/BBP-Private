@@ -23,7 +23,7 @@ jobs:
           
       - name: Smuggler
         run: |
-                 cat target-hosts.txt | python3 smuggler/smuggler.py --log output.txt --quiet
+                 cat target-hosts.txt | python3 smuggler/smuggler.py --log output.txt
 
       - name: Commit Tool Output
         run: |
