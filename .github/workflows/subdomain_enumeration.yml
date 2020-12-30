@@ -92,17 +92,19 @@ jobs:
                  cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
                  sort -u temp_file2.txt -o temp_file2.txt
                  grep -vf ignore-hosts.txt temp_file2.txt > subdomains-tools-output.txt
-                
-      - name: Create Wordlists
+            
+      - name: dnsgen
         run: |
                  ./dnsgen subdomains-tools-output.txt >> dnsgen-temp-output.txt
-                 cat dnsgen-temp-output.txt | egrep .\www > www-greped.txt
-                 grep -vf www-greped.txt dnsgen-temp-output.txt > dnsgen-output.txt
+                 cat dnsgen-temp-output.txt | grep -v "www" > dnsgen-output.txt
+                 cat dnsgen-output.txt | wc -l
+              
+      - name: Create Wordlists
+        run: |
                  sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
                  cat dnsgen-output.txt >> custom-wordlist.txt && sort -u custom-wordlist.txt -o custom-wordlist.txt
                  grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
                  cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
-                 cat dnsgen-output.txt | wc -l
                  cat custom-wordlist.txt | wc -l
                  
       - name: DNS Resolver-MassDNS
