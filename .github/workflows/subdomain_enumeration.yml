@@ -1,6 +1,6 @@
 #important note: Before running this workflow, set below mentioned secrets variable in repository settings.
 #$TARGET_DOMAIN, TARGET_IGNORE_HOSTS(optional), TARGET_IGNORE_IPS(optional)
-name: Subdomain Enumeration CI
+name: Subdomain Enumeration
  
 on:
   workflow_dispatch:
