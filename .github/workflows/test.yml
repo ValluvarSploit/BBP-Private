@@ -13,15 +13,15 @@ jobs:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
                  TARGET_IGNORE_HOSTS: $ {{ secrets.TARGET_IGNORE_HOSTS_LIST }}
                  TARGET_IGNORE_IPS: $ {{ secrets.TARGET_IGNORE_IPS_LIST }}
-                 DATE: $(date +"%d_%m_%Y")
-                 FILE_NAME: "$TARGET_DOMAIN"
     
     steps:
       - uses: actions/checkout@v2
 
       - name: Run Test Script
         run: |
-                 echo "$DATE"
+                 echo "$TARGET_DOMAIN_Bingo"
+                 echo "$TARGET_DOMAIN"_Dingo
+                 FILE_NAME="$TARGET_DOMAIN"_Jingo
                  echo "$FILE_NAME"
                  
 
