@@ -8,17 +8,21 @@ jobs:
   test-build:
     runs-on: ubuntu-latest
     env:
-               HOSTS_LIST: ${{ secrets.TARGET_HOSTS_LIST }}
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+                 TARGET_IGNORE_HOSTS: $ {{ secrets.TARGET_IGNORE_HOSTS_LIST }}
+                 TARGET_IGNORE_IPS: $ {{ secrets.TARGET_IGNORE_IPS_LIST }}
+                 DATE: $(date +"%d_%m_%Y")
+                 FILE_NAME: "$TARGET_DOMAIN"
     
     steps:
       - uses: actions/checkout@v2
 
       - name: Run Test Script
         run: |
-                 echo "$HOSTS_LIST" > hosts-list.txt
-                 pip3 install dnsgen
-                 cp ~/.local/bin/dnsgen .
-                 ./dnsgen hosts-list.txt | tee -a dnsgen-output.txt
-                 cat dnsgen-output.txt | head
+                 echo "$DATE"
+                 echo "$FILE_NAME"
+                 
 
 
