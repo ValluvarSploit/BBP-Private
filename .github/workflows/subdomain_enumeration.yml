@@ -3,9 +3,9 @@
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN    , formtat below
 #       example.com
-#  2. TARGET_IGNORE_HOSTS    , format below
+#  2. TARGET_IGNORE_HOSTS    , format below     (update any if no hosts to ignore)
 #       https://docs.example.com
-#  3. TARGET_IGNORE_IPS    , format below
+#  3. TARGET_IGNORE_IPS    , format below       (update any if no IPs to ignore)
 #       0.0.0.0
  
 name: Subdomain Enumeration
