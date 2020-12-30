@@ -15,6 +15,8 @@ jobs:
 
       - name: Run Test Script
         run: |
-                 pip3 install dnsgen 
-                 dnsgen --help
+                 pip3 install dnsgen
+                 ls -l ~/.local/bin/dnsgen
+                 cd ~/.local/bin/
+                 ./dnsgen --help
 
