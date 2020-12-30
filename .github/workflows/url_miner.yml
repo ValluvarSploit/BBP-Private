@@ -40,7 +40,6 @@ jobs:
       - name: Input Files
         run: |
                  echo "$TARGET_IGNORE_HOSTS_LIST" > ignore-hosts.txt
-                 cat ignore-hosts.txt
 
       - name: waybackurls
         run: |
@@ -52,8 +51,8 @@ jobs:
                 
       - name: Combine Output Files
         run: |
-                 cat waybackurls-output.txt gau-output.txt | tee all-urls.txt
-                 while read line; do if [ ! -z "$line" ] ; then cat all-urls.txt | grep -v "$line" | tee all-urls.txt; fi; done < ignore-hosts.txt
+                 cat waybackurls-output.txt gau-output.txt | tee all-urls-tmp.txt
+                 grep -vf ignore-hosts.txt all-urls-tmp.txt > all-urls.txt
                  sort -u all-urls.txt -o all-urls.txt
                  zip all-urls.txt.zip all-urls.txt && xz all-urls.txt.zip
                  cat all-urls.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
@@ -82,5 +81,5 @@ jobs:
       - name: Send Outputs to Slack Channel
         run: |
                  curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Collect-All-Urls -F filename="$TARGET_DOMAIN"-all-urls.zip.xz -F file=@all-urls.txt.zip.xz
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Collect-All-Unique-Urls -F filename="$TARGET_DOMAIN"-all-urls-unqiue.txt.zip.xz -F file=@all-urls-unqiue.txt.zip.xz
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-GF-Patterns-Urls -F filename="$TARGET_DOMAIN"-patterns-urls.txt.zip.xz -F file=@patterns-urls.zip.xz
+#                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Collect-All-Unique-Urls -F filename="$TARGET_DOMAIN"-all-urls-unqiue.txt.zip.xz -F file=@all-urls-unqiue.txt.zip.xz
+#                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-GF-Patterns-Urls -F filename="$TARGET_DOMAIN"-patterns-urls.txt.zip.xz -F file=@patterns-urls.zip.xz
