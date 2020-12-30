@@ -40,7 +40,7 @@ jobs:
                             
       - name: Subzy
         run: |
-                 ./subzy --targets=targets.txt -concurrency 50 | subzy-logs.txt
+                 ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
                  cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt
                  
       - name: Subjack
