@@ -7,6 +7,8 @@
 #       https://docs.example.com
 #  3. TARGET_IGNORE_IPS    , format below       (update any if no IPs to ignore)
 #       0.0.0.0
+
+# Workflow Dependency: No
  
 name: Subdomain Enumeration
  
