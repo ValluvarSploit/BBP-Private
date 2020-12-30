@@ -18,11 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
        
-      # gau, Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httprobe,dnsgen, resolvers.txt, massdns
+      # Assetfinder, Amass, Sublist3r, censys-subdomain-finder, jq, findomain, subfinder, httprobe,dnsgen, resolvers.txt, massdns
       - name: Install Dependencies
         run: |
-                 wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
-                 tar xvf gau_1.1.0_linux_amd64.tar.gz
                  go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
                  go get -u github.com/tomnomnom/httprobe && cp /home/runner/go/bin/httprobe .
                  sudo snap install amass
@@ -86,10 +84,6 @@ jobs:
         run: |
                  ./subfinder -d "$TARGET_DOMAIN" -all --silent >> subdomains-tools-output.txt
                 
-      - name: gau
-        run: |
-                 ./gau -subs "$TARGET_DOMAIN" | cut -d / -f 3 | sort -u >> subdomains-tools-output.txt
-                
       - name: Unique subdomains
         run: |
                  echo "$TARGET_IGNORE_HOSTS" > ignore-hosts.txt
@@ -131,4 +125,4 @@ jobs:
       - name: Remove Temporary Files
         run: |
                rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
-               rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt temp_file1.txt temp_file2.txt massdns-output.txt gau_1.1.0_linux_amd64.tar.gz subdomains-tools-output.txt ignore-ips.txt live-ips-output-temp.txt live-ips-output.txt ignore-hosts.txt live-hosts-output.txt dnsgen dnsgen-output.txt
+               rm jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt temp_file1.txt temp_file2.txt massdns-output.txt subdomains-tools-output.txt ignore-ips.txt live-ips-output-temp.txt live-ips-output.txt ignore-hosts.txt live-hosts-output.txt dnsgen dnsgen-output.txt
