@@ -1,3 +1,9 @@
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST    , format belo
+#       https://example.com
+#       https://info.example.com
+
 name: Subdomain Takeover
 
 on:
@@ -7,7 +13,8 @@ jobs:
   subdomain-takeover:
     runs-on: ubuntu-latest
     env:
-      INPUT_FILE: '/home/runner/work/Test-Data/Test-Data/live-httpx-subdomains-output.txt'
+                 TARGET_DOMAIN: $ {{ secrets.TARGET_DOMAIN }}
+                 TARGET_SUBDOMAINS_LIST: $ {{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
 
   
     steps:
@@ -16,37 +23,42 @@ jobs:
       # subzy, subjack, nuclei
       - name: Install Dependencies
         run: |
-         go get -u -v github.com/lukasikic/subzy
-         go get -v github.com/haccer/subjack
-         git clone https://github.com/projectdiscovery/nuclei-templates.git
-         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
-         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
+                 go get -u -v github.com/lukasikic/subzy
+                 cp /home/runner/go/bin/subzy .
+                 go get -v github.com/haccer/subjack
+                 cp /home/runner/go/bin/subjack .
+                 git clone https://github.com/projectdiscovery/nuclei-templates.git
+                 wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
+                 tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
+                 
+      - name: Input Files
+        run: |
+                 echo "$TARGET_SUBDOMAINS_LIST" > targets.txt
+                            
       - name: Subzy
         run: |
-         cd /home/runner/go/bin/
-         ./subzy --targets="$INPUT_FILE" -concurrency 50 -hide_fails | tee /home/runner/work/Test-Data/Test-Data/subdomain-takeover-output.txt
+                 ./subzy --targets=targets.txt -concurrency 50 | subzy-logs.txt
+                 cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt
+                 
       - name: Subjack
         run: |
-         cd /home/runner/go/bin/
-         ./subjack -w "$INPUT_FILE" -t 100 -timeout 30 -o /home/runner/work/Test-Data/Test-Data/subjack-output.txt -ssl -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
-         cd /home/runner/work/Test-Data/Test-Data/
-         if [[ ! -f subjack-output.txt ]]; then touch subjack-output.txt; fi
+                 ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+                 cat subjack-logs.txt | grep -v "Not Vulnerable" | subjack-output.txt
+         
       - name: Nuclei
         run: |
-         ./nuclei -l "$INPUT_FILE" -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
-         if [[ ! -f nuclie-output.txt ]]; then touch nuclie-output.txt; fi
+                 ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
+                 
       - name: Combine Outputs
         run: |
-         cat subjack-output.txt | tee -a subdomain-takeover-output.txt
-         cat nuclie-output.txt | tee -a subdomain-takeover-output.txt
+                if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover.txt; fi
+                if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover.txt; fi
+                if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover.txt; fi
+
+      - name: Send Output Files Slack Channel
+        run: |
+               
       - name: Remove Temporary Files
         run: |
           rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz subjack-output.txt nuclie-output.txt
           rm -rf nuclei-templates/
-      - name: Commit Tool Output
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "Github Action"
-          git add subdomain-takeover-output.txt
-          git commit -m "Update subdomain-takeover-output.txt"
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
