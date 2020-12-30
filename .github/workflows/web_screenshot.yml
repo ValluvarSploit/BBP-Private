@@ -42,5 +42,5 @@ jobs:
                  
       - name: Send Output Files Slack Channel
         run: |
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Website-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.xz -F file=@eyewitness_output.zip.xz
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Website-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.zip.xz -F file=@eyewitness_output.zip.xz
                  
