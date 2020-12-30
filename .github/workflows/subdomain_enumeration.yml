@@ -91,6 +91,7 @@ jobs:
                 
       - name: Unique subdomains
         run: |
+                 echo "$TARGET_IGNORE_HOSTS" > ignore-hosts.txt
                  mv subdomains-tools-output.txt temp_file1.txt
                  cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
                  sort -u temp_file2.txt -o temp_file2.txt
@@ -98,7 +99,6 @@ jobs:
                 
       - name: Create Wordlists
         run: |
-                 echo "$TARGET_IGNORE_HOSTS" > ignore-hosts.txt
                  sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
                  grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
                  cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
