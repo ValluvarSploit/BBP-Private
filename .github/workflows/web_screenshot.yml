@@ -36,7 +36,7 @@ jobs:
                  
       - name: Eyewitness
         run: |
-                 python3 EyeWitness/Python/EyeWitness.py --web -f targets.txt --proxy-ip 127.0.0.1 --proxy-port 8080 --proxy-type socks5 --timeout 120 --no-prompt
+                 python3 EyeWitness/Python/EyeWitness.py --web -f targets.txt --timeout 120 --no-prompt
                  mv `date +"%Y"`* eyewitness_output
                  zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
                  
