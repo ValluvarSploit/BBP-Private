@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+                 TARGET_IGNORE_HOSTS_LIST: ${{ secrets.TARGET_IGNORE_HOSTS_LIST }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                  SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
  
@@ -32,6 +33,10 @@ jobs:
                  cp /home/runner/go/bin/waybackurls .
                  wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
                  tar xvf gau_1.1.0_linux_amd64.tar.gz
+                 
+      - name: Input Files
+        run: |
+                 echo "$TARGET_IGNORE_HOSTS_LIST" > ignore-hosts.txt
 
       - name: waybackurls
         run: |
@@ -44,6 +49,7 @@ jobs:
       - name: Combine Output Files
         run: |
                  cat waybackurls-output.txt gau-output.txt | tee all-urls.txt
+                 while read line; do if [ ! -z "$line" ] ; then cat all-urls.txt | grep -v "$line" | tee all-urls.txt; fi; done < ignore-hosts.txt
                  sort -u all-urls.txt -o all-urls.txt
                  zip all-urls.txt.zip all-urls.txt && xz all-urls.txt.zip
                  cat all-urls.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
