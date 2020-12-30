@@ -1,5 +1,13 @@
-#important note: Before running this workflow, set below mentioned secrets variable in repository settings.
-#$TARGET_DOMAIN, TARGET_IGNORE_HOSTS, TARGET_IGNORE_IPS
+
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN    , formtat below
+#       example.com
+#  2. TARGET_IGNORE_HOSTS    , format below
+#       https://docs.example.com
+#  3. TARGET_IGNORE_IPS    , format below
+#       0.0.0.0
+ 
 name: Subdomain Enumeration
  
 on:
