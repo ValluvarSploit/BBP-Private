@@ -15,6 +15,6 @@ jobs:
 
       - name: Run Test Script
         run: |
-                 echo "$HOSTS_LIST" | tee host.txt
-                 cat host.txt
+                 pip3 install dnsgen 
+                 dnsgen --help
 
