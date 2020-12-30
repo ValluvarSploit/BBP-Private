@@ -22,7 +22,8 @@ jobs:
                  echo "$TARGET_DOMAIN_Bingo"
                  echo "$TARGET_DOMAIN"_Dingo
                  FILE_NAME="$TARGET_DOMAIN"_Jingo
-                 echo "$FILE_NAME"
+                 echo "$FILE_NAME" > file.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data tools subdomain file-$today" -F filename="$TARGET_DOMAIN"_subdomains-tools-output_$today.txt -F file=@file.txt
                  
 
 
