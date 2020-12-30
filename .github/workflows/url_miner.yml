@@ -1,3 +1,9 @@
+#Stage 4
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN    , formtat below
+#       example.com
+
 name: URL Collector
 
 on:
@@ -6,11 +12,15 @@ on:
 jobs:
   url-collector:
     runs-on: ubuntu-latest
+    env:
+                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
  
     steps:
       - uses: actions/checkout@v2
         
-      - name: Tools Installation and Setup
+      - name: Install Dependencies
         run: |
                  go get -u github.com/tomnomnom/gf
                  cp /home/runner/go/bin/gf .
@@ -22,10 +32,6 @@ jobs:
                  cp /home/runner/go/bin/waybackurls .
                  wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz
                  tar xvf gau_1.1.0_linux_amd64.tar.gz
-                              
-      - name: Remove Old files
-        run: |       
-#                rm urls-output.txt.zip.xz urls-output.txt rm xss-params.txt sqli-params.txt
 
       - name: waybackurls
         run: |
@@ -37,51 +43,34 @@ jobs:
                 
       - name: Combine Output Files
         run: |
-                 cat waybackurls-output.txt gau-output.txt | tee urls-output.txt
-                 sort -u urls-output.txt -o urls-output.txt
-                 cat urls-output.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
-                 cat temp-output.txt | ./qsreplace FUZZ | tee -a unique-url-output.txt
-                 rm temp-output.txt
+                 cat waybackurls-output.txt gau-output.txt | tee all-urls.txt
+                 sort -u all-urls.txt -o all-urls.txt
+                 zip all-urls.txt.zip all-urls.txt && xz all-urls.txt.zip
+                 cat all-urls.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
+                 cat temp-output.txt | ./qsreplace FUZZ | tee -a all-urls-unqiue.txt
+                 zip all-urls-unqiue.txt.zip all-urls-unqiue.txt && xz all-urls-unqiue.txt.zip
  
       - name: Patterns
         run: |
-                 cat urls-output.txt | ./gf interestingEXT | tee -a interestingEXT-params.txt
-                 cat urls-output.txt | ./gf jsvar | tee -a jsvar-params.txt          
-                 cat unique-url-output.txt | ./gf interestingparams | tee -a interestingparams-params.txt
-                 cat unique-url-output.txt | ./gf xss | tee -a xss-params.txt
-                 cat unique-url-output.txt | ./gf sqli | tee -a sqli-params.txt          
-                 cat unique-url-output.txt | ./gf lfi | tee -a lfi-params.txt          
-                 cat unique-url-output.txt | ./gf ssrf | tee -a ssrf-params.txt          
-                 cat unique-url-output.txt | ./gf redirect | tee -a redirect-params.txt          
-                 cat unique-url-output.txt | ./gf ssti | tee -a ssti-params.txt          
-                 cat unique-url-output.txt | ./gf rce | tee -a rce-params.txt          
-                 cat unique-url-output.txt | ./gf idor | tee -a idor-params.txt          
-                 cat unique-url-output.txt | ./gf debug_logic | tee -a debug_logic-params.txt
-                 cat unique-url-output.txt | ./gf img-traversal | tee -a img-traversal-params.txt
-                 cat unique-url-output.txt | ./gf interestingsubs | tee -a interestingsubs-params.txt
-                          
-      - name: Compress Output File
+                 mkdir patterns-urls
+                 cat all-urls.txt | ./gf interestingEXT | tee -a patterns-urls/interestingEXT-params.txt
+                 cat all-urls.txt | ./gf jsvar | tee -a patterns-urls/jsvar-params.txt          
+                 cat all-urls-unqiue.txt | ./gf interestingparams | tee -a patterns-urls/interestingparams-params.txt
+                 cat all-urls-unqiue.txt | ./gf xss | tee -a patterns-urls/xss-params.txt
+                 cat all-urls-unqiue.txt | ./gf sqli | tee -a patterns-urls/sqli-params.txt          
+                 cat all-urls-unqiue.txt | ./gf lfi | tee -a patterns-urls/lfi-params.txt          
+                 cat all-urls-unqiue.txt | ./gf ssrf | tee -a patterns-urls/ssrf-params.txt          
+                 cat all-urls-unqiue.txt | ./gf redirect | tee -a patterns-urls/redirect-params.txt          
+                 cat all-urls-unqiue.txt | ./gf ssti | tee -a patterns-urls/ssti-params.txt          
+                 cat all-urls-unqiue.txt | ./gf rce | tee -a patterns-urls/rce-params.txt          
+                 cat all-urls-unqiue.txt | ./gf idor | tee -a patterns-urls/idor-params.txt          
+                 cat all-urls-unqiue.txt | ./gf debug_logic | tee -a patterns-urls/debug_logic-params.txt
+                 cat all-urls-unqiue.txt | ./gf img-traversal | tee -a patterns-urls/img-traversal-params.txt
+                 cat all-urls-unqiue.txt | ./gf interestingsubs | tee -a patterns-urls/interestingsubs-params.txt
+                 zip -r patterns-urls.zip patterns-urls && xz patterns-urls.zip       
+   
+      - name: Send Outputs to Slack Channel
         run: |
-                 ls -lh urls-output.txt
-                 zip urls-output.txt.zip urls-output.txt
-                 ls -lh urls-output.txt.zip
-                 xz urls-output.txt.zip
-                 ls -lh urls-output.txt.zip.xz
-                 xz -d urls-output.txt.zip.xz
-                 ls -lh
-                 unzip urls-output.txt.zip
-                 ls -lh
-
-      - name: Remove Installation Files
-        run: |
-                 rm -rf Gf-Patterns/
-                 rm LICENSE README.md gau gau_1.1.0_linux_amd64.tar.gz temp-2.txt waybackurls-output.txt gau-output.txt qsreplace-linux-386-0.0.1.tgz gf waybackurls
-                 
-      - name: Commit Tool Output
-        run: |
-                 git config --local user.email "action@github.com"
-                 git config --local user.name "Github Action"
-                 git add idor-params.txt debug_logic-params.txt img-traversal-params.txt interestingEXT-params.txt interestingsubs-params.txt unique-url-output.txt xss-params.txt sqli-params.txt lfi-params.txt ssrf-params.txt redirect-params.txt ssti-params.txt rce-params.txt jsvar-params.txt
-                 git commit -m "Update urls-output.txt.zip.xz"
-                 git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
-#
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Collect-All-Urls -F filename="$TARGET_DOMAIN"-all-urls.zip.xz -F file=@all-urls.txt.zip.xz
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Collect-All-Unique-Urls -F filename="$TARGET_DOMAIN"-all-urls-unqiue.txt.zip.xz -F file=@all-urls-unqiue.txt.zip.xz
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-GF-Patterns-Urls -F filename="$TARGET_DOMAIN"-patterns-urls.txt.zip.xz -F file=@patterns-urls.zip.xz
