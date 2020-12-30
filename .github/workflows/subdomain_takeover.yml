@@ -17,8 +17,9 @@ jobs:
     env:
                  TARGET_DOMAIN: $ {{ secrets.TARGET_DOMAIN }}
                  TARGET_SUBDOMAINS_LIST: $ {{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 
-  
     steps:
       - uses: actions/checkout@v2
         
@@ -53,14 +54,18 @@ jobs:
                  
       - name: Combine Outputs
         run: |
-                if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover.txt; fi
-                if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover.txt; fi
-                if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover.txt; fi
+                 if [[ -f subzy-logs.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subzy-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
+                 if [[ -f subjack-logs.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subjack-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
+                 if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+                 if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+                 if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
 
       - name: Send Output Files Slack Channel
         run: |
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-takeover-logs -F filename="$TARGET_DOMAIN"-subdomain-takeover-logs.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-logs.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-takeover-results -F filename="$TARGET_DOMAIN"-subdomain-takeover-results.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-results.txt
                
       - name: Remove Temporary Files
         run: |
-          rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz subjack-output.txt nuclie-output.txt
-          rm -rf nuclei-templates/
+                rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz
+                rm -rf nuclei-templates/
