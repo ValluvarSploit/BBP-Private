@@ -7,6 +7,8 @@
 #       docs.example.com
 #       info.example.com 
 
+# Workflow Dependency: subdomain_enumeration.yml
+
 name: URL Collector
 
 on:
