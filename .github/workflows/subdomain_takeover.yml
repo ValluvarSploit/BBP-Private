@@ -46,7 +46,7 @@ jobs:
       - name: Subjack
         run: |
                  ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
-                 cat subjack-logs.txt | grep -v "Not Vulnerable" | subjack-output.txt
+                 cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt
          
       - name: Nuclei
         run: |
