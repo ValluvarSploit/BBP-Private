@@ -95,12 +95,16 @@ jobs:
                 
       - name: Create Wordlists
         run: |
-                 ./dnsgen subdomains-tools-output.txt >> dnsgen-output.txt
+                 ./dnsgen subdomains-tools-output.txt >> dnsgen-temp-output.txt
+                 cat dnsgen-temp-output.txt | egrep .\www > www-greped.txt
+                 grep -vf www-greped.txt dnsgen-temp-output.txt > dnsgen-output.txt
                  sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
                  cat dnsgen-output.txt >> custom-wordlist.txt && sort -u custom-wordlist.txt -o custom-wordlist.txt
                  grep -vf ignore-hosts.txt custom-wordlist.txt > custom2-wordlist.txt
                  cat subdomains-tools-output.txt custom2-wordlist.txt > massdns-input.txt
-                
+                 cat dnsgen-output.txt | wc -l
+                 cat custom-wordlist.txt | wc -l
+                 
       - name: DNS Resolver-MassDNS
         run: |
                  ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
@@ -109,23 +113,29 @@ jobs:
                  echo "$TARGET_IGNORE_IPS" > ignore-ips.txt
                  grep -vf ignore-ips.txt live-ips-output-temp.txt > live-ips-output.txt
                
+      - name: Send FIles to Slack Channel-1
+        run: |
+                 today=$(date +"%d_%m_%Y")
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data tools subdomain file-$today" -F filename="$TARGET_DOMAIN_subdomains-tools-output_$today.txt" -F file=@subdomains-tools-output.txt         
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data live hosts file-$today" -F filename="$TARGET_DOMAIN_live-hosts-output_$today.txt" -F file=@live-hosts-output.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data live ips file-$today" -F filename="$TARGET_DOMAIN_live-ips-output_$today.txt" -F file=@live-ips-output.txt  
+                 
       - name: HTTP/HTTPS Resolver-httpx
         run: |
                  count=$(cat live-hosts-output.txt | wc -l)
                  echo "$count"
-                 ./httpx -l live-hosts-output.txt -o live-httpx-subdomains-output.txt
+                 ./httpx -l live-hosts-output.txt -o live-httpx-subdomains-raw-output.txt -threads 10000 -silent -stats -cname
+                 cat live-httpx-subdomains-raw-output.txt | awk '{print $1}' >> live-httpx-subdomains-output.txt
                  cat live-httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-subdomains-hosts-output.txt
                  
-      - name: Send Files to Slack Channel
+      - name: Send Files to Slack Channel-2
         run: |
                  today=$(date +"%d_%m_%Y")
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data tools subdomain file-$today" -F filename="$TARGET_DOMAIN_subdomains-tools-output_$today.txt" -F file=@subdomains-tools-output.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data httprobe live subdomain raw file-$today" -F filename="$TARGET_DOMAIN_live-httprobe-subdomains-raw-output_$today.txt" -F file=@live-httpx-subdomains-raw-output.txt
                  curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data httprobe live subdomain file-$today" -F filename="$TARGET_DOMAIN_live-httprobe-subdomains-output_$today.txt" -F file=@live-httpx-subdomains-output.txt
                  curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data httprobe subdomain hosts file-$today" -F filename="$TARGET_DOMAIN_live-httpx-subdomains-hosts-output_$today.txt" -F file=@live-httpx-subdomains-hosts-output.txt
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data live hosts file-$today" -F filename="$TARGET_DOMAIN_live-hosts-output_$today.txt" -F file=@live-hosts-output.txt
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data live ips file-$today" -F filename="$TARGET_DOMAIN_live-ips-output_$today.txt" -F file=@live-ips-output.txt  
-                 
+                    
       - name: Remove Temporary Files
         run: |
                rm -rf Sublist3r/ censys-subdomain-finder/ massdns/
-               rm httpx httpx_1.0.3_linux_amd64.tar.gz jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt temp_file1.txt temp_file2.txt massdns-output.txt subdomains-tools-output.txt ignore-ips.txt live-ips-output-temp.txt live-ips-output.txt ignore-hosts.txt live-hosts-output.txt dnsgen dnsgen-output.txt
+               rm httpx httpx_1.0.3_linux_amd64.tar.gz jq findomain LICENSE.md README.md subfinder subfinder_2.4.5_linux_amd64.tar.gz resolvers.txt custom-wordlist.txt custom2-wordlist.txt massdns-input.txt temp_file1.txt temp_file2.txt massdns-output.txt subdomains-tools-output.txt ignore-ips.txt live-ips-output-temp.txt live-ips-output.txt ignore-hosts.txt live-hosts-output.txt dnsgen dnsgen-output.txt dnsgen-temp-output.txt www-greped.txt live-httpx-subdomains-raw-output.txt
