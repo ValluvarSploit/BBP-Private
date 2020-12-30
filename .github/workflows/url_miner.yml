@@ -3,7 +3,7 @@
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN    , formtat below
 #       example.com
-#  2. TARGET_IGNORE_HOSTS_LIST
+#  2. TARGET_IGNORE_HOSTS_LIST     (If this secrets is not updated, result may go wrong.)
 #       docs.example.com
 #       info.example.com 
 
@@ -40,6 +40,7 @@ jobs:
       - name: Input Files
         run: |
                  echo "$TARGET_IGNORE_HOSTS_LIST" > ignore-hosts.txt
+                 cat ignore-hosts.txt
 
       - name: waybackurls
         run: |
