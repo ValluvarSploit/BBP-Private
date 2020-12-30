@@ -1,5 +1,5 @@
 #important note: Before running this workflow, set below mentioned secrets variable in repository settings.
-#$TARGET_DOMAIN, TARGET_IGNORE_HOSTS(optional), TARGET_IGNORE_IPS(optional)
+#$TARGET_DOMAIN, TARGET_IGNORE_HOSTS, TARGET_IGNORE_IPS
 name: Subdomain Enumeration
  
 on:
@@ -119,25 +119,21 @@ jobs:
                
       - name: Send FIles to Slack Channel-1
         run: |
-                 today=$(date +"%d_%m_%Y")
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data tools subdomain file-$today" -F filename="$TARGET_DOMAIN_subdomains-tools-output_$today.txt" -F file=@subdomains-tools-output.txt         
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data live hosts file-$today" -F filename="$TARGET_DOMAIN_live-hosts-output_$today.txt" -F file=@live-hosts-output.txt
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data live ips file-$today" -F filename="$TARGET_DOMAIN_live-ips-output_$today.txt" -F file=@live-ips-output.txt  
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-tools-subdomains -F filename="$TARGET_DOMAIN"-tools-subdomains.txt -F file=@subdomains-tools-output.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-live-hosts -F filename="$TARGET_DOMAIN"-live-hosts.txt -F file=@live-hosts-output.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-live-ips -F filename="$TARGET_DOMAIN"-live-ips.txt -F file=@live-ips-output.txt  
                  
       - name: HTTP/HTTPS Resolver-httpx
         run: |
-                 count=$(cat live-hosts-output.txt | wc -l)
-                 echo "$count"
                  ./httpx -l live-hosts-output.txt -o live-httpx-subdomains-raw-output.txt -threads 10000 -silent -stats -cname
                  cat live-httpx-subdomains-raw-output.txt | awk '{print $1}' >> live-httpx-subdomains-output.txt
                  cat live-httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-subdomains-hosts-output.txt
                  
       - name: Send Files to Slack Channel-2
         run: |
-                 today=$(date +"%d_%m_%Y")
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data httprobe live subdomain raw file-$today" -F filename="$TARGET_DOMAIN_live-httprobe-subdomains-raw-output_$today.txt" -F file=@live-httpx-subdomains-raw-output.txt
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data httprobe live subdomain file-$today" -F filename="$TARGET_DOMAIN_live-httprobe-subdomains-output_$today.txt" -F file=@live-httpx-subdomains-output.txt
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data httprobe subdomain hosts file-$today" -F filename="$TARGET_DOMAIN_live-httpx-subdomains-hosts-output_$today.txt" -F file=@live-httpx-subdomains-hosts-output.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-http-resolved-raw -F filename="$TARGET_DOMAIN"-http-resolved-raw.txt -F file=@live-httpx-subdomains-raw-output.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-http-resolved -F filename="$TARGET_DOMAIN"-http-resolved.txt -F file=@live-httpx-subdomains-output.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-http-resolved-hosts -F filename="$TARGET_DOMAIN"-http-resolved-hosts.txt -F file=@live-httpx-subdomains-hosts-output.txt
                     
       - name: Remove Temporary Files
         run: |
