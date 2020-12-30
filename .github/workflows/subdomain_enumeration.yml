@@ -111,6 +111,8 @@ jobs:
                
       - name: HTTP/HTTPS Resolver-httpx
         run: |
+                 count=$(cat live-hosts-output.txt | wc -l)
+                 echo "$count"
                  ./httpx -l live-hosts-output.txt -o live-httpx-subdomains-output.txt
                  cat live-httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-subdomains-hosts-output.txt
                  
