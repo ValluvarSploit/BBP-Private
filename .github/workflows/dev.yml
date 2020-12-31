@@ -1,7 +1,6 @@
 name: Whatweb 
  
 on:
-
   workflow_dispatch:
 
 jobs:
@@ -23,7 +22,6 @@ jobs:
       - name: Install Dependencies
         run: |
                  sudo apt-get install -y whatweb
-                 whatweb -h
            
       - name: Whatweb
         run: |
@@ -31,7 +29,5 @@ jobs:
                  
       - name: Send File to Slack Channel            
         run: |           
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="Test-Data tools subdomain file-$today" -F filename="$TARGET_DOMAIN"_subdomains-tools-output_$today.txt -F file=@file.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Whatweb-Results -F filename="$TARGET_DOMAIN"-whatweb-logs.txt -F file=@whatweb-logs.json
                  
-
-
