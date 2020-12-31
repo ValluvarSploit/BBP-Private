@@ -1,3 +1,19 @@
+
+#Stage 8
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN    , formtat below
+#       example.com
+#  2. TARGET_GITHUB_ORG    , format below      (Optional)
+#       orgname
+#        or
+#  3. TARGET_GITHUB_USERS_LIST    format below    (Optional)
+#       user_name1
+#       user_name2
+
+# Workflow Dependency: No
+
+
 name: Git Enumeration
 
 on:
