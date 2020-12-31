@@ -28,22 +28,27 @@ jobs:
 
       - name: Install Dependencies
         run: |
-                  pip install python-libnmap
-                  
-                  python masscan_to_nmap.py -h
-#                 sudo apt-get install git gcc make libpcap-dev
-#                 git clone https://github.com/robertdavidgraham/masscan
-#                 cd masscan && make -j && cp bin/masscan ../masscanb
+                 pip install python-libnmap
+                 sudo apt-get install git gcc make libpcap-dev
+                 git clone https://github.com/robertdavidgraham/masscan
+                 cd masscan && make -j && cp bin/masscan ../masscanb
                  
       - name: Input Files
         run: |
- #                echo "$TARGET_IP_LIST" > targets.txt
+                 echo "$TARGET_IP_LIST" > targets.txt
            
       - name: Masscan
         run: | 
-  #               sudo ./masscanb -iL targets.txt --rate 10000 -p1-65535 -oL masscan.txt
+                 sudo ./masscanb -iL targets.txt --rate 10000 -p1-65535 -oX masscan.xml
+                 ls -l
+                 
+      - name: Masscan to Nmap
+        run: |
+                 python masscan_to_nmap.py --scan-file masscan.xml
+                 ls -l
                  
       - name: Send File to Slack Channel            
         run: |           
-   #              curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Masscan-Results -F filename="$TARGET_DOMAIN"-masscan.txt -F file=@masscan.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Masscan-Results -F filename="$TARGET_DOMAIN"-masscan.xml -F file=@masscan.xml
+      # curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Masscan-Results -F filename="$TARGET_DOMAIN"-masscan.txt -F file=@masscan.txt
                  
