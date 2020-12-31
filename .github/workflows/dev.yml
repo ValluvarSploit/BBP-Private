@@ -40,12 +40,10 @@ jobs:
       - name: Masscan
         run: | 
                  sudo ./masscanb -iL targets.txt --rate 10000 -p1-65535 -oX masscan.xml
-                 ls -l
                  
       - name: Masscan to Nmap
         run: |
-                 python masscan_to_nmap.py --scan_file masscan.xml
-                 ls -l
+                 python masscan_to_nmap.py -f masscan.xml
                  
       - name: Send File to Slack Channel            
         run: |           
