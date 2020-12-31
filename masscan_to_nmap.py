@@ -52,8 +52,9 @@ def main():
             report_dict[host.ipv4].append(service.port)
 
     for target, ports in report_dict.items():
-        print("Getting ready to scan {0} on ports {1}".format(target, ','.join(map(str, ports))))
-        do_scan(target, options + str(ports))
+        all_port = ','.join(map(str, ports))
+        print("Getting ready to scan {0} on ports {1}".format(target, all_port))
+        do_scan(target, options + str(all_port))
 
 if __name__ == '__main__':
     main()
