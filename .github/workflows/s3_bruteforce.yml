@@ -6,7 +6,7 @@
 
 # Workflow Dependency: No
 
-name: S3 Bruteforc
+name: S3 Bruteforce
 
 on:
   workflow_dispatch:
