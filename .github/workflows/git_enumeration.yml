@@ -9,40 +9,26 @@ jobs:
     env:
                 GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
                 GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+                TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+                TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
+                TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
+                GITHUB_TOKEN: ${{ secrets.TOKEN }}
     steps:
       - uses: actions/checkout@v2
         
       - name: Install Dependencies
         run: |
-                wget --quiet https://github.com/tillson/git-hound/releases/download/v1.3/git-hound_1.3_Linux_x86_64.tar.gz
-                tar xvf git-hound_1.3_Linux_x86_64.tar.gz
-                mkdir ~/.githound
+                 git clone https://github.com/obheda12/GitDorker.git
+                 pip3 install -r GitDorker/requirements.txt
                 
-      - name: Remove Exisiting Output Files
+      - name: Input Files
         run: |
-        # rm git-hound-output.txt
-        #                  echo "github_username: "$GIT_USERNAME"" > config.yml
-         #       echo "github_password: "$GIT_PASSWORD"" >> config.yml
-                #echo -e "github_username: "$GIT_USERNAME"\ngithub_password: "$GIT_PASSWORD"" > config.yml
-      - name: git-hound
+                 echo "$TARGET_USERS_FILE" > git-users.txt
+                           
+      - name: Git-Dorker
         run: |
-                echo "github_username: "$GIT_USERNAME"" >  ~/.githound/config.yml
-                echo "github_password: "$GIT_PASSWORD"" >>  ~/.githound/config.yml
-                ./git-hound --subdomain-file live-httpx-subdomains-hosts-output.txt --dig-files --dig-commits --config-file ~/.githound/config.yml >> git-hound-output.txt
-            
-      - name: Display Output Files
-        run: |
-
-                cat git-hound-output.txt
+                 python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 --userfile git-users.txt --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
                 
-      - name: Remove Installation Files  
+      - name: Send Output Files Slack Channel
         run: |
-                rm LICENSE README.md git-hound git-hound_1.3_Linux_x86_64.tar.gz config.yml
-                             
-      - name: Commit Tool Output
-        run: |
-                git config --local user.email "action@github.com"
-                git config --local user.name "Github Action"
-                git add git-hound-output.txt
-                git commit -m "git enumeration"
-                git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags 
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Gitdorker-Results -F filename="$TARGET_DOMAIN"-gitdorker.txt -F file=@git-output.txt
