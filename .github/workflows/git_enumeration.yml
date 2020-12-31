@@ -13,6 +13,8 @@ jobs:
                 TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
                 TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
                 GITHUB_TOKEN: ${{ secrets.TOKEN }}
+                SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+                SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                
     steps:
       - uses: actions/checkout@v2
         
