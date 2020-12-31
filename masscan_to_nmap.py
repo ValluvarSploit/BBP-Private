@@ -22,7 +22,8 @@ def do_scan(target, options):
     rc = nmproc.sudo_run_background()
 
     while nmproc.is_running():
-        print("Nmap scan running: ETC: {0} DONE: {1}%".format(nmproc.etc,nmproc.progress))
+#        print("Nmap scan running: ETC: {0} DONE: {1}%".format(nmproc.etc,nmproc.progress))
+        print(nmproc.stdout)
         sleep(2)
 
     if (rc !=0):
