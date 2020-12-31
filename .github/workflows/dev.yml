@@ -1,25 +1,25 @@
-#Stage 3
+#Stage 12
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN    , formtat below
 #       example.com
-#  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST    , format below
-#       https://example.com
-#       https://info.example.com
+#  2. TARGET_IP_LIST    , format below
+#       1.1.1.1
+#       2.2.2.2
 
 #workflow Dependent: subdomain_enumeration.yml
 
-name: Whatweb 
+name: Masscan
  
 on:
   workflow_dispatch:
 
 jobs:
-  whatweb:
+  masscan:
     runs-on: ubuntu-latest
     env:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
-                 TARGET_RESOLVED_HOSTS: ${{ secrets.TARGET_HOSTS_LIST }}
+                 TARGET_IP_LIST: ${{ secrets.TARGET_IP_LIST }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                  SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                 
     
@@ -28,21 +28,19 @@ jobs:
 
       - name: Install Dependencies
         run: |
-                 git clone https://github.com/urbanadventurer/WhatWeb.git
-                 sudo gem install bundler
-                 cd WhatWeb/ && bundle install
+                 sudo apt-get install git gcc make libpcap-dev
+                 git clone https://github.com/robertdavidgraham/masscan
+                 cd masscan && make -j && cp bin/masscan ../
                  
       - name: Input Files
         run: |
-                 echo "$TARGET_RESOLVED_HOSTS" > WhatWeb/targets.txt
+                 echo "$TARGET_IP_LIST" > targets.txt
            
-      - name: Whatweb
-        run: |
-                 cd WhatWeb/
-                 ./whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
-                 cp whatweb-logs.json ../
+      - name: Masscan
+        run: | 
+                 sudo masscan -iL targets.txt --rate 10000 -p1-65535 -oL masscan.txt
                  
       - name: Send File to Slack Channel            
         run: |           
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Whatweb-Results -F filename="$TARGET_DOMAIN"-whatweb-logs.txt -F file=@whatweb-logs.json
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Masscan-Results -F filename="$TARGET_DOMAIN"-masscan.txt -F file=@masscan.txt
                  
