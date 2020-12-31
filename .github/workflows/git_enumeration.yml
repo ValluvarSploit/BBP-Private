@@ -7,10 +7,10 @@ jobs:
   git-enumeration:
     runs-on: ubuntu-latest
     env:
-                GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
-                GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+        #        GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+        #        GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
+        #        TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
                 TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
                 GITHUB_TOKEN: ${{ secrets.TOKEN }}
                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
@@ -26,12 +26,13 @@ jobs:
                 
       - name: Input Files
         run: |
-                 echo "$TARGET_USERS_FILE" > git-users.txt
+       #  echo "$TARGET_USERS_FILE" > git-users.txt
                            
       - name: Git-Dorker
         run: |
-                 python3 GitDorker/GitDorker.py --dorks test.txt --userfile git-users.txt --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
-     # python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 --userfile git-users.txt --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
+                 python3 GitDorker/GitDorker.py --dorks test.txt --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
+      #     python3 GitDorker/GitDorker.py --dorks test.txt --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-output.txt
+     
                 
       - name: Send Output Files Slack Channel
         run: |
