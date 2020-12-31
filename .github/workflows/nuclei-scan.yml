@@ -38,7 +38,7 @@ jobs:
 
       - name: Nuclei scan
         run: |         
-                 ./nuclei -l targets.txt -c 500 -stats -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
+                 ./nuclei -l targets.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
                  
       - name: Send Output Files Slack Channel
         run: |
