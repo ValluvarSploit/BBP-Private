@@ -2,10 +2,7 @@
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN    , formtat below
-#       example.com
-#  2. TARGET_HOSTS_LIST    , format below   
-#       example.com
-#       docs.example.com
+#       example
 
 # Workflow Dependency: No
 
@@ -15,11 +12,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  s3-scanner:
+  s3-bruteforce:
     runs-on: ubuntu-latest
     env:
                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                TARGET_HOST_LIST: ${{ secrets.TARGET_HOSTS_LIST }}
                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                
     steps:
@@ -27,18 +23,14 @@ jobs:
         
       - name: Install Dependencies
         run: |
-                 git clone https://github.com/sa7mon/S3Scanner.git
-                 pip install -r S3Scanner/requirements.txt
-                 
-      - name: Input Files
-        run: |
-                 echo "$TARGET_HOST_LIST" > targets.txt
+                 git clone https://github.com/nahamsec/lazys3.git
                            
       - name: S3 Scanner
         run: |
-                 python S3Scanner/s3scanner.py targets.txt | tee -a s3-scanner.txt
+                 cd lazys3/
+                 ruby lazys3.rb "$TARGET_DOMAIN" | tee -a ../s3-bruteforece.txt
 
       - name: Send Output Files Slack Channel
         run: |
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-S3-Scanner-Results -F filename="$TARGET_DOMAIN"-s3-scanner.txt -F file=@s3-scanner.txt
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-S3-Bruteforce-Results -F filename="$TARGET_DOMAIN"-s3-bruteforce.txt -F file=@bruteforece.txt
                  
