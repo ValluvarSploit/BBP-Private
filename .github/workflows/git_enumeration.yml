@@ -35,6 +35,7 @@ jobs:
                 
       - name: Send Output Files Slack Channel
         run: |
+                 ls -l
                  mv git-output.txt_gh_dorks git-output.txt
                  curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Gitdorker-Results -F filename="$TARGET_DOMAIN"-gitdorker.txt -F file=@git-output.txt
                  
