@@ -17,7 +17,7 @@ parser.add_argument('-f', '--scan-file', dest='scan_file', help='Masscan XML fil
 args = parser.parse_args()
 
 def do_scan(target, options):
-
+    print(target, options)
     nmproc = NmapProcess(target, options)
     rc = nmproc.sudo_run_background()
 
