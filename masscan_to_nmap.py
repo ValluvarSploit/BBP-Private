@@ -39,7 +39,7 @@ def do_scan(target, options):
 def main():
     
     # space on the end is on purpose
-    options = "-sS -sV -O -sC -pT:"
+    options = "-sV -pT:"
 
     try:
         report = NmapParser.parse_fromfile(args.scan_file)
