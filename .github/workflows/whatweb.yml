@@ -1,3 +1,14 @@
+#Stage 3
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN    , formtat below
+#       example.com
+#  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST    , format below
+#       https://example.com
+#       https://info.example.com
+
+#workflow Dependent: subdomain_enumeration.yml
+
 name: Whatweb 
  
 on:
