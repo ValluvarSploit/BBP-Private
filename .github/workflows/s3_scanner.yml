@@ -6,7 +6,7 @@
 
 # Workflow Dependency: No
 
-name: S3 Scanner
+name: S3 Bruteforc
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ jobs:
         run: |
                  git clone https://github.com/nahamsec/lazys3.git
                            
-      - name: S3 Scanner
+      - name: S3 Bruteforc
         run: |
                  cd lazys3/
                  ruby lazys3.rb "$TARGET_DOMAIN" | tee -a ../s3-bruteforece.txt
