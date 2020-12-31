@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
-                 TARGET_RESOLVED_HOSTS: $ {{ secrets.TARGET_HOSTS_LIST }}
+                 TARGET_RESOLVED_HOSTS: ${{ secrets.TARGET_HOSTS_LIST }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                  SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                 
     
