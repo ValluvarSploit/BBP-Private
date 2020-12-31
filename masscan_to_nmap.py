@@ -53,6 +53,8 @@ def main():
 
     for target, ports in report_dict.items():
         print("Getting ready to scan {0} on ports {1}".format(target, ', '.join(map(str, ports))))
+        print(target)
+        print(options)
         do_scan(target, options)
 
 if __name__ == '__main__':
