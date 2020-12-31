@@ -43,5 +43,6 @@ jobs:
             
       - name: Send Outputs to Slack Channel
         run: |
-                 if [[ -f xss-vulnerable-urls.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-XSS-Results -F filename="$TARGET_DOMAIN"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
+                 count=$(cat xss-vulnerable-urls.txt | wc -w)
+                 if [[ -f xss-vulnerable-urls.txt ]] && [[ "$count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-XSS-Results -F filename="$TARGET_DOMAIN"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
       
