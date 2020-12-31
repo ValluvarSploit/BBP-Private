@@ -1,3 +1,14 @@
+#Stage 6
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN    , formtat below
+#       example.com
+#  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST    , format below
+#       https://example.com
+#       https://info.example.com
+
+# Workflow Dependency: subdomain_enumeration.yml
+
 name: Nuclei Scan
  
 on:
@@ -6,27 +17,30 @@ on:
 jobs:
   nuclei-scan:
     runs-on: ubuntu-latest
-    
+    env:
+                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+                 TARGET_SUBDOMAINS_LIST: ${{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+                 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Clean-up
+      - name: Install Dependencies
         run: |
-         rm nuclie-output.txt
-         touch nuclie-output.txt
+                 git clone https://github.com/projectdiscovery/nuclei-templates.git
+                 wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
+                 tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
+                 
+      - name: Input Files
+        run: |
+                 echo "$TARGET_SUBDOMAINS_LIST" > targets.txt
+
       - name: Nuclei scan
+        run: |         
+                 ./nuclei -l targets.txt -c 500 -stats -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
+                 
+      - name: Send Output Files Slack Channel
         run: |
-         git clone https://github.com/projectdiscovery/nuclei-templates.git
-         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
-         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
-         ./nuclei -l live-httpx-subdomains-output.txt -c 500 -stats -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
-         if [[ ! -f nuclie-output.txt ]]; then touch nuclie-output.txt; fi
-         rm LICENSE.md nuclei README.md nuclei_2.2.0_linux_amd64.tar.gz
-         rm -rf nuclei-templates/
-      - name: Commit Output file
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add nuclie-output.txt
-          git commit -m "Update nuclie-output.txt"
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+                 if [[ -f nuclie-output.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Scan-Results -F filename="$TARGET_DOMAIN"-nuclei-scan.txt -F file=@nuclie-output.txt; fi
+                 
