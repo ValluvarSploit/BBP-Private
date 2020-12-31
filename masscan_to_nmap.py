@@ -12,7 +12,7 @@ from collections import defaultdict
 from time import sleep
 
 parser = argparse.ArgumentParser(description='Import masscan results and run an nmap scan against the target.')
-parser.add_argument('f' --scan-file, dest='scan_file', help='Masscan XML file')
+parser.add_argument('-f', '--scan-file', dest='scan_file', help='Masscan XML file')
 #parser.add_argument('-f', '--scan_file', nargs='?', type=argparse.FileType('r'), help='XML file containing masscan results.')
 args = parser.parse_args()
 
