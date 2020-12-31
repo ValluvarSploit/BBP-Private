@@ -26,6 +26,7 @@ jobs:
       - name: Whatweb
         run: |
                  cd WhatWeb/
+                 bundle install
                  ./whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
                  cp whatweb-logs.json ../
                  
