@@ -126,6 +126,7 @@ jobs:
                  grep -vf ignore-ips.txt live-ips-output-temp.txt > live-ips-output.txt
                  tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt
                  sort -u live-hosts-output.txt -o live-hosts-output.txt
+                 sort -u live-ips-output-temp.txt -o live-ips-output-temp.txt
                
       - name: Send FIles to Slack Channel-1
         run: |
