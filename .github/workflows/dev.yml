@@ -29,6 +29,8 @@ jobs:
       - name: Install Dependencies
         run: |
                   pip install python-libnmap
+                  
+                  python masscan_to_nmap.py -h
 #                 sudo apt-get install git gcc make libpcap-dev
 #                 git clone https://github.com/robertdavidgraham/masscan
 #                 cd masscan && make -j && cp bin/masscan ../masscanb
