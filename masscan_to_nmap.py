@@ -12,7 +12,8 @@ from collections import defaultdict
 from time import sleep
 
 parser = argparse.ArgumentParser(description='Import masscan results and run an nmap scan against the target.')
-parser.add_argument('-f', '--scan_file', nargs='?', type=argparse.FileType('r'), help='XML file containing masscan results.')
+parser.add_argument(''f' --scan-file, dest='scan_file', help='Masscan XML file')
+#parser.add_argument('-f', '--scan_file', nargs='?', type=argparse.FileType('r'), help='XML file containing masscan results.')
 args = parser.parse_args()
 
 def do_scan(target, options):
@@ -41,7 +42,7 @@ def main():
     options = "-sS -sV -O -sC -p "
 
     try:
-        report = NmapParser.parse_fromfile(scan_file)
+        report = NmapParser.parse_fromfile(args.scan_file)
     except NmapParserException as e:
         print("Scan parsing failed: {0}".format(nmproc.stderr))
 
