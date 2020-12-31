@@ -30,7 +30,7 @@ jobs:
         run: |
                  sudo apt-get install git gcc make libpcap-dev
                  git clone https://github.com/robertdavidgraham/masscan
-                 cd masscan && make -j && cp bin/masscan ../
+                 cd masscan && make -j && cp bin/masscan ../masscanb
                  
       - name: Input Files
         run: |
@@ -38,7 +38,7 @@ jobs:
            
       - name: Masscan
         run: | 
-                 sudo masscan -iL targets.txt --rate 10000 -p1-65535 -oL masscan.txt
+                 sudo masscanb -iL targets.txt --rate 10000 -p1-65535 -oL masscan.txt
                  
       - name: Send File to Slack Channel            
         run: |           
