@@ -46,7 +46,8 @@ jobs:
                            
       - name: Git-Dorker
         run: |
-                 python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
+                  python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 -q "$TARGET_DOMAIN"  --token "$GITHUB_TOKEN" -o git-output.txt
+     #      python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
       #     python3 GitDorker/GitDorker.py --dorks test.txt --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-output.txt
      
                 
