@@ -21,11 +21,13 @@ jobs:
 
       - name: Install Dependencies
         run: |
-                 sudo apt-get install -y whatweb
+                 git clone https://github.com/urbanadventurer/WhatWeb.git
            
       - name: Whatweb
         run: |
-                 whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
+                 cd WhatWeb/
+                 ./whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
+                 cp whatweb-logs.json ../
                  
       - name: Send File to Slack Channel            
         run: |           
