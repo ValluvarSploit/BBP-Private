@@ -30,17 +30,17 @@ jobs:
         run: |
                  sudo apt-get update && sudo apt-get install nmap -y
                  pip install python-libnmap
-                 sudo apt-get install git gcc make libpcap-dev
-                 git clone https://github.com/robertdavidgraham/masscan
-                 cd masscan && make -j && cp bin/masscan ../masscanb
+#                 sudo apt-get install git gcc make libpcap-dev
+#                 git clone https://github.com/robertdavidgraham/masscan
+#                 cd masscan && make -j && cp bin/masscan ../masscanb
                  
       - name: Input Files
         run: |
-                 echo "$TARGET_IP_LIST" > targets.txt
+#                 echo "$TARGET_IP_LIST" > targets.txt
            
       - name: Masscan
         run: | 
-                 sudo ./masscanb -iL targets.txt --rate 10000 -p1-65535 -oX masscan.xml
+#                 sudo ./masscanb -iL targets.txt --rate 10000 -p1-65535 -oX masscan.xml
                  
       - name: Masscan to Nmap
         run: |
@@ -48,6 +48,6 @@ jobs:
                  
       - name: Send File to Slack Channel            
         run: |           
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Masscan-Results -F filename="$TARGET_DOMAIN"-masscan.xml -F file=@masscan.xml
+ #                curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Masscan-Results -F filename="$TARGET_DOMAIN"-masscan.xml -F file=@masscan.xml
       # curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Masscan-Results -F filename="$TARGET_DOMAIN"-masscan.txt -F file=@masscan.txt
                  
