@@ -22,11 +22,12 @@ jobs:
       - name: Install Dependencies
         run: |
                  git clone https://github.com/urbanadventurer/WhatWeb.git
+                 sudo gem install bundler
+                 cd WhatWeb/ && bundle install
            
       - name: Whatweb
         run: |
                  cd WhatWeb/
-                 bundle install
                  ./whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
                  cp whatweb-logs.json ../
                  
