@@ -7,7 +7,8 @@
 #       1.1.1.1
 #       2.2.2.2
 
-#workflow Dependent: subdomain_enumeration.yml
+#workflow Dependent on: subdomain_enumeration.yml
+#file dependent on: masscan_to_nmap.py
 
 name: Masscan
  
