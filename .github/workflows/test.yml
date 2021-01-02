@@ -21,6 +21,6 @@ jobs:
                  echo "Hello World"
                  
       - name: Input Files
-      - run: |
+        run: |
                  echo "$TARGET_IP" > targets-ips.txt
                  echo "$TARGET_IP_EXCLUDE" > targets-ips-exclude.txt
