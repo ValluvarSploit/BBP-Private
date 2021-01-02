@@ -1,4 +1,8 @@
 #Stage 12
+#Description:
+#  1. Run masscan against list of target IPs. This would prodcue masscan.xml file
+#  2. Input masscan result file(masscan.xml) to nmap version detection.
+
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN    , formtat below
@@ -10,7 +14,7 @@
 #workflow Dependent on: subdomain_enumeration.yml
 #file dependent on: masscan_to_nmap.py
 
-name: Masscan
+name: Masscan - Nmap
  
 on:
   workflow_dispatch:
