@@ -1,4 +1,22 @@
-name: Nmap Top 1000 Ports Scan
+#Stage 00
+#Description:
+#  1. Nmap scan on top 1000 ports.
+#  2. Send nmap output to Slack channel.
+
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN
+#       example.com
+#  2. TARGET_IP_LIST
+#       1.1.1.1
+#       2.2.2.2
+#  2. TARGET_IGNORE_IPS_LIST
+#       3.3.3.3
+#       4.4.4.4
+
+# Workflow Dependency: subdomain_enumeration.yml
+
+name: Nmap-Top 1000
  
 on:
   workflow_dispatch:
@@ -6,20 +24,30 @@ on:
 jobs:
   nmap-1000-ports-scan:
     runs-on: ubuntu-latest
+    env:
+                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+                 TARGET_IP: ${{ secrets.TARGET_IP_LIST }}
+                 TARGET_IP_EXCLUDE: ${{ secrets.TARGET_IGNORE_IPS_LIST }}
     
     steps:
       - uses: actions/checkout@v2
 
-      - name: Clean-up
-        run: rm nmap-1000-ports.nmap nmap-1000-ports.xml nmap-1000-ports.gnmap
-      - name: Install nmap
-        run: sudo apt-get update && sudo apt-get install nmap -y
-      - name: Nmap scan
-        run: nmap -Pn -sC -sV -iL live-host-output.txt -oA nmap-1000-ports --reason -excludefile nmap-dont-scan-host.txt
-      - name: Commit Output file
+      - name: Install Dependencies
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add nmap-1000-ports.nmap nmap-1000-ports.xml nmap-1000-ports.gnmap
-          git commit -m "Update nmap-1000-ports.nmap nmap-1000-ports.xml nmap-1000-ports.gnmap"
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/Test-Data.git" HEAD:main --follow-tags
+                 sudo apt-get update && sudo apt-get install nmap -y
+
+      - name: Input Files
+      - run: |
+                 echo "$TARGET_IP" > targets-ips.txt
+                 echo "$TARGET_IP_EXCLUDE" > targets-ips-exclude.txt
+
+      - name: Nmap scan
+        run: |
+                 nmap -Pn -sC -sV -iL targets-ips.txt -oA nmap-top-1000 -excludefile targets-ips-exclude.txt
+
+      - name: Send Files to Slack Channel
+      - run: |
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-gnmap-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.gnmap -F file=@nmap-top-1000.gnmap
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-nmap-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.nmap -F file=@nmap-top-1000.nmap
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-xml-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.xml -F file=@nmap-top-1000.xml
+
