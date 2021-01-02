@@ -4,8 +4,8 @@
 #  1. TARGET_DOMAIN
 #       example.com
 #  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST
-#       https://example.com
-#       https://files.example.com
+#       example.com
+#       files.example.com
 
 name: FFUF
  
@@ -35,7 +35,7 @@ jobs:
            
       - name: ffuf
         run: |
-         while read url; do ./ffuf -c -w wordlists/one-for-all-wordlist.txt -u $url/FUZZ -se -sf -mc all -fc 300,301,302,303,500,400,404 | tee fuff-output.txt; done < targets.txt
+         while read url; do ./ffuf -c -w wordlists/one-for-all-wordlist.txt -u https://$url/FUZZ -se -sf -mc all -fc 300,301,302,303,500,400,404 | tee fuff-output.txt; done < targets.txt
 
                                   
       - name: Send Files to Slack Channel            
