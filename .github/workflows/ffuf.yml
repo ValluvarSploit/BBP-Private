@@ -3,7 +3,7 @@
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN
 #       example.com
-#  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST
+#  2. TARGET_HOSTS_LIST
 #       example.com
 #       files.example.com
 
