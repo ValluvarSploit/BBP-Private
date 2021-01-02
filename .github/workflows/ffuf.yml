@@ -3,24 +3,17 @@
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN    , formtat below
 #       example.com
-#  2. TARGET_IP_LIST    , format below
-#       1.1.1.1
-#       2.2.2.2
 
-#workflow Dependent on: subdomain_enumeration.yml
-#file dependent on: masscan_to_nmap.py
-
-name: Masscan (workflow name)
+name: FFUF
  
 on:
   workflow_dispatch:
 
 jobs:
-  masscan(build-name):
+  ffuf-recursive:
     runs-on: ubuntu-latest
     env:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
-                 TARGET_IP_LIST: ${{ secrets.TARGET_IP_LIST }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                  SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                 
     
