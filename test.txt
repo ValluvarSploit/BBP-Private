@@ -1,3 +1,0 @@
-"api_key_sid"
-"api_key"
-"api_secret"
