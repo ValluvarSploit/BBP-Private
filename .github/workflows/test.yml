@@ -19,3 +19,8 @@ jobs:
       - name: Install Dependencies
         run: |
                  echo "Hello World"
+                 
+      - name: Input Files
+      - run: |
+                 echo "$TARGET_IP" > targets-ips.txt
+                 echo "$TARGET_IP_EXCLUDE" > targets-ips-exclude.txt
