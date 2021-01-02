@@ -18,13 +18,4 @@ jobs:
 
       - name: Install Dependencies
         run: |
-                 sudo apt-get update && sudo apt-get install nmap -y
-
-      - name: Input Files
-      - run: |
-                 echo "$TARGET_IP" > targets-ips.txt
-                 echo "$TARGET_IP_EXCLUDE" > targets-ips-exclude.txt
-
-      - name: Nmap scan
-        run: |
-                 nmap -Pn -sC -sV -iL targets-ips.txt -oA nmap-top-1000 -excludefile targets-ips-exclude.txt
+                 echo "Hello World"
