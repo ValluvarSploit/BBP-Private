@@ -21,7 +21,7 @@ jobs:
                  sudo apt-get update && sudo apt-get install nmap -y
 
       - name: Input Files
-      - run: |
+        run: |
                  echo "$TARGET_IP" > targets-ips.txt
                  echo "$TARGET_IP_EXCLUDE" > targets-ips-exclude.txt
 
@@ -30,7 +30,7 @@ jobs:
                  nmap -Pn -sC -sV -iL targets-ips.txt -oA nmap-top-1000 -excludefile targets-ips-exclude.txt
 
       - name: Send Files to Slack Channel
-      - run: |
+        run: |
                  curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-gnmap-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.gnmap -F file=@nmap-top-1000.gnmap
                  curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-nmap-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.nmap -F file=@nmap-top-1000.nmap
                  curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-xml-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.xml -F file=@nmap-top-1000.xml
