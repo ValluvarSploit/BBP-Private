@@ -1,21 +1,3 @@
-#Stage 00
-#Description:
-#  1. Nmap scan on top 1000 ports.
-#  2. Send nmap output to Slack channel.
-
-#Important Note:
-# Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN
-#       example.com
-#  2. TARGET_IP_LIST
-#       1.1.1.1
-#       2.2.2.2
-#  2. TARGET_IGNORE_IPS_LIST
-#       3.3.3.3
-#       4.4.4.4
-
-# Workflow Dependency: subdomain_enumeration.yml
-
 name: Nmap-Top 1000
  
 on:
