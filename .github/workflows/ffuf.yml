@@ -1,8 +1,11 @@
 #Stage 0
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN    , formtat below
+#  1. TARGET_DOMAIN
 #       example.com
+#  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST
+#       https://example.com
+#       https://files.example.com
 
 name: FFUF
  
@@ -10,10 +13,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  ffuf-recursive:
+  ffuf:
     runs-on: ubuntu-latest
     env:
-                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+                 TARGET_URL: ${{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                  SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                 
     
@@ -22,16 +26,18 @@ jobs:
 
       - name: Install Dependencies
         run: |
-                 echo "Dev masscan"
-                 
+         wget --quiet https://github.com/ffuf/ffuf/releases/download/v1.1.0/ffuf_1.1.0_linux_amd64.tar.gz
+         tar -xvf ffuf_1.1.0_linux_amd64.tar.gz
+
       - name: Input Files
         run: |
-                 echo "$TARGET_IP_LIST" > targets.txt
+         echo "$TARGET_URL" > targets.txt
            
-      - name: Masscan
-        run: | 
-                 echo "masscan"
+      - name: ffuf
+        run: |
+         while read url; do ./ffuf -c -w wordlists/one-for-all-wordlist.txt -u $url/FUZZ -se -sf -mc all -fc 300,301,302,303,500,400,404 | tee fuff-output.txt; done < targets.txt
+
                                   
       - name: Send Files to Slack Channel            
         run: |           
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-masscan-Results -F filename="$TARGET_DOMAIN"-output.txt -F file=@output.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-ffuf-Results -F filename="$TARGET_DOMAIN"-fuff-output.txt -F file=@fuff-output.txt
