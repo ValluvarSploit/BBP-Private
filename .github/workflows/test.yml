@@ -1,33 +1,35 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
-
-# Controls when the action will run. 
+ 
 on:
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  nmap-1000-ports-scan:
     runs-on: ubuntu-latest
     env:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
                  TARGET_IP: ${{ secrets.TARGET_IP_LIST }}
                  TARGET_IP_EXCLUDE: ${{ secrets.TARGET_IGNORE_IPS_LIST }}
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Install Dependencies
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+                 sudo apt-get update && sudo apt-get install nmap -y
+
+      - name: Input Files
+      - run: |
+                 echo "$TARGET_IP" > targets-ips.txt
+                 echo "$TARGET_IP_EXCLUDE" > targets-ips-exclude.txt
+
+      - name: Nmap scan
+        run: |
+                 nmap -Pn -sC -sV -iL targets-ips.txt -oA nmap-top-1000 -excludefile targets-ips-exclude.txt
+
+      - name: Send Files to Slack Channel
+      - run: |
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-gnmap-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.gnmap -F file=@nmap-top-1000.gnmap
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-nmap-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.nmap -F file=@nmap-top-1000.nmap
+                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Scan-xml-Results -F filename="$TARGET_DOMAIN"-nmap-top-1000.xml -F file=@nmap-top-1000.xml
+
