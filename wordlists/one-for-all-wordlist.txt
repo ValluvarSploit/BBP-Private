@@ -55266,6 +55266,7 @@ sql_data.sql
 sqldb
 sql_dump
 /sqldump.sql 
+sqldump.sql
 sqldump.sql 
 SQLException
 SqlException.class.php
