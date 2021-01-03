@@ -7,7 +7,7 @@
 #       example.com
 #       files.example.com
 
-name: FFUF
+name: Fuzz Directories & Files
  
 on:
   workflow_dispatch:
