@@ -1,4 +1,4 @@
-name: Resolver CI
+name: File Downloader
 
 on:
   workflow_dispatch:
