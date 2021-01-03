@@ -1,26 +1,7 @@
-
-====================
-?
-??
-?? ????
-???
-????
-?????
-??????
-???????
-????????
-??????????
 _
-_0
 0
 00
 000
-0000_007f
-0000_007f.php
-0001_AddDatabaseUser
-0001_AddDatabaseUser.sql
-000da69e222012bd88fbae0122d66528
-000da69e222012bd88fbae0122d66528.php
 000_DigitalRepository
 001
 001_CreateDeploymentTable
@@ -84,8 +65,6 @@ _0
 007_Hierarchy.sql
 007.html
 008
-0080_00ff
-0080_00ff.php
 008.html
 008.php
 008_Sets
@@ -100,8 +79,6 @@ _0
 00-test.t
 01
 010
-0100_017f
-0100_017f.php
 010_categories
 010_DataManager
 010_DataManager.sql
@@ -109,7 +86,6 @@ _0
 010.php
 0.1.0.sql
 011
-01-123056
 011_DigitalRepository
 011_DigitalRepository.sql
 011.php
@@ -131,8 +107,6 @@ _0
 015.php
 016
 016.php
-0180_024F
-0180_024F.php
 01_assign
 01_assign.phpt
 01connect
@@ -141,8 +115,6 @@ _0
 01-Introducing-Symfony
 02
 020_jobs
-0250_02af
-0250_02af.php
 02.css
 02-Exploring-Symfony-s-Code
 02fetch
@@ -151,10 +123,6 @@ _0
 02_output.phpt
 02_output.tpl.php
 03
-0300_036f
-0300_036f.php
-0370_03ff
-0370_03ff.php
 03_filters
 03_filters.phpt
 03_filters.tpl.php
@@ -162,8 +130,6 @@ _0
 03simplequery
 03simplequery.phpt
 04
-0400_04ff
-0400_04ff.php
 04B_08__
 04numcols
 04numcols.phpt
@@ -183,10 +149,6 @@ _0
 04_plugins_image.tpl.php
 04-The-Basics-of-Page-Creation
 05
-0500_052f
-0500_052f.php
-0530_058f
-0530_058f.php
 05-Configuring-Symfony
 05_errors
 05_errors.phpt
@@ -215,6 +177,7 @@ _0
 08_autoload
 08_autoload.phpt
 08-Inside-the-Model-Layer
+09
 09-Links-and-the-Routing-System
 09numrows
 09numrows.phpt
@@ -222,22 +185,19 @@ _0
 0aboutmanual.html
 0.about_zen_cart.html
   0. Definitions.
-%%0E^0E4^0E407559%%footer
-%%0E^0E4^0E407559%%footer.tpl.php
 0.html
 0_Readme_First
 1
 10
+100
+1000
 1001
 1.0.0.xml
-1024
+101
 1.0.3.xml
-10400_1044f
-10400_1044f.php
 1.0.4.xml
 10a0_10ff
 10a0_10ff.php
-  10. Automatic Licensing of Downstream Recipients.
 10errormap
 10errormap.phpt
 10-Forms
@@ -246,50 +206,31 @@ _0
 11
 1.1.3.xml
 1.1.4.xml
-%%117^%%1172603085^index
-%%117^%%1172603085^index.tpl.php
 11-Ajax-Integration
-11 of the WIPO copyright treaty adopted on 20 December 1996, or
+11/api
   11. Patents.
 11.php
 11transactions
 11transactions.phpt
 12
 120
-12-123056
 123
-%%127^%%12781687^pkgelementindex
-%%127^%%12781687^pkgelementindex.tpl.php
 128
 128x128
 12-Caching
-  12. No Surrender of Others' Freedom.
 12.php
 13
-%%131^%%131447552^elementindex
-%%131^%%131447552^elementindex.tpl.php
-%%-13^%%-135052920^header
-%%-13^%%-135052920^header.tpl.php
-%%13^13E^13E2CA0E%%home
-%%13^13E^13E2CA0E%%home.tpl.php
 13.html
 13-I18n-and-L10n
 13limit
 13limit.phpt
 13.php
-  13. Use with the GNU Affero General Public License.
 14
-%%-14^%%-1407541581^method
-%%-14^%%-1407541581^method.tpl.php
-%%146^%%146134639^function
-%%146^%%146134639^function.tpl.php
 14fetchmode_object
 14fetchmode_object.phpt
 14-Generators
 14.php
-  14. Revised Versions of this License.
 15
-1536
   15. Disclaimer of Warranty.
 15.html
 15.php
@@ -298,20 +239,13 @@ _0
 15-Unit-and-Functional-Testing
 16
 160
-%%165^%%1653142046^class
-%%165^%%1653142046^class.tpl.php
-16-Application-Management-Tools
-  16. Limitation of Liability.
 16.php
 16tableinfo
 16tableinfo.phpt
 16x16
 17
-%%176^%%1767056382^include
-%%176^%%1767056382^include.tpl.php
 17-Extending-Symfony
 17.html
-  17. Interpretation of Sections 15 and 16.
 17.php
 17query
 17query.phpt
@@ -322,17 +256,22 @@ _0
 18-Performance
 18.php
 19
-%%-19^%%-1910644431^basicindex
-%%-19^%%-1910644431^basicindex.tpl.php
 192
+1990
+1991
+1992
+1993
+1994
+1995
+1996
+1997
+1998
+1999
 19getlistof
 19getlistof.phpt
 19.html
 19-Mastering-Symfony-s-Configuration-Files
 19.php
-%%1A^1AB^1AB9BADF%%login
-%%1A^1AB^1AB9BADF%%login.html.php
-(1) assert copyright on the software, and (2) offer you this License
 1b
 1c
 1column
@@ -354,56 +293,35 @@ _0
 1.swf
 2
 20
-200709
-200710
-200712
+200
+2000
+2001
+2002
+2003
+2004
+2005
+2006
+2007
 2008
-200805
-2008-1
-2008-12
 2009
-200903
-2009-04-28
-2009-04-28.log.php
-%%-20^%%-2040098360^filesource
-%%-20^%%-2040098360^filesource.tpl.php
-20-210037
-%%202^%%2027336986^classtrees
-%%202^%%2027336986^classtrees.tpl.php
-2048
-2_0_50727
+2010
+2011
+2012
 20.html
 20k_c1
 20k_c2
 20.php
 21
-2100_214f
-2100_214f.php
-2150_218f
-2150_218f.php
 21.html
 21.php
 22
-2210intro
-2210intro.html
-2-215307
-2220fonts
-2220fonts.html
-2230colors
-2230colors.html
-2240cache
-2240cache.html
 22.html
 22working
 22working.html
 22x22
 23
-%%239^%%239105369^footer
-%%239^%%239105369^footer.tpl.php
 23.html
 24
-2460_24ff
-2460_24ff.php
 24.html
 24x24
 25
@@ -417,11 +335,8 @@ _0
 28.html
 29
 29.html
-%%2A^2A7^2A72D64A%%categories
-%%2A^2A7^2A72D64A%%categories.tpl.php
 2-areas
 2-areas.html
-  2. Basic Permissions.
 2c00_2c5f
 2c00_2c5f.php
 2c60_2c7f
@@ -433,9 +348,8 @@ _0
 2dbarcodes
 2dbarcodes.php
 2D.php
-%%2E^2E4^2E4D4797%%add_user
-%%2E^2E4^2E4D4797%%add_user.tpl.php
 2_files
+2g
 2.html
 2 - HtmlHelpers
 2.inc
@@ -448,37 +362,14 @@ _0
 2.readme_how_to_upgrade.html
 3
 30
-3010intro
-3010intro.html
-3020lineplot
-3020lineplot.html
-3030barplot
-3030barplot.html
-3040errorplot
-3040errorplot.html
-3050scatterplot
-3050scatterplot.html
-3060combplots
-3060combplots.html
-3070adjscalelabels.html
-3072
-3080graphaug
-3080graphaug.html
-3090axisform
-3090axisform.html
-3095bands
-3095bands.html
+300
 30.html
 31
-3-142209
-3-144255
 31.html
 32
 32.html
 32x32
 33
-%%33^330^33066966%%manage_users
-%%33^330^33066966%%manage_users.tpl.php
 33.html
 34
 34.html
@@ -492,25 +383,19 @@ _0
 38.html
 39
 39.html
-3c4f07d3ea3546b624eba92122caef38
-3c4f07d3ea3546b624eba92122caef38.php
 3d
 3D
-%%3D^3D3^3D34000E%%message
-%%3D^3D3^3D34000E%%message.tpl.php
 3DCaptcha
 3D-Fantasy
 3dparty
 3d.php
 3e
-~@3ff9456110dff66d51cf942cff6c8a28
-~@3ff9456110dff66d51cf942cff6c8a28.php
+3g
 3.html
 3.inc
 3paso
 3paso.php
 3.php
-  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
 3rd
 3rd_party
 3rdparty
@@ -523,11 +408,7 @@ _0
 400.html
 400.php
 401
-4010radarplot
-4010radarplot.html
 401.html
-4020pieplot
-4020pieplot.html
 403
 403.html
 403.jsp
@@ -545,11 +426,8 @@ _0
 404.php
 404.tpl
 404.xml
-4096
 40.html
 41
-%%41^41F^41F24718%%header
-%%41^41F^41F24718%%header.tpl.php
 41.html
 42
 422
@@ -560,8 +438,6 @@ _0
 44
 44.html
 45
-%%45^45E^45E480CD%%index
-%%45^45E^45E480CD%%index.tpl.php
 45.html
 46
 46.html
@@ -593,10 +469,6 @@ _0
 512
 51.html
 52
-520070221
-520070609
-5269Test
-5269Test.php
 53
 54
 55
@@ -604,11 +476,6 @@ _0
 57
 58
 59
-  5. Conveying Modified Source Versions.
-%%5F^5F2^5F2CEFE2%%myaccount
-%%5F^5F2^5F2CEFE2%%myaccount.tpl.php
-5faa3ac71ba95d59fd13d0623d306a7e
-5faa3ac71ba95d59fd13d0623d306a7e.php
 5gantt
 5gantt.html
 5.html
@@ -623,70 +490,47 @@ _0
 64
 64x64
 65
-%%-65^%%-658603405^page
-%%-65^%%-658603405^page.tpl.php
 66
 67
 68
-6834e866c305618b4350f5aa1ab3f7e2
-6-860313
 69
-%%6A^6A5^6A537DD8%%login
-%%6A^6A5^6A537DD8%%login.tpl.php
   6. Conveying Non-Source Forms.
 6csimdoc.html
-%%6D^6D7^6D7C5625%%test
-%%6D^6D7^6D7C5625%%test.tpl.php
 6.html
 6.php
 7
 70
-%%708^%%708843835^var
-%%708^%%708843835^var.tpl.php
 71
 72
-%%72^72A^72AAA3F9%%settings
-%%72^72A^72AAA3F9%%settings.tpl.php
 73
 75
 768
 77
-%%77^774^774BE9C9%%index
-%%77^774^774BE9C9%%index.html.php
   7. Additional Terms.
 7adv
 7adv.html
 7d
 7.html
 7.php
-    7.  This requirement modifies the requirement in section 4 to
 7zip
 8
 80
-80C552
 81
 82
-87d6c687005a3c9eef68dbb410a07976
 8b
-8ca4342ef08088a0222d02d3d79d3ae4
-8ca4342ef08088a0222d02d3d79d3ae4.php
 8canvas
 8canvas.html
 8.html
 8.php
   8. Termination.
 9
-904f2d49d3b31af1126b0acd58f915f1
-904f2d49d3b31af1126b0acd58f915f1.php
 92
 93
 96
 960
 960.css
 97
-%%972^%%972954595^docblock.tpl.php
 99
-  9. Acceptance Not Required for Having Copies.
 9b
 9.html
 9.php
@@ -727,6 +571,9 @@ abbr.js
 Abbr.php
 abc
 ABC
+abc123
+abcd
+abcd1234
 ABC.hbm.xml
 Abilities
 AbortException
@@ -774,7 +621,6 @@ About.vb
 about.xml
 about_zencart
 about_zencart.html
-above cannot be given local legal effect according to their terms,
 absform
 absform.html
 absform.js
@@ -856,8 +702,6 @@ AbstractView.php
 AbstractXmlDataSet
 AbstractXmlDataSet.php
 ac
-ac59322f16772b5a859c220c9ebed819
-ac59322f16772b5a859c220c9ebed819.php
 acao
 acao.php
 acc
@@ -881,6 +725,7 @@ acceptpagebreak
 _access
 access
 Access
+access.1
 accesscontrol
 AccessControl
 accesscontrol.inc.php
@@ -911,7 +756,11 @@ access.inc.php
 accesskeys
 AccessLevel
 AccessLevel.php
+access-log
 access.log
+access_log
+access-log.1
+access_log.1
 AccessManager
 AccessManager.php
 accessor
@@ -1031,7 +880,9 @@ account_share
 account_share.php
 accounts.php
 account.sql
+/accounts.sql 
 accounts.sql
+accounts.sql 
 accounts.tpl
 AccountTest
 AccountTest.cs
@@ -1089,15 +940,9 @@ acoaction.php
 AC_OETags.js
 aco_fixture
 aco_fixture.php
-  A compilation of a covered work with other separate and independent
-a computer network, with no transfer of a copy, is not conveying.
-  A "contributor" is a copyright holder who authorizes use under this
-  A contributor's "essential patent claims" are all patent claims
-    a) Convey the object code in, or embodied in, a physical product
 aco.php
 aco_two_fixture
 aco_two_fixture.php
-  A "covered work" means either the unmodified Program or a work based
 acp
 acp_attachments
 acp_attachments.html
@@ -1213,6 +1058,7 @@ act_config
 act_config.php
 actinfo
 actinfo.php
+action
 Action
 action.asp
 Action.class.php
@@ -1356,6 +1202,7 @@ ActiveRecord.xml
 activer_lot
 activer_lot.php
 active.tpl
+activex
 Activities
 Activities.php
 activity
@@ -1375,8 +1222,6 @@ actor.php
 act.php
 actualizar
 actualizar.php
-actual knowledge that, but for the patent license, your conveying the
-actually uses, or expects or is expected to use, the product.  A product
 AcyclicTest
 AcyclicTest.php
 ad
@@ -1526,13 +1371,7 @@ additional_examples
 additional_images
 additional_images.php
 additional-methods.js
-  "Additional permissions" are terms that supplement the terms of this
-additional permissions on material, added by you to a covered work,
-Additional permissions that are applicable to the entire Program shall
 additional.php
-  Additional terms, permissive or non-permissive, may be stated in the
-additional terms that apply to those files, or a notice indicating
-    additional terms, to the whole of the work, and all its parts,
 add_level
 add_level.php
 add_link
@@ -1596,6 +1435,7 @@ add_player.php
 add_poll
 add_poll.php
 add_post
+addpost
 addPost
 add_post.php
 addPost.php
@@ -1676,7 +1516,6 @@ add_specials
 add_specials.php
 addtask
 addtask.php
-add to a covered work, you may (if authorized by the copyright holders of
 AddToCart
 AddToCart.inc
 add_topic
@@ -1728,7 +1567,6 @@ AdhocTypedefTask
 AdhocTypedefTask.php
 adicionar
 adicionar.php
-    a) Disclaiming warranty or limiting liability differently from the
 adjacency_list
 AdjacencyList
 adjacency_list.php
@@ -1742,10 +1580,15 @@ adLDAP
 adLDAP.php
 adler32
 adler32.c
+_adm
 adm
+ADM
 _admin
+~admin
 admin
+admin_
 ~Admin
+ADMIN
 admin1
 admin1.master
 admin1.master.cs
@@ -2883,8 +2726,6 @@ adodb-recordset
 adodb-recordset.inc.php
 adodb-ro
 adodb-ro.inc.php
-adodb-ru1251
-adodb-ru1251.inc.php
 adodb-sapdb
 adodb-sapdb.inc.php
 adodb-sess
@@ -2919,8 +2760,6 @@ adodb_th
 adodb_th.inc.php
 adodb-time
 adodb-time.inc.php
-adodb-uk1251
-adodb-uk1251.inc.php
 adodb-vfp
 adodb-vfp.inc.php
 adodb-xmlschema
@@ -2949,6 +2788,7 @@ ads.js
 adsleft.js
 ads.php
 adsright.js
+adv
 Adv
 advanced
 Advanced
@@ -2966,7 +2806,6 @@ AdvancedValueBinder
 AdvancedValueBinder.php
 advcheckbox
 advcheckbox.php
-adversely affects the operation of the network or violates the rules and
 advert
 advertise
 advertisement_fixture
@@ -3109,6 +2948,7 @@ affiliate_popup_image
 affiliate_popup_image.php
 affiliate_reports
 affiliate_reports.php
+affiliates
 affiliate_sales
 affiliate_sales.php
 affiliate_show_banner
@@ -3134,8 +2974,6 @@ af_NA
 af_NA.xml
 afp
 af.php
-afrikaans-iso-8859-1
-afrikaans-iso-8859-1.inc.php
 afrikaans-utf-8
 afrikaans-utf-8.inc.php
 after
@@ -3143,7 +2981,6 @@ After
 After.php
 after_tree_fixture
 after_tree_fixture.php
-a further restriction but permits relicensing or conveying under this
 af.xml
 af_ZA
 af_ZA.xml
@@ -3220,7 +3057,6 @@ agfa
 agfa.php
 aggregate_db_orm
 aggregate_db_type
-"aggregate" if the compilation and its resulting copyright are not
 aggregator
 aggregator.admin.inc
 aggregator.css
@@ -3238,12 +3074,12 @@ aggregator-summary-item.tpl.php
 aggregator.views.inc
 aggregator-wrapper
 aggregator-wrapper.tpl.php
+AggreSpy
 AG.php
 agpl
 agpl-3
 agreement
 agreement.html
-agreement or commitment, however denominated, not to enforce a patent
 Agreement.php
 agreement.tpl
 agregar
@@ -3389,8 +3225,6 @@ aktywacja.php
 ak.xml
 al
 Alanden_
-albanian-iso-8859-1
-albanian-iso-8859-1.inc.php
 albanian.js
 albanian-utf-8
 albanian-utf-8.inc.php
@@ -3431,6 +3265,7 @@ alchemik
 alchemik.php
 alchemist
 alchemist.tpl
+alert
 Alert
 alertBoxes.js
 alert.css
@@ -3439,6 +3274,7 @@ alert_lite.css
 AlertMessage
 AlertMessage.cs
 Alert.php
+alerts
 Alerts
 alerts.js
 alert.tpl
@@ -3498,10 +3334,8 @@ allitems-frame.html
 _all.js
 alllinks
 alllinks.php
-ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
 allocateduserhours
 allocateduserhours.php
-  All other non-permissive additional terms are considered "further
 Allow
 Allow.php
 allow_url_fopen
@@ -3509,7 +3343,6 @@ allow_url_fopen.php
 All.php
 allreleases
 allreleases.xml
-  All rights granted under this License are granted for the term of
 AllSpecs
 AllSpecs.php
 all.sql
@@ -3535,7 +3368,6 @@ almohanad
 almohanad.php
 Alnum
 Alnum.php
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 alpha
 Alpha
 alphaAPI.js
@@ -3553,7 +3385,6 @@ alquiler
 alquiler.php
 AlreadyExistException
 AlreadyExistException.php
-Also add information on how to contact you by electronic and paper mail.
 also_purchased
 also_purchased.html
 also_purchased_products
@@ -3575,7 +3406,6 @@ alternate_template
 alternate_template.php
 alternate_template.tpl.php
 alternative
-    alternative is allowed only occasionally and noncommercially, and
 alternative_php
 alternative_php.html
 alter.sql
@@ -3585,12 +3415,14 @@ alt_nav
 alt_nav.php
 alt_news
 alt.php
+alumni
 AlumniServerProject
 AlumniServerProject.php
 AlwaysShowToolbar.js
 AlwaysTrueValidatorRule
 AlwaysTrueValidatorRule.class.php
 am
+amazon
 Amazon
 Amazon.php
 AmazonS3
@@ -3620,14 +3452,13 @@ AMFSerializer.php
 amline.swf
 amministrazione
 amministrazione.php
-a modified version of its Corresponding Source.  The information must
 am.php
 am.xml
 AN
-an absolute waiver of all civil liability in connection with the
 Anagrafica
 Anagrafica.php
 Anagram
+analog
 analyse
 Analyse
 analyse.php
@@ -3667,23 +3498,18 @@ ancillary_classes.html
 And
 AndCondition
 AndCondition.php
-and control, on terms that prohibit them from making any copies of
-and execute modified versions of a covered work in that User Product from
 And.php
 andreas01
 andreas02
+android
 AndSearch
 AndSearch.class.php
 AndSelector
 AndSelector.php
 AndSpecification
 AndSpecification.cs
-and the Corresponding Source of the work is not available for anyone
 AndValidatorRule
 AndValidatorRule.class.php
-and which are not combined with it such as to form a larger program,
-and you may offer support or warranty protection for a fee.
-  An "entity transaction" is a transaction transferring control of an
 Angle
 Angle.php
 angltrr
@@ -3702,7 +3528,6 @@ animation.js
 animation-min.js
 animations
 AnimationSequence.js
-  An interactive user interface displays "Appropriate Legal Notices"
 anketa
 anketa.php
 Ankh
@@ -3744,6 +3569,8 @@ announcesys
 announcesys.php
 Annuaire
 Annuaire.html
+anon
+anonymous
 Anonymous
 AnonymousAgent
 AnonymousAgent.class.php
@@ -3757,9 +3584,8 @@ anotherPartialSuccess
 anotherPartialSuccess.php
 AN.php
 ans
+ansi
 ANSI
-ANSI58216StringParser
-ANSI58216StringParser.class.php
 AnsiColorFormatter.php
 AnsiColorLogger.php
 ans.php
@@ -3802,18 +3628,14 @@ ANTLRStringStreamTest
 ANTLRStringStreamTest.php
 anycontent
 anycontent.php
-any implied license or other defenses to infringement that may
 AnyImporter
 AnyImporter.cs
 AnyInvokedCount
 AnyInvokedCount.php
-    any liability that these contractual assumptions directly impose on
 AnyMatcher
 AnyMatcher.php
-any other work released this way by its authors.  You can apply it to
 AnyParameters
 AnyParameters.php
-any patent claim is infringed by making, using, selling, offering for
 AnyRequired
 AnyRequired.php
 AnyType
@@ -3827,6 +3649,8 @@ AO.php
 aop.php
 ap
 apa
+apac
+~apache
 apache
 apache2
 apache404
@@ -3837,7 +3661,6 @@ apache.conf
 apache.php
 apache_rewrite
 apa.html
-  A patent license is "discriminatory" if it does not include within
 apb
 apb.html
 Apc
@@ -3852,12 +3675,14 @@ apd
 apd.html
 apercu
 apercu.php
+apexec
 a.php
 api
 Api
 API
 apiActionsTest
 apiActionsTest.php
+api/apidocs
 api_attachment
 api_attachment.php
 ApiBase
@@ -3937,10 +3762,13 @@ ApiResult.php
 apis
 ApisDirectory
 ApisDirectory.php
+api/swagger-ui.html
 api-tables
 api-tables.html
 api_user
 api_user.xml
+api/v1
+api/v2
 api.watermark.php
 api.xml
 APL-2
@@ -3980,6 +3808,8 @@ App_Data
 AppData
 AppData.cs
 AppData.php
+appeal
+appeals
 appearance
 Appearance
 appearance.php
@@ -4011,6 +3841,7 @@ app.inc.php
 app.ini
 App.java
 app.js
+appl
 APPL
 app_layout
 app_layout.php
@@ -4022,7 +3853,7 @@ applescript.php
 applet
 applet.html
 applets
-APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+appliation
 _application
 application
 Application
@@ -4080,6 +3911,7 @@ application_top
 application_top_export
 application_top_export.php
 application_top.php
+application.wadl
 application.xml
 applifecycles
 App_LocalResources
@@ -4090,7 +3922,6 @@ ApplyFilter
 ApplyFilter.php
 ApplyMask
 ApplyMask.php
-apply only to part of the Program, that part may be used separately
 apply.php
 AppManifest
 AppManifest.xml
@@ -4102,19 +3933,20 @@ appointment.php
 App.php
 app.properties
 app.py
-    Appropriate Legal Notices; however, if the Program has interactive
-appropriately publish on each copy an appropriate copyright notice;
 approve
 approve.php
 apps
 appserver
 AppSettings.cs
+AppsLocalLogin
+AppsLogin
 apps.php
 apps.properties
 AppTest.php
 App_Themes
 App_WebReferences
 App.xaml.cs
+apr
 APR_and_Serf
 Apr-License
 Apr-Util-License
@@ -4135,8 +3967,6 @@ arabic.php
 arabic-utf-8
 arabic-utf-8.inc.php
 arabic-utf-8.php
-arabic-windows-1256
-arabic-windows-1256.inc.php
 ar_AE
 ar_AE.xml
 ar_BH
@@ -4295,7 +4125,6 @@ ar_QA.xml
 arquivo
 arquivo.php
 arr
-arrangement, you convey, or propagate by procuring conveyance of, a
 array
 Array
 array.asp
@@ -4458,6 +4287,7 @@ article-post
 article-post.php
 ArticleRepository
 ArticleRepository.cs
+articles
 Articles
 articles.asp
 articles_controller
@@ -4511,6 +4341,7 @@ as
 as2
 as2.php
 AsAdmin
+ascii
 Ascii
 Ascii85
 ASCII85Decode
@@ -4522,8 +4353,8 @@ AsciiHex.php
 ASCIIMathML.js
 Ascii.php
 ascii.xml
+asdf
 asec_images
-  A separable portion of the object code, whose source code is excluded
 AsGrayscale
 AsGrayscale.php
 ashcroft.jar
@@ -4618,6 +4449,7 @@ AssessmentTaken
 AssessmentTakenIterator
 AssessmentTakenIterator.php
 AssessmentTaken.php
+asset
 Asset
 AssetHelper
 AssetHelper.php
@@ -4682,12 +4514,12 @@ at_a_glance
 at_a_glance.html
 Atendimento
 Atendimento.asp
-    a) The work must carry prominent notices stating that you modified
 atlas
 AtLeastExpectation
 AtLeastExpectation.php
 AtMostExpectation
 AtMostExpectation.php
+atom
 Atom
 atom.css
 ATOM.html
@@ -4755,6 +4587,7 @@ attach_quota_body
 attach_quota_body.tpl
 attach_rules
 attach_rules.php
+attachs
 attach_shadow
 attach_shadow.tpl
 attachtypes
@@ -4788,6 +4621,7 @@ attention_list.php
 att_fields
 att_fields.php
 attibuteFilter
+attic
 att.php
 Attr
 AttrCollections
@@ -4854,7 +4688,6 @@ AttrTypes
 AttrTypes.php
 AttrValidator
 AttrValidator.php
-    (at your option) any later version.
 au
 Au
 auc
@@ -4887,10 +4720,10 @@ Audit.cs
 AuditLog
 AuditLog.php
 audit.php
+audits
 aup
 Au.php
 aup.php
-  A "User Product" is either (1) a "consumer product", which means any
 Auteur
 Auteur.cs
 auth
@@ -5069,7 +4902,6 @@ AuthorArticleFormFilter.class.php
 AuthorArticlePeer
 AuthorArticlePeer.php
 AuthorArticle.php
-    author attributions in that material or in the Appropriate Legal
 Author.class.php
 Author.cs
 author_fixture
@@ -5104,6 +4936,7 @@ authorization.php
 AuthorizationTestCase
 AuthorizationTestCase.class.php
 Authorize
+authorized_keys
 authorizenet
 authorizenet_admin_notification
 authorizenet_admin_notification.php
@@ -5124,18 +4957,17 @@ AuthorList
 AuthorList.cs
 AuthorMapBuilder
 AuthorMapBuilder.php
-author or copyright holder as a result of your choosing to follow a
 AuthorPeer
 AuthorPeer.php
 Author.php
 AuthorProfile
 AuthorProfile.cs
+authors
 AUTHORS
 author.schema.xml
 authors of previous versions.
     authors of the material; or
 authors.php
-authors' sake, the GPL requires that modified versions be marked as
 authors.xml
 AuthorTable
 AuthorTable.class.php
@@ -5230,13 +5062,7 @@ autoit.js
 autoit.php
 AutoLengthSC
 AutoLengthSC.class.php
-!autolink
 Autolink
-!autolink_bbcode_include
-!autolink_bbcode_include.php
-!autolink_bbcode_include_var
-!autolink_bbcode_include_var.php
-!autolink.php
 Autolink.php
 __autoload
 _autoload
@@ -5284,6 +5110,7 @@ automargins
 automargins.php
 Automat
 automatic
+automation
 Automat.php
 autopackage2
 autopackage2.php
@@ -5324,8 +5151,6 @@ availability
 availability.php
 Availabilityzones
 Availabilityzones.php
-    available for as long as needed to satisfy these requirements.
-available, or (2) arrange to deprive yourself of the benefit of the
 AvailableTask
 AvailableTask.php
 AvantGo
@@ -5348,15 +5173,16 @@ avisos.php
 avisynth
 avisynth.php
 av.js
-avoid the special danger that patents applied to a free program could
 AW
 award
 award.php
 awards
 awards.php
+awl
 AW.php
 AWSECommerceService
 AWSECommerceService.wsdl
+awstats
 AX
 Axis
 axis2d
@@ -5374,8 +5200,6 @@ az_Cyrl
 az_Cyrl_AZ
 az_Cyrl_AZ.xml
 az_Cyrl.xml
-azerbaijani-iso-8859-9
-azerbaijani-iso-8859-9.inc.php
 azerbaijani-utf-8
 azerbaijani-utf-8.inc.php
 az.lang.inc.php
@@ -5388,17 +5212,17 @@ AZUL
 az.xml
 b
 b2
+b2b
+b2c
 b2.php
 b5
 b5.js
 b6
-b663b6a1-1c34-4c60-a891-c14772507b23
-b663b6a1-1c34-4c60-a891-c14772507b23.xml
-%%B7^B7E^B7EEE2AD%%users
-%%B7^B7E^B7EEE2AD%%users.tpl.php
 BA
 babel
 back
+backdoor
+backend
 Backend
 Backend.class.php
 backend_compat
@@ -5450,6 +5274,8 @@ backlink.php
 backlink.xml
 backoffice
 back.php
+/back.sql 
+back.sql 
 backtrace_silencers
 backtrace_silencers.rb
 backup
@@ -5467,7 +5293,11 @@ backupPrefetch.inc
 _backups
 backups
 backup.sh
+/backup.sql 
 backup.sql
+backup.sql 
+/backups.sql 
+backups.sql 
 backupsync
 backupsync.reg.xml
 backup_timeout
@@ -5529,6 +5359,7 @@ BancoDados.php
 banco.php
 Band
 Band.php
+bandwidth
 BandwidthMonitor
 BandwidthMonitor.php
 banemails
@@ -5545,6 +5376,7 @@ BankMatching.php
 bank.php
 BankReconciliation
 BankReconciliation.php
+banks
 bank.tpl
 banktransfer
 banktransfer.php
@@ -6113,7 +5945,9 @@ basexml.asp
 basexml.php
 basexml.pl
 bash
+.bash_history
 bash.php
+.bashrc
 basic
 Basic
 basic4gl
@@ -6173,9 +6007,8 @@ basket.html
 BasketItem
 BasketItem.cs
 basket.php
+baskets
 bas.php
-basque-iso-8859-1
-basque-iso-8859-1.inc.php
 basque-utf-8
 basque-utf-8.inc.php
 batbackup
@@ -6199,6 +6032,7 @@ batresume.php
 battle
 battle.php
 battle.tpl
+baz
 bb
 b_bbcode_include
 b_bbcode_include.php
@@ -6274,6 +6108,9 @@ bb_func_vthread
 bb_func_vthread.php
 bb_func_vtopic
 bb_func_vtopic.php
+bb-hist
+bb-histlog
+bboard
 bb_parser
 bb_parser.php
 bb.php
@@ -6301,7 +6138,6 @@ bcolor_bbcode_include.php
 bcolor_bbcode_include_var
 bcolor_bbcode_include_var.php
 bcolor.php
-    b) Convey the object code in, or embodied in, a physical product
 bcpowmod
 bcpowmod.php
 BD
@@ -6340,6 +6176,7 @@ be_BY
 be_BY.xml
 bedrijf
 bedrijf.php
+beehive
 been installed in ROM).
 beep
 beez
@@ -6405,6 +6242,7 @@ bench.php
 bencode
 bencode.php
 benc.php
+benefits
 benioku
 be_null
 be_null.inc
@@ -6412,7 +6250,6 @@ Be.php
 berkeleydb
 berkeleydb.lib.php
 BerkeleyDB-License
-be similar in spirit to the present version, but may differ in detail to
 be_sql
 be_sql.inc
 bestFitClass
@@ -6421,7 +6258,6 @@ best_sellers
 best_sellers.php
 beta
 beta.php
-be treated as though they were included in this License, to the extent
 BetterValidateDateAttribute
 BetterValidateDateAttribute.cs
 BetterValidateDateTimeAttribute
@@ -6439,7 +6275,6 @@ BetweenExpectation
 BetweenExpectation.php
 Between.php
 be.xml
-beyond what the individual works permit.  Inclusion of a covered work
 Bezier
 bezierex1
 bezierex1.php
@@ -6447,6 +6282,7 @@ Bezier.php
 bf
 bf2
 bf2.class.php
+bfc
 bf.class.php
 bf.php
 bfv
@@ -6508,6 +6344,7 @@ BigInteger
 BigInteger.cs
 BigInteger.php
 bigint.php
+bigip
 BigMath
 BigMath.php
 Big.php
@@ -6521,7 +6358,9 @@ Billing
 billing.php
 bill.php
 bill.tpl
+~bin
 bin
+binaries
 Binaries
 binary
 Binary
@@ -6556,9 +6395,11 @@ bindTimer
 bindTimer.php
 binlog
 binlog.lib.php
+bins
 bio
 Bio
 Bio.php
+bios
 BI.php
 Birds
 birth
@@ -6598,6 +6439,7 @@ bkgimgflagex3.php
 bkgimgflagex4
 bkgimgflagex4.php
 bkp
+bkup
 black
 Black
 black_and_white
@@ -6791,6 +6633,7 @@ blogger.css
 blogger.inc.php
 blogger.js
 blogger.php
+bloggers
 blogger.xml
 Blog.hbm.xml
 blog.html
@@ -6833,6 +6676,7 @@ Blogroll.aspx
 Blogroll.aspx.cs
 Blogroll.cs
 blogroll.xml
+blogs
 Blogs
 Blogs.aspx
 BlogService
@@ -6941,6 +6785,7 @@ Boards.tpl
 board.tpl
 BoardUnite
 BoardUnite.asp
+~bob
 bobo
 bobo.sql
 bo_CN
@@ -6964,6 +6809,7 @@ BodyStyle.css
 body.tpl
 BodyType
 BodyType.cs
+bofh
 bogusData
 bo_IN
 bo_IN.xml
@@ -7068,6 +6914,7 @@ BookPeer
 BookPeer.php
 book.php
 book-rtl.css
+books
 Books
 BooksCategory
 BooksCategory.php
@@ -7190,8 +7037,6 @@ BOSH
 BOSH.php
 bosnian-utf-8
 bosnian-utf-8.inc.php
-bosnian-windows-1250
-bosnian-windows-1250.inc.php
 bot
 bot_class
 bot_class.php
@@ -7355,8 +7200,6 @@ brands.php
 brazilian
 brazilian.js
 brazilian_portuguese
-brazilian_portuguese-iso-8859-1
-brazilian_portuguese-iso-8859-1.inc.php
 brazilian_portuguese.php
 brazilian_portuguese-utf-8
 brazilian_portuguese-utf-8.inc.php
@@ -7375,7 +7218,6 @@ breakpointer
 BreakPost
 BreakPost.cs
 BreakPost.xml
-    b) Requiring preservation of specified reasonable legal notices or
 brfl.swf
 brian
 brian_priority
@@ -7389,6 +7231,8 @@ broadcast_chat_client
 broadcast_chat_client.pl
 broadcast_echo_cli
 broadcast_echo_cli.pl
+broken
+broker
 Broker
 Broker.php
 brotherjonathan
@@ -7510,7 +7354,6 @@ bs.xml
 bt.css
 bTemplate
 bTemplate.php
-    b) The work must carry prominent notices stating that it is
 btn
 btree
 btree.cpp
@@ -7574,8 +7417,6 @@ bug152
 bug152.php
 bug155
 bug155.php
-bug22328
-bug22328.phpt
 bug674
 bug674.php
 bug727_1
@@ -7622,6 +7463,7 @@ BugType
 BugType.cs
 Bugx
 build
+BUILD
 BuildAll
 BuildAllLoad
 BuildAllLoad.php
@@ -7681,6 +7523,7 @@ BuildPropelGenPEARPackageTask.php
 build-propel.xml
 build.properties
 build.py
+buildr
 build_release
 Build-Release
 build_release.sh
@@ -7713,10 +7556,9 @@ bulgarian-koi8-r.inc.php
 bulgarian.php
 bulgarian-utf-8
 bulgarian-utf-8.inc.php
-bulgarian-windows-1251
-bulgarian-windows-1251.inc.php
 bulk
 bulk.php
+bullet
 bulletproof
 bullets
 bundle
@@ -7745,7 +7587,6 @@ but do not include claims that would be infringed only as a
 butler
 butler.php
 butterfly
-but the special requirements of the GNU Affero General Public License,
 button
 Button
 buttonbar
@@ -7782,6 +7623,7 @@ buying.php
 buyitnow
 buyitnow.php
 buy_now
+buynow
 buy_now.php
 buy.php
 BuyPost
@@ -7797,6 +7639,7 @@ byn
 byn_ER
 byn_ER.xml
 byn.xml
+bypass
 BY.php
 ByteArray
 ByteArrayExporter
@@ -7818,9 +7661,6 @@ BytesUsed
 BytesUsed.php
 ByteValueIterator
 ByteValueIterator.php
-by the Free Software Foundation.
-by the Installation Information.  But this requirement does not apply
-by this License, of making, using, or selling its contributor version,
 bz
 bz.c
 Bzip
@@ -7842,11 +7682,7 @@ c128cobject
 c128cobject.php
 c39object
 c39object.php
-c3b491e5-59ac-4f6a-81e5-27e971b903ed
-c3b491e5-59ac-4f6a-81e5-27e971b903ed.xml
 c4
-%%C8^C82^C821C881%%register
-%%C8^C82^C821C881%%register.tpl.php
 ca
 cabecalho
 cabecalho.php
@@ -8274,6 +8110,7 @@ CallTest.php
 calm
 cal.php
 Calypso
+camel
 CamelCaseToDash
 CamelCaseToDash.php
 CamelCaseToSeparator
@@ -8310,7 +8147,6 @@ cancel.php
 candle.exe.config
 CandleStick
 CandleStick.php
-can do so.  This is fundamentally incompatible with the aim of
 canon
 canonical
 CanonicalCourse
@@ -8325,7 +8161,6 @@ CanonicalCourseTestCase
 CanonicalCourseTestCase.class.php
 canonical.php
 canon.php
-can regenerate automatically from other parts of the Corresponding
 Canvas
 canvas_attach.js
 canvasbezierex1
@@ -8433,6 +8268,8 @@ cardList
 cardList.php
 card.php
 cards
+career
+careers
 carousel
 carousel-beta-debug.js
 carousel-beta.js
@@ -8447,6 +8284,7 @@ car.php
 Carrier
 carrinho
 carrinho.php
+cars
 _cart
 cart
 cartas
@@ -8465,6 +8303,7 @@ cart_item.rb
 cart.js
 cart.php
 cart.rb
+carts
 cart_test
 cart_test1
 cart_test1.rb
@@ -8612,8 +8451,6 @@ catagory.php
 catala.js
 catalan
 catalan.inc.php
-catalan-iso-8859-1
-catalan-iso-8859-1.inc.php
 catalan.php
 catalan-utf-8
 catalan-utf-8.inc.php
@@ -8628,10 +8465,12 @@ catalog.js
 CatalogManager
 CatalogManager.properties
 catalog.php
+catalogs
 Catalogs
 CatalogSearch
 catalogue
 catalog.xml
+catalyst
 Catch
 Catch.php
 Cat.cs
@@ -8815,6 +8654,7 @@ catform.php
 catform.tpl
 cat.html
 cat_images
+catinfo
 cat.js
 cat-js.php
 cat_list
@@ -8844,6 +8684,7 @@ CBTCompiler.php
 CBTProcessor
 CBTProcessor.php
 cc
+ccbill
 cccatcs
 cccatcs.html
 cccheckin
@@ -8873,7 +8714,6 @@ c_ComponentLoadedEvent
 c_ComponentLoadedEvent.php
 CConfig
 CConfig.php
-    c) Convey individual copies of the object code with a copy of the
 CCore
 CCore.php
 cc.php
@@ -8957,8 +8797,11 @@ cerberus
 cerberus.php
 cerca
 cerca.php
+cerificate
 cert
-certain responsibilities if you distribute copies of the software, or if
+certificate
+certificates
+certs
 c_ExceptionOccuredEvent
 c_ExceptionOccuredEvent.php
 cf
@@ -8968,17 +8811,20 @@ cf5_upload
 cf5_upload.cfm
 cf_basexml
 cf_basexml.cfm
+cfcache
 cf_commands
 cf_commands.cfm
 cf_connector
 cf_connector.cfm
 cfdg
 cfdg.php
+cfdocs
 cfg
 cfg.inc.php
 cfg.php
 cfgs
 Cfg.xml
+cfide
 c_FieldAlreadySetException
 c_FieldAlreadySetException.php
 cfiles
@@ -8991,6 +8837,7 @@ cf~testsessions
 cf~testsessions.php
 cf_upload
 cf_upload.cfm
+cfusion
 cf_util
 cf_util.cfm
 CG
@@ -9000,7 +8847,19 @@ cgglzn
 cgglzn.asp
 CGI
 cgi-bin
+cgibin
+cgi-bin2
+cgi-home
+cgi-local
+cgi-pub
+cgi-script
+cgi-shl
+cgi-sys
+cgi-web
+cgi-win
+cgiwrap
 cglib-nodep-2.1_3.jar
+cgm-web
 cgn
 CG.php
 ch
@@ -9089,11 +8948,11 @@ change_boots
 change_boots.php
 change_character
 change_character.php
+changed
 changedatain
 changedatain.inc.php
 changedataout
 changedataout.inc.php
-changed, so that their problems will not be attributed erroneously to
 change_email
 ChangeEmail
 change_email.php
@@ -9286,6 +9145,8 @@ char.asp
 Charcoal
 CharCounter
 char-counter.js
+charge
+charges
     charge under subsection 6d.
 charmap
 charmap.css
@@ -9368,6 +9229,7 @@ chatmsgs
 chatmsgs.php
 chatmsgs.tpl
 chat.php
+chats
 Chats
 chat_server
 chatserver
@@ -9582,6 +9444,7 @@ chick
 Chick
 Chick.deps.php
 Chick.php
+child
 Child
 ChildDef
 ChildDef.php
@@ -9601,14 +9464,11 @@ chinese
 chinese.class.php
 chinese.css
 chinese_gb
-chinese-gb2312
 chinese_gb.inc.php
 chinese.inc.php
 chinese.js
 chinese.lang.php
 chinese.php
-chinese_simplified-gb2312
-chinese_simplified-gb2312.inc.php
 chinese_simplified-utf-8
 chinese_simplified-utf-8.inc.php
 chinese_traditional-big5
@@ -9699,7 +9559,8 @@ CI.php
 Circle
 Circle.php
 circuit
-circumvention of technological measures to the extent such circumvention
+cisco
+cisweb
 cite
 cite.js
 Cite.php
@@ -9707,6 +9568,7 @@ cities
 Cities
 Cities.php
 Cities.xml
+citrix
 city
 city_express
 city_express.php
@@ -9726,6 +9588,7 @@ CL
 cl3d.swf
 claim
 claim.php
+claims
 Claims
 Claims.php
 clan
@@ -10020,6 +9883,8 @@ ClassIControlForward.php
 classic.php
 class.icq.php
 class.id3.php
+classified
+classifieds
 ClassIHttpRequest
 ClassIHttpRequest.php
 ClassILanguage
@@ -10434,7 +10299,6 @@ clear_cache.php
 ClearCache.php
 cleardata
 cleardata.php
-    clear directions next to the object code saying where to find the
 clear_interwiki_cache
 clear_interwiki_cache.php
 clearlooks2
@@ -10461,12 +10325,14 @@ click.html
 click.php
 ClickRepeater.js
 ClickRepeater-min.js
+clicks
 clickthrough
 clickthrough.php
 clicktobuild
 Click To Build
 clicktodeploylocal
 CLI.class.php
+client
 Client
 client1
 client1.php
@@ -10474,6 +10340,7 @@ client2
 client2.php
 client3
 client3.php
+clientaccesspolicy
 ClientBin
 client.class.php
 ClientController
@@ -10521,6 +10388,8 @@ ClientsideSpellcheck
 clientside-spellcheck.js
 clients.js
 clients.php
+/clients.sql 
+clients.sql 
 ClientTest
 ClientTest.php
 client.tpl
@@ -10581,6 +10450,7 @@ closetable2
 closetable2.tpl
 closetable.tpl
 close.tpl
+closing
 Cloud
 Cloud.php
 Clover
@@ -10610,14 +10480,17 @@ clsUpload
 clsUpload.asp
 cls_user
 cls_user.php
+club
 clublib
 clublib.inc
 clublibsec
 clublibsec.inc
 clubs
 clubs.php
+cluster
 ClusteredBars.js
 ClusteredColumns.js
+clusters
 cm
 c_mac
 c_mac.php
@@ -10678,6 +10551,7 @@ CNAME.php
 cncard
 cncard.php
 cn_CN
+cnf
 cn.js
 cn-language
 cn-language.php
@@ -10693,11 +10567,9 @@ c_NoSuchModuleException.php
 c_NotInitializedException
 c_NotInitializedException.php
 cn.php
-cns11643-plane1
-cns11643-plane14
-cns11643-plane2
 cns-language
 cns-language.php
+cnt
 cnt-language
 cnt-language.php
 cntstems
@@ -10710,6 +10582,7 @@ cobertura.jar
 cobol
 cobol.php
 COB.php
+cocoon
 cod
 cod2
 cod2.class.php
@@ -10729,6 +10602,7 @@ code_bbcode_include_var
 code_bbcode_include_var.php
 code_bbcode_save
 code_bbcode_save.php
+codec
 CodeCampServer
 codecampserver.css
 CodeCampServerProfile
@@ -10768,7 +10642,6 @@ CodeIgniter
 code_igniter_license
 CodeIgniter_License
 CodeIgniter.php
-code is in no case prevented or interfered with solely because
 code.js
 codemirror
 codemirror.js
@@ -10789,6 +10662,7 @@ coder
 Coderoom
 Coderoom.Build.Tasks.pdb
 Coderoom MSBuild Tasks
+codes
 CodeSearch
 CodeSearch.php
 codestats
@@ -10811,6 +10685,7 @@ CODING_STANDARDS
 codingstandards.php
 cod.php
 coffee
+cognos
 COGSGLPostings
 COGSGLPostings.php
 co.html
@@ -11028,7 +10903,6 @@ combgraphex1.php
 combination as such.
 combination.js
 combine
-combined work, and to convey the resulting work.  The terms of this
 combine.php
 CombineScripts
 CombineScripts.cs
@@ -11211,6 +11085,7 @@ commentrenderer.php
 comment_reply
 comment_reply.php
 comment-rtl.css
+comments
 Comments
 Comments.aspx
 Comments.aspx.cs
@@ -11270,8 +11145,9 @@ comment-wrapper.tpl.php
 Comment.xml
 com_menumanager
 com_menus
+commerce
 Commerce
-commercial, industrial or non-consumer uses, unless such uses represent
+commercial
 com_messages
 commission
 commission.php
@@ -11390,6 +11266,7 @@ Communication
 communication.css
 communication.inc.php
 Communication.php
+communicator
 community
 community.php
 com_newsfeeds
@@ -11492,6 +11369,8 @@ compiler.xoAppUrl.php
 compiler.xoImgUrl.php
 compile.section_start.php
 compile.sh
+complaint
+complaints
 complete
 completed
 completed.php
@@ -11505,12 +11384,12 @@ ComplexGenerator.php
 complex.html
 Complex.php
 ComplexProperties
+compliance
 compliance_menu
 com_plugins
 com_poll
 _component
 component
-Component, and (b) serves only to enable use of the work with that
 Component.class.php
 ComponentContainer
 ComponentContainer.php
@@ -11595,9 +11474,10 @@ compressOld.php
 Compressor
 Compressor.php
 compress.php
-computer or modifying a private copy.  Propagation includes copying,
+computer
 computers
 computers.php
+computing
 comregister
 comregister.html
 com_registration
@@ -11654,10 +11534,8 @@ conditionalTest.js
 ConditionBase
 ConditionBase.php
 Condition.cs
-conditioned on the non-exercise of one or more of the rights that are
 Condition.php
 conditions
-conditions are met.  This License explicitly affirms your unlimited
 conditionSet
 conditions.php
 ConditionTask
@@ -11672,6 +11550,7 @@ conexao.php
 conexion
 conexion.php
 conex.php
+_conf
 conf
 Conf
 conf.class.php
@@ -11701,6 +11580,7 @@ ConferenceRepository
 ConferenceRepository.cs
 ConferenceRepositoryTester
 ConferenceRepositoryTester.cs
+conferences
 ConferenceTester
 ConferenceTester.cs
 conf_global
@@ -12132,8 +12012,7 @@ Connwl
 Connwl.asp
 ConsecutiveCalls
 ConsecutiveCalls.php
-consequence of further modification of the contributor version.  For
-consistent with the requirements of this License, to extend the patent
+console
 Console
 ConsoleApplication1
 ConsoleApplication1.csproj
@@ -12209,8 +12088,10 @@ const.tpl
 consulta
 consulta.class.php
 consulta.php
+consumer
 Consumer
 Consumer.php
+contact
 Contact
 contactaction
 contactaction.php
@@ -12360,7 +12241,6 @@ ContainsRegexpSelector
 ContainsRegexpSelector.php
 ContainsSelector
 ContainsSelector.php
-contain the covered work, unless you entered into that arrangement,
 contato
 contato.php
 content
@@ -12401,7 +12281,6 @@ content_category.xml
 ContentClass
 content.class.php
 ContentClass.php
-content, constitutes a covered work.  This License acknowledges your
 ContentController
 ContentController.php
 Content.cs
@@ -12535,6 +12414,7 @@ contract
 ContractController
 ContractController.cs
 contract.php
+contracts
 Contracts
 contrato
 contrato.php
@@ -12687,7 +12567,6 @@ Controls.aspx.cs
 controls.html
 controls.js
 Controls.php
-control those activities.  However, it does not include the work's
 Control.tpl
 control_update_calendar
 control_update_calendar.tpl
@@ -12755,12 +12634,9 @@ convert_uudecode.php
 convert_uuencode
 convert_uuencode.php
 convert_word.js
-conveyed by you (or copies made from those copies), or (b) primarily
-    conveying of source, or (2) access to copy the
   Conveying under any other circumstances is permitted solely under
 Conveyor
 Conveyor.php
-convey, without conditions so long as your license otherwise remains
 conv.php
 conv.pl
 cookbook
@@ -12848,25 +12724,17 @@ copyleft
 copyleft.inc
 copy_move
 copy_move.php
-    copy of the Corresponding Source for all the software in the
-copy of the Program in return for a fee.
 copyOutput
 copy.php
 copyright
 Copyright
 COPYRIGHT
-  "Copyright" also means copyright-like laws that apply to other kinds of
 copyright.asp
- Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
-    Copyright (C) <year>  <name of author>
-copyright holder, and you cure the violation prior to 30 days after
 copyright.html
 copyright.inc.php
-copyright on the Program, and are irrevocable provided the stated
 Copyright.php
 CopyTask
 CopyTask.php
-    copy the object code is a network server, the Corresponding Source
 copy_to_clipboard
 copy_to_confirm
 copy_to_confirm.php
@@ -12944,21 +12812,14 @@ CornersStyleCollection.class.php
 corp
 corpo
 corpo.php
+corporate
 Corporate
 corp.php
 CorrectGamma
 CorrectGamma.php
+corrections
 correo
 correo.php
-    Corresponding Source along with the object code.  If the place to
-  Corresponding Source conveyed, and Installation Information provided,
-Corresponding Source conveyed under this section must be accompanied
-    Corresponding Source fixed on a durable physical medium
-    Corresponding Source from a network server at no charge.
-    Corresponding Source in the same way through the same place at no
-Corresponding Source of the work from the predecessor in interest, if
-    Corresponding Source.  Regardless of what server hosts the
-    Corresponding Source, you remain obligated to ensure that it is
 CosmosResult
 CosmosResult.php
 CosmosResultSet
@@ -13013,7 +12874,6 @@ countrylist
 countrylist.php
 Country.php
 country.sql
-country that you have reason to believe are valid.
 country.tpl
 country.xml
 counts
@@ -13087,6 +12947,7 @@ CourseOffering.php
 CourseOfferingTestCase
 CourseOfferingTestCase.class.php
 course.php
+courses
 Courses
 CourseSection
 CourseSection.class.php
@@ -13115,41 +12976,11 @@ CoverageReportTransformer
 CoverageReportTransformer.php
 CoverageSetupTask
 CoverageSetupTask.php
-covered work, and grant a patent license to some of the parties
-covered work in a country, or your recipient's use of the covered work
-covered work is covered by this License only if the output, given its
-covered work so as to satisfy simultaneously your obligations under this
-covered work, you indicate your acceptance of this License to do so.
 cover.php
 covers
 cp
 cp037
 cp038
-cp10000
-cp10006
-cp10007
-cp10029
-cp1006
-cp10079
-cp10081
-cp1026
-cp1250
-cp1250.xml
-cp1251
-cp1251_to_utf8_recursive
-cp1251_to_utf8_recursive.php
-cp1251.xml
-cp1252
-cp1253
-cp1254
-cp1255
-cp1256
-cp1256.xml
-cp1257
-cp1257.xml
-cp1258
-cp1259_to_utf8
-cp1259_to_utf8.php
 cp273
 cp274
 cp275
@@ -13200,6 +13031,7 @@ cp932
 cp936
 cp949
 cp950
+cpadmin
 cpaint
 cpaint2
 cpaint2.backend-debugger.php
@@ -13236,7 +13068,6 @@ cpp-qt.php
 cpp.xml
 cprofil
 cprofil.php
-    c) Prohibiting misrepresentation of the origin of that material, or
 cProtocolSMTP
 cp_smilies
 cp_smilies.php
@@ -13247,7 +13078,9 @@ cp_view.php
 cql
 CQLResult
 CQLResult.xml
+cr
 CR
+crack
 craft
 craft.php
 crahan
@@ -13257,6 +13090,8 @@ cram_md5_sasl_client
 cram_md5_sasl_client.php
 CRAP
 CRAP.php
+crash
+crashes
 crass
 crawler
 Crawler
@@ -13436,7 +13271,6 @@ CREDITOS
 creditos.php
 Credit.php
 credits
-!CREDITS
 credits.html
 credits.php
 CreditStatus
@@ -13467,13 +13301,9 @@ crloginform.ihtml
 crloginform.tpl.html
 crm
 croatian
-croatian-iso-8859-2
-croatian-iso-8859-2.inc.php
 croatian.php
 croatian-utf-8
 croatian-utf-8.inc.php
-croatian-windows-1250
-croatian-windows-1250.inc.php
 cron
 cron-curl
 cron-curl.sh
@@ -13484,7 +13314,9 @@ cron.log
 cron-lynx
 cron-lynx.sh
 cron.php
+crons
 crontab
+crontabs
 crop
 croparea
 croparea.php
@@ -13944,6 +13776,8 @@ customers_points_pending.php
 customers_points.php
 customers_points_referral
 customers_points_referral.php
+/customers.sql 
+customers.sql 
 customers_status
 customers_status.php
 Customers.xml
@@ -13993,6 +13827,8 @@ customize.php
 custom.js
 custom_load
 custom_load.php
+custom-log
+custom_log
 custom-methods-demo
 custom-methods-demo.html
 custom_pages
@@ -14025,16 +13861,19 @@ custom.xml
 CustWhereAlloc
 CustWhereAlloc.php
 Cut
+cute
 cute_icons_for_site
 cut_link
 cut_link.php
 Cut.php
+cv
 CV
 cv.css
 CV.php
 CVS
 cvs2cl
 cvs.html
+.cvsignore
 CvsPassTask
 CvsPassTask.php
 CVS.php
@@ -14044,6 +13883,7 @@ CvsTask.php
 cvswrappers
 cv.xml
 cx
+cxf
 c.xml
 C#.xml
 cxpdo
@@ -14067,7 +13907,6 @@ cygbuild.sh
 cy_GB.xml
 cy.js
 Cylinders.js
-    c) You must license the entire work, as a whole, under this
 cy.php
 cyrillic
 CyrusSASL
@@ -14077,17 +13916,14 @@ cz
 czary
 czary.php
 czary.tpl
+czcmdcvt
 czech
 czech.inc
 czech.inc.php
-czech-iso-8859-2
-czech-iso-8859-2.inc.php
 czech.js
 czech.php
 czech-utf-8
 czech-utf-8.inc.php
-czech-windows-1250
-czech-windows-1250.inc.php
 cz.js
 cz_lang_data
 cz_lang_data.inc.php
@@ -14112,6 +13948,7 @@ daemon
 Daemon
 Daemon.class.php
 daemon.php
+daily
 DailyCountsResult
 DailyCountsResult.php
 DailyCountsResultSet
@@ -14130,11 +13967,10 @@ DAL.csproj
 DalHelper
 DalHelper.cs
 dal.php
+dana-na
 danish
 danish.inc.php
 danish.ini
-danish-iso-8859-1
-danish-iso-8859-1.inc.php
 danish.js
 danish.php
 danish-utf-8
@@ -14335,7 +14171,11 @@ database_setup_default
 database_setup_default.php
 database_setup.php
 databases.php
+/database.sql 
 database.sql
+database.sql 
+/database.sqlite 
+database.sqlite 
 database-start
 database-start.tpl
 database_tables
@@ -14528,7 +14368,9 @@ data_sources
 datasources
 datasources.class.php
 datasource.xml
+/data.sql 
 data.sql
+data.sql 
 DataSQLBuilder
 DataSQLBuilder.php
 data.sql.php
@@ -14591,6 +14433,7 @@ data-view-plugins.js
 DataVO
 DataWire.js
 data.xml
+date
 Date
 DateAndTime
 DateAndTime.class.php
@@ -14744,6 +14587,7 @@ datum
 datum.php
 dav
 da.xml
+day
 Day
 Day1
 Day2
@@ -14770,6 +14614,7 @@ dayview.php
 _db
 db
 Db
+DB
 DB1
 db1.mdb
 DB1.php
@@ -14777,6 +14622,7 @@ Db2
 Db2.php
 Db4oHttpModule
 Db4oHttpModule.cs
+dba
 db_access
 dbaccess
 db_access.php
@@ -14798,6 +14644,8 @@ DBAPI
 DBAPI.php
 dbase
 dbase.php
+/dbase.sql 
+dbase.sql 
 db.asp
 db-backup
 db_backup
@@ -14806,6 +14654,8 @@ db-backup.php
 db_backup.php
 DBBackup.php
 db_backups
+/db_backup.sql 
+db_backup.sql 
 DbBase
 DbBase.php
 DBBool
@@ -14901,6 +14751,8 @@ db_drivers
 DBDrivers
 dbDump
 dbDump.php
+/dbdump.sql 
+dbdump.sql 
 DBE
 DBE.interface.php
 db_error
@@ -15006,6 +14858,7 @@ db-logs
 db-logs.lock
 db_main
 db_main.php
+dbman
 DBManager
 DbManager.cs
 DBManager.php
@@ -15018,6 +14871,7 @@ DbModel.html
 dbmodel.php
 DbModule
 DbModule.php
+dbmodules
 dbms
 db_msql
 db_msql.inc
@@ -15183,8 +15037,12 @@ dbsettings.php
 db_setup
 db_setup.php
 DbSimple
+/db.sql 
 db.sql
+db.sql 
 db_sql
+/db.sqlite 
+db.sqlite 
 db_sqlite
 DBSQLite
 DbSqlite.class.php
@@ -15246,6 +15104,7 @@ db_updater
 db_updater.php
 db_usql
 db_usql.inc
+dbutil
 dbUtil
 DBUtil.cs
 DB_utility
@@ -15264,11 +15123,12 @@ db_verify
 db_verify.php
 dbx.js
 db.xml
+dc
 DCE_Controller
 DCE_Controller.php
+dcforum
 d_config
 d_config.php
-    d) Convey the object code by offering access from a designated
 dcs
 dcs.php
 dd
@@ -15292,6 +15152,7 @@ deactivate.php
 deactivate.tpl
 deadend
 deadend.php
+dealer
 Dearchiver
 Dearchiver.class.php
 de_AT
@@ -15383,9 +15244,12 @@ de_CH
 de_CH.xml
 decimal
 decimal.php
+decl
+declaration
 Declaration
 Declaration.cs
 Declaration.js
+declarations
 declare.js
 DeclareVars
 DeclareVars.php
@@ -15410,7 +15274,10 @@ Decorators
 Decorators.php
 DecoratorTest
 DecoratorTest.php
+decrypt
 Decrypt
+decrypted
+decryption
 Decrypt.php
 dectobase64
 dectobase64.inc.php
@@ -15707,6 +15574,7 @@ DefineSuppTransClass.php
 DefineTask
 DefineTask.php
 define.tpl
+definition
 Definition
 DefinitionCache
 DefinitionCacheFactory
@@ -15910,6 +15778,7 @@ DeleteController.php
 delete_cookie
 delete_cookie.inc.php
 DELETE.cs
+deleted
 Deleted
 Deleted.aspx
 deleteDefaultMessages
@@ -16276,6 +16145,7 @@ _desktop.ini
 desktop.ini
 desktop.js
 desktop.php
+desktops
 desktopsearch
 deslogar
 deslogar.php
@@ -16354,6 +16224,7 @@ development.log
 development.php
 development.rb
 devel.php
+device
 Device
 device_fixture
 device_fixture.php
@@ -16376,6 +16247,7 @@ devolucion
 Devolucion
 Devolucion.php
 dev.php
+devs
 _devtools
 Dev.xml
 dewplayer-mini.swf
@@ -16384,6 +16256,7 @@ dewplayer.swf
 DException
 DException.php
 de.xml
+df
 DFA
 DFA.php
 Dfn
@@ -16524,6 +16397,7 @@ DictionarySectionHandler
 DictionarySectionHandler.cs
 Dict.php
 dicts
+diff
 Diff
 Diff3
 Diff3.php
@@ -16538,9 +16412,10 @@ diffLanguage
 diffLanguage.php
 Diff.php
 diff.phpt
+diffs
 diff.xml
-    d) If the work has interactive user interfaces, each must display
 dig
+digest
 Digest
 DigestMD5
 DigestMD5.php
@@ -16581,6 +16456,7 @@ DimensionsPart
 DimensionsPart.class.php
 DimensionsPartStructure
 DimensionsPartStructure.class.php
+dir
 Dir
 DIR
 dir1
@@ -16604,12 +16480,14 @@ Directive.php
 direct.js
 DirectLex
 DirectLex.php
+directories
 Directories
 directories.js
 Directories.php
 directorio
 Directorio
 Directorio.php
+directory
 Directory
 Directory.class.php
 Directory.cs
@@ -16832,7 +16710,6 @@ DistributedTestSuiteBuilder
 DistributedTestSuiteBuilder.java
 DistributedTestSuiteBuilderTest
 DistributedTestSuiteBuilderTest.java
-distribution (with or without modification), making available to the
 Distributor
 distro
 div
@@ -16858,17 +16735,20 @@ dk_lang_data.inc.php
 dk.lang.inc.php
 DK.php
 dl
-    d) Limiting the use for publicity purposes of names of licensors or
 DLL
 dlldata.c
 dl.php
 dm
 dmc
+dm-config
 dmod
 dmod.php
 dmpf
 dmpf.c
 dm.php
+dms
+dms0
+DMSDump
 dnd
 dndContainer.js
 dnd.css
@@ -16921,6 +16801,7 @@ docbook.css
 doc_comment.php
 doc_comment_test.php
 doc.css
+docebo
 doc-files
 DocFrame.html
 doc.html
@@ -16928,6 +16809,7 @@ DocHTML.php
 doc.inc
 docit.sh
 doc.js
+dock
 docleanup.php
 DocLink.php
 Docomo.php
@@ -16966,6 +16848,7 @@ doctypes.php
 doctype.tpl
 docu
 docu.css
+document
 Document
 documentacao
 Documentacion
@@ -16984,7 +16867,6 @@ document_categories.php
 Document.class.php
 Document.cs
 document_directory_fixture.php
-documented (and with an implementation available to the public in
 documenter.php
 document_fixture.php
 document_general
@@ -17009,6 +16891,7 @@ DocumentQuery.php
 DocumentRevisions
 document_root
 documents
+Documents
 document_sections.php
 DocumentSecurity.php
 documents.php
@@ -17160,8 +17043,6 @@ dom_xmlrpc_client
 dom_xmlrpc_client.php
 dom_xmlrpc_constants
 dom_xmlrpc_constants.php
-dom_xmlrpc_datetime_iso8601
-dom_xmlrpc_datetime_iso8601.php
 dom_xmlrpc_domit_lite_parser
 dom_xmlrpc_domit_lite_parser.php
 dom_xmlrpc_domit_parser
@@ -17251,7 +17132,6 @@ double_list.js
 Double.php
 DoubleValidatorRule
 DoubleValidatorRule.class.php
-doubtful cases shall be resolved in favor of coverage.  For a particular
 do_updatetask
 do_updatetask.php
 doupload
@@ -17278,6 +17158,7 @@ download-cats.php
 download_cats.php
 download.class.php
 downLoad.css
+downloader
 Downloader
 Downloader.cs
 Downloader.php
@@ -17435,6 +17316,7 @@ DropMenu.js
 droppable
 droppable.html
 Droppable.js
+dropped
 drop.php
 drop.sql
 drop_table
@@ -17562,7 +17444,9 @@ dump_session
 dump_session.php
 dumpSisterSites
 dumpSisterSites.php
+/dump.sql 
 dump.sql
+dump.sql 
 _dumpTemplate
 _dumpTemplate.php
 dumpTextPass
@@ -17598,8 +17482,6 @@ dutch-form
 dutch-form.html
 dutch-form.js
 dutch.inc.php
-dutch-iso-8859-1
-dutch-iso-8859-1.inc.php
 dutch.js
 dutch_NL
 dutch.php
@@ -17716,17 +17598,12 @@ e107_plugins
 e107_themes
 e107v4a
 e2
-%%E3^E36^E36F7EB7%%test
-%%E3^E36^E36F7EB7%%test.conf%7Csetup.php
-e8a01c49e3bd6881d1526bce80cbcad7
-e8a01c49e3bd6881d1526bce80cbcad7.php
+e2fs
 eaccelerator
 eaccelerator.php
-  Each contributor grants you a non-exclusive, worldwide, royalty-free
-  Each time you convey a covered work, the recipient automatically
-  Each version is given a distinguishing version number.  If the
 Ean13
 Ean13.php
+ear
 earlier work or a work "based on" the earlier work.
 early_bind
 early_bind.php
@@ -17794,10 +17671,10 @@ eclipse
 eclipse.php
 eclipse_test
 eclipse_test.php
-    e) Convey the object code using peer-to-peer transmission, provided
+ecommerce
 EC.php
 ed
-    e) Declining to grant rights under trademark law for use of some
+edge
 EDIconfig
 EDIconfig.inc
 EDI_Incoming_Orders
@@ -18224,6 +18101,7 @@ editRole
 editRole.php
 Editroles
 Editroles.php
+edits
 edit_search
 EditSessionLink
 EditSessionLink.ascx
@@ -18304,6 +18182,8 @@ edit.xml
 EDIVariableSubstitution
 EDIVariableSubstitution.inc
 edmunds
+edp
+edu
 education
 Education
 education.php
@@ -18403,10 +18283,13 @@ effects.transfer.min.js
 effects.transfer.packed.js
 EfferentCoupling
 EfferentCoupling.php
+effort
+efforts
 EG
 egold
 egold.php
 EG.php
+egress
 egypt
 EH
 ehcache
@@ -18432,6 +18315,7 @@ Elastic.php
 el_CY
 el_CY.xml
 el_dlg.js
+element
 Element
 Elemental
 element-beta-debug.js
@@ -18675,12 +18559,14 @@ email_word.asp
 embed
 Embeddability
 Embeddability.php
+embedded
 EmbeddedFile
 EmbeddedFile.php
 embed.html
 embed.js
 embed.php
 emblems
+emea
 Emergente
 emerwarp
 emerwarp.php
@@ -18719,9 +18605,11 @@ EmployeeTerritoryController
 EmployeeTerritoryController.cs
 EmployeeTerritory.cs
 employee.xml
+employment
 Empresa
 Empresa.php
 empresas
+empty
 Empty
 Empty.ascx
 empty-file
@@ -18743,6 +18631,8 @@ empty-value-struct
 empty-value-struct.php
 EMS
 EMS.php
+emu
+emulator
 en
 enable
 EnabledInterface
@@ -18787,7 +18677,6 @@ encoder.py
 EncoderTest
 EncoderTest.php
 encoding
-encoding.cp1251.inc.php
 encoding.cp866.inc.php
 encoding.dingbats.inc.php
 encoding.entities.inc.php
@@ -18795,31 +18684,16 @@ EncodingFoundException
 EncodingFoundException.cs
 encoding.glyphs.inc.php
 encoding.inc.php
-encoding.iso-8859-10.inc.php
-encoding.iso-8859-11.inc.php
-encoding.iso-8859-13.inc.php
-encoding.iso-8859-14.inc.php
-encoding.iso-8859-15.inc.php
-encoding.iso-8859-1.inc.php
-encoding.iso-8859-2.inc.php
-encoding.iso-8859-3.inc.php
-encoding.iso-8859-4.inc.php
-encoding.iso-8859-5.inc.php
-encoding.iso-8859-6.inc.php
-encoding.iso-8859-7.inc.php
-encoding.iso-8859-8.inc.php
-encoding.iso-8859-9.inc.php
 encoding.koi8-r.inc.php
 encoding.php
 encodings
 encoding.symbol.inc.php
 encoding_test
 encoding_test.php
-encoding.windows-1250.inc.php
-encoding.windows-1251.inc.php
-encoding.windows-1252.inc.php
 en.conf
+encrypt
 Encrypt
+encrypted
 EncryptedData
 EncryptedData.php
 EncryptedKey
@@ -18843,6 +18717,7 @@ encuesta.php
 encyclopedia
 Encyclopedia
 encyclopedia.php
+encyption
 end
 endauction_cumulative
 endauction_cumulative.inc.php
@@ -19005,8 +18880,6 @@ english_help.php
 english.ignore.php
 english.inc
 english.inc.php
-english-iso-8859-1
-english-iso-8859-1.inc.php
 english.js
 english.lang.php
 english.language.php
@@ -19076,6 +18949,8 @@ EnterKeyHandling.js
 EnterParagraphs
 enter-paragraphs.js
 enter.php
+enterprise
+entertainment
 entete
 entete.php
 Entidades
@@ -19156,10 +19031,12 @@ EntityWebTemplate
 Entity.xml
 Entrada
 Entrada.php
+entries
 Entries
 Entries.cs
 Entries.php
 _entry
+entry
 Entry
 EntryAbstract
 EntryAbstract.php
@@ -19244,12 +19121,14 @@ en_US_POSIX.xml
 en-US.xml
 en_US.xml
 en_utf8
+env
 ENV
 env.conf.php
 EnvelopedSignature
 EnvelopedSignature.php
 en_VI
 env.inc.php
+environ
 environment
 Environment.class.php
 environment.config.php
@@ -19457,6 +19336,7 @@ error.js.php
 Error.lib.php
 ErrorLinePlot
 ErrorLinePlot.html
+error-log
 error.log
 error_log
 errorlog
@@ -19503,6 +19383,7 @@ ErrorResponse
 ErrorResponse.xml
 ErrorResult
 ErrorResult.cs
+errors
 _Errors
 Errors
 errors.asp
@@ -19557,6 +19438,8 @@ err.php
 erstellen
 erstellen.php
 es
+esale
+esales
 ESAPI
 ESAPI.properties
 es_AR
@@ -19635,8 +19518,6 @@ estilo.css
 estilos
 estilos.css
 estonian
-estonian-iso-8859-1
-estonian-iso-8859-1.inc.php
 estonian.js
 estonian.php
 estonian-utf-8
@@ -19683,6 +19564,7 @@ Eula
 EULA_NDepend
 eu.php
 EUR.js
+europe
 euskara.js
 eu.xml
 eval
@@ -19694,7 +19576,6 @@ EvaluationIterator.php
 Evaluation.php
 Evaluator
 Evaluator.cs
-EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
 event
 _Event
 Event
@@ -19763,6 +19644,7 @@ EventQuery.php
 event_queue
 event_queue.class.php
 _events
+events
 Events
 events_actions
 Events.cs
@@ -19797,12 +19679,13 @@ EveryNthPoint
 EveryNthPoint.php
 EveryoneGroup
 EveryoneGroup.class.php
- Everyone is permitted to copy and distribute verbatim copies
+evil
 evt
 evt.php
 eWebEditor
 eWebEditor.asp
 ew.js
+ews
 ex
 ex1
 ex1.php
@@ -19815,7 +19698,6 @@ ex4
 ex4.php
 ex5
 ex5.php
-exact copy.  The resulting work is called a "modified version" of the
 ExactlyExpectation
 ExactlyExpectation.php
 exam
@@ -20663,12 +20545,11 @@ example_word.css
 example.xml
 example-xrds
 example-xrds.xml
+excalibur
 excanvas.js
 excanvas.pack.js
 excel
 Excel
-Excel2007
-Excel2007.php
 Excel5
 Excel5.php
 Excel.js
@@ -20745,7 +20626,6 @@ ExcludeMimeType.php
 excludeuser
 excludeuser.php
 ex.css
-excuse you from the conditions of this License.  If you cannot convey a
 Exe
 exec
 exec.html
@@ -20918,6 +20798,7 @@ Expr.php
 ext
 Ext
 ext-2
+ext2
 Ext.Action.html
 ext-air
 ext-air-adapter.js
@@ -21065,7 +20946,6 @@ extensions.php
 extension.xml
 extenso
 extenso.php
-extent that warranties are provided), that licensees may convey the
 exterior_type_category_fixture
 exterior_type_category_fixture.php
 extern
@@ -21416,6 +21296,7 @@ EZPDF
 ezpdo
 ez_setup
 ez_setup.py
+ezshopper
 ez_sql
 ezsql
 ez_sql_core
@@ -21436,13 +21317,9 @@ ezxml.php
 f
 F
 f2
-%%F2^F2A^F2A0FFFB%%sermons
-%%F2^F2A^F2A0FFFB%%sermons.tpl.php
 f2.php
 f5attack_overrun_message
 f5attack_overrun_message.php
-%%F7^F7F^F7F34188%%header
-%%F7^F7F^F7F34188%%header.tpl.php
 fa
 fa_AF
 fa_AF.xml
@@ -21506,6 +21383,7 @@ facturar
 facturas
 facturas_controller
 facturas_controller.php
+faculty
 Fade.js
 fader
 fader.css
@@ -21527,6 +21405,7 @@ fail.html
 Fail.php
 FailTest
 FailTest.php
+failure
 Failure
 Failure.php
 fa_ir
@@ -21556,6 +21435,7 @@ False.php
 fam
 famfamfam
 famfamfam_silk_icons
+family
 Family
 Family.php
 fancy
@@ -21687,8 +21567,6 @@ fbx_Switch.php
 fc
 FCF_Area2D.swf
 FCF_Bar2D.swf
-%%FC^FC8^FC84D2B5%%login
-%%FC^FC8^FC84D2B5%%login.tpl.php
 FCF_Candlestick.swf
 FCF_Column2D.swf
 FCF_Column3D.swf
@@ -21707,6 +21585,7 @@ FCF_StackedArea2D.swf
 FCF_StackedBar2D.swf
 FCF_StackedColumn2D.swf
 FCF_StackedColumn3D.swf
+fcgi-bin
 fck
 fck_1_gecko.js
 fck_1_ie.js
@@ -22017,7 +21896,6 @@ feature_set_fixture
 feature_set_fixture.php
 features.html
 features.php
-feature that (1) displays an appropriate copyright notice, and (2)
 feature.xml
 FederatingRepositoryManager
 FederatingRepositoryManager.class.php
@@ -22026,6 +21904,7 @@ Fedex
 fedexeu.php
 Fedex.php
 Fedora
+feed
 Feed
 feed_add
 feed_add.php
@@ -22092,6 +21971,7 @@ feed-viewer.css
 FeedViewer.js
 FeedWindow.js
 feed.xml
+felix
 FellowStudents
 FellowStudents.php
 fense
@@ -22190,6 +22070,7 @@ fi_lang_data.inc.php
 fi.lang.inc.php
 fi-language
 fi-language.php
+file
 File
 file1
 file11
@@ -22207,6 +22088,7 @@ file41
 FileAccessRules
 file_add_db
 file_add_db.asp
+fileadmin
 File_Admin_AddNew
 File_Admin_AddNew.asp
 File_Admin_List
@@ -22533,6 +22415,7 @@ FileWorkerBase
 FileWorkerBase.cs
 FileWriter
 FileWriter.php
+filez
 Filing
 FilingException
 FilingException.php
@@ -22667,8 +22550,6 @@ filtros
 fil.xml
 fin
 Final
-  Finally, every program is threatened constantly by software patents.
-finally terminates your license, and (b) permanently, if the copyright
 Final.php
 finance
 Finance
@@ -22705,6 +22586,7 @@ find_unused_messages.sh
 findusers
 findusers.php
 finefolders
+finger
 Finger
 Finger.php
 finish
@@ -22718,8 +22600,6 @@ finish.php
 finish.tpl
 finnish
 finnish.inc.php
-finnish-iso-8859-1
-finnish-iso-8859-1.inc.php
 finnish.js
 finnish.php
 finnish-utf-8
@@ -22739,6 +22619,7 @@ firebug.js
 Firebug.php
 firebug.phpt
 firebugx.js
+firefox
 Firefox
 FirePhp
 FirePHP.class.php
@@ -22791,7 +22672,6 @@ FIXEDMENU
 Fixed.php
 FixedPointFormatter
 FixedPointFormatter.cs
-fixed term (regardless of how the transaction is characterized), the
 fixfiles
 fixfiles.sh
 fix-ie5.js
@@ -22801,8 +22681,6 @@ fi.xml
 FixNesting
 FixNesting.php
 fixperms
-FixPHP5PEARWarnings
-FixPHP5PEARWarnings.php
 fixscale_radarex1
 fixscale_radarex1.php
 fixSlaveDesync.php
@@ -22987,6 +22865,7 @@ FlowPlayerDark.swf
 flowPlayer.js
 FlowPlayerLight.swf
 FlowPlayerLP.swf
+flows
 flow_stats
 flow_stats.php
 flow_viewport
@@ -23001,6 +22880,7 @@ fluidics
 fluidics.php
 Flush
 Flush.php
+flv
 FLV
 FLV.php
 flvplayer
@@ -23010,6 +22890,7 @@ flv.swf
 fm
 FM
 FM.php
+fn
 fnc
 fnc.php
 fns_tinybrowser
@@ -23026,6 +22907,7 @@ fo_FO
 fo_FO.xml
 fo.js
 _folder
+folder
 Folder
 Folder1
 folder.class.php
@@ -23057,6 +22939,7 @@ fonctions_generales
 fonctions_generales.php
 fonctions.inc.php
 fonctions.php
+font
 _Font
 Font
 FontChoice.js
@@ -23145,6 +23028,7 @@ footer.jsp
 _footer.php
 footer.php
 _Footer.php.html
+footers
 Footers
 _footer.tpl
 footer.tpl
@@ -23166,8 +23050,6 @@ foot.tpl.php
 foo.xml
 fo.php
 For
-for and in connection with specific products or compilations that
-for a work that has been modified or installed by the recipient, or for
 Forbidden
 Forbidden.php
 forbiden
@@ -23198,10 +23080,8 @@ foreignkey.tpl
 Foreign.php
 forelse
 forelse.php
-for enforcing compliance by third parties with this License.
 forest
 forest.php
-  For example, if you distribute copies of such a program, whether
 forge
 forge.html
 forge.php
@@ -23234,6 +23114,7 @@ forgotten
 forgotten.php
 for.help
 _form
+form
 Form
 Form1
 Form1.cs
@@ -23249,7 +23130,6 @@ FormActionNamePassTokenCollector
 FormActionNamePassTokenCollector.class.php
 _form_actions
 _form_actions.php
-for making modifications to it.  "Object code" means any non-source
 Form.ascx
 Form.ascx.cs
 Form.ascx.designer.cs
@@ -23411,6 +23291,7 @@ form_login.php
 formLogin.php
 form_lot
 form_lot.php
+formmail
 FormMail
 form_mailing
 form_mailing.php
@@ -23430,14 +23311,12 @@ FormMultiCheckbox.php
 FormNote
 FormNote.php
 formo
-form of a separately written license, or stated as exceptions;
 form of a work.
 FormOperations
 form-operations.js
 formo.php
 FormOptions
 FormOptions.php
-For more information on this, and how to apply and follow the GNU GPL, see
 FormPassword
 FormPassword.php
 _form.php
@@ -23540,14 +23419,16 @@ form.xml
 foro
 foro.php
 For.php
+forrest
 for_the_demo
-  For the developers' and authors' protection, the GPL clearly explains
 fortran
 fortran.php
 fortune
 Fortune
 Fortune.php
 forum
+forum1
+forum2
 forumadmin
 forum_admin_body
 forum_admin_body.tpl
@@ -23680,14 +23561,12 @@ forward.php
 forwardSuccess
 forwardSuccess.php
 for which you have or can give appropriate copyright permission.
-for you must do so exclusively on your behalf, under your direction
 foto
 foto.php
 fotos
 Fotos
 fotos.php
 foundation
-Foundation.  If the Program does not specify a version number of the
 fo.xml
 fp
 fpadmin
@@ -24225,6 +24104,7 @@ fr_CA.xml
 fr_CH
 fr_CH.xml
 fr_dlg.js
+free
 Free
 freeamount
 freeamount.php
@@ -24232,14 +24112,12 @@ FreeASPUpload
 FreeASPUpload.asp
 freebasic
 freebasic.php
+freebsd
 FreeBSD
 freecharger
 freecharger.php
-freedoms that you received.  You must make sure that they, too, receive
 FreeEnergyModules
 freefont
-freefont-20080323
-freefont-20090104
 FreeForm
 FreeForm.php
 freeimage
@@ -24262,7 +24140,6 @@ freemono.php
 freeoptions
 freeoptions.php
 Free.php
-free programs, and that you know you can do these things.
 freesans
 freesansb
 freesansbi
@@ -24290,7 +24167,6 @@ FreeSerifItalic
 freeserif.php
 freeshipper
 freeshipper.php
-free software which everyone can redistribute and change under these terms.
 Freezer
 Freezer.php
 FreightCalculation
@@ -24300,8 +24176,6 @@ FreightCosts.php
 french
 french.inc
 french.inc.php
-french-iso-8859-1
-french-iso-8859-1.inc.php
 french.js
 french.lang.php
 french.php
@@ -24311,7 +24185,6 @@ french.xml
 fr_engine.js
 Frequency
 Frequency.php
-    f) Requiring indemnification of licensors and authors of that
 fresh
 fr-FR
 fr_FR
@@ -24380,6 +24253,7 @@ frmTest.cs
 frmTest.resx
 frmupload
 frmupload.html
+frob
 frog
 From
 frommap
@@ -24389,7 +24263,6 @@ from-markup.js
 FromNodesAssetIterator
 FromNodesAssetIterator.class.php
 From.php
-from the Corresponding Source as a System Library, need not be
 from_unicode.php
 front
 Front
@@ -24465,6 +24338,8 @@ ftdetect
 FText
 FText.php
 ftiens4.js
+~ftp
+ftp
 Ftp
 FTP
 ftp.class.php
@@ -24491,6 +24366,9 @@ FtpSession
 FtpSession.cs
 FTs
 FTs.php
+fuck
+fuckoff
+fuckyou
 fujifilm
 fujifilm.php
 full
@@ -24832,7 +24710,6 @@ funzioni.php
 fur
 fur_IT
 fur_IT.xml
-    further charge.  You need not require recipients to copy the
 fur.xml
 fusebox
 fusebox4
@@ -24871,6 +24748,7 @@ fuzz-tester
 fuzz-tester.php
 Fuzzy
 Fuzzy.php
+fw
 Fw
 FW
 FwkTestCase
@@ -24943,8 +24821,6 @@ GaleriesImages.php
 Galeries.php
 galery
 galery.php
-galician-iso-8859-1
-galician-iso-8859-1.inc.php
 galician-utf-8
 galician-utf-8.inc.php
 galleries
@@ -25022,6 +24898,7 @@ games
 games.php
 game_vars
 game_vars.php
+ganglia
 gantt
 GanttActivityInfo
 GanttActivityInfo.html
@@ -25136,16 +25013,15 @@ GanttVLine.html
 ga.php
 Gapps
 Gapps.php
+garbage
 garland
 gate
+gateway
 Gateway
 Gateway.php
 gather.js
 ga.xml
 gb
-gb12345
-gb2312
-gb_2312-80
 Gbase
 Gbase.php
 gb-big5
@@ -25203,6 +25079,7 @@ gecko
 Gecko
 gecko.js
 gecko.xml
+geeklog
 geizhals
 geizhals.php
 gemstone
@@ -25249,7 +25126,6 @@ General.resx
 general_rtl.css
 GeneralSettings
 GeneralSettings.php
-GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
 general-template
 general-template.php
 general.tpl
@@ -25417,8 +25293,6 @@ germani
 german.inc
 german.inc.php
 germani.php
-german-iso-8859-1
-german-iso-8859-1.inc.php
 german.js
 german.lang.php
 german.language.php
@@ -25429,6 +25303,7 @@ german-utf-8.php
 germany
 GermanZipCode
 GermanZipCode.php
+geronimo
 ger.php
 _geshi
 geshi
@@ -25449,6 +25324,7 @@ gestcatag.php
 gestion
 gestion.php
 get
+getaccess
 GetAll
 GetAll.php
 getalltags
@@ -25561,6 +25437,7 @@ GetInfoResult
 GetInfoResult.php
 get_JFXX_thumb
 get_JFXX_thumb.php
+getjobid
 get.js
 getLagTimes
 getLagTimes.php
@@ -25708,10 +25585,9 @@ gingko.php
 GI.php
 Gis
 Gis.php
+gitweb
 Given
 Given.php
-give under the previous paragraph, plus a right to possession of the
-giving you legal permission to copy, distribute and/or modify it.
 gl
 GL
 GLAccountInquiry
@@ -25740,6 +25616,7 @@ GLCodesInquiry.php
 gl_ES
 gl_ES.xml
 glider.js
+glimpse
 GLJournal
 GLJournal.php
 gl.js
@@ -25874,11 +25751,6 @@ GN
 GN.php
 GNU
 gnu-fdl
-                    GNU GENERAL PUBLIC LICENSE
-GNU GENERAL PUBLIC LICENSE
-    GNU General Public License for more details.
-GNU General Public License for most of our software; it applies also to
-GNU General Public License, you may choose any version ever published
 gnu_gpl
 GnuGPL
 GNU-GPL
@@ -25892,6 +25764,7 @@ gnu-regexp-1.1.4.jar
 go
 goals
 goals.html
+goaway
 go.html
 Gold
 gold.css
@@ -26007,7 +25880,7 @@ GothicBoldItalic
 GothicItalic
 goto
 goto.php
-governed by this License along with a term that is a further
+government
 gp
 gpicsync-GUI
 gpl
@@ -26020,6 +25893,7 @@ GPL_license
 GPL-LICENSE
 gpl_license.html
 gp.php
+gprs
 gps
 gps.php
 GQ
@@ -26076,6 +25950,8 @@ Gramatica.php
 Grammar
 Grammar.php
 GRANITE
+grant
+grants
 graph
 graph.class.php
 Graph.html
@@ -26095,6 +25971,7 @@ GraphicSoftBrokenLine
 GraphicSoftBrokenLine.php
 GraphicTextRun
 GraphicTextRun.php
+graphiql
 graphisme
 graphisme.php
 Graphite
@@ -26102,6 +25979,7 @@ graph.js
 graph_legend
 graph_legend.html
 graph.php
+graphql
 graphs
 Graphs
 Graphs.php
@@ -26110,7 +25988,6 @@ GraphTabTitle.html
 GraphViz
 GraphViz.php
 Grass
-gratis or for a fee, you must pass on to the recipients the same
 Gravatar
 Gravatar.cs
 Gravatar.php
@@ -26125,8 +26002,6 @@ GRDDLParser.php
 GreaterThan
 GreaterThan.php
 greek
-greek-iso-8859-7
-greek-iso-8859-7.inc.php
 greek.js
 greek.php
 greek-utf-8
@@ -26398,6 +26273,7 @@ grupos
 grupos.php
 GS
 gsitemap
+gsm
 GS.php
 Gt
 Gtalk
@@ -26416,6 +26292,7 @@ Guard.cs
 guard.php
 Guess
 Guess.php
+~guest
 guest
 guestbook
 guestbook.asp
@@ -26432,6 +26309,7 @@ guestbook.sql
 guestbook.tpl
 guest.js
 guest.php
+guests
 Guests
 Guests.cs
 Guest.xml
@@ -26447,6 +26325,7 @@ guide_controller.php
 guide.css
 guide.html
 guide.php
+guides
 GuidEx
 GuidEx.cs
 GuidGenerator
@@ -26472,6 +26351,7 @@ gui.php
 GuiSkin
 GUI.sql
 gu.js
+gump
 gungan
 gungan.ini
 guru
@@ -26554,12 +26434,16 @@ ha_Arab.xml
 habtm
 habtm.php
 hack
+hacker
 Hacker
 HackerConsole
+hacking
+hackme
 hack.php
 hacks
 hacks.css
 hacks.min.css
+hadoop
 ha_GH
 ha_GH.xml
 ha_Latn
@@ -26605,6 +26489,7 @@ ha_NG
 Hangman
 ha_NG.xml
 Happy
+hardcore
 hardware
 Hardware
 hardware.php
@@ -26764,6 +26649,7 @@ HarmoniTypeIterator
 HarmoniTypeIterator.class.php
 HarmoniWritableLog
 HarmoniWritableLog.class.php
+harmony
 HasAttrCompare
 HasAttrCompare.cs
 ha_SD
@@ -26795,9 +26681,7 @@ HasUniqueDomainSignatureValidator.cs
 HasUniqueEntitySignatureValidatorTests
 HasUniqueEntitySignatureValidatorTests.cs
 hatten
-have designed this version of the GPL to prohibit the practice for those
 haven
-have the freedom to distribute copies of free software (and charge for
 Having
 Having.php
 haw
@@ -26929,11 +26813,10 @@ _head.tpl
 head.tpl
 head.tpl.html
 head.tpl.php
+health
 Health
 Health.php
 hebrew
-hebrew-iso-8859-8-i
-hebrew-iso-8859-8-i.inc.php
 hebrew.php
 hebrew-utf-8
 hebrew-utf-8.inc.php
@@ -26956,6 +26839,7 @@ he.js
 he_lang_data
 he_lang_data.inc.php
 he.lang.inc.php
+hello
 Hello
 hello1
 hello_controller
@@ -27017,6 +26901,7 @@ help_email.php
 help_en
 help_en.php
 help_en.txt
+helper
 Helper
 HelperAbstract
 HelperAbstract.php
@@ -27105,7 +26990,6 @@ help_topic.MYI
 help.tpl
 help.tpl.php
 help.txt
-help.txt,v
 help_update_topic
 help_update_topic.php
 helpview
@@ -27136,7 +27020,6 @@ Helvetica-Oblique.php
 HelveticaOblique.php
 Helvetica.php
 he.php
-hereafter acquired, that would be infringed by some manner, permitted
 heroes
 heron
 heron_exception
@@ -27160,6 +27043,7 @@ hhp.tpl
 hi
 hibernate
 hibernate.cfg.xml
+hidden
 Hidden
 HiddenAttribute
 HiddenAttribute.cs
@@ -27204,6 +27088,7 @@ HierarchyTestCase
 HierarchyTestCase.class.php
 hierselect
 hierselect.php
+high
 highlight
 highlight.css
 Highlighter
@@ -27244,10 +27129,12 @@ hint.js
 Hint.php
 hints
 hints.js
+hipaa
 hi.php
 histo
 historique
 historique.php
+.history
 history
 history.aspx
 history.aspx.cs
@@ -27305,9 +27192,8 @@ hof
 hof.php
 hof.tpl
 Holder
-holder fails to notify you of the violation by some reasonable means
 Holder.php
-HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
+hole
 holiday
 holiday.php
 holidays
@@ -27345,6 +27231,7 @@ home.js
 homeland_farmland
 homeModel
 homeModel.php
+homepage
 Homepage
 HomePage
 homepage.css
@@ -27373,10 +27260,12 @@ hooks.js
 hooks.php
 hook_system
 hook_system.html
+hop
 hora
 hora.php
 horario
 horario.php
+horde
 horiz
 horizbarex1
 horizbarex1.html
@@ -27424,10 +27313,12 @@ hostenv_rhino.js
 hostenv_spidermonkey.js
 hostenv_svg.js
 hostenv_wsh.js
+hosting
 Hosting
 Hostname
 Hostname.php
 Host.php
+hosts
 Hosts
 HostSettings
 HostSettings.ascx
@@ -27437,6 +27328,7 @@ HotForms.php
 hotkey.js
 hotkeys
 hour
+hourly
 hour.php
 hours
 hours.php
@@ -27451,7 +27343,6 @@ hover
 hover.html
 hoverIntent.js
 hover.js
-  However, if you cease all violation of this License, then your
 how_it_works
 howitworks
 how_it_works.html
@@ -27460,7 +27351,6 @@ howMany
 howMany.php
 howto
 HOWTO
-            How to Apply These Terms to Your New Programs
 HowToBuild
 howto.html
 How To Install
@@ -27492,6 +27382,7 @@ hsl.js
 hsqldb.jar
 hsv.js
 HT
+hta
 .htaccess
 _.htaccess
 _htaccess
@@ -27501,9 +27392,11 @@ HtaccessFile.php
 htaccess_for_page_not_found_redirects
 htaccess_for_page_not_found_redirects.htaccess
 htaccess.php
+htbin
 htbrowse
 htbrowse.php
 htc
+htdoc
 htdocs
 h_teal
 htm
@@ -27811,9 +27704,12 @@ html_words_highlight.php
 html_wrap
 html.xml
 Htm.php
+.htpasswd
 htpasswd
 htpasswd.php
 HT.php
+~http
+http
 Http
 http404
 http404.ascx
@@ -27858,6 +27754,7 @@ HttpContextTestContext
 HttpContextTestContext.cs
 HttpCookie
 HttpCookie.class.php
+~httpd
 httpd
 .httpd.conf
 httpd.conf
@@ -27928,6 +27825,7 @@ HttpResponse.cs
 httpresponse.html
 HTTP_Response.html
 HttpResponse.php
+https
 Https
 httpServer
 httpServer.php
@@ -27961,6 +27859,7 @@ HttpUploadedFile
 HttpUploadedFile.php
 HttpUri
 HttpUri.php
+httpuser
 HttpUserAgent
 HttpUserAgent.php
 HTTP_VARIANT_ALSO_VARIES
@@ -27984,8 +27883,6 @@ human
 human_condition
 human.php
 hungarian
-hungarian-iso-8859-2
-hungarian-iso-8859-2.inc.php
 hungarian.js
 hungarian.php
 hungarian-utf-8
@@ -28008,6 +27905,7 @@ HybridSessionBuilder.cs
 hybrid-totals.js
 Hydrator
 Hydrator.php
+hyper
 hyperlink
 hyperlink.html
 hyperlink.inc.php
@@ -28124,8 +28022,8 @@ iBindableControl.php
 iBindable.php
 IBlogRepository
 IBlogRepository.cs
+ibm
 Ibm
-ibm-1251
 ibm-866
 Ibm.php
 ibrowser
@@ -28146,6 +28044,7 @@ iCalendar.js
 iCal_parser
 iCal_parser.php
 ical.php
+icat
 ICatalogService
 ICatalogService.cs
 ICategory
@@ -28354,6 +28253,7 @@ IDomainQuery.cs
 Id.php
 idrag.js
 idrop.js
+ids
 Ids
 IDS
 IDS_Caching
@@ -28490,11 +28390,8 @@ IExtension
 IExtension.cs
 if
 If
-(if any) on which the executable work runs, or a compiler used to
-if any, to sign a "copyright disclaimer" for the program, if necessary.
 IfChanged
 IfChanged.php
-  If conditions are imposed on you (whether by court order, agreement or
 if else
 if else.help
 IfEqual
@@ -28524,7 +28421,6 @@ IFormValidator.cs
 IFormValidator.php
 iforum
 If.php
-  If, pursuant to or in connection with a single transaction or
 iframe
 iframe.css
 iframe_history
@@ -28538,9 +28434,6 @@ IFriendlyUrlGenerator
 IFriendlyUrlGenerator.cs
 IfTask
 IfTask.php
-  If the disclaimer of warranty and limitation of liability provided
-  If the program does terminal interaction, make it output a short
-  If the Program specifies that a proxy can decide which future
 ifx
 ifxblind.js
 ifxbounce.js
@@ -28556,10 +28449,6 @@ ifxscrollto.js
 ifxshake.js
 ifxslide.js
 ifxtransfer.js
-  If you add terms to a covered work in accord with this section, you
-  If you convey a covered work, knowingly relying on a patent license,
-  If you convey an object code work under this section in, or with, or
-  If you develop a new program, and you want it to be of the greatest
 ig
 igb
 igb.php
@@ -28569,6 +28458,7 @@ IGenericTransaction
 IGenericTransaction.cs
 ig_NG
 ig_NG.xml
+ignore
 Ignore
 Ignore.php
 ig.php
@@ -28612,10 +28502,13 @@ IInputSpecification
 IInputSpecification.cs
 IInputSpecificationExpression
 IInputSpecificationExpression.cs
+iisadmin
+iisadmpwd
 iisapppool
 iisapppool.html
 iisdirinfo
 iisdirinfo.html
+iissamples
 ii.xml
 IJsonExportable.cs
 IJsonImportable.cs
@@ -28876,6 +28769,7 @@ image_filledlineex01.html
 ImageFill.php
 image_fixture
 image_fixture.php
+imagefolio
 image_form
 image_form.php
 image_frame_decorator
@@ -29361,6 +29255,7 @@ implements
 ImplicitResultMaps
 import
 Import
+important
 Important
 ImportantDecorator
 ImportantDecorator.php
@@ -29450,13 +29345,12 @@ ImpureUnitTestSuite
 ImpureUnitTestSuite.java
 in
 in accord with this section must be in a format that is publicly
-in a country, would infringe one or more identifiable patents in that
-in a fashion requiring copyright permission, other than the making of an
 INamingContainer
 INamingContainer.php
 in an aggregate does not cause this License to apply to the other
 InArray
 InArray.php
+inbound
 InboundEmail
 inbox
 InboxEntry
@@ -29548,9 +29442,6 @@ includes interface definition files associated with source files for
 includes.php
 includes.xml
 include.tpl
-(including a cross-claim or counterclaim in a lawsuit) alleging that
-    (including a physical distribution medium), accompanied by a
-    (including a physical distribution medium), accompanied by the
 inc-menu
 inc_menu
 inc-menu.php
@@ -29589,6 +29480,7 @@ _index
 index
 Index
 index-1
+index_1
 index1
 index-10
 index-10.html
@@ -29614,6 +29506,7 @@ index-1.html
 index1.html
 index1.php
 index-2
+index_2
 index2
 Index2
 index2.htm
@@ -29719,7 +29612,6 @@ index.html.bak
 index.html.erb
 index.html.php
 index.html.svn-base
-index.html,v
 index.htm.svn-base
 index.htpl
 index.id.xml
@@ -29773,7 +29665,6 @@ _index.php.html
 _index_php.html
 index.php.svn-base
 index.php.svn-work
-index.php,v
 index.phtml
 index.pl.xml
 index_products
@@ -29830,13 +29721,13 @@ indicators
 inditreuse
 individual
 indonesian
-indonesian-iso-8859-1
-indonesian-iso-8859-1.inc.php
 indonesian.js
 indonesian.php
 indonesian-utf-8
 indonesian-utf-8.inc.php
 indonesian-utf-8.php
+inetpub
+inetsrv
 inf
 inffast
 inffast.c
@@ -29891,6 +29782,7 @@ InfoMessage
 InfoMessage.php
 info-pane
 _info.php
+info.php
 Info.php
 info_publiclist
 info_publiclist.php
@@ -29926,7 +29818,6 @@ info_window.php
 info.xml
 Infrastructure
 Infrastructure.csproj
-infringement under applicable copyright law, except executing it on a
 inftrees
 inftrees.c
 infusion
@@ -29939,6 +29830,7 @@ Ingredient
 IngredientController
 IngredientController.cs
 Ingredient.cs
+ingress
 inhalt
 inhalt.php
 inheritance
@@ -30170,7 +30062,6 @@ INode
 INode.cs
 INode.java
 in one of these ways:
-in or on a volume of a storage or distribution medium, is called an
 INotification
 INotification.cs
 inove
@@ -30236,8 +30127,11 @@ input_validator
 InputValidator
 input_validator.php
 InputValidator.php
+inquire
 Inquirer
 Inquirer.php
+inquiries
+inquiry
 INR.js
 ins
 Ins
@@ -30369,7 +30263,6 @@ instalar
 instalar.php
 _install
 install
-!INSTALL
 __INSTALL
 INSTALL
 INSTALL~
@@ -30410,7 +30303,6 @@ installation_example_03
 installation_example_03.html
 installation.htm
 installation.html
-  "Installation Information" for a User Product means any methods,
 InstallationManager
 InstallationManager.cs
 installation.php
@@ -30504,7 +30396,6 @@ install.mysql.inc
 install.pgsql.inc
 _install.php
 install.php
-install.php,v
 install.phtml
 install.rb
 install.rdf
@@ -30568,6 +30459,7 @@ INSTRUCTIONS
 instructions.html
 instructions.php
 Instrumentation
+int
 Int
 integer
 Integer
@@ -30624,15 +30516,15 @@ interfaces
 Interfaces
 Interfaces.cs
 interfaces.php
-interfaces specified for a particular programming language, one that
 interfaces_test
 interfaces_test.php
-    interfaces that do not display Appropriate Legal Notices, your
 InterfaceTest
 InterfaceTest.php
 Interface.tpl
 interfectus
+interim
 intermap
+intermediate
 IntermediateParser
 IntermediateParser.inc
 __internal
@@ -30643,6 +30535,8 @@ Internal.php
 internals
 internal_table
 internal_table.php
+international
+internet
 InternetExplorer
 InternetExplorer.js
 InternetTextbox.js
@@ -30654,15 +30548,11 @@ Interwiki
 interwiki.conf
 Interwiki.php
 interwiki.sql
-in the business of distributing software, under which you make payment
-  In the following three paragraphs, a "patent license" is any express
 intl
 intlink
 intlink_toolbar_data
 intlink_toolbar_data.gecko.inc.php
 intlink_toolbar_data.inc.php
-into a dwelling.  In determining whether a product is a consumer product,
-into proprietary programs.  If your program is a subroutine library, you
 Int.php
 intranet
 intro
@@ -30867,6 +30757,7 @@ ipbans
 ipbans.php
 IPBlock
 IPBlock.php
+ipc
 IP.c
 ipcheck
 ipcheck.php
@@ -31003,6 +30894,7 @@ IsAdmin.php
 IsAnything
 IsAnything.php
 is_a.php
+isapi
 IsapiRewrite4
 IsapiRewrite4.ini
 IsAuthorizedCache
@@ -31089,46 +30981,11 @@ IsNull.php
 iso
 Iso
 ISO
-iso-10646-ucs-2
-iso-10646-ucs-4
-iso-2022-cn
-iso-2022-jp
-iso-2022-jp-2
-iso-2022-kr
 iso-639-3
 iso-639-3_translated
 iso639-utf8
 iso646-dk
 iso646-kr
-ISO8601StringParser
-ISO8601StringParser.class.php
-ISO8601StringParserTestCase
-ISO8601StringParserTestCase.class.php
-ISO8601TimeStringParser
-ISO8601TimeStringParser.class.php
-iso-8859-1
-iso8859-1
-ISO-8859-1
-iso-8859-10
-iso-8859-11
-iso-8859-13
-iso-8859-14
-iso-8859-15
-iso-8859-16
-iso-8859-1.js
-ISO-8859-1.php
-iso-8859-2
-iso8859-2
-iso-8859-3
-iso-8859-4
-iso8859-4
-iso-8859-5
-iso8859-5
-iso-8859-6
-iso-8859-7
-iso-8859-8
-iso-8859-9
-iso8859-9
 iso-ir-10
 iso-ir-102
 iso-ir-103
@@ -31267,7 +31124,6 @@ ISubmitterControl.php
 is_utf8
 is_utf8.php
 is widely used among developers working in that language.
-IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
 is.xml
 it
 IT
@@ -31278,7 +31134,6 @@ ITableIterator.php
 ITableMetaData
 ITableMetaData.php
 ITable.php
-it.  (Additional permissions may be written to require their own
 ITag
 ITag.cs
 ITaggable
@@ -31288,8 +31143,6 @@ ITagService.cs
 italian
 italian.inc
 italian.inc.php
-italian-iso-8859-1
-italian-iso-8859-1.inc.php
 italian.js
 italiano
 Italiano
@@ -31301,7 +31154,6 @@ italian-utf-8.php
 Italic
 Italic.php
 italy
-    it, and giving a relevant date.
 ita.php
 it_CH
 it_CH.xml
@@ -31427,7 +31279,6 @@ ittabs.js
     it under the terms of the GNU General Public License as published by
 Itunes
 Itunes.php
-    it) with contractual assumptions of liability to the recipient, for
 ITwitterService
 ITwitterService.cs
 ITX
@@ -31496,6 +31347,8 @@ izquierda
 izquierda.php
 j
 J
+j2ee
+j2me
 ja
 Jabber
 Jabber.php
@@ -31522,6 +31375,7 @@ ja_JP_TRADITIONAL
 ja-JP.xml
 ja_JP.xml
 ja.js
+jakarta
 jakarta-oro-2.0.8.jar
 ja.lang.inc.php
 JAMA
@@ -31563,6 +31417,7 @@ java_imports
 java.js
 java_klappe.js
 java.php
+java-plugin
 JavaPOCAgentManager
 JavaPOCAgentManager.class.php
 JavaPOCIdManager
@@ -31605,12 +31460,14 @@ javascript.tpl
 JavaScriptUtils
 JavaScriptUtils.cs
 javascript.xml
+javax
 java.xml
 javax.servlet.jar
 jaxer.js
 ja.xml
 Jayrock
 jayya
+jboss
 jboss-web
 jboss-web.xml
 jcarousel.css
@@ -31654,15 +31511,16 @@ jieorm
 jieorm.php
 jieorm_util
 jieorm_util.php
+jigsaw
 jimw
-jis_x0201
-jis_x0208-1983
-jis_x0212-1990
+jj
 jkw
 jkw.php
 JLD
 JM
 JM.php
+jmx-console
+JMXSoapAdapter
 JO
 job
 Job
@@ -31775,7 +31633,11 @@ jobs.css
 jobs.html
 jobs.php
 job.xml
+joe
 johab
+~john
+john
+join
 Join
 join_a_b_fixture
 join_a_b_fixture.php
@@ -31832,6 +31694,7 @@ Joystick
 Joystick.c
 jp
 Jp
+jpa
 jpeg.html
 Jpeg.php
 JPEXS
@@ -31853,7 +31716,6 @@ jpgraph_errhandler.inc.php
 jpgraph_error.php
 jpgraph_flags.php
 jpgraph_gantt.php
-jpgraph_gb2312.php
 jpgraph_gradient.php
 jpgraph_iconplot.php
 jpgraph_imgtrans.php
@@ -32174,6 +32036,8 @@ jquery.yiitab.js
 jqUploader
 jqUploader.swf
 jqXMLUtils.js
+jre
+jrun
 _js
 js
 js-1.5R4.1.jar
@@ -32238,6 +32102,7 @@ jsmin.php
 JSMinPlus.php
 jsnode.php
 jsolait
+json
 Json
 JSON_2.0.2.asp
 json2.js
@@ -32334,6 +32199,7 @@ jsr173_1.0_api.jar
 jsrsclient.js
 jsScrollbar.js
 jsScroller.js
+jsso
 jssource
 jsSuccess.js.php
 js_suggest
@@ -32375,6 +32241,7 @@ jsUnitVersionCheck.js
 jsUnitVersionCheckTests.html
 JsUnitWebsiteVersionGrabber.java
 jsutils.php
+jsx
 jt_1
 jTable
 jTagging
@@ -32389,6 +32256,7 @@ jump.php
 junction
 junior_callback
 junior_callback.php
+juniper
 junit-3.8.1.jar
 junit-4.4.jar
 junit.jar
@@ -32402,6 +32270,7 @@ justify_bbcode_include.php
 justify_bbcode_include_var
 justify_bbcode_include_var.php
 justify.php
+jvm
 jwc
 jwebunit-1.2.jar
 jwplayer
@@ -32410,6 +32279,7 @@ jxnews
 jxnews.asp
 jxpj
 jxpj.asp
+k
 K
 k2
 ka
@@ -32443,6 +32313,7 @@ ka.xml
 kb
 Kbd
 Kbd.php
+kboard
 kb.php
 kcaptcha
 kcaptcha_config
@@ -32473,7 +32344,6 @@ Kerberos5
 Kerberos5.php
 kernel
 kernel.php
-(kernel, window system, and so on) of the specific operating system
 ketquahoctap
 ketquahoctap.xml
 key
@@ -32500,6 +32370,7 @@ KeyedRepository
 KeyedRepository.cs
 KeyedRepositoryTester
 KeyedRepositoryTester.cs
+keygen
 keyhandler.js
 KeyInfo
 KeyInfo.php
@@ -32552,6 +32423,8 @@ KH.php
 KHTMLFixes.css
 khtml.js
 KI
+kids
+kill
 Kind
 Kind.js
 Kinematic
@@ -32596,6 +32469,7 @@ kn_IN.xml
 knowledge
 knowledgebase
 KNOWN_BUGS
+known_hosts
 KNOWN_ISSUES
 know their rights.
 kn.php
@@ -32684,7 +32558,6 @@ krumo.ini
 krumo.js
 kses
 kses.php
-ksx1001
 ku
 kuaiqian
 kuaiqian.php
@@ -32729,6 +32602,7 @@ ky.php
 ky.xml
 KZ
 KZ.php
+l
 L
 l10n
 L10n
@@ -32792,6 +32666,7 @@ labels.uk.resx
 labels.zh-CN.resx
 labels.zh-TW.resx
 label.xml
+labs
 ladder
 laempresa
 laempresa.php
@@ -33326,14 +33201,13 @@ latvian
 latvian.php
 latvian-utf-8
 latvian-utf-8.inc.php
-latvian-windows-1257
-latvian-windows-1257.inc.php
 launch
 launchConfigurationHistory
 launchConfigurationHistory.xml
 launch.php
 LaunchTestRunCommand
 LaunchTestRunCommand.java
+law
 layer
 layeredcontent
 Layer.html
@@ -33482,6 +33356,7 @@ lc_messages.php
 l_config
 l_config.php
 LC.php
+ldap
 Ldap
 LDAPAgentIterator
 LDAPAgentIterator.class.php
@@ -33506,6 +33381,8 @@ ldi_table
 ldi_table.php
 ldml
 LeadAnnotation.js
+leader
+leaders
 Leads
 leaf
 Leaf
@@ -33609,6 +33486,7 @@ LengthTest.php
 LengthValidator
 LengthValidator.cs
 LengthValidator.php
+lenya
 Leopard
 lesser
 lesson
@@ -33644,6 +33522,7 @@ lexico.php
 lexique
 lexique.php
 lfx
+lg
 lgetl
 lgetl.pl
 lgetr
@@ -33712,11 +33591,9 @@ licences
 licencia
 licencja-gpl-polski
 license
-!LICENSE
 _LICENSE
 LICENSE
 LICENSE-2
-License and any other pertinent obligations, then as a consequence you may
 license_apache
 license_bsd
 License by making exceptions from one or more of its conditions.
@@ -33725,7 +33602,6 @@ license_default
 license_default.php
 License.  Each licensee is addressed as "you".  "Licensees" and
 license_english
-license from a particular copyright holder is reinstated (a)
 license-GPL
 License_GPL
 LICENSE_GPL
@@ -33742,10 +33618,7 @@ licenses to the work the party's predecessor in interest had or could
     License to anyone who comes into possession of a copy.  This
 license to downstream recipients.  "Knowingly relying" means you have
 license.tpl
-License will continue to apply to the part which is the covered work,
-    License will therefore apply, along with any applicable section 7
 License would be to refrain entirely from conveying the Program.
-License, you may add to a covered work material governed by the terms
 licensing
 li_com
 li_Common
@@ -33810,11 +33683,13 @@ lime
 lime.css
 lime.php
 limesurvey
+limit
 Limit
 LimitedScope
 LimitedScope.php
 limit.inc
 Limit.php
+line
 Line
 LINE
 line9_64_33_1
@@ -33906,7 +33781,6 @@ LinkedList
 LinkedList.cs
 LinkedServers
 LinkedServers.sql
-linked subprograms that the work is specifically designed to require,
 Linker
 linker.js
 Linker.php
@@ -34140,6 +34014,7 @@ ListImporter
 ListImporter.cs
 list.inc
 list.inc.php
+listinfo
 _listing
 listing
 Listing
@@ -34266,8 +34141,6 @@ liteTemplate
 liteTemplate.Class.php
 lithuanian-utf-8
 lithuanian-utf-8.inc.php
-lithuanian-windows-1257
-lithuanian-windows-1257.inc.php
 li_util
 li_util.html
 li_Utility
@@ -34337,6 +34210,7 @@ loadEmployeeInfo.php
 loadEmployeePropGrid
 loadEmployeePropGrid.php
 _loader
+loader
 Loader
 loader.class.php
 Loader.cs
@@ -34447,6 +34321,7 @@ localtime_cli
 localtime_cli.pl
 localtime_serv
 localtime_serv.pl
+location
 Location
 location_actions
 location_actions.php
@@ -34475,6 +34350,7 @@ LocatorTest.php
 lock
 lock.class.php
 Lock.cs
+locked
 Locked
 Locked.php
 Locking
@@ -34490,6 +34366,7 @@ loc.php
 lofus
 .log
 _log
+~log
 log
 Log
 log4j
@@ -34535,6 +34412,7 @@ _Log---Email
 _Log---Email.php.html
 LogEntry
 LogEntry.php
+logfile
 _Log---File
 LogFile
 logfile.php
@@ -34742,6 +34620,7 @@ LoginResult.cs
 login.rhtml
 login-rtl.css
 login_rtl.css
+logins
 Logins
 login_sasl_client
 login_sasl_client.php
@@ -34816,9 +34695,7 @@ logon
 LogOn
 LogOn.aspx
 logon.h
-logon.h,v
 logon.php
-logon.php,v
 LogOnUserControl
 LogOnUserControl.ascx
 Logo.php
@@ -34869,6 +34746,8 @@ logrouter
 logrouter.vsd
 .logs
 _logs
+~logs
+logs
 Logs
 LogScale
 LogScale.html
@@ -34925,6 +34804,7 @@ Loot
 LoremIpsum
 LoremIpsum.php
 lost
+lost+found
 lostPage
 lostPage.php
 lostpass
@@ -34954,6 +34834,7 @@ lotusscript
 lotusscript.css
 lotusscript.js
 lotusscript.php
+low
 Lower
 LowerCase
 LowerCase.php
@@ -34963,6 +34844,7 @@ Lower.php
 LowLevel
 LowLevel.c
 lo.xml
+~lp
 LR
 LR.php
 lrscan
@@ -34996,6 +34878,7 @@ lt.xml
 LU
 lua
 lua.php
+lucene
 Lucene
 lucene-core-2.0.0.jar
 Lucene.Net.xml
@@ -35065,7 +34948,6 @@ mac-dingbats
 macedonian.js
 mac-greek
 machine
-machine-readable Corresponding Source under the terms of this License,
 mac-iceland
 macintosh
 mac-japan
@@ -35187,6 +35069,7 @@ maillist
 maillist.php
 mail-local
 mail-local.php
+mailman
 MAILMAN
 MailManager
 MailManager.cs
@@ -35424,8 +35307,6 @@ MainWindow
 MainWindow.xaml.cs
 main.xml
 maj
-"Major Component", in this context, means a major essential component
-Major Component, or to implement a Standard Interface for which an
 MajoritySelector
 MajoritySelector.php
 maj.php
@@ -35450,7 +35331,6 @@ makefont
 makefont.php
 makefontuni
 makefontuni.php
-make it effectively proprietary.  To prevent this, the GPL assures that
 makemini
 makemini.pl
 makepackage
@@ -35466,12 +35346,9 @@ makernotes
 makers
 make.sh
 makes it unnecessary.
-make, use, sell, offer for sale, import and otherwise run, modify and
 makeWebBuildModuleList.js
 MakeWellFormed
 MakeWellFormed.php
-malay-iso-8859-1
-malay-iso-8859-1.inc.php
 malay-utf-8
 malay-utf-8.inc.php
 mambo
@@ -35531,6 +35408,7 @@ manage.inc.php
 manage.js
 manage_links
 manage_links.php
+management
 Management
 Management.php
 manage_messages
@@ -35543,6 +35421,7 @@ manage.php
 manage_posts
 manage_posts.php
 manage.py
+manager
 Manager
 Manager.cs
 manager.css
@@ -35572,6 +35451,7 @@ manage_user.tpl
 managing_apps.html
 Manifest
 MANIFEST
+MANIFEST.MF
 Manifest.php
 ManifestTask
 ManifestTask.php
@@ -35653,6 +35533,7 @@ ManualReportBuilder
 ManualReportBuilder.html
 ManualRequirements
 ManualRequirements.html
+manuals
 Manuals
 ManualSalesAnalysis
 ManualSalesAnalysis.html
@@ -35769,6 +35650,7 @@ MarginSP.class.php
 MarginTopSP
 MarginTopSP.class.php
 marine
+~mark
 mark
 markdown
 Markdown
@@ -35837,6 +35719,7 @@ MasterPage.css
 MasterPage.Master.cs
 MasterPage.Master.designer.cs
 masterpages
+master.passwd
 master.php
 _masters
 masters
@@ -35860,7 +35743,6 @@ match.php
 MatchValidator
 MatchValidator.php
 material
-    material by anyone who conveys the material (or modified versions of
 MaterializedPath
 MaterializedPath.php
 material under section 10.
@@ -35881,6 +35763,8 @@ matrix4
 matrix.js
 Matrix.php
 matrox
+~matt
+maven
 maxdb
 maxdb_datadict
 maxdb_datadict.inc
@@ -35919,11 +35803,11 @@ MaxValueValidator
 MaxValueValidator.php
 MaxWidthSP
 MaxWidthSP.class.php
-    may be on a different server (operated by you or a third party)
 may consider it more useful to permit linking proprietary applications with
 maze
 maze.php
 maze.tpl
+mbox
 Mbox
 Mbox.php
 mbstring
@@ -36090,6 +35974,7 @@ m_delete.php
 MDL
 MD.php
 md_stylechanger.js
+me
 Measure
 measure.js
 measures.
@@ -36176,7 +36061,6 @@ m_edit.php
 medium
 Medium
 medium.css
-    medium customarily used for software interchange, for a price no
 Medium.php
 meeting
 meeting.php
@@ -36184,6 +36068,7 @@ Meetings
 megaupload
 meldung
 meldung.php
+mem
 member
 Member
 memberAction
@@ -36249,6 +36134,7 @@ members_controller.php
 Members.cs
 MemberServices
 MemberServices.php
+membership
 Membership
 MemberShip
 MemberShip.cs
@@ -36279,6 +36165,7 @@ membertypes.inc.php
 membertypes.php
 member_view
 member_view.tpl.php
+_mem_bin
 membre
 membre.php
 membres
@@ -36305,6 +36192,7 @@ MemModel.php
 memo
 MEMO_ja
 memo.php
+memory
 Memory
 MemoryArchive
 MemoryArchive.php
@@ -36334,7 +36222,6 @@ MenuAdapter.cs
 menuAdmin
 menu.admin.inc
 menuAdmin.php
-menu, a prominent item in the list meets this criterion.
 menuarea.css
 Menu.ascx
 Menu.ascx.cs
@@ -36492,6 +36379,7 @@ MergeRecords
 Meridiem
 Meridiem.php
 mess
+message
 Message
 Message.ascx
 Message.ascx.cs
@@ -37053,17 +36941,15 @@ MIDI
 MIDI.c
 mid.js
 miframe-min.js
-might be different; for a GUI interface, you would use an "about box".
 migrate
 Migrate
-migrate_Mambo4523_to_Joomla_100
-migrate_Mambo4523_to_Joomla_100.sql
 Migrate.php
 migrate_to_md5
 migrate_to_md5.php3
 migrating
 migrating.php
 migrating.tpl.php
+migration
 Migration
 migration_create
 Migration.php
@@ -37140,6 +37026,7 @@ mimetypes.php
 mime_types.rb
 mime.xml
 min
+mina
 MinApp
 MinApp.php
 MIndex
@@ -37197,6 +37084,7 @@ MinTime
 MinTime.php
 min_unit_tests
 min-unpacked-rev
+minute
 Minute
 Minute.php
 MinValue
@@ -37209,6 +37097,7 @@ MinWidthSP.class.php
 MINYN___
 mirc
 mirc.php
+mirror
 Mirror
 mirrorframe.js
 mirror_images
@@ -37216,6 +37105,7 @@ mirror_images.pl
 Mirror.php
 mirror_rfc
 mirror_rfc.pl
+mirrors
 Mirror.xml
 misc
 Misc
@@ -37266,8 +37156,10 @@ missing_table
 MissingTokenException
 MissingTokenException.php
 missing_view
+mission
 MITLicense
 MIT-LICENSE
+mix
 MixedCodeDocumentCodeFragment.cs
 MixedCodeDocument.cs
 MixedCodeDocumentFragment.cs
@@ -37310,6 +37202,7 @@ mk.xml
 ml
 ml_IN
 ml_IN.xml
+mlist
 ml.php
 Mls
 ml.xml
@@ -37349,6 +37242,7 @@ mn_Mong_CN.xml
 mn_Mong.xml
 mn.xml
 MO
+mobi
 mobile
 Mobile
 mobile.css
@@ -37548,7 +37442,6 @@ model_test
 ModelTest
 model.test.php
 ModelTest.php
-    model, to give anyone who possesses the object code either (1) a
 model.tpl
 model.xml
 Mode.php
@@ -37584,9 +37477,6 @@ modifica
 modifica.php
 modification follow.
 modification has been made.
-modification of the work as a means of enforcing, against the work's
-modified object code on the User Product (for example, the work has
-modified versions of the software inside them, although the manufacturer
 modifier
 Modifier
 modifier.bbcode2html.php
@@ -37643,7 +37533,6 @@ modifyarticle.php
 modify_defences
 modify_defences.php
 modify.html
-modify it is void, and will automatically terminate your rights under
 modify.log
 modify.php
 modifypic
@@ -37980,6 +37869,7 @@ Monday.xml
 Moneda
 Moneda.php
 monetary.js
+money
 Money
 Moneybookers
 Moneybookers.php
@@ -37999,6 +37889,7 @@ monitor
 _Monitor
 Monitor
 monitor.asp
+monitoring
 Monitor.php
 _Monitor.php.html
 Monitor.php.html
@@ -38019,6 +37910,7 @@ monofont_read_me
 monster
 monstercache
 monsters
+month
 Month
 month_calendar
 month_calendar.module.php
@@ -38026,6 +37918,7 @@ Month.class.php
 Month List
 MonthList
 MonthList.cs
+monthly
 MonthlyCalendar
 MonthlyCalendar.css
 MonthlyCalendar.html
@@ -38100,10 +37993,8 @@ more_1
 more_codegen
 more.html
 more_information
-More information : http://www.mavitunasecurity.com/blog/SVN-Digger-Better-Lists-for-Forced-Browsing/
 more_information.php
 more.js
-  Moreover, your license from a particular copyright holder is
 more.php
 moresmiles
 moresmiles.php
@@ -38211,6 +38102,7 @@ MovieI18n.php
 MoviePeer
 MoviePeer.php
 Movie.php
+movies
 Movies
 Movies.php
 movieSuccess
@@ -38221,6 +38113,7 @@ moz-bindings.xml
 mozilla
 mozilla.inc.php
 mozxpath.js
+mp
 mp3
 mp3_bbcode_include
 mp3_bbcode_include.php
@@ -38258,6 +38151,8 @@ ms
 msaccess
 msaccess.php
 ms_access_primer
+msadc
+msadm
 ms_BN
 ms_BN.xml
 MSBuild
@@ -38342,9 +38237,9 @@ msql_transaction_module.inc
 MSSCCPRJ
 MSSp3en
 MSSp3ena
+ms-sql
+mssql
 Mssql
-mssql2005
-mssql2005.php
 mssqlAdapter
 mssqlAdapter.php
 mssql_basic
@@ -38425,6 +38320,7 @@ msvc
 ms_word_sample
 ms.xml
 mt
+mta
 mt.js
 mtmcode.js
 mt_MT
@@ -38468,6 +38364,7 @@ MultiLength
 MultiLength.php
 multilingual
 multilingual.php
+multimedia
 multinews
 multinews.sql
 multipart
@@ -38547,7 +38444,6 @@ music_type_filenames
 music_type_filenames.php
 MustOverwrite
 MustOverwrite.php
-must place, in the relevant source files, a statement of the
 MustRead
 MustRead.html
 mutex
@@ -38679,6 +38575,7 @@ myDoctrineRecordFormFilter.class.php
 MyException
 MyException.php
 MyExtensions
+myfaces
 my_file
 myfile
 myfile.asp
@@ -38739,6 +38636,7 @@ MY_Pagination.php
 mypdo
 mypdo.class.php
 my.php
+myphpnuke
 MyPipelineBySalesStageDashlet
 myPluginsSfAutoloadPluginModulesAutoloadPluginLib
 myPluginsSfAutoloadPluginModulesAutoloadPluginLib.class.php
@@ -38831,6 +38729,7 @@ mysql-connector-java-5.0.7-bin.jar
 mysql-connector-java-5.1.5-bin.jar
 mysql_connect.php
 mysql.css
+mysqld
 mysql_data
 MySqlDatabase
 MySqlDatabase.class.php
@@ -38999,7 +38898,9 @@ MySQLSelectQueryResultTestCase
 MySQLSelectQueryResultTestCase.class.php
 MySQLSelectQueryTestCase
 MySQLSelectQueryTestCase.class.php
+/mysql.sql 
 mysql.sql
+mysql.sql 
 MySQL_SQLGenerator
 MySQL_SQLGenerator.class.php
 MySQLStatement
@@ -39044,10 +38945,6 @@ MySQLUpdateQueryResult
 MySQLUpdateQueryResult.class.php
 MySQLUpdateQueryTestCase
 MySQLUpdateQueryTestCase.class.php
-mysql_upgrade_zencart_1301_to_1302
-mysql_upgrade_zencart_1301_to_1302.sql
-mysql_upgrade_zencart_1302_to_135
-mysql_upgrade_zencart_1302_to_135.sql
 mysql_upgrade_zencart_135_to_136
 mysql_upgrade_zencart_135_to_136.sql
 mysql_upgrade_zencart_136_to_137
@@ -39102,6 +38999,7 @@ myxml
 myxml.php
 MZ
 MZ.php
+n
 N
 n2b64
 n2cms
@@ -39357,6 +39255,7 @@ nb_NO.xml
 nb.php
 nbproject
 nb.xml
+nc
 NC
 ncover
 NCover.Console.exe.config
@@ -39433,13 +39332,17 @@ Nest.php
 net
 Net
 net-2
+netbsd
+netcat
 NetDebug
 NetDebug.php
 NetFlow_pr
+nethome
 NetPBM
 NetPBM.php
 Net_POP3_example
 Net_POP3_example.php
+nets
 netscape
 net_smtp
 Net_SMTP
@@ -39453,6 +39356,7 @@ Network
 network_check
 NetworkException
 NetworkException.class.php
+networking
 Networking
 network may be denied when the modification itself materially and
 Network.php
@@ -39806,6 +39710,7 @@ next
 next.html
 next.php
 nfo
+nfs
 NG
 ngen
 ngen.html
@@ -39856,6 +39761,7 @@ NHQG.exe.config
 NHRepository
 NHRepository.cs
 ni
+nice
 nicEdit.js
 nicEditor
 niceforms-default.css
@@ -39957,6 +39863,8 @@ nobadbraces
 nobadcase
 NoBannerLogger
 NoBannerLogger.php
+~nobody
+nobody
 nocache
 nocache.inc.php
 nocache.php
@@ -39987,6 +39895,7 @@ nodatabase.php
 no_data.php
 nodb_config
 nodb_config.php
+node
 Node
 NodeAction
 NodeAction.class.php
@@ -40110,8 +40019,6 @@ NORTHWND_log
 NORTHWND_log.ldf
 norwegian
 norwegian.inc.php
-norwegian-iso-8859-1
-norwegian-iso-8859-1.inc.php
 norwegian.js
 norwegian.php
 norwegian-utf-8
@@ -40126,7 +40033,6 @@ Nostalgia.php
 Not
 nota
 notabs
-not accept this License.  Therefore, by modifying or propagating a
 notas
 notas.php
 notatnik
@@ -40146,7 +40052,6 @@ NotConfigurationSmartTemplate.php
 NotConfigurationSmarty
 NotConfigurationSmarty.php
 not control copyright.  Those thus making or running the covered works
-not convey it at all.  For example, if you agree to terms that obligate you
 notdefined
 notdefined.php
 not_disabled
@@ -40227,6 +40132,8 @@ notification_update
 notification_update.php
 notifi_cli
 notifi_cli.php
+notified
+notifier
 Notifier
 Notifier.php
 notify
@@ -40239,7 +40146,6 @@ NotImplemented
 notimplementedexception
 notimplementedexception.php
 NotImplemented.php
-not impose a license fee, royalty, or other charge for exercise of
 NotInLib
 NotInLib.class.php
 NotMatch
@@ -40262,8 +40168,6 @@ NotSelector.php
 NotSpecification
 NotSpecification.cs
 not survive such relicensing or conveying.
-  Notwithstanding any other provision of this License, for material you
-  Notwithstanding any other provision of this License, you have
 not-xrds
 not-xrds.xml
 NotYetImplementedException
@@ -40332,6 +40236,7 @@ nukePage
 nukePage.inc
 nukePage.php
 nuke.sql
+nul
 null
 Null
 Nullables
@@ -40476,9 +40381,12 @@ ny.xml
 NZ
 NZ.php
 O
-o2007blue
-o2007silver
 o2k7
+OA
+OAErrorDetailPage
+OA_HTML
+oa_servlets
+oauth
 OAuth
 OAuthConsumer
 OAuthConsumer.cs
@@ -40492,6 +40400,7 @@ OAuthRequest.cs
 OAuthUtil
 OAuthUtil.cs
 ob
+obdc
 oberon2
 oberon2.php
 ob_get_clean
@@ -40586,7 +40495,9 @@ observer.rb
 observers
 observer_test
 observer_test.php
+obsolete
 Obsolete
+obsoleted
 ocaml
 ocaml-brief
 ocaml-brief.php
@@ -40669,6 +40580,7 @@ ODBCTypes
 ODBCTypes.php
 odbc_utility
 odbc_utility.php
+ode
 Odo
 Odo.php
 ods
@@ -40676,9 +40588,10 @@ ods.php
 odt
 odt.php
 Odyssey
+oem
 oEmbedTest
 oEmbedTest.php
-OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+ofbiz
 OFC
 of_checkbox
 of_checkbox.inc
@@ -40689,9 +40602,8 @@ Offer
 Offer.php
 OfferSet
 OfferSet.php
+office
 Office
-office2000
-office2003
 office3d
 OfficeAdmin
 OfficeAdmin.php
@@ -40718,20 +40630,15 @@ off.php
 Offset
 offset.js
 Offset.php
-of having them make modifications exclusively for you, or provide you
 of_radio
 of_radio.inc
-of sections 4 and 5, provided that you also convey the
 of_select
 of_select.inc
 of_text
 of_textarea
 of_textarea.inc
 of_text.inc
-of that license document, provided that the further restriction does
-of the GPL, as needed to protect the freedom of users.
 of the particular user or of the way in which the particular user
- of this license document, but changing it is not allowed.
 ognl-2.6.11.jar
 ognl.jar
 ok
@@ -40791,6 +40698,7 @@ om_KE
 om_KE.xml
 om.php
 om.xml
+onbound
 onclick
 ONCLICK
 onclick-simple
@@ -40840,7 +40748,6 @@ onLoadBind.php
 onLoadBindTimer
 onLoadBindTimer.php
 on_load_main.js
-    only if you received the object code with such an offer, in accord
 on the Program.
 ontModel
 onuninstall
@@ -40864,10 +40771,13 @@ OPEN
 OpenAjax.js
 open_basedir
 open_basedir.php
+openbsd
 opendb
 opendb.php
+opendir
 opendocument.lib.php
 OpenDocument.php
+openejb
 open-flash-chart
 open_flash_chart_object
 open_flash_chart_object.php
@@ -40889,6 +40799,7 @@ openid-server.css
 openid.xml
 OpenID_Yadis
 OpenID_Yadis.php
+openjpa
 OpenLayers.js
 OpenOffice
 open.php
@@ -40947,6 +40858,7 @@ Operator.cs
 Operator.php
 operators
 operators.php
+opinion
 opmaak.css
 opml
 OpmlHandler
@@ -40959,6 +40871,7 @@ OpportunitiesByLeadSourceByOutcomeDashlet
 OpportunitiesByLeadSourceDashlet
 opportunity
 opportunity.php
+oprocmgr-status
 opt
 opt.api.php
 opt.class.php
@@ -41288,6 +41201,7 @@ option_visual_table_class.html
 option_width
 option_width.html
 or
+oracle
 Oracle
 oracle11
 oracle11.php
@@ -41339,6 +41253,7 @@ OracleUpdateQueryResult
 OracleUpdateQueryResult.class.php
 OracleUpdateQueryTestCase
 OracleUpdateQueryTestCase.class.php
+oracle.xml.xsql.XSQLServlet
 orange
 orange_bg.css
 orange.css
@@ -41347,7 +41262,6 @@ Orbit
 or can get the source code.  And you must show them these terms so they
 OrCondition
 OrCondition.php
-or convey a specific copy of the covered work, then the patent license
 ord
 order
 Order1
@@ -41385,6 +41299,7 @@ order_details.php
 OrderDetails.php
 OrderDirection
 OrderDirection.cs
+ordered
 OrderedEnumeration
 OrderedEnumeration.cs
 OrderedEnumerationTester
@@ -41451,8 +41366,6 @@ Organisation
 Organisation.php
 Organization
 Organization.cs
-organization, or merging organizations.  If propagation of a covered
-organization, or substantially all assets of one, or subdividing an
 organize
 organize.php
 organizer
@@ -41461,7 +41374,6 @@ organizer.html
 organizer.js
 org.eclipse.wst.common.project.facet.core.xml
 org.mortbay.jetty.jar
-or household purposes, or (2) anything designed or sold for incorporation
 Orientation
 Orientation.java
 original
@@ -41490,13 +41402,13 @@ OrSelector
 OrSelector.php
 OrSpecification
 OrSpecification.cs
-or that patent license was granted, prior to 28 March 2007.
 OrValidatorRule
 OrValidatorRule.class.php
 or.xml
 os
 OS
 osapi
+osc
 oscommerce
 oscommerce.sql
 OsCondition
@@ -41558,7 +41470,6 @@ others
 OtherTest
 OtherTest.php
 otherwise be available to you under applicable patent law.
-otherwise) that contradict the conditions of this License, they do not
 ot_loworderfee
 ot_loworderfee.php
 ot_redemptions
@@ -41582,6 +41493,7 @@ outbox
 outbox.html
 outbox.php
 OutcomeByMonthDashlet
+outgoing
 outline
 outline.css
 Outline Profiles
@@ -41592,6 +41504,7 @@ out.php
 outposts
 outposts.php
 outposts.tpl
+output
 Output
 OutputCache
 OutputCache.php
@@ -41636,6 +41549,7 @@ output_test
 OutputTestCase
 OutputTestCase.php
 output_test.php
+outreach
 Outros
 outside
 outside.php
@@ -41737,11 +41651,14 @@ overview.tpl
 overview-tree
 overview-tree.html
 overview.xml
+owa
 owl
 owl.php
-owned or controlled by the contributor, whether already acquired or
+ows
+ows-bin
 p
 p2
+p2p
 p4add
 p4add.html
 p4change
@@ -41805,6 +41722,7 @@ package_install
 package_install.php
 __package__.js
 package.js
+package.json
 package-list
 packagelist
 packagelist.xml
@@ -41830,7 +41748,6 @@ package.xml
 packagexml
 packagexml.py
 packaging
-packaging a Major Component, but which is not part of that Major
 packaging.php
 packed
 packer
@@ -41863,6 +41780,7 @@ pagamenti
 pagamenti.php
 page
 Page
+page_1
 page1
 page1.html
 page1.php
@@ -42046,6 +41964,7 @@ Pager.php
 PagerTest
 PagerTest.php
 pager.tpl
+_pages
 pages
 Pages.aspx
 Pages.aspx.cs
@@ -42139,8 +42058,6 @@ _pagination.php
 Pagination.php
 pagination.tpl.php
 Paginator
-paginator3000.css
-paginator3000.js
 paginator-core.css
 paginator.css
 paginator-debug.js
@@ -42165,6 +42082,7 @@ pa_Guru
 pa_Guru_IN
 pa_Guru_IN.xml
 pa_Guru.xml
+paid
 pa_IN
 painel
 painel.php
@@ -42226,6 +42144,7 @@ panasonic.php
 panda
 pane
 pane.js
+panel
 Panel
 panel1
 panel1.php
@@ -42263,6 +42182,7 @@ PaperController.php
 paper.css
 paper.js
 Paper.php
+papers
 PaperShare
 pa.php
 pa_PK
@@ -42315,6 +42235,7 @@ ParFormat.html
 ParFormat.php
 _ParFormat.php.html
 Paris
+parse
 Parse
 parse_analyze
 parse_analyze.lib.php
@@ -42425,9 +42346,7 @@ partialTest.php
 PartialViewGenerator
 PartialViewGenerator.cs
 particulares
-PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
 parties to make or receive copies.  Mere interaction with a user through
-parties who would receive the covered work from you, a discriminatory
 PartIterator
 PartIterator.php
 Partition Functions
@@ -42445,7 +42364,6 @@ Part.php
 part_pics
 parts
 parts of the aggregate.
-parts of the General Public License.  Of course, your program's commands
 PartStructure
 PartStructureIterator
 PartStructureIterator.php
@@ -42464,6 +42382,7 @@ passport_client
 passport_client.php
 PassThrough
 PassThrough.php
+.passwd
 passwd
 passwd_form
 passwd_form.tpl.html
@@ -42507,6 +42426,7 @@ password.js
 Password.jsp
 _password.php
 password.php
+passwords
 password-strength-meter.js
 PasswordTextBox
 PasswordTextBox.php
@@ -42514,6 +42434,7 @@ password.tpl
 PasswordValidator
 PasswordValidator.html
 PasswordValidator.js
+past
 Past
 paste
 pastebin
@@ -42715,9 +42636,6 @@ patch-watchlist-null
 patch-watchlist-null.sql
 patch-watchlist.sql
 patent against the party.
-patent license (a) in connection with copies of the covered work
-patent license for this particular work, or (3) arrange, in a manner
-patent license under the contributor's essential patent claims, to
 patents cannot be used to render the program non-free.
 patent sublicenses in a manner consistent with the requirements of
 patError
@@ -42856,11 +42774,13 @@ pay.php
 pays
 pay.tpl
 pb
+pbo
 pc
 pCache
 pcg
 pchart
 pChart
+pci
 pcl
 pclerror
 pclerror.lib.php
@@ -42969,6 +42889,7 @@ PDFQuotation
 PDFQuotationPageHeader
 PDFQuotationPageHeader.inc
 PDFQuotation.php
+pdfs
 PDFSalesAnalPageHeader
 PDFSalesAnalPageHeader.inc
 PDFSalesAnalysis
@@ -43037,18 +42958,8 @@ peanut_noaccess
 peanut_talkbubble
 pear
 PEAR
-pearbug13693
-pearbug13693.phpt
-pear_bug4879
-pear_bug4879.phpt
 pearbug513
 pearbug513.phpt
-pear_bug6251
-pear_bug6251.phpt
-pear_bug6428
-pear_bug6428.phpt
-pearbug7618
-pearbug7618.phpt
 pear-build
 pear-build.xml
 pear.class.php
@@ -43097,6 +43008,7 @@ pecl.sh
 pedido
 Pedido
 Pedido.php
+peek
 Peer
 PeerBuilder
 PeerBuilder.php
@@ -43158,6 +43070,7 @@ Percentage
 Percentage.php
 PercentEncoder
 PercentEncoder.php
+.perf
 perf
 perf-db2
 perf-db2.inc.php
@@ -43236,7 +43149,6 @@ Permissions
 permissions.class.php
 permissions_controller
 permissions_controller.php
-permissions.  However, no additional obligations are imposed on any
 permissions.js
 Permissions.php
 permissions_phpbb
@@ -43246,7 +43158,6 @@ permissions.tpl
 Permissions.xml
 PermissionTable
 PermissionTable.class.php
-    permission to license the work in any other way, but it does not
 permission to link or combine any covered work with a work licensed
 permission to run the unmodified Program.  The output from running a
 permission_trace
@@ -43255,7 +43166,6 @@ PERMISSION_UPDATE
 PERMISSION_UPDATE.php
 PERMISSION_VALIDATE
 PERMISSION_VALIDATE.php
-permission, would make you directly or secondarily liable for
 permit
 permit.php
 Perm.php
@@ -43267,8 +43177,6 @@ persian
 persian.php
 persian-utf-8
 persian-utf-8.inc.php
-persian-windows-1256
-persian-windows-1256.inc.php
 persist
 persistable
 PersistableObject
@@ -43435,6 +43343,7 @@ phaos_mapmaker.php
 phar
 phases
 phases.php
+phf
 phgstats
 phgstats.class.php
 philosophy
@@ -43453,9 +43362,12 @@ PhingPhpDocumentorSetup.php
 PhingTask
 PhingTask.php
 phoenix
+phone
 Phone
 phonebook
 Phone.php
+phones
+phorum
 photo
 photoalbum
 photoalbums
@@ -43484,6 +43396,7 @@ photo-manager.html
 photo.php
 PhotoQuery
 PhotoQuery.php
+photos
 Photos
 photos.css
 photoshop
@@ -43554,8 +43467,6 @@ PHP5PeerBuilder.php
 php5ts
 php6
 php6.php
-php_a0100131
-php_a010013l
 phpaliases
 phpaliases.py
 PhpArray
@@ -43564,6 +43475,7 @@ PHPAspect
 php-barcode
 php-barcode.php
 phpbb
+phpBB
 phpbb2
 phpBB2
 phpbb2.php
@@ -43631,6 +43543,7 @@ PhpEvalTask
 PhpEvalTask.php
 php_evaluator
 php_evaluator.cls.php
+phpEventCalendar
 phpexcel
 PHPExcel
 PHPExcel.php
@@ -43757,6 +43670,7 @@ phpmkrfn
 phpmkrfn.php
 phpmole
 PHPmY
+phpmyadmin
 phpMyAdmin
 Phpmyadmin
 phpmyadmin.css.php
@@ -43764,6 +43678,7 @@ phpMyAdmin-http
 phpMyAdmin-http.conf
 PhpNameGenerator
 PhpNameGenerator.php
+phpnuke
 PHPNuke
 phpolait
 phpolait.php
@@ -43787,6 +43702,7 @@ phprpc_date
 phprpc_date.php
 phprpc_server
 phprpc_server.php
+phps
 phpserializer
 PHPSession
 PHPSession.php
@@ -44041,6 +43957,7 @@ PiePlot3D.html
 PiePlotC
 PiePlotC.html
 PiePlot.html
+pii
 PIM
 PIM.php
 pindex
@@ -44076,7 +43993,10 @@ PipelineBySalesStageDashlet
 pipeline.class.php
 pipeline.factory.class.php
 pipe.php
+pipermail
 pipes
+piranha
+pivot
 pivottable
 pivottable.inc.php
 pix
@@ -44108,7 +44028,6 @@ pk.php
 pl
 Place
 Place.cs
-    place (gratis or for a charge), and offer equivalent access to the
 Placeholder
 placeholder.html
 Placeholder.php
@@ -44205,6 +44124,7 @@ player_stat
 player_stat.php
 player.swf
 play.html
+playing
 playlist
 PlaylistId
 PlaylistId.php
@@ -44253,6 +44173,7 @@ Plotters.js
 pl.php
 pl_PL
 pl_PL.xml
+pls
 plsql
 plsql.php
 plug
@@ -44531,12 +44452,14 @@ pnversion
 pnversion.php
 po
 PO
+poc
 PO_Chk_ShiptRef_JobRef
 PO_Chk_ShiptRef_JobRef.php
 podcast
 podcast.php
 PO_Header
 PO_Header.php
+poi
 point
 Point
 Point2D
@@ -44622,8 +44545,6 @@ PolicyServer
 PolicyServer.cs
 polish
 polish.inc.php
-polish-iso-8859-2
-polish-iso-8859-2.inc.php
 Polish.js
 polish.php
 polish-utf-8
@@ -44804,6 +44725,7 @@ PopupWindow.js
 popupwin.js
 PO_ReadInOrder
 PO_ReadInOrder.inc
+porn
 port
 port2
 port2.php
@@ -44816,6 +44738,7 @@ portal.css
 portal.html
 Portal.js
 Portal.php
+portals
 Portals
 PortalService
 PortalService.cs
@@ -44827,6 +44750,7 @@ Porte
 Porte.php
 PorterStemmer
 PorterStemmer.php
+portfolio
 portfolio_fixture.php
 portlet
 Portlet
@@ -44845,12 +44769,11 @@ portuguese-br
 portuguesebr
 portuguese-br.php
 portuguese.inc.php
-portuguese-iso-8859-1
-portuguese-iso-8859-1.inc.php
 portuguese.js
 portuguese.php
 portuguese-utf-8
 portuguese-utf-8.inc.php
+pos
 PO_SelectOSPurchOrder
 PO_SelectOSPurchOrder.php
 PO_SelectPurchOrder
@@ -44871,7 +44794,6 @@ PositionSC.class.php
 PositionSP
 PositionSP.class.php
 posix.js
-possible use to the public, the best way to achieve this is to make it
 _post
 post
 post_1
@@ -44932,6 +44854,7 @@ post_delete
 post_delete.php
 Post-Deployment
 post_disapproved
+posted
 posted_attachments_body
 posted_attachments_body.tpl
 post_edit
@@ -45158,6 +45081,7 @@ PostOffice
 PostOffice.php
 PostOrderIterator
 PostOrderIterator.php
+postpaid
 Post_Parser
 Post_Parser.class.php
 PostPeer
@@ -45243,6 +45167,7 @@ ppt
 Pptx.php
 pr
 PR
+pr0n
 practice
 practice.html
 prado
@@ -45344,10 +45269,12 @@ preload
 preload.php
 pre-lock
 prelude.jspf
+premium
 PreOrderIterator
 PreOrderIterator.php
 PreOrderNodeIterator
 PreOrderNodeIterator.php
+prepaid
 prepare
 PreparedStatement
 PreparedStatementCommon
@@ -45381,6 +45308,7 @@ Presentation
 Presentation.css
 presentation.js
 Presentation.php
+presentations
 Presenter
 PresenterComponent
 PresenterComponent.php
@@ -45395,6 +45323,7 @@ presenters
 present.php
 PresentSelector
 PresentSelector.php
+preserve
 PreserveScripts
 preserve-scripts.js
 preset
@@ -45402,6 +45331,7 @@ preset.php
 Presets
 Presets.html
 pre.smarty_compat.php
+press
 presse
 presse.php
 press-this
@@ -45453,6 +45383,7 @@ Prices
 Prices_Customer
 Prices_Customer.php
 Prices.php
+pricing
 PRIDEConverter
 primarykey
 PrimaryKeyConvention
@@ -45512,10 +45443,13 @@ PrintCustTrans.php
 PrintCustTransPortrait
 PrintCustTransPortrait.php
 print_draft.css
+printenv
+printer
 Printer
 printer_friendly
 printer_friendly.html
 Printer.php
+printers
 print_funcs
 print_funcs.inc.php
 print.html
@@ -45559,6 +45493,7 @@ PriorityQueue.php
 PriorityStack
 PriorityStack.php
 prior to 60 days after the cessation.
+priv
 priv_action
 priv_action.php
 privacy
@@ -45614,13 +45549,13 @@ probe
 probe.php3
 Problem
 Problem.php
+problems
 proc
 Proc.cs
 ProceduralPages
 ProceduralPages.inc
 procedure
 procedures
-procedures, authorization keys, or other information required to install
 procesar
 procesar.php
 Process
@@ -45708,8 +45643,6 @@ ProduAdmin_Type
 ProduAdmin_Type.asp
 ProduAdmin_xiaoType
 ProduAdmin_xiaoType.asp
-produce it from the Program, in the form of source code under the
-produce the work, or an object code interpreter used to run it.
 product
 Product
 productAction
@@ -45818,7 +45751,6 @@ product_popup_images.php
 product_prev_next
 product_prev_next.php
 product.rb
-product received by a particular user, "normally used" refers to a
 ProductRepository
 ProductRepository.cs
 product_reviews
@@ -45845,7 +45777,6 @@ products_expected.php
 products_extra_images
 products_extra_images.php
 products.html
-products.  If such problems arise substantially in other domains, we
 products_media
 products_media.html
 products_media.php
@@ -45869,7 +45800,6 @@ product_test
 product_test.rb
 ProductTests
 ProductTests.cs
-    product that is covered by this License, on a durable physical
 product_thumbnail_images
 product_thumbnail_images.php
 product.tpl
@@ -46025,7 +45955,6 @@ proftpd
 proftpd.conf
 program
 Program
-    <program>  Copyright (C) <year>  <name of author>
 Program.cs
 program_files
 programming
@@ -46035,7 +45964,6 @@ program.php
 programs
 Program specifies that a certain numbered version of the GNU General
 programs which are used unmodified in performing those activities but
-Program, unless a warranty or assumption of liability accompanies a
 Program.vb
 progress
 progress2
@@ -46191,7 +46119,6 @@ prompt
 prompt.css
 prompt.html
 prop
-propagate that work, subject to this License.  You are not responsible
 propagate the contents of its contributor version.
 propagation
 propagation.html
@@ -46326,6 +46253,7 @@ propview.php
 prosilver
 ProspectLists
 Prospects
+prot
 PROT
 protect
 Protect
@@ -46339,6 +46267,7 @@ Protected.php
 protect_forums
 protect_forums.html
 protecting users' freedom to change the software.  The systematic
+protection
 Protection
 ProtectionForm
 ProtectionForm.php
@@ -46367,7 +46296,6 @@ Prototype
 prototype-1
 prototype-1.4.0.js
 prototype-1.6.0.2.js
-prototype1602.js
 prototype-1.6.0.3.js
 prototype-bridge.js
 prototype-bridge-min.js
@@ -46401,7 +46329,6 @@ providers
 Provider.xml
 providex
 providex.php
-provisionally, unless and until the copyright holder explicitly and
 prov.js
 proxies
 proxy
@@ -46431,6 +46358,7 @@ prune
 PruneAllVersionConstraint
 PruneAllVersionConstraint.class.php
 prune.php
+prv
 ps
 ps_AF
 ps_AF.xml
@@ -46452,6 +46380,7 @@ PSpell.php
 PSpellShell
 PSpellShell.php
 ps.php
+psql
 ps.unicode.inc.php
 ps.utils.inc.php
 ps.whitespace.inc.php
@@ -46502,9 +46431,9 @@ Publicaciones
 Publicaciones.php
 PublicAction
 PublicAction.class.php
-public, and in some countries other activities as well.
 publication
 publication.php
+publications
 Publications
 public_check
 public_check.php
@@ -46519,9 +46448,6 @@ public.inc
 PublicIndexFile
 PublicIndexFile.php
 public.js
-Public License instead of this License.  But first, please read
-Public License "or any later version" applies to it, you have the
-publicly available network server or other readily accessible means,
 public.php
 PublicScriptsDirectory
 PublicScriptsDirectory.php
@@ -46548,10 +46474,14 @@ publish.php
 publish.sh
 publish.xml
 pub.php
+pubs
+pull
 punbb
 punbb.php
 purchase
 purchase.php
+purchases
+purchasing
 PurchData
 PurchData.php
 Pure
@@ -46570,7 +46500,6 @@ PurifierLinkify.php
 purple
 purple.css
 purple.js
-purposes of this definition, "control" includes the right to grant
 PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
 push
 pushbutton
@@ -46617,6 +46546,7 @@ pvcsunlock
 pvcsunlock.html
 pvp
 pvp.php
+pw
 PW
 pwd
 pw_db_adodb
@@ -46887,6 +46817,7 @@ QMySqliDatabase
 QMySqliDatabase.class.php
 QName
 QName.php
+qotd
 QPaginatedControl
 QPaginatedControl.class.php
 QPaginator
@@ -46909,6 +46840,7 @@ _qpanel_list.tpl
 qpanel.php
 qpanel.tpl.php
 q.php
+qpid
 QPL
 QPostgreSqlDatabase
 QPostgreSqlDatabase.class.php
@@ -47118,6 +47050,7 @@ QueueManager
 QueueManager.php
 queue.php
 queue.py
+queues
 Queues
 queuescanner
 queuescanner.php
@@ -47265,6 +47198,7 @@ Radial
 radial_blue
 radial_orange
 Radial.php
+radio
 Radio
 RadioButton
 RadioButton.class.php
@@ -47456,8 +47390,8 @@ readlog.php
 readmail
 readmail.php
 read-me
-Readme!
-!ReadMe
+readme
+Readme
 Read Me
 Read_Me
 _README
@@ -47535,6 +47469,7 @@ read_three
 read_three.pl
 read.tpl
 real
+realestate
 Realestate
 Realestate.csproj
 realm
@@ -47587,16 +47522,12 @@ receipt
 receipt.php
 receive
 Receive.asp
-received it, or any part of it, contains a notice stating that it is
-received notice of violation of this License (for any work) from that
+received
 ReceiveFile
 ReceiveFile.php
-receive it, in any medium, provided that you conspicuously and
 receive.php
 receiver
 receiver.php
-receives a license from the original licensors, to run, modify and
-receiving the covered work authorizing them to use, propagate, modify
 recent
 Recent
 RecentBuilds
@@ -47613,6 +47544,7 @@ RecentPosts
 RecentPosts.cs
 recentposts.php
 recent.tpl
+recharge
 recherche
 recherche.aspx
 recherche.aspx.cs
@@ -47643,6 +47575,7 @@ RecognizerSharedState.php
 recommend
 recommend.php
 Recommend_Us
+record
 Record
 record_artists
 record_artists.php
@@ -47658,6 +47591,7 @@ record_company_filter.php
 record_company.php
 RecordDriver
 RecordDriver.php
+recorded
 Recorded
 Recorded.php
 recorder
@@ -47702,6 +47636,7 @@ recover_password.php
 recover.php
 recoverpost
 recoverpost.php
+recovery
 recruit
 recruit.php
 rect
@@ -47723,6 +47658,8 @@ recursos
 recursos.php
 recycle
 recycle.asp
+recycled
+Recycled
 recycle.php
 red
 red_bg.css
@@ -47764,6 +47701,7 @@ refactorings.index
 refcount
 refcount.php
 refer
+reference
 Reference
 ReferenceAssemblies
 reference_buttons
@@ -47900,6 +47838,7 @@ Regions
 regipbans
 regipbans.php
 regist
+register
 Register
 Register.ascx
 Register.ascx.cs
@@ -47961,6 +47900,7 @@ registration.html
 registration.html.php
 registration.js
 registration.php
+registrations
 registration.tpl
 registrieren
 registrieren.php
@@ -48006,7 +47946,6 @@ reg_upload.asp
 reindex
 reindex.php
 reinstated permanently if the copyright holder notifies you of the
-reinstated, you do not qualify to receive new licenses for the same
 reject
 reject.php
 Relate
@@ -48077,6 +48016,7 @@ remember.php
 remember.xml
 remind
 Remind
+reminder
 Reminder
 reminder.css
 reminder.html
@@ -48143,13 +48083,13 @@ RemotingMessage
 RemotingMessage.php
 removal in certain cases when you modify the work.)  You may place
 remove
-remove any additional permissions from that copy, or from any part of
 removeBOM
 removeBOM.php
 removeClass
 removeClass.html
 remove_control_m
 remove_control_m.sh
+removed
 RemoveEmpty
 RemoveEmpty.php
 remove-font-tags
@@ -48194,6 +48134,7 @@ Renderable.php
 render.class.php
 renderDump
 renderDump.php
+rendered
 Renderer
 renderer.cls.php
 Renderer.js
@@ -48221,6 +48162,7 @@ Reorder
 reorder.html
 reorder.js
 reorder.php
+rep
 repair
 repair.php
 repay
@@ -48264,6 +48206,12 @@ REPLACE_THIS_FILE_WITH_YOUR_KEY_FILE
 ReplaceTokens
 ReplaceTokens.php
 replays
+replica
+replicas
+replicate
+replicated
+replication
+replicator
 replies
 replies.php
 repl.php
@@ -48409,6 +48357,7 @@ RepositoryTestsHelper
 RepositoryTestsHelper.cs
 rep_rech_dep
 rep_rech_dep.php
+reprints
 repr.js
 RepubsubIO.js
 reputation
@@ -48418,6 +48367,8 @@ reqcheck
 reqcheck.php
 req.html
 req.php
+reqs
+request
 Request
 Request2
 Request.class.php
@@ -48485,7 +48436,6 @@ requirement.php
 requirements
 requirements.html
 requirements.php
-requirement to continue to provide support service, warranty, or updates
 require.php
 RequiresConferenceFilterAttribute
 RequiresConferenceFilterAttribute.cs
@@ -48493,6 +48443,9 @@ RequiresVersion
 RequiresVersion.php
 RequiresVersion.tpl
     requiring that modified versions of such material be marked in
+requisition
+requisitions
+_res
 res
 resampler
 resampler.php
@@ -48549,6 +48502,7 @@ ReSharperCodeStyle
 ReSharperCodeStyle.xml
 ResharperLiveTemplates
 ResharperLiveTemplates.xml
+resin
 resizable
 resizable.css
 resizable.html
@@ -48605,6 +48559,7 @@ resolver.jar
 Resolver.php
 resolveStubs
 resolveStubs.php
+resource
 Resource
 ResourceAbstract
 ResourceAbstract.php
@@ -48632,6 +48587,7 @@ ResourcePool
 ResourcePool.cs
 Resource.resx
 _resources
+resources
 Resources
 Resources.class.php
 Resources.cs
@@ -48686,6 +48642,7 @@ RESTException
 RESTException.php
 Rest.js
 restore
+restored
 restore_database
 restore_database.php
 restore_include_path
@@ -48696,7 +48653,6 @@ rest.php
 restricted
 restricted.php
 restrictions" within the meaning of section 10.  If the Program as you
-restriction, you may remove that term.  If a license document contains
 rest.tpl
 Result
 ResultAcceptorAction
@@ -48766,6 +48722,7 @@ resync
 resync.comments.php
 resync.feeds.php
 resync.php
+retail
 retire
 retire.php
 retrieve
@@ -48793,6 +48750,7 @@ Reveal.cs
 reverse
 ReverseComparer
 ReverseComparer.cs
+reversed
 reversed.js
 ReverseGRN
 ReverseGRN.php
@@ -48802,7 +48760,9 @@ ReversePinpoint.php
 reverse_relationships
 reverse_relationships.php
 revert
+reverted
 revert.html
+review
 Review
 reviewcom
 reviewcom.php
@@ -48836,9 +48796,6 @@ RewriterUtils
 RewriterUtils.cs
 rewriteTest.js
 rewrite.xml
-rfc0001
-rfc0001.00.html
-rfc0002
 RFC822
 RFC822.php
 rfc822.phpt
@@ -48926,9 +48883,6 @@ rightpane.php
 Right.php
 rights
 Rights
-rights granted or affirmed under this License.  For example, you may
-rights granted under this License, and you may not initiate litigation
-rights of fair use or other equivalent, as provided by copyright law.
 RightSP
 RightSP.class.php
 Rights.php
@@ -48948,6 +48902,8 @@ roadmap
 roadmap.html
 roadmap.php
 roadmap.tpl
+roam
+roaming
 Roar.css
 robot
 robot.js
@@ -48995,14 +48951,13 @@ roletest
 roletest.php
 rollback
 rollback.php
+roller
 Rollover
 rollover.js
 Rollover.php
 rollovers.js
 roman
 romanian
-romanian-iso-8859-1
-romanian-iso-8859-1.inc.php
 romanian.js
 romanian.php
 romanian-utf-8
@@ -49012,6 +48967,7 @@ RomanNumerals.php
 roman.py
 ro_MD
 ro_MD.xml
+room
 Room
 Room.aspx
 Room.aspx.cs
@@ -49024,7 +48980,9 @@ rooms
 rooms.php
 .root
 _root
+~root
 root
+Root
 RootAssetSearch
 RootAssetSearch.class.php
 Root.cs
@@ -49351,9 +49309,6 @@ Ruby_Not_Installed
 rubyonrails
 ruby.php
 ruby.xml
-ru_cp1251
-ru_CP1251.js
-ru_cp1251.php
 ru_dlg.js
 ru.inc.php
 ru.js
@@ -49405,6 +49360,7 @@ rule.js
 Rule.php
 RuleRegistry
 RuleRegistry.php
+rules
 Rules
 RulesAndDefaults
 RulesAndDefaults.sql
@@ -49484,8 +49440,6 @@ russian-koi8-r.inc.php
 russian.php
 russian-utf-8
 russian-utf-8.inc.php
-russian-windows-1251
-russian-windows-1251.inc.php
 ru_UA
 ru_UA.xml
 ru_utf8
@@ -49496,6 +49450,7 @@ rw
 rw.php
 rw_RW
 rw_RW.xml
+rwservlet
 rw.xml
 s
 S
@@ -49548,8 +49503,8 @@ salemaker_info.php
 salemaker.php
 salemaker_popup
 salemaker_popup.php
-sale, or importing the Program or any portion of it.
 sale.php
+sales
 Sales
 SalesAnalReptCols
 SalesAnalReptCols.php
@@ -49579,6 +49534,7 @@ salutations.js
 sam
 samba
 same work.
+saml
 Saml
 Saml.php
 Samp
@@ -49764,6 +49720,7 @@ SASL.php
 sas.php
 sauvegarde
 sauvegarde.php
+sav
 savant
 Savant3
 Savant3_Filter_trimwhitespace
@@ -49792,6 +49749,7 @@ SaveController
 SaveController.cs
 SaveControllerTester
 SaveControllerTester.cs
+saved
 Saved
 Saved.aspx
 save_delete
@@ -49854,6 +49812,7 @@ SayAdmin.asp
 SayAdmin_Del
 SayAdmin_Del.asp
 sb
+sbin
 sb.php
 sc
 scaffold
@@ -49893,6 +49852,7 @@ scandir
 scandir.php
 scan.js
 scan_makefile_in
+scanned
 scanner
 Scanner
 Scanner.cs
@@ -49900,6 +49860,7 @@ scanner.py
 scan_newsgroups
 scan_newsgroups.pl
 scan.php
+scans
 Scatter
 scatter_csimex1
 scatter_csimex1.html
@@ -49933,6 +49894,7 @@ Scene
 Scene.cpp
 SCGI
 schablon
+sched
 scheda
 scheda.php
 sched_apocalypse
@@ -49990,6 +49952,7 @@ ScheduleSlot
 ScheduleSlot.aspx
 ScheduleTestCase
 ScheduleTestCase.class.php
+scheduling
 Scheduling
 SchedulingException
 SchedulingException.php
@@ -50166,6 +50129,8 @@ Scripting
 Scripting.php
 script.js
 script.js.php
+scriptlet
+scriptlets
 script-loader
 ScriptLoader.js
 script-loader.php
@@ -50726,13 +50691,13 @@ secondary_model_fixture.php
 Second.php
 secpay
 secpay.php
+secret
 Secret.js
 secrets
 secrets.php
 section
 _Section
 Section
-section 13, concerning interaction through a network will apply to the
 section.class.php
 SectionController
 SectionController.php
@@ -50787,6 +50752,7 @@ sectors
 secure
 secureapp
 secureapp.sh
+secured
 secure.php
 secureSuccess
 secureSuccess.php
@@ -50798,6 +50764,7 @@ securimage_play
 securimage_play.php
 securimage_show
 securimage_show.php
+security
 Security
 Security.aspx
 Security.aspx.cs
@@ -50838,6 +50805,7 @@ SecurityTests.cs
 SecurityTokenReference
 SecurityTokenReference.php
 security.tpl
+security.txt
 SecurityUtilities
 SecurityUtilities.cs
 security.xml
@@ -50881,6 +50849,7 @@ Sel_calendar.js
 selcolor
 selcolor.html
 selcolor.php
+select
 Select
 Select1.js
 selectable
@@ -51104,6 +51073,7 @@ sendpwd
 sendpwd.php
 send_reminders
 send_reminders.php
+sendto
 se_NO
 se_NO.xml
 sent
@@ -51146,14 +51116,11 @@ SequentialTask.php
 serbian
 serbian_cyrillic-utf-8
 serbian_cyrillic-utf-8.inc.php
-serbian_cyrillic-windows-1251
-serbian_cyrillic-windows-1251.inc.php
 serbian_latin-utf-8
 serbian_latin-utf-8.inc.php
-serbian_latin-windows-1250
-serbian_latin-windows-1250.inc.php
 serbian.php
 Serf-License
+serial
 SerializableDictionary
 SerializableDictionary.cs
 SerializableStringDictionary
@@ -51184,9 +51151,11 @@ Serializer.php
 Series.js
 sermons
 sermons.tpl
+serv
 serve
 serve.php
 _server
+server
 Server
 server_binlog
 server_binlog.php
@@ -51208,6 +51177,7 @@ server_export.php
 server_import
 server_import.php
 server.inc.php
+server-info
 server_info
 ServerInfo
 server_info.php
@@ -51257,6 +51227,7 @@ ServerSideConnection.java
 servers.php
 server_sql
 server_sql.php
+server-status
 server_status
 serverstatus
 server_status.php
@@ -51274,6 +51245,7 @@ server_variables
 server_variables.php
 servervars
 servervars.php
+service
 Service
 Service1
 Service1.cs
@@ -51371,6 +51343,7 @@ sesion.php
 sess
 sessao
 sessao.php
+session
 Session
 SessionAPI
 SessionAPI.php
@@ -51668,7 +51641,9 @@ setup_options.php
 setup.php
 setup.php.svn-base
 setup.py
+/setup.sql 
 setup.sql
+setup.sql 
 setup_styles.css
 setup_text
 setup_text.php
@@ -53343,6 +53318,7 @@ shareforum.php
 ShareLayout
 Share.php
 sharepic.js
+shares
 sharetext.js
 SharpArch
 SharpArch.Core.NHibernateValidator.pdb
@@ -53409,6 +53385,7 @@ ShipmentCosting
 ShipmentCosting.php
 Shipments
 Shipments.php
+shipped
 Shipper
 Shipper.php
 Shippers
@@ -53461,6 +53438,7 @@ shop_include.php
 shopinfo
 shopinfo.php
 shop.js
+shopper
 shop.php
 shopping
 shopping_cart
@@ -53480,6 +53458,7 @@ shopping_cart.tpl.php
 shopping_flow
 shopping_flow.php
 shopping.php
+shops
 short
 shortcode
 shortcodes
@@ -53532,6 +53511,7 @@ Showboard
 Showboard.php
 ShowCart
 ShowCart.tpl
+showcat
 showcode
 showcode.php
 showcomments
@@ -53544,6 +53524,7 @@ ShowcontentPic.asp
 Show.css
 showdf
 showdown.js
+showenv
 showerr
 showerr.asp
 show-example
@@ -53567,6 +53548,7 @@ showimg
 ShowImg
 ShowImg.asp
 showimg.php
+showjobs
 showJobs
 showJobs.php
 show.js
@@ -53576,6 +53558,7 @@ showlog
 showlog.php
 show_logs
 show_logs.php
+showmap
 show-mapimage
 show-mapimage.php
 ShowMessage
@@ -53613,6 +53596,7 @@ ShowpinpaiPic1.asp
 ShowpinpaiPic.asp
 Showpm
 Showpm.php
+show_post
 showpost
 showpost.php
 show.posts.php
@@ -53650,6 +53634,8 @@ showtableborder_ie.css
 showtableborders
 ShowTable.php
 ShowTemplate
+show_thread
+showthread
 Showthread
 Showthread.php
 show.tpl
@@ -53742,16 +53728,20 @@ Signature.php
 Signatures
 Signatures.sql
 Sign.cs
+signed
+signer
 signin
 SignIn
 Signin.ascx
 Signin.ascx.cs
 SignIn.aspx
 SignIn.aspx.cs
+signing
 signin.html
 signin.php
 signinSuccess
 signinSuccess.php
+signoff
 signon
 signon.auth.lib.php
 signon.php
@@ -53799,6 +53789,7 @@ SimleException
 SimleException.cs
 simp2trad
 Simpl
+simple
 Simple
 simple-1
 simple-1.html
@@ -54019,6 +54010,7 @@ singleton.phpt
 single.tpl.php
 SingularValueDecomposition
 SingularValueDecomposition.php
+sink
 Sioc
 Sioc.cs
 si.php
@@ -54071,6 +54063,7 @@ sitelinks
 site_links.php
 sitelinks.php
 SiteManager
+site-map
 site_map
 sitemap
 sitemap-ar_AR
@@ -54126,6 +54119,8 @@ Site.Master.designer.cs
 site.php
 sitepredeletehandlers
 sites
+SiteScope
+SiteServer
 SiteSettings
 SiteSettings.ascx
 SiteSettings.ascx.cs
@@ -54200,6 +54195,7 @@ skins.php
 SkinTemplate
 SkinTemplate.php
 skin.xml
+skip
 SKIP
 skipif
 skipif.inc
@@ -54295,28 +54291,21 @@ slimbox.js
 slim_iehacks.css
 slim_iehacks-rtl.css
 slim_print_base.css
+sling
 slingshot
 slingshot.html
 sl.js
 slot
 slovak
-slovak-iso-8859-2
-slovak-iso-8859-2.inc.php
 slovak.js
 slovak.php
 slovak-utf-8
 slovak-utf-8.inc.php
-slovak-windows-1250
-slovak-windows-1250.inc.php
 slovenian
-slovenian-iso-8859-2
-slovenian-iso-8859-2.inc.php
 slovenian.js
 slovenian.php
 slovenian-utf-8
 slovenian-utf-8.inc.php
-slovenian-windows-1250
-slovenian-windows-1250.inc.php
 sl.php
 sl_SI
 sl_SI.xml
@@ -54513,6 +54502,7 @@ smsadmin.php
 SMS.java
 sms.js
 sms.php
+smtp
 Smtp
 SMTP4
 SMTP4.php
@@ -54573,6 +54563,7 @@ snippets.html
 snippets.php
 snmp
 snmp.php
+snoop
 Snoopy
 Snoopy.class.inc
 snoopy.class.inc.php
@@ -54594,6 +54585,7 @@ SOA.php
 soap_methods
 soap_methods.tpl
 soap.php
+soaprouter
 soapserver
 soapserver.php
 SoapService
@@ -54649,8 +54641,6 @@ software_add_license_2
 software_add_license_2.php
 software_add_license.php
 software and other kinds of works.
-software for all its users.  We, the Free Software Foundation, use the
-software on general-purpose computers, but in those that do, we wish to
 software.php
 software_register
 software_register_add
@@ -54671,16 +54661,20 @@ software_register.php
 so_KE
 so_KE.xml
 Solar
+solaris
+sold
 Solid
 Solid.php
 solr
 Solr
 Solr.php
+solution
 Solution
 Solution.cs
 SolutionInfo
 SolutionInfo.cs
 SolutionItems
+solutions
 Solutions
 some
   Some devices are designed to deny users access to install or run
@@ -54784,7 +54778,6 @@ Source
 Source.
 source2doc.php
 sourcecode
-source code form), and must require no special password or key for
 source_core
 source_editor
 source_editor.js
@@ -54811,7 +54804,9 @@ source.xml
 sourdough
 Sourdough
 Sourdough.class.php
+soutbox
 south-street
+sox
 so.xml
 sp
 spa
@@ -54830,6 +54825,7 @@ spacify
 spacify.php
 spade
 spade.php
+spam
 Spam
 SpamCheck
 SpamChecker
@@ -54844,8 +54840,6 @@ Span.class.php
 spanish
 spanish.inc
 spanish.inc.php
-spanish-iso-8859-1
-spanish-iso-8859-1.inc.php
 spanish.js
 spanish.lang.php
 spanish.php
@@ -55065,7 +55059,6 @@ SpecialWatchlist
 SpecialWatchlist.php
 SpecialWhatlinkshere
 SpecialWhatlinkshere.php
-specifically for use in, a User Product, and the conveying occurs as
 specifically granted under this License.  You may not convey a covered
 Specification
 SpecificationBase
@@ -55177,11 +55170,14 @@ split_page_results.php
 split.php
 SplitScreen.js
 splitter.js
+sponsor
 sponsors
 sponsors.php
 sponsors.tpl
+spool
 sport
 sport.php
+sports
 spotlight
 spotlight-example.js
 spotlight.html
@@ -55217,6 +55213,7 @@ SpryTabbedPanels.css
 SpryTabbedPanels.js
 spsNewsletterConfig
 spsNewsletterConfig.php
+Spy
 _spyc
 Spyc
 Spyc.class.php
@@ -55229,8 +55226,7 @@ sq_AL.xml
 sq.js
 _sql
 sql
-SQL2000
-SQL2000.sql
+SQL
 sql_al
 sql_al.php
 sql.asp
@@ -55269,6 +55265,8 @@ SqlDataProvider.cs
 sql_data.sql
 sqldb
 sql_dump
+/sqldump.sql 
+sqldump.sql 
 SQLException
 SqlException.class.php
 SQLException.php
@@ -55398,6 +55396,7 @@ sqlMap
 sqlMap.xml
 sql_mysql
 sql_mysql.php
+sqlnet
 SQLOrder
 SQLOrder.class.php
 sql_parse
@@ -55456,10 +55455,13 @@ square
 squid
 SquidUpdate
 SquidUpdate.php
+squirrel
+squirrelmail
 sq.xml
 sr
 sr_BA
 sr_BA.xml
+_src
 src
 Src
 Src.php
@@ -55527,17 +55529,23 @@ sscmlabel
 sscmlabel.html
 sscmunfreeze
 sscmunfreeze.html
+.ssh
+ssh
 SSH1
 SSH1.php
 SSH2
 SSH2.php
+ssi
 ssl
 ssl_check
 ssl_check.html
 ssl_check.php
 sslclient
 sslclient.php
+sslvpn
 ssm.js
+ssn
+sso
 SSO
 SSP
 ss.php
@@ -55585,6 +55593,7 @@ staff.xml
 Stage
 Stage.php
 stages
+staging
 stamp.js
 standalone
 Standalone
@@ -55595,6 +55604,7 @@ StandaloneTestAware
 StandaloneTestAware.java
 StandaloneTest.java
 _standard
+standard
 Standard
 standard-1.1.2.jar
 standardCodes
@@ -55603,7 +55613,6 @@ StandardDateFormatter
 StandardDateFormatter.cs
 StandardDateTimeFormatter
 StandardDateTimeFormatter.cs
-standard defined by a recognized standards body, or, in the case of
 standard_format
 standard.inc.php
 standard_ipn
@@ -55687,6 +55696,7 @@ statemachine
 statemachine.php
 StateManager.js
 StateManager-min.js
+statement
 Statement
 statement.class.php
 StatementCommon
@@ -55698,6 +55708,7 @@ StatementIterator.php
 StatementParser
 StatementParser.php
 Statement.php
+statements
 Statements
 StatementTest
 StatementTest.php
@@ -55712,8 +55723,6 @@ states_controller.php
 states.js
 States.php
 state.sql
-States should not allow patents to restrict development and use of
-state the exclusion of warranty; and each file should have at least
 state.tpl
 state.tpl.php
 state.xml
@@ -55748,6 +55757,7 @@ staticmodel
 staticmodel.php
 StaticPage
 StaticPage.cs
+staticpages
 staticPages
 Static.php
 StaticRoute
@@ -56012,6 +56022,7 @@ StorableString.abstract.php
 StorableString.class.php
 StorableTime
 StorableTime.class.php
+storage
 Storage
 Storage.class.php
 Storage.cs
@@ -56041,6 +56052,7 @@ store_controller.rb
 store_controller_test
 store_controller_test.rb
 store.css
+stored
 StoredProcedure
 StoredProcedure.cs
 Stored Procedures
@@ -56358,6 +56370,7 @@ structureTable
 StructureTest
 StructureTest.php
 structure.xml
+strut
 strutil
 strutil.php
 struts
@@ -56591,6 +56604,7 @@ Subquery.php
 subs
 SUBS
 subscribe
+subscribed
 Subscribe.html
 subscribe.php
 subscriber
@@ -56601,6 +56615,7 @@ subscribers.php
 subscribes
 subscribes.php
 Subscript
+subscription
 Subscription
 Subscription.class.php
 SubscriptionEntry
@@ -56645,7 +56660,6 @@ SuccessMessage
 SuccessMessage.php
 success.php
 success.tpl
-(such as an express permission to practice a patent or covenant not to
 such as by intimate data communication or control flow between those
 SUCH DAMAGES.
 suchen
@@ -56668,6 +56682,7 @@ suggests
 suite
 Suite
 Suite.php
+suites
 suite-ui
 suite-ui-noajax
 suite-ui-noajax.tpl.php
@@ -56689,9 +56704,11 @@ summary.tpl
 Summer
 sum.php
 sun
+sunos
 sunset
 sun-web
 sun-web.xml
+SUNWmc
 Sup
 super
 Super
@@ -56768,6 +56785,7 @@ SuppShiptChgs.php
 SuppTransGLAnalysis.php
 SURBL
 SURBL.php
+surf
 surface.js
 Surround
 Surround.php
@@ -56792,6 +56810,7 @@ SVG.php
 svgUtil.js
 SvgWidget.js
 sv.js
+.svn
 svn
 SvnBaseTask
 SvnBaseTask.php
@@ -56800,7 +56819,6 @@ svn-checkout.html
 SvnCheckoutTask
 SvnCheckoutTask.php
 svn-commit
-SVN Digger v1.0 - 11/04/2011
 SvnExportTask
 SvnExportTask.php
 svn.html
@@ -56825,6 +56843,11 @@ sv_SE.xml
 sv.xml
 sw
 Swaf
+swagger
+swagger/index.html
+swagger/swagger-ui.html
+swagger-ui
+swagger-ui.html
 swap
 swat
 swatch
@@ -56835,8 +56858,6 @@ swe7
 swe7.xml
 swedish
 swedish.inc.php
-swedish-iso-8859-1
-swedish-iso-8859-1.inc.php
 swedish.js
 swedish.php
 swedish-utf-8
@@ -56893,6 +56914,7 @@ switch.php
 sw_KE
 sw_KE.xml
 sword
+sws
 SwtWidget.js
 sw_TZ
 sw_TZ.xml
@@ -56942,8 +56964,10 @@ symfony
 symfony.php
 symfony-plugins
 Symmetric
+synapse
 sync
 Sync
+synced
 SynchronousAsyncResult
 SynchronousAsyncResult.cs
 synchronous-resize
@@ -57041,6 +57065,7 @@ syslog.info
 syslog.module
 Syslog.php
 sys_log.tpl
+sysmanager
 sys.php
 sysset
 sysset.asp
@@ -57124,7 +57149,6 @@ system_indexcp.html
 system.ini
 system.install
 system.js
-System Libraries, or general-purpose tools or generally available free
 SystemMenu.js
 system-menus.css
 system-menus-rtl.css
@@ -57142,6 +57166,7 @@ system_redirect.html
 system_rss
 system_rss.html
 system-rtl.css
+systems
 system_setup
 system_setup_default
 system_setup_default.php
@@ -57678,11 +57703,13 @@ talk.php
 Talks
 TAL.php
 tan
-tangible personal property which is normally used for personal, family,
 tango
 TAP
 TAPCCache
 TAPCCache.php
+tape
+tapes
+tapestry
 TAP.php
 TApplication
 TApplicationComponent
@@ -58118,6 +58145,7 @@ technews
 technews.asp
 technical
 technological measures.
+technology
 Technorati
 Technorati.php
 tech.php
@@ -58127,6 +58155,8 @@ TEditCommandColumn
 TEditCommandColumn.php
 te_IN
 te_IN.xml
+tel
+tele
 Telefone
 Telefone.php
 telephoneCodeData
@@ -58140,7 +58170,6 @@ tell_a_friend.php
 tell_a_friend.tpl.php
 tellfriend
 tellfriend.tpl
-tells the user that there is no warranty for the work (except to the
 Telnet
 Telnet.php
 tem
@@ -58151,6 +58180,7 @@ tema.php
 temas
 _temp
 temp
+TEMP
 Temp_Dv_ForumNews
 Temp_Dv_ForumNews.config
 temper
@@ -58428,6 +58458,8 @@ TemporaryDirectory
 TemporaryDirectory.php
 TempPE
 temp.php
+/temp.sql
+temp.sql
 temp_uploads
 tenpay
 tenpayc2c
@@ -58453,7 +58485,6 @@ terms_and_conditions
                        TERMS AND CONDITIONS
 terms_and_conditions.php
 terms.html
-terms of section 4, provided that you also meet all of these conditions:
     terms of sections 15 and 16 of this License; or
 terms.php
 TermsPriorityQueue
@@ -58472,9 +58503,12 @@ TErrorHandler
 TErrorHandler.php
 .test
 _test
+~test
 test
 Test
 test1
+test123
+test1234
 test1-discover
 test1-discover.txt
 Test1.html
@@ -58591,6 +58625,7 @@ TestCases
 testcases.css
 test_cases.php
 testcases.php
+test-cgi
 test.cgi
 Test_Cgi
 Test_Cgi.php
@@ -58699,6 +58734,7 @@ TestEnbeddedConfig
 TestEnbeddedConfig.cfg.xml
 TestEntity
 TestEntity.cs
+test-env
 test_environment
 test_environment.php
 teste.php
@@ -58798,6 +58834,7 @@ test_HTTP_ConditionalGet
 test_HTTP_ConditionalGet.php
 test_HTTP_Encoder
 test_HTTP_Encoder.php
+testimonial
 testimonials
 test.inc
 test.inc.php
@@ -59189,9 +59226,11 @@ TeX
 texb
 TException
 TException.php
+texis
 te.xml
 TExpression
 TExpression.php
+text
 Text
 TextAdapter.js
 text-align
@@ -59401,34 +59440,6 @@ ThankYou
 ThankYou.aspx
 thank_you.php
 thankyou.php
-than the work as a whole, that (a) is included in the normal form of
-that material) supplement the terms of this License with terms:
-    that supports equivalent copying facilities, provided you maintain
-that there is no warranty for this free software.  For both users' and
-that they are valid under applicable law.  If additional permissions
-the above requirements apply either way.
-THead
-THead.php
-the conditions stated below.  Sublicensing is not allowed; section 10
-the "copyright" line and a pointer to where the full notice is found.
-  The "Corresponding Source" for a work in object code form means all
-  The Corresponding Source for a work in source code form is that
-  The Corresponding Source need not include anything that users
-the covered work, and you disclaim any intention to limit operation or
-    the Free Software Foundation, either version 3 of the License, or
-  The Free Software Foundation may publish revised and/or new versions of
-  The GNU General Public License does not permit incorporating your program
-the GNU General Public License from time to time.  Such new versions will
-  The GNU General Public License is a free, copyleft license for
-the GNU General Public License is intended to guarantee your freedom to
-thehunter
-The hypothetical commands `show w' and `show c' should show the appropriate
-theidea
-theidea.php
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-the interface presents a list of user commands or options, such as a
-the library.  If this is what you want to do, use the GNU Lesser General
-  The licenses for most software and other practical works are designed
 theme
 Theme
 theme1
@@ -59509,39 +59520,17 @@ themeTesterQuirk.html
 theme.test.php
 theme.tpl
 theme.xml
-them if you wish), that you receive source code or can get it if you
 Then
 Then.php
-then you must either (1) cause the Corresponding Source to be so
 the only significant mode of use of the product.
 the_paper_monkies_fixture
 the_paper_monkies_fixture.php
-  The precise terms and conditions for copying, distribution and
-the predecessor has it or can get it with reasonable efforts.
-THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-  "The Program" refers to any copyrightable work licensed under this
-the Program, the only way you could satisfy both those terms and this
-  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
-  The requirement to provide Installation Information does not include a
 thesaurus
 thesaurus.php
-the scope of its coverage, prohibits the exercise of, or is
-these rights or asking you to surrender the rights.  Therefore, you have
-thesis
-  The "source code" for a work means the preferred form of the work
-the source code needed to generate, install, and (for an executable
-TheSQL
-  The "System Libraries" of an executable work include anything, other
-the terms of this License in conveying all material for which you do
-the_town_of_witchwoode
-the User Product in which it has been modified or installed.  Access to a
 thewall
 thewall.common.php
 thewall.php
 thewall.server.php
-the work, and the source code for shared libraries and dynamically
-the work, and under which the third party grants, to any of the
-They are licensed under GPL, feel free to share and use your own GPL-Compatible application.
 thickbox
 thickbox-compressed.js
 thickbox.css
@@ -59566,16 +59555,6 @@ third
 third_party
 thirdparty
 ThirdPartyLibraries
-This
-    This is free software, and you are welcome to redistribute it
-this License.
-this License.  If your rights have been terminated and not permanently
-this License (including any patent licenses granted under the third
-  "This License" refers to version 3 of the GNU General Public License.
-this License without regard to the additional permissions.
-    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-    This program is distributed in the hope that it will be useful,
-    This program is free software: you can redistribute it and/or modify
 th.js
 th_lang_data
 th_lang_data.inc.php
@@ -59661,6 +59640,7 @@ Thumb.php
 thumb_plugins
 thumbs
 Thumbs
+Thumbs.db
 thumbs_doc.php
 thumbs_folder
 thumbs_folder.php
@@ -59713,6 +59693,7 @@ tig_ER.xml
 Tighten
 Tighten.php
 tig.xml
+tiki
 tile
 Tile
 tilecache
@@ -60001,6 +59982,7 @@ tinyspell
 tinyspell.php
 Tinyurl
 tinyxml
+tip
 tip_balloon
 tip_balloon.js
 TipBox
@@ -60019,6 +60001,7 @@ tips_portable_sql
 titan
 TItemDataRenderer
 TItemDataRenderer.php
+title
 Title
 Title.ascx
 Titlebar
@@ -60095,6 +60078,7 @@ TLogger.php
 TLogRouter
 TLogRouter.php
 tl.php
+tls
 tl.xml
 tm
 TMap
@@ -60113,7 +60097,9 @@ tml
 TModule
 TModule.php
 _tmp
+~tmp
 tmp
+TMP
 tmp_c
 tmpdir
 tmpdir.inc
@@ -60125,6 +60111,7 @@ tmplCache
 tmpl_table
 tmpl_table.inc
 tmp.php
+tmps
 tms
 tms.html
 tmssql
@@ -60165,18 +60152,13 @@ to
 Toaster
 Toaster.css
 Toaster.js
-to attach them to the start of each source file to most effectively
 toc
 toc.css
 tocentry
 tocentry.tpl
-to choose that version for the Program.
 toc.html
 toc.js
 toCN
-to collect a royalty for further conveying from those to whom you convey
-  To "convey" a work means any kind of propagation that enables other
-to copy, free of charge and under the terms of this License, through a
 Toc.php
 toc.tpl
 toc.xml
@@ -60185,6 +60167,7 @@ today.php
 todger.js
 to-do
 to_do
+todo
 TODO
 todo_gantt_sub
 todo_gantt_sub.php
@@ -60198,7 +60181,6 @@ todoList.php
 todolist.tpl
 Todo.php
 TODOs
-  To do so, attach the following notices to the program.  It is safest
 todo.sql
 todo_tasks_sub
 todo_tasks_sub.php
@@ -60252,7 +60234,6 @@ TokenType.cs
 tomcat
 tomcat-users
 tomcat-users.xml
-  To "modify" a work means to copy from or adapt all or part of the work
 Tongue
 tool
 Tool
@@ -60484,8 +60465,6 @@ top.php
 ._Top.php
 top_referer
 top_referer.module.php
-  To "propagate" a work means to do anything with it that, without
-  To protect your rights, we need to prevent others from denying you
 TopSP
 TopSP.class.php
 Top+SubMenu
@@ -60509,7 +60488,6 @@ TOracleTableColumn
 TOracleTableColumn.php
 TOracleTableInfo
 TOracleTableInfo.php
-to receive a copy likewise does not require acceptance.  However,
 Torque
 Torque.php
 torrent
@@ -60517,10 +60495,10 @@ torrent.css
 torrent.php
 torrents
 torrents.php
+tos
 TOS
 toSG
 TOS.php
-to take away your freedom to share and change the works.  By contrast,
 Total
 total.html
 Total.php
@@ -60539,6 +60517,7 @@ touch
 TouchTask
 TouchTask.php
 to_unicode.php
+tour
 tournament
 tournament.php
 tourney
@@ -60918,6 +60897,7 @@ TPreparedStatementFactory.php
 TPreparedStatement.php
 TPropertyAccess
 TPropertyAccess.php
+tpv
 TQueue
 TQueue.php
 tr
@@ -60935,6 +60915,7 @@ TraceLogger.cs
 Trace.php
 Tracer
 Tracer.cs
+traceroute
 traces
 track
 Track
@@ -60962,6 +60943,7 @@ Tracker.cs
 tracker.css
 tracker.pages.inc
 tracker.php
+trackers
 Trackers
 TrackForm
 TrackForm.cs
@@ -60992,7 +60974,6 @@ tracks.php
 Track_Tool_06_16_08
 trad2simp
 trade
-    trade names, trademarks, or service marks; or
 trade.php
 traderoute
 traderoute.php
@@ -61003,11 +60984,15 @@ TRadioButton.php
 Traditional
 tradphrases
 trads
+traffic
+trailer
 Trailer
 Trailer.php
+trailers
 trails
 trails.php
 train
+training
 train.php
 train.tpl
 TraitsInfo
@@ -61099,6 +61084,8 @@ transmenuC.js
 transmenu.css
 Transparency
 Transparency.php
+transparent
+transport
 Transport
 transport.js
 Transport.php
@@ -61127,9 +61114,11 @@ TraversalInfo.php
 trav_serv
 trav_serv.pl
 tr_dlg.js
+treasury
 treat
 treat.php
 _tree
+tree
 Tree
 TreeAdapter.js
 TreeBasicController.js
@@ -61270,6 +61259,7 @@ TResultMap.php
 TResultProperty
 TResultProperty.php
 Tr.html
+trial
 Triangle
 Triangle.php
 tribearmor
@@ -61447,6 +61437,7 @@ TStyle
 TStyle.php
 TStyleSheet
 TStyleSheet.php
+tsweb
 ts.xml
 ts_ZA
 ts_ZA.xml
@@ -61517,11 +61508,10 @@ tundraGrid.css
 tundra_rtl.css
 TUpdateMappedStatement
 TUpdateMappedStatement.php
+turbine
 turkce
 turkish
 turkish.inc.php
-turkish-iso-8859-9
-turkish-iso-8859-9.inc.php
 turkish.js
 turkish.php
 turkish-utf-8
@@ -61536,6 +61526,7 @@ turnfight1.tpl
 turnfight.php
 turnfight.tpl
 turquoise.css
+tuscany
 TUser
 TUserManager
 TUserManager.php
@@ -61587,6 +61578,7 @@ tv.css
 TV.php
 tw
 tw_dlg.js
+tweak
 tweaks.css
 TWebControl
 TWebControlAdapter
@@ -61710,8 +61702,9 @@ TypeUtil.cs
 TypeValidator
 TypeValidator.php
 Type.vb
-typical or common use of that class of product, regardless of the status
 typo
+typo3
+typo3conf
 typo.css
 TypoFr
 TypoFr.php
@@ -61883,6 +61876,7 @@ udp_echo_cli3.pl
 udp_echo_serv
 udp_echo_serv.pl
 Udp.php
+uds
 uebersicht
 uebersicht.php
 ufo.js
@@ -62053,8 +62047,6 @@ uk.php
 ukrainian.js
 ukrainian-utf-8
 ukrainian-utf-8.inc.php
-ukrainian-windows-1251
-ukrainian-windows-1251.inc.php
 uk_UA
 uk_UA.xml
 uk.xml
@@ -62077,6 +62069,7 @@ UM
 uml
 UML
 UM.php
+umts
 unauthorized
 UnauthorizedException
 UnauthorizedException.php
@@ -62108,7 +62101,6 @@ UnderscoreToDash.php
 UnderscoreToSeparator
 UnderscoreToSeparator.php
 under_the_bards_tree
-under those permissions, but the entire Program remains governed by
 under version 3 of the GNU Affero General Public License into a single
 Undo
 Undo.html
@@ -62152,6 +62144,7 @@ uninstall
 uninstall.php
 uninstall.phtml
 uninstall.sql
+union
 unique
 Unique
 UniqueAppender
@@ -62247,10 +62240,11 @@ unlink_scan.php
 unlock
 unlock.php
 Unpack
-unpacking, reading or copying.
 Unpack.php
 UnRAR
 unreal
+unreg
+unregister
 Unserializer
 Unserializer.php
 unset
@@ -62305,7 +62299,6 @@ update.1.1.php
 update.1.2.php
 update.1.3.php
 update2
-update-20060817
 update2.php
 update_account
 update_account.php
@@ -62325,6 +62318,7 @@ updatecache.php
 update.class.php
 update.compare.inc
 update.css
+updated
 Updated
 update_db
 updatedb
@@ -62911,11 +62905,9 @@ us-ascii
 USD.js
 use
 UseCases
-used to limit the access or legal rights of the compilation's users
 use_gmail
 UseMacro
 UseMacro.php
-USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
 _user
 user
 User
@@ -63262,6 +63254,7 @@ user_location_include.php
 user_location_include_var
 user_location_include_var.php
 user_location.php
+userlog
 UserLog
 user_logged_in
 user_logged_in.html
@@ -63425,7 +63418,6 @@ user-picture
 user-picture.tpl.php
 user_postings
 user_postings.tpl.inc
-User Product is transferred to the recipient in perpetuity or for a
 user-profile
 user_profile
 UserProfile
@@ -63607,7 +63599,9 @@ UsersRecord
 UsersRecord.php
 users_search
 users_search.php
+/users.sql 
 users.sql
+users.sql 
 userstate
 userstate.php
 userstats
@@ -63624,7 +63618,6 @@ UsersView
 users_view.php
 UsersView.php
 users.xml
-users, your or third parties' legal rights to forbid circumvention of
 UserTable
 UserTable.class.php
 userTable.php
@@ -63691,7 +63684,6 @@ use_trans_sid
 use_trans_sid.php
 use_utf8
 use_utf8.php
-use, which is precisely where it is most unacceptable.  Therefore, we
 using
 using.html
 usingmbunit
@@ -63720,9 +63712,6 @@ usuarios
 usuarios.php
 ut
 UT	
-ut2003
-ut2004
-ut2004.class.php
 ut.class.php
 utenti
 utenti.php
@@ -63806,6 +63795,7 @@ UtfNormalUtil.php
 utf.php
 utf_tools
 utf_tools.php
+util
 _Util
 Util
 UtilAction
@@ -63833,6 +63823,7 @@ utilities.inc.php
 Utilities.java
 utilities.js
 utilities.php
+utility
 Utility
 utility.class.php
 Utility.cpp
@@ -63915,6 +63906,7 @@ v0
 v1
 v1.js
 v1.php
+v1.x/swagger-ui.html
 v2
 v2.js
 v2.php
@@ -63970,8 +63962,6 @@ ValidateDateNotInFutureAttribute.cs
 ValidateEmail
 ValidateEmail.php
 validateform.js
-validate_HTML401TRANSITIONAL
-validate_HTML401TRANSITIONAL.inc.php
 validate_input
 validate_input.php
 validate.js
@@ -63989,8 +63979,6 @@ validate_transform.makeDate.php
 validate_transform.trim.php
 validateuser
 validateuser.php
-validate_XHTML10TRANSITIONAL
-validate_XHTML10TRANSITIONAL.inc.php
 validatexml
 validatexml.html
 validation
@@ -64184,6 +64172,7 @@ VarTest.php
 var.tpl
 vat
 vat.php
+vault
 vb
 vb6
 vb6.html
@@ -64224,6 +64213,7 @@ vehicle
 Vehicle
 Vehicle.cs
 vekna_blue
+velocity
 _vendor
 vendor
 Vendor
@@ -64242,6 +64232,8 @@ Venue
 Venue.php
 ve.php
 ver
+ver1
+ver2
 Vera
 verab
 VeraBd
@@ -64306,12 +64298,12 @@ verilog
 verilog.php
 ver.php
 _version
+version
 Version
 VERSION
 Version1
 Version1.php
 Version2
-                       Version 3, 29 June 2007
 Versionable
 Versionable.php
 Version.asp
@@ -64345,13 +64337,11 @@ VersionInfo
 VersionInfo.cs
 Versioning
 version.ini
-version or of any later version published by the Free Software
 _version.php
 Version.php
 version.properties
 versions
 Versions
-versions of the GNU General Public License can be used, that proxy's
 versions.php
 .versions-readme
 version.tpl
@@ -64380,6 +64370,7 @@ vesper
 ve.xml
 ve_ZA
 ve_ZA.xml
+vfs
 VG
 VG.php
 vhdl
@@ -64479,6 +64470,7 @@ view_create
 view_create.php
 View.cs
 view.css
+viewcvs
 view_data
 ViewData
 ViewData.cs
@@ -64925,6 +64917,7 @@ views.js
 views-list.css
 views-more
 views-more.tpl.php
+view-source
 view_source
 viewsource
 viewsource.html
@@ -65049,6 +65042,7 @@ views-view-table.tpl.php
 views-view.tpl.php
 views-view-unformatted
 views-view-unformatted.tpl.php
+viewsvn
 view_t
 view_task
 viewtask
@@ -65106,6 +65100,7 @@ ViewUser.php
 ViewUsers
 ViewUsers.php
 view_user.tpl
+viewvc
 viewweek
 viewweek.php
 view.welcome.php
@@ -65131,12 +65126,12 @@ vimwiki_lst
 vimwiki_media
 v_index
 v_index.php
-violation by some reasonable means, this is the first time you have
 violet
 vip
 vi.php
 vip.php
 Vip_UpUser.js
+virtual
 Virtual
 virtual_attributes
 virtual_attributes.php
@@ -65243,8 +65238,10 @@ vocabulary
 vocabulary.php
 Void
 Void.php
+voip
 voir_lot
 voir_lot.php
+vol
 Voltage
 Voltage.sln
 Volume
@@ -65286,6 +65283,7 @@ Vote_List.asp
 votemodify
 votemodify.asp
 vote.php
+voter
 votes
 vote_save
 votesave
@@ -65301,11 +65299,11 @@ vote.tpl
 vote.xml
 voting
 v.php
+vpn
 vpopmail
 vpopmail.php
 vprintf
 vprintf.php
-vs2005
 vsprintf
 vsprintf.php
 vssadd
@@ -65330,6 +65328,7 @@ vssver
 vssver2
 vtemplate
 vtemplate.class.php
+_vti_bin
 _vti_cnf
 _vti_pvt
 _vti_script
@@ -65338,6 +65337,7 @@ VTypes.js
 VTypes-min.js
 VU
 vue
+vuln
 vuoto
 vuoto.php
 VU.php
@@ -65375,8 +65375,10 @@ vw_usr.php
 vw_usr_sessions
 vw_usr_sessions.php
 w
+w3
 w3c
 w3c.php
+wa
 Wacow
 waf
 wai.js
@@ -65393,7 +65395,6 @@ wall
 wallpapers
 wall.php
 wal.xml
-want it, that you can change the software or use pieces of it in new
 wap
 wap.asp
 wap.php
@@ -65401,6 +65402,7 @@ war
 Warehouse
 Warehouse.php
 warehouse.tpl
+warez
 warned
 warned.php
 warning
@@ -65450,7 +65452,9 @@ watermarks
 watin
 WatiN
 WatiN.Core.xml
+way-board
 wb
+wbboard
 wb_generic
 wb_generic.inc.php
 wb_resources
@@ -65482,11 +65486,21 @@ WeatherMap
 WeatherMap.php
 weather.php
 weaver
+.web
+web
 Web
+webaccess
+webadmin
+webagent
+webalizer
 webapp
 WebApplication
 WebApplication.cs
 webapps
+webb
+webbbs
+web-beans
+webboard
 WebBrowser
 WebBrowser.php
 webbuild
@@ -65494,8 +65508,14 @@ webbuild.html
 webbuild.js
 webbuild.php
 webbuild.sh
+webcalendar
+webcart
+webcasts
+webcgi
+webchat
 webclient
 Web.config
+web-console
 web_content
 WebContent
 WebContent.php
@@ -65509,8 +65529,10 @@ WebControls
 WebControls.php
 Web.csproj
 webdashboard
+webdata
 webdav
 webdav.php
+webdb
 web_fetch
 web_fetch_p
 web_fetch.pl
@@ -65560,7 +65582,9 @@ weblink.xml
 web.log
 weblog
 Weblog
+weblogic
 Weblog.php
+weblogs
 WebMacro
 WebMacro.html
 webmail
@@ -65577,6 +65601,7 @@ Webpage
 WebPage
 WebPage.cs
 web.php
+webplus
 web_prefork1
 web_prefork1.pl
 web_prefork2
@@ -65613,6 +65638,7 @@ WebSessionStorage
 WebSessionStorage.cs
 websetup
 websetup.php
+webshop
 WebShot
 website
 WebSite
@@ -65627,8 +65653,12 @@ WebSite.css
 WebSite.html
 website.php
 WebSites
+websphere
+websql
 WebStart
 WebStart.php
+webstats
+websvn
 webtest
 WebTest.cs
 web_tester
@@ -65641,6 +65671,7 @@ web_test_test
 web_test_test.php
 web_thread1
 web_thread1.pl
+webtrader/include
 WebUI
 WebUser
 WebUser.cs
@@ -65650,6 +65681,7 @@ WebUtilities
 WebUtilities.cs
 WebUtility
 WebUtility.cs
+webwork
 webwork-2.2-beta-4.jar
 web.xml
 Weebox
@@ -65661,6 +65693,7 @@ Weekday
 Weekday.php
 Weekdays
 Weekdays.php
+weekly
 Weekly
 Weekly.php
 week.php
@@ -65696,6 +65729,14 @@ welcome.php
 Welcome.swf
 welcome.tpl
 welcome.view.php
+.well-known/
+.well-known/acme-challenge/
+.well-known/assetlinks.json
+.well-known/autoconfig/mail/
+.well-known/caldav/
+.well-known/change-password
+.well-known/keybase.txt
+.well-known/openid-configuration
 wfb
 wfbimages
 wfb.php
@@ -65733,9 +65774,6 @@ whats_new.tpl.php
 WhatWGStorageProvider.js
 When
 When.php
-  When we speak of free software, we are referring to freedom, not
-  When you convey a copy of a covered work, you may at your option
-  When you convey a covered work, you waive any legal power to forbid
 Where
 Where.cs
 Where.php
@@ -65744,7 +65782,6 @@ WhereTest.php
 where to find the applicable terms.
 WhereUsedInquiry
 WhereUsedInquiry.php
-which are not part of the work.  For example, Corresponding Source
 which_staff_member_are_you
 Whidbey
 while
@@ -65756,6 +65793,7 @@ white.css
 whitelist
 whitelisted-url-protocols
 whitelist.inc.php
+whitepapers
 whitespace
 whitespace.php
 WhiteSpaceSC
@@ -65781,6 +65819,7 @@ w.html
 why
 whyGreen
 why.php
+wicket
 wide
 wideimage
 WideImage
@@ -65855,7 +65894,6 @@ Wildcard
 Wildcard.php
 Wildfire
 WildPack
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
 willem
 willem.sql
 win
@@ -65894,15 +65932,6 @@ Window-min.js
 Window.php
 windows
 WINDOWS
-windows-1250
-windows-1251
-windows-1252
-windows-1253
-windows-1254
-windows-1255
-windows-1256
-windows-1257
-windows-1258
 windows.css
 Windowseol
 Windowseol.php
@@ -65927,6 +65956,7 @@ WindsorExtensions
 WindsorExtensions.cs
 winnscriptatype
 winnscriptatype.php
+winnt
 WINNT
 WinNTFileSystem
 WinNTFileSystem.php
@@ -65939,6 +65969,7 @@ winxpsilver
 wire
 wireframes.css
 Wire.js
+wireless
 wishlist
 Wishlist
 wishlist.php
@@ -65946,7 +65977,6 @@ wispblue.js
 With
 withelse
 withelse.php
-with facilities for running those works, provided that you comply with
 WithMap
 WithMap.php
 withoutLayoutSuccess
@@ -65981,6 +66011,7 @@ wmc.html
 wm_config
 wm_config.php
 wm.html
+wml
 wmp
 WM.php
 wmp.php
@@ -65997,6 +66028,7 @@ wo_Latn_SN.xml
 wo_Latn.xml
 woohoo
 wo.php
+word
 Word
 wordcount
 WordCount
@@ -66057,7 +66089,6 @@ WorkflowException.php
 WorkflowManager
 WorkflowManager.php
 workflow.php
-work if you are a party to an arrangement with a third party that is
 working
 working.php
 workingsets
@@ -66081,8 +66112,6 @@ WorkOrderReceive.php
 WorkOrderStatus
 WorkOrderStatus.php
 Work.php
-work results from an entity transaction, each party to that
-work) run the object code and to modify the work, including scripts to
 Worksheet
 WorksheetEntry
 WorksheetEntry.php
@@ -66095,11 +66124,8 @@ workshop
 workshop.php
 workspace
 workspace.php
-works, such as semiconductor masks.
 WorkStyle
-works, which are not by their nature extensions of the covered work,
 work thus licensed is called the contributor's "contributor version".
-work under this License, and how to view a copy of this License.  If
 world
 World.cs
 worldpay
@@ -66114,6 +66140,7 @@ wo_SN
 wo_SN.xml
 wow
 wo.xml
+wp
 wp-admin
 wp-admin.css
 wp-ajax-response.js
@@ -66137,6 +66164,7 @@ wp-content
 wp-cron
 wp-cron.php
 wp-db
+wp-dbmanager
 wp-db.php
 wp-diff
 wp-diff.php
@@ -66175,10 +66203,12 @@ wp-rss.php
 wp-scriptaculous.js
 wp-settings
 wp-settings.php
+wp-syntax
 wp-syntax.css
 wp_theme
 wp-trackback
 wp-trackback.php
+wrap
 Wrap
 wrap_cli
 wrap_cli.pl
@@ -66251,12 +66281,12 @@ write_ten.pl
 write.tpl
 write.vorbiscomment.php
     written offer to provide the Corresponding Source.  This
-    written offer, valid for at least three years and valid for as
 ws
 WS
 ws_auth
 ws_auth.php
 wsc
+ws-client
 ws-config
 ws-config.php
 Wsdl
@@ -66302,6 +66332,7 @@ WsdlOperation
 WsdlOperation.php
 Wsdl.php
 ws_ftp
+WS_FTP
 ws_ftp.log
 wsgi
 wsgi.py
@@ -66312,19 +66343,30 @@ ws-login.php
 ws.php
 wsvn
 wsvn.php
+wtai
 wurfl
 wurfl.xml
 wuxi
+_www
+~www
 www
 Www
+www1
+www2
+www3
 WWW_Access
 WWW_Access.php
+wwwboard
 _www.js
 Www.php
 www_root
 wwwroot
+www-sql
+wwwstats
 WwwSubDomainModule
 WwwSubDomainModule.cs
+wwwthreads
+wwwuser
 WWW_Users
 WWW_Users.php
 Www.xml
@@ -66445,6 +66487,7 @@ xajaxUserFunction
 xajaxUserFunction.inc.php
 xajax_verbose.js
 xajax_verbose_uncompressed.js
+xalan
 xamlSyntax
 xamlSyntax.config
 xaramenu.js
@@ -66474,6 +66517,7 @@ xenobe_control
 xenobe_control.php
 xenobe_funcs
 xenobe_funcs.php
+xerces
 xercesImpl-2.6.2.jar
 xercesImpl.jar
 xerces.jar
@@ -66499,6 +66543,7 @@ xheditor_skin
 XhrIframeProxy.js
 xhr.js
 xhrMultiPart.js
+xhtml
 Xhtml
 xhtml1-transitional
 XHTMLAndHTML4
@@ -66754,6 +66799,7 @@ XmlRoleProvider
 XmlRoleProvider.cs
 xml-rpc
 xml_rpc
+xmlrpc
 Xmlrpc
 XmlRpc
 XML_RPC
@@ -67059,6 +67105,7 @@ xspf
 xspf.php
 xspf_player_slim.swf
 xspf_player.swf
+xsql
 xss
 xss.php
 xstandard
@@ -67441,13 +67488,17 @@ xwork.xml
 xxtea
 xxtea.php
 xxx
+XXX
 XYDataSet
 XYDataSet.php
 XYSeriesDataSet
 XYSeriesDataSet.php
+xyzzy
+y
 Y
 Yadis
 Yadis.php
+yahoo
 Yahoo
 yahoo_bbcode_include
 yahoo_bbcode_include.php
@@ -67488,8 +67539,10 @@ yay_mock
 yay_mock.php
 Yay.php
 YE
+year
 Year
 Year.class.php
+yearly
 Year.php
 YearTestCase
 YearTestCase.class.php
@@ -67526,18 +67579,6 @@ Yml.php
 yo
 yo_NG
 yo_NG.xml
-  You are not required to accept this License in order to receive or
-You can use these lists for finding hidden resources on the web applications.
-you grant is automatically extended to all recipients of the covered
-    you inform other peers where the object code and Corresponding
-  You may charge any price or no price for each copy that you convey,
-  You may convey a covered work in object code form under the terms
-  You may convey a work based on the Program, or the modifications to
-  You may convey verbatim copies of the Program's source code as you
-  You may make, run and propagate covered works that you do not
-  You may not impose any further restrictions on the exercise of the
-  You may not propagate or modify a covered work except as expressly
-you modify it: responsibilities to respect the freedom of others.
 Your_Account
 yourauctions
 yourauctions_c
@@ -67556,10 +67597,9 @@ yourfeedback
 yourfeedback.php
 Yourpay
 Yourpay.php
-your programs, too.
 your receipt of the notice.
-  You should also get your employer (if you work as a programmer) or school,
     You should have received a copy of the GNU General Public License
+youtube
 YouTube
 youtube_bbcode_include
 youtube_bbcode_include.php
@@ -67570,6 +67610,7 @@ youtube.js
 YouTube.php
 yo.xml
 yqlj
+yt
 YTO
 YTO.php
 YtsAnchorAlias
@@ -67623,6 +67664,7 @@ Yylex
 Yylex.java
 Yytoken
 Yytoken.java
+z
 Z
 z80
 z80.php
@@ -67633,6 +67675,7 @@ ZapfDingbats.php
 ZA.php
 ZarBold
 zarbold.php
+zboard
 ZCache
 ZCache.php
 Z_ChangeBranchCode
@@ -67673,9 +67716,11 @@ ZedGraph
 Zeep
 Zeep.php
 zen
+zencart
 zen_classic
 zen-classic.css
 zen.css
+zend
 Zend
 ZendCodeAnalyzerTask
 ZendCodeAnalyzerTask.php
@@ -67695,6 +67740,7 @@ ZendServer.php
 ZendX
 zen-fixed.css
 zenlike
+zero
 ZF
 ZfStandardLibraryDirectory
 ZfStandardLibraryDirectory.php
@@ -67724,10 +67770,6 @@ ZhConversion.php
 zh_dlg.js
 zhengzhi
 zhengzhi.asp
-zh-gb2312
-zh-gb2312_lang_data
-zh-gb2312_lang_data.inc.php
-zh-gb2312.lang.inc.php
 zh-Hans
 zh_Hans
 zh_Hans_CN
@@ -67789,6 +67831,7 @@ zipfile
 ZipFile.class.php
 ZipFile.cs
 zipfile.php
+zipfiles
 zip.html
 zip.js
 ziplib
@@ -67836,6 +67879,7 @@ Zoop
 Zoop.php
 zope
 zope.py
+zorum
 Z_poAddLanguage
 Z_poAddLanguage.php
 Z_poAdmin
