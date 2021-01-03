@@ -11,15 +11,16 @@ name: FFUF
  
 on:
   workflow_dispatch:
+  
+env:
+      TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+      TARGET_URL: ${{ secrets.TARGET_HOSTS_LIST }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
 
 jobs:
-  ffuf:
-    runs-on: ubuntu-latest
-    env:
-                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                 TARGET_URL: ${{ secrets.TARGET_HOSTS_LIST }}
-                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                 
+  fuzz-directories:
+    runs-on: ubuntu-latest                
     
     steps:
       - uses: actions/checkout@v2
@@ -36,11 +37,30 @@ jobs:
       - name: Fuzz Directories
         run: |
          while read url; do ./ffuf -c -w wordlists/directories.txt -u https://$urlFUZZ -se -sf -mc all -fc 400,404 | tee fuzz-directories.txt; done < targets.txt
-      - name: ffuf
+                
+      - name: Send Files to Slack Channel            
+        run: |           
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Fuzz-Directories-Results -F filename="$TARGET_DOMAIN"-fuzz-directories.txt -F file=@fuzz-directories.txt
+
+  fuzz-files:
+    runs-on: ubuntu-latest               
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+         wget --quiet https://github.com/ffuf/ffuf/releases/download/v1.1.0/ffuf_1.1.0_linux_amd64.tar.gz
+         tar -xvf ffuf_1.1.0_linux_amd64.tar.gz
+
+      - name: Input Files
+        run: |
+         echo "$TARGET_URL" > targets.txt
+         
+      - name: Fuzz Files
         run: |
          while read url; do ./ffuf -c -w wordlists/one-for-all-wordlist.txt -u https://$url/FUZZ -se -sf -mc all -fc 400,404 | tee fuzz-files.txt; done < targets.txt
                 
       - name: Send Files to Slack Channel            
         run: |           
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Fuzz-Files-Results -F filename="$TARGET_DOMAIN"-fuzz-files.txt -F file=@fuzz-files.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Fuzz-Directories-Results -F filename="$TARGET_DOMAIN"-fuzz-directories.txt -F file=@fuzz-directories.txt
