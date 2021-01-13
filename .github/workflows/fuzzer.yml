@@ -36,7 +36,7 @@ jobs:
          
       - name: Fuzz Directories
         run: |
-         while read url; do ./ffuf -c -w wordlists/directories.txt -u http://$url/FUZZ -recursion -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-directories.txt; done < targets.txt
+         while read url; do ./ffuf -c -w wordlists/directory.txt -u http://$url/FUZZ -recursion -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-directories.txt; done < targets.txt
                 
       - name: Send Files to Slack Channel            
         run: |           
