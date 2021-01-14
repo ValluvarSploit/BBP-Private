@@ -11152,6 +11152,7 @@ com_messages
 commission
 commission.php
 commit
+COMMIT_EDITMSG
 commitinfo
 commit.php
 comm.js
@@ -16110,6 +16111,7 @@ describe.php
 DescribeService
 DescribeService.php
 descript
+description
 Description
 DESCRIPTION
 description.html
