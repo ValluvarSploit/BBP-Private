@@ -4,7 +4,7 @@
 #  1. TARGET_FUZZ_HOST
 #       files.example.com
 
-name: Fuzz Directories & Files
+name: Fuzz Files
  
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
 
 jobs:
-  fuzz-directories:
+  fuzz-sensitive-files:
     runs-on: ubuntu-latest                
     
     steps:
@@ -38,7 +38,7 @@ jobs:
         run: |           
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_HOST"-Fuzz-Sensitive-Files-Results -F filename="$TARGET_HOST"-fuzz-sensitive-files.txt -F file=@fuzz-sensitive-files.txt
 
-  fuzz-files:
+  fuzz-all-files:
     runs-on: ubuntu-latest               
     
     steps:
