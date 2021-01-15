@@ -30,13 +30,13 @@ jobs:
         run: |
          echo "$TARGET_HOST" > targets.txt
          
-      - name: Fuzz Directories
+      - name: Fuzz Sesitive Files
         run: |
-         while read url; do ./ffuf -w wordlists/directory.txt -u http://$url/FUZZ -recursion -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-directories.txt; done < targets.txt
+         ./ffuf -w wordlists/sensitive-wordlist.txt -u http://$url/FUZZ -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-sensitive-files.txt
                 
       - name: Send Files to Slack Channel            
         run: |           
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_HOST"-Fuzz-Directories-Results -F filename="$TARGET_HOST"-fuzz-directories.txt -F file=@fuzz-directories.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_HOST"-Fuzz-Sensitive-Files-Results -F filename="$TARGET_HOST"-fuzz-sensitive-files.txt -F file=@fuzz-sensitive-files.txt
 
   fuzz-files:
     runs-on: ubuntu-latest               
@@ -55,8 +55,8 @@ jobs:
          
       - name: Fuzz Files
         run: |
-         while read url; do ./ffuf -w wordlists/one-for-all-wordlist.txt -u http://$url/FUZZ -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-files.txt; done < targets.txt
+         ./ffuf -w wordlists/one-for-all-wordlist.txt -u http://$url/FUZZ -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-all-files.txt
                 
       - name: Send Files to Slack Channel            
         run: |           
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_HOST"-Fuzz-Files-Results -F filename="$TARGET_HOST"-fuzz-files.txt -F file=@fuzz-files.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_HOST"-Fuzz-All-Files-Results -F filename="$TARGET_HOST"-fuzz-all-files.txt -F file=@fuzz-all-files.txt
