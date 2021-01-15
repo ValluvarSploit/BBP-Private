@@ -32,7 +32,7 @@ jobs:
          
       - name: Fuzz Sesitive Files
         run: |
-         ./ffuf -w wordlists/sensitive-wordlist.txt -u http://$url/FUZZ -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-sensitive-files.txt
+         ./ffuf -w wordlists/sensitive-wordlist.txt -u http://$TARGET_HOST/FUZZ -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-sensitive-files.txt
                 
       - name: Send Files to Slack Channel            
         run: |           
@@ -55,7 +55,7 @@ jobs:
          
       - name: Fuzz Files
         run: |
-         ./ffuf -w wordlists/one-for-all-wordlist.txt -u http://$url/FUZZ -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-all-files.txt
+         ./ffuf -w wordlists/one-for-all-wordlist.txt -u http://$TARGET_HOST/FUZZ -se -sf -mc all -fc 400,404 -maxtime 21580 | tee fuzz-all-files.txt
                 
       - name: Send Files to Slack Channel            
         run: |           
