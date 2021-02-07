@@ -20,7 +20,7 @@ jobs:
     env:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
                  TARGET_SUBDOMAINS_LIST: ${{ secrets.TARGET_SUBDOMAINS_LIST }}
-                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_WHOOK_NAME }}
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                  SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
     steps:
