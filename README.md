@@ -11,6 +11,22 @@
       2. TARGET_SUBDOMAINS_LIST
            https://example.com
            https://info.example.com
+                    
+# XSS Hunter:
+   Workflow Name: 
+     xss_hunter.yml</br>
+   Workflow Description: 
+     Check for Cross-Site-Scripting(XSS) vulnerability for given urls.</br>
+   Workflow Dependency: 
+     subdomain_enumeration.yml</br>
+     url_miner.yml</br>
+   
+   # Example:
+      1. TARGET_DOMAIN 
+           example.com
+      2. TARGET_SUBDOMAINS_LIST
+           https://example.com
+           https://info.example.com
            
            
 
