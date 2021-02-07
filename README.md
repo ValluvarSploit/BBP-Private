@@ -15,7 +15,7 @@
 # XSS Hunt:
    Workflow Name: xss_hunter.yml</br>
    Workflow Description: Check for Cross-Site-Scripting(XSS) vulnerability for given urls.</br>
-   Workflow Dependency: 
+   Workflow Dependency:</br> 
      subdomain_enumeration.yml</br>
      url_miner.yml</br>
    
