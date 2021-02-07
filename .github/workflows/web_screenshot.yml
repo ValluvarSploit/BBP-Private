@@ -19,30 +19,28 @@ jobs:
     runs-on: ubuntu-latest
     env:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                 TARGET_SUBDOMAINS_LIST: ${{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
-                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+                 TARGET_SUBDOMAINS_LIST: ${{ secrets.TARGET_SUBDOMAINS_LIST }}
+                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_WHOOK_NAME }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Install Dependencies
         run: |
-                 git clone https://github.com/FortyNorthSecurity/EyeWitness.git
-                 cd EyeWitness/Python/setup
-                 sudo ./setup.sh
+         git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh
                  
       - name: Input Files
         run: |
-                 echo "$TARGET_SUBDOMAINS_LIST" > targets.txt
+         echo "$TARGET_SUBDOMAINS_LIST" > targets.txt
                  
       - name: Eyewitness
         run: |
-                 python3 EyeWitness/Python/EyeWitness.py --web -f targets.txt --timeout 120 --no-prompt
-                 mv `date +"%Y"`* eyewitness_output
-                 zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
+         python3 EyeWitness/Python/EyeWitness.py --web -f targets.txt --timeout 120 --no-prompt
+         mv `date +"%Y"`* eyewitness_output
+         zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
                  
       - name: Send Output Files Slack Channel
         run: |
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Website-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.zip.xz -F file=@eyewitness_output.zip.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Website-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.zip.xz -F file=@eyewitness_output.zip.xz
                  
