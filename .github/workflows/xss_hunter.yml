@@ -1,9 +1,8 @@
-#Stage 7
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN    , formtat below
+#  1. TARGET_DOMAIN
 #       example.com
-#  2. TARGET_XSS_URLS_LIST    , format below
+#  2. TARGET_XSS_URLS_LIST
 #       https://example.com/image.php?q=FUZZ
 #       https://example.com/image.php?a=FUZZ
 
@@ -18,31 +17,31 @@ jobs:
   xss-hunter:
     runs-on: ubuntu-latest
     env:
-                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                 TARGET_XSS_URLS: ${{ secrets.TARGET_XSS_URLS_LIST }}
-                 XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
-                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+     TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+     TARGET_XSS_URLS: ${{ secrets.TARGET_XSS_URLS_LIST }}
+     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+     XSS_HUNTER_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
+
                  
     steps:
       - uses: actions/checkout@v2
         
       - name: Install Dependencies
         run: |
-                 go get -u github.com/tomnomnom/hacks/kxss
-                 cp /home/runner/go/bin/kxss .
-                 sudo snap install dalfox
+         go get -u github.com/tomnomnom/hacks/kxss && cp /home/runner/go/bin/kxss .
+         sudo snap install dalfox
       
       - name: Input Files
         run: |
-                 echo "$TARGET_XSS_URLS" > targets.txt
+         echo "$TARGET_XSS_URLS" > targets.txt
                  
       - name: KXSS & Dalfox
         run: |
-                 cat targets.txt | ./kxss | awk '{print $9}' | dalfox pipe -b "$XSS_HUNTER_URL_TOKEN" | tee -a xss-vulnerable-urls.txt
+         cat targets.txt | ./kxss | awk '{print $9}' | dalfox pipe -b "$XSS_HUNTER_URL_TOKEN" | tee -a xss-vulnerable-urls.txt
             
       - name: Send Outputs to Slack Channel
         run: |
-                 count=$(cat xss-vulnerable-urls.txt | wc -w)
-                 if [[ -f xss-vulnerable-urls.txt ]] && [[ "$count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-XSS-Results -F filename="$TARGET_DOMAIN"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
+         count=$(cat xss-vulnerable-urls.txt | wc -w)
+         if [[ -f xss-vulnerable-urls.txt ]] && [[ "$count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-XSS-Results -F filename="$TARGET_DOMAIN"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
       
