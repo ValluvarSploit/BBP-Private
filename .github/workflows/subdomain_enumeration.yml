@@ -16,9 +16,6 @@ env:
      TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
      TARGET_IGNORE_HOSTS: $ {{ secrets.TARGET_IGNORE_HOSTS_LIST }}
      TARGET_IGNORE_IPS: $ {{ secrets.TARGET_IGNORE_IPS_LIST }}
-     CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
-     CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
-     SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
@@ -97,45 +94,58 @@ jobs:
         with:
          name: bbp-private-artifacts-uploaded
          path: bbp-private-artifacts/
+    
+    
+  amass-brute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: sudo snap install amass                  
+      - name: Amass
+        run: amass enum -active -brute -d "$TARGET_DOMAIN" -dir amass_out
+      - name: Artifact Files
+        run: cp amass_out/amass.txt  bbp-private-artifacts/
+      - name: Upload BBP-Private Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded
+         path: bbp-private-artifacts/
+         
          
   massdns-resolver:
     runs-on: ubuntu-latest
-    needs: [subdomain-enumeration]
-    
+    needs: [subdomain-enumeration,amass-brute]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: bbp-private-artifacts-uploaded
-              
+         name: bbp-private-artifacts-uploaded 
       - name: Input Files
         run: |
          echo "$TARGET_IGNORE_IPS" > ignore-ips.txt              
-         
       - name: Install Dependencies
         run: |
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
-
       - name: DNS Resolver-MassDNS
         run: |
+         sort -u amass.txt -o amass.txt
+         cat amass.txt >> massdns-input.txt
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output-temp.txt         
          grep -vf ignore-ips.txt live-ips-output-temp.txt > live-ips-output.txt
          tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt
          sort -u live-hosts-output.txt -o live-hosts-output.txt
-         sort -u live-ips-output.txt -o live-ips-output.txt
-               
+         sort -u live-ips-output.txt -o live-ips-output.txt  
       - name: Send MassDNS Output Files to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-Hosts-Results -F filename="$TARGET_DOMAIN"-live-hosts.txt -F file=@live-hosts-output.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-IPs-Results -F filename="$TARGET_DOMAIN"-live-ips.txt -F file=@live-ips-output.txt  
-         
       - name: Artifact Files
         run: |
          cp live-hosts-output.txt bbp-private-artifacts/
-         
       - name: Upload BBP-Private Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -145,23 +155,19 @@ jobs:
   httpx-resolver:
     runs-on: ubuntu-latest
     needs: [massdns-resolver]
-    
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
          name: bbp-private-artifacts-uploaded         
-         
       - name: Install Dependencies
         run: |
-         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz
-                  
+         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz       
       - name: httpx Resolver
         run: |
          ./httpx -l live-hosts-output.txt -o live-httpx-subdomains-raw-output.txt -threads 10000 -silent -stats -cname
          cat live-httpx-subdomains-raw-output.txt | awk '{print $1}' >> live-httpx-subdomains-output.txt
          cat live-httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-subdomains-hosts-output.txt
-                 
       - name: Send httpx Output Files to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-HTTP-Resolved-Results-Raw -F filename="$TARGET_DOMAIN"-http-resolved-raw.txt -F file=@live-httpx-subdomains-raw-output.txt
