@@ -26,7 +26,9 @@ jobs:
       - name: Input Files
         run: echo "$TARGET_SUBDOMAINS" > target.txt
       - name: Install Dependencies
-        run: git clone https://github.com/nsonaniya2010/SubDomainizer.git && pip3 install -r SubDomainizer/requirements.txt            
+        run: |
+         sudo apt-get install python3-setuptools
+         git clone https://github.com/nsonaniya2010/SubDomainizer.git && pip3 install -r SubDomainizer/requirements.txt            
       - name: Subdomanizer
         run: python3 SubDomainizer/SubDomainizer.py -l target.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt
       - name: Send Output Files Slack Channel
