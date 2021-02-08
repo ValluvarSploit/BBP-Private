@@ -31,8 +31,6 @@ jobs:
         run: |
          echo "$TARGET_IGNORE_HOSTS" > ignore-hosts.txt
          echo "$TARGET_IGNORE_IPS" > ignore-ips.txt
-         mkdir bbp-private-artifacts
-       
       - name: Install Dependencies
         run: |
          go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
@@ -41,11 +39,9 @@ jobs:
          wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux && mv findomain-linux findomain && chmod +x findomain
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz && tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
          pip3 install dnsgen && cp ~/.local/bin/dnsgen .
-         
       - name: Certspotter
         run: |
          curl -s "https://api.certspotter.com/v1/issuances?domain="$TARGET_DOMAIN"&expand=dns_names" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" | uniq | tee output.txt
-         
       - name: Amass
         run: |
          amass enum -passive -d "$TARGET_DOMAIN" >> output.txt
@@ -88,7 +84,7 @@ jobs:
          
       - name: Artifact Files
         run: |
-         cp massdns-input.txt bbp-private-artifacts/
+         mkdir bbp-private-artifacts && cp massdns-input.txt bbp-private-artifacts/
          
       - name: Upload BBP-Private Artifacts
         uses: actions/upload-artifact@v2
@@ -106,7 +102,7 @@ jobs:
       - name: Amass
         run: amass enum -active -brute -d "$TARGET_DOMAIN" -dir amass_out
       - name: Artifact Files
-        run: cp amass_out/amass.txt  bbp-private-artifacts/
+        run: mkdir bbp-private-artifacts && cp amass_out/amass.txt  bbp-private-artifacts/
       - name: Upload BBP-Private Artifacts
         uses: actions/upload-artifact@v2
         with:
