@@ -142,7 +142,7 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-IPs-Results -F filename="$TARGET_DOMAIN"-live-ips.txt -F file=@live-ips-output.txt  
       - name: Artifact Files
         run: |
-         cp live-hosts-output.txt bbp-private-artifacts/
+         mkdir bbp-private-artifacts && cp live-hosts-output.txt bbp-private-artifacts/
       - name: Upload BBP-Private Artifacts
         uses: actions/upload-artifact@v2
         with:
