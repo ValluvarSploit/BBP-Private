@@ -14,7 +14,7 @@ jobs:
                  CENSYS_API_SECRET: ${{ secrets.CENSYS_API_SECRET }}
                  SECURITY_TRAILS_API_KEY: ${{ secrets.SECURITY_TRAILS_API_KEY }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}  
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}  
     
     steps:
       - uses: actions/checkout@v2
