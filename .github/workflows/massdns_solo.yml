@@ -1,0 +1,48 @@
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN
+#       example.com
+#  2. TARGET_IGNORE_HOSTS
+#       https://docs.example.com
+#  3. TARGET_IGNORE_IPS
+#       0.0.0.0
+
+name: MassDNS-Solo
+ 
+on:
+  workflow_dispatch:
+
+env:
+     TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
+     TARGET_IGNORE_HOSTS: $ {{ secrets.TARGET_IGNORE_HOSTS_LIST }}
+     TARGET_IGNORE_IPS: $ {{ secrets.TARGET_IGNORE_IPS_LIST }}
+     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+
+
+jobs:
+  massdns-resolver-solo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Input Files
+        run: |
+         echo "$TARGET_IGNORE_IPS" > ignore-ips.txt              
+      - name: Install Dependencies
+        run: |
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
+      - name: DNS Resolver-MassDNS
+        run: |
+         sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > massdns-input.txt
+         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
+         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
+         cat massdns-output.txt | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > live-ips-output-temp.txt         
+         grep -vf ignore-ips.txt live-ips-output-temp.txt > live-ips-output.txt
+         tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt
+         sort -u live-hosts-output.txt -o live-hosts-output.txt
+         sort -u live-ips-output.txt -o live-ips-output.txt  
+      - name: Send MassDNS Output Files to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-Hosts-Results -F filename="$TARGET_DOMAIN"-live-hosts.txt -F file=@live-hosts-output.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-IPs-Results -F filename="$TARGET_DOMAIN"-live-ips.txt -F file=@live-ips-output.txt  
