@@ -48,7 +48,7 @@ jobs:
          
       - name: Sublist3r
         run: |
-         python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -o output.txt >/dev/null
+         python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -t 50 -o output.txt >/dev/null
          
       - name: Amass
         run: |
