@@ -39,16 +39,15 @@ jobs:
         run: |
          go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
          sudo snap install amass
-         git clone https://github.com/aboul3la/Sublist3r.git && pip install -r Sublist3r/requirements.txt
          git clone https://github.com/christophetd/censys-subdomain-finder.git && pip install -r censys-subdomain-finder/requirements.txt
          wget --quiet https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && mv jq-linux64 jq && chmod +x jq
          wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux && mv findomain-linux findomain && chmod +x findomain
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz && tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
          pip3 install dnsgen && cp ~/.local/bin/dnsgen .
          
-      - name: Sublist3r
+      - name: Certspotter
         run: |
-         python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443 -t 20 -o output.txt >/dev/null
+         curl -s "https://api.certspotter.com/v1/issuances?domain=chime.com&expand=dns_names" | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep chime.com | uniq | tee certspotter.out
          
       - name: Amass
         run: |
@@ -56,20 +55,8 @@ jobs:
          
       - name: Assetfinder
         run: |
-         ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> output.txt
-         
-      - name: Censys
-        run: |
-         python censys-subdomain-finder/censys_subdomain_finder.py --censys-api-id "$CENSYS_API_ID" --censys-api-secret "$CENSYS_API_SECRET" "$TARGET_DOMAIN" | cut -d ' ' -f4 >> output.txt
-                
-      - name: Security Trails      
-        run: |
-         curl -s --request GET --url https://api.securitytrails.com/v1/domain/"$TARGET_DOMAIN"/subdomains?apikey="$SECURITY_TRAILS_API_KEY" | ./jq '.subdomains[]' | sed 's/\"//g' >test.txt 2>/dev/null && sed "s/$/."$TARGET_DOMAIN"/" test.txt | sed 's/ //g' && rm test.txt >> output.txt
-                
-      - name: Certspotter
-        run: |
-         curl -s https://certspotter.com/api/v0/certs\?domain\="$TARGET_DOMAIN" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" >> output.txt
-                
+         ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> output.txt        
+                                   
       - name: RapidDNS
         run: |
          curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> output.txt
