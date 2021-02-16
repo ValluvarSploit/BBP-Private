@@ -1,10 +1,10 @@
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN
+#  1. DOMAIN
 #       example.com
-#  2. TARGET_IGNORE_HOSTS
+#  2. DOMAIN_IGNORE_HOSTS
 #       https://docs.example.com
-#  3. TARGET_IGNORE_IPS
+#  3. DOMAIN_IGNORE_IPS
 #       0.0.0.0
 
 name: Subdomain Enumeration
@@ -13,9 +13,9 @@ on:
   workflow_dispatch:
 
 env:
-     TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }} 
-     TARGET_IGNORE_HOSTS: $ {{ secrets.TARGET_IGNORE_HOSTS_LIST }}
-     TARGET_IGNORE_IPS: $ {{ secrets.TARGET_IGNORE_IPS_LIST }}
+     TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
+     TARGET_IGNORE_HOSTS: $ {{ secrets.DOMAIN_IGNORE_HOSTS }}
+     TARGET_IGNORE_IPS: $ {{ secrets.DOMAIN_IGNORE_IPS }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
@@ -23,10 +23,8 @@ env:
 jobs:
   subdomain-enumeration:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v2
-       
       - name: Input Files
         run: |
          echo "$TARGET_IGNORE_HOSTS" > ignore-hosts.txt
@@ -45,31 +43,24 @@ jobs:
       - name: Amass
         run: |
          amass enum -passive -d "$TARGET_DOMAIN" >> output.txt
-         
       - name: Assetfinder
         run: |
-         ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> output.txt        
-                                   
+         ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> output.txt                                 
       - name: RapidDNS
         run: |
          curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> output.txt
-         
       - name: Crt.sh
         run: |
-         curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> output.txt
-                
+         curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> output.txt     
       - name: Findomain
         run: |
-         ./findomain -t "$TARGET_DOMAIN" -q >> output.txt
-                
+         ./findomain -t "$TARGET_DOMAIN" -q >> output.txt       
       - name: Subfinder
         run: |
-         ./subfinder -d "$TARGET_DOMAIN" -all --silent >> output.txt
-                
+         ./subfinder -d "$TARGET_DOMAIN" -all --silent >> output.txt  
       - name: Unique subdomains
         run: |
          cat output.txt | sed 's/\*\.//g' | uniq > subdomains-tools-output.txt
-              
       - name: Create Wordlists
         run: |
          sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
@@ -77,15 +68,12 @@ jobs:
          cat subdomains-tools-output.txt >> custom-wordlist.txt
          sort -u custom-wordlist.txt -o custom-wordlist.txt
          grep -vf ignore-hosts.txt custom-wordlist.txt > massdns-input.txt
-         
       - name: Send Subdomain Tools Output Files to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomains-Tools-Results -F filename="$TARGET_DOMAIN"-tools-subdomains.txt -F file=@subdomains-tools-output.txt
-         
       - name: Artifact Files
         run: |
          mkdir bbp-private-artifacts && cp massdns-input.txt bbp-private-artifacts/
-         
       - name: Upload BBP-Private Artifacts
         uses: actions/upload-artifact@v2
         with:
