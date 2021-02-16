@@ -7,7 +7,7 @@
 #  3. DOMAIN_IGNORE_IPS
 #       0.0.0.0
 
-name: Subdomain Enumeration
+name: Domain Recon
  
 on:
   workflow_dispatch:
