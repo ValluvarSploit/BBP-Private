@@ -21,7 +21,7 @@ jobs:
                  TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
                  TARGET_IGNORE_HOSTS_LIST: ${{ secrets.TARGET_IGNORE_HOSTS_LIST }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
  
     steps:
       - uses: actions/checkout@v2
