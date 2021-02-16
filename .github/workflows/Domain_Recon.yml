@@ -190,7 +190,7 @@ jobs:
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt
       - name: Nuclei
         run: |
-         ./nuclei -l live-httpx-subdomains-output.txt -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
+         ./nuclei -l live-httpx-subdomains-output.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-output.txt
       - name: Combine Outputs
         run: |
          if [[ -f subzy-logs.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subzy-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
