@@ -1,9 +1,9 @@
 #Stage 2
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN    , formtat below
+#  1. DOMAIN 
 #       example.com
-#  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST    , format below
+#  2. DOMAIN_SUBDOMAINS_HTTPS
 #       https://example.com
 #       https://info.example.com
 
@@ -18,52 +18,43 @@ jobs:
   subdomain-takeover:
     runs-on: ubuntu-latest
     env:
-                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                 TARGET_SUBDOMAINS_LIST: ${{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
+                 TARGET_DOMAIN: ${{ secrets.DOMAIN }}
+                 TARGET_SUBDOMAINS_LIST: ${{ secrets.DOMAIN_SUBDOMAINS_HTTPS }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
     steps:
       - uses: actions/checkout@v2
-        
-      # subzy, subjack, nuclei
+      - name: INput Files
+        run: echo "TARGET_SUBDOMAINS_LIST" >> targets.txt
       - name: Install Dependencies
         run: |
-                 go get -u -v github.com/lukasikic/subzy
-                 cp /home/runner/go/bin/subzy .
-                 go get -v github.com/haccer/subjack
-                 cp /home/runner/go/bin/subjack .
-                 git clone https://github.com/projectdiscovery/nuclei-templates.git
-                 wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
-                 tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
-                 
-      - name: Input Files
-        run: |
-                 echo "$TARGET_SUBDOMAINS_LIST" > targets.txt
-                            
+         go get -u -v github.com/lukasikic/subzy && cp /home/runner/go/bin/subzy .
+         go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
       - name: Subzy
         run: |
-                 ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
-                 cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt
-                 
+         ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
+         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt   
       - name: Subjack
         run: |
-                 ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
-                 cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt
-         
+         ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt
       - name: Nuclei
         run: |
-                 ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
-                 
+         ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-output.txt
       - name: Combine Outputs
         run: |
-                 if [[ -f subzy-logs.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subzy-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
-                 if [[ -f subjack-logs.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subjack-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
-                 if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-                 if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-                 if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-
+         if [[ -f subzy-logs.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subzy-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
+         if [[ -f subjack-logs.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subjack-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
+         if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+         if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+         if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
       - name: Send Output Files Slack Channel
         run: |
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Logs -F filename="$TARGET_DOMAIN"-subdomain-takeover-logs.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-logs.txt
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Results -F filename="$TARGET_DOMAIN"-subdomain-takeover-results.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-results.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Logs -F filename="$TARGET_DOMAIN"-subdomain-takeover-logs.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-logs.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Results -F filename="$TARGET_DOMAIN"-subdomain-takeover-results.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-results.txt
+
+
+        
