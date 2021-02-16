@@ -321,15 +321,15 @@ jobs:
       - name: Combine Output Files
         run: |
          cat waybackurls-output.txt gau-output.txt | uniq | tee all-urls-tmp.txt
-         zip all-urls.txt.zip all-urls.txt && xz all-urls.txt.zip
-         cat all-urls.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
+         zip all-urls.txt.zip all-urls-tmp.txt && xz all-urls.txt.zip
+         cat all-urls-tmp.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
          cat temp-output.txt | ./qsreplace FUZZ | tee -a all-urls-unqiue.txt
          zip all-urls-unqiue.txt.zip all-urls-unqiue.txt && xz all-urls-unqiue.txt.zip
       - name: Patterns
         run: |
          mkdir patterns-urls
-         cat all-urls.txt | ./gf interestingEXT | tee -a patterns-urls/interestingEXT-params.txt
-         cat all-urls.txt | ./gf jsvar | tee -a patterns-urls/jsvar-params.txt          
+         cat all-urls-tmp.txt | ./gf interestingEXT | tee -a patterns-urls/interestingEXT-params.txt
+         cat all-urls-tmp.txt | ./gf jsvar | tee -a patterns-urls/jsvar-params.txt          
          cat all-urls-unqiue.txt | ./gf interestingparams | tee -a patterns-urls/interestingparams-params.txt
          cat all-urls-unqiue.txt | ./gf xss | tee -a patterns-urls/xss-params.txt
          cat all-urls-unqiue.txt | ./gf sqli | tee -a patterns-urls/sqli-params.txt          
