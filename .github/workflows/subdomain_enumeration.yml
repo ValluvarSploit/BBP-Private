@@ -166,7 +166,7 @@ jobs:
 
   subdomain-takeover:
     runs-on: ubuntu-latest
-    needs: [massdns-resolver]
+    needs: [httpx-resolver]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -200,3 +200,47 @@ jobs:
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Logs -F filename="$TARGET_DOMAIN"-subdomain-takeover-logs.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-logs.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Results -F filename="$TARGET_DOMAIN"-subdomain-takeover-results.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-results.txt
+
+
+  nuclei-scan:
+    runs-on: ubuntu-latest  
+    needs: [httpx-resolver]   
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded  
+      - name: Install Dependencies
+        run: |
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
+      - name: Nuclei scan
+        run: |        
+         ./nuclei -l live-httpx-subdomains-output.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
+         if [[ -f nuclie-output.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Scan-Results -F filename="$TARGET_DOMAIN"-nuclei-scan.txt -F file=@nuclie-output.txt; fi
+         
+         
+  js-hunter:
+    runs-on: ubuntu-latest
+    needs: [httpx-resolver]            
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded 
+      - name: Install Dependencies
+        run: |
+         sudo apt-get install python3-setuptools
+         git clone https://github.com/nsonaniya2010/SubDomainizer.git && pip3 install -r SubDomainizer/requirements.txt            
+      - name: Subdomanizer
+        run: |
+         python3 SubDomainizer/SubDomainizer.py -l live-httpx-subdomains-output.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt
+      - name: Send Output Files Slack Channel
+        run: |
+         subdomains_count=$(cat subdomains.txt | wc -w)
+         secrets_count=$(cat secrets.txt | wc -w)
+         cloud_count=$(cat cloud.txt | wc -w)
+         if [[ -f subdomains.txt ]] && [[ "$subdomains_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomainizer-Results -F filename="$TARGET_DOMAIN"-subdomainizer-subdomains.txt -F file=@subdomains.txt ; fi
+         if [[ -f cloud.txt ]] && [[ "$cloud_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomainizer-Results -F filename="$TARGET_DOMAIN"-subdomainizer-cloud.txt -F file=@cloud.txt ; fi
+         if [[ -f secrets.txt ]] && [[ "$secrets_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomainizer-Results -F filename="$TARGET_DOMAIN"-subdomainizer-secrets.txt -F file=@secrets.txt ; fi
