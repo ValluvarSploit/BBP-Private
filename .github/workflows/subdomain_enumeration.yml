@@ -244,3 +244,19 @@ jobs:
          if [[ -f subdomains.txt ]] && [[ "$subdomains_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomainizer-Results -F filename="$TARGET_DOMAIN"-subdomainizer-subdomains.txt -F file=@subdomains.txt ; fi
          if [[ -f cloud.txt ]] && [[ "$cloud_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomainizer-Results -F filename="$TARGET_DOMAIN"-subdomainizer-cloud.txt -F file=@cloud.txt ; fi
          if [[ -f secrets.txt ]] && [[ "$secrets_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomainizer-Results -F filename="$TARGET_DOMAIN"-subdomainizer-secrets.txt -F file=@secrets.txt ; fi
+
+
+  broken-link-hijacking:
+    runs-on: ubuntu-latest            
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded 
+      - name: Install Dependencies
+        run: sudo npm install broken-link-checker -g                         
+      - name: blh
+        run: |
+         while read url ; do printf "Site: $url" | tee -a blh-output.txt; blc -rof --filter-level 3 $url | tee -a blh-output.txt; done < live-httpx-subdomains-output.txt
+      - name: Send Output Files Slack Channel
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-blh-Results -F filename="$TARGET_DOMAIN"-blh.txt -F file=@blh-output.txt
