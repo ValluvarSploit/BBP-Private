@@ -1,9 +1,8 @@
-#Stage 6
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN    , formtat below
+#  1. DOMAIN
 #       example.com
-#  2. TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST    , format below
+#  2. DOMAIN_SUBDOMAINS_HTTPS
 #       https://example.com
 #       https://info.example.com
 
@@ -18,29 +17,22 @@ jobs:
   nuclei-scan:
     runs-on: ubuntu-latest
     env:
-                 TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                 TARGET_SUBDOMAINS_LIST: ${{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
-                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+     TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
+     TARGET_SUBDOMAINS: ${{ secrets.DOMAIN_SUBDOMAINS_HTTPS }}
+     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
                  
     steps:
       - uses: actions/checkout@v2
-
+      - name: Input Files
+        run: echo "$TARGET_SUBDOMAINS" > targets.txt
       - name: Install Dependencies
         run: |
-                 git clone https://github.com/projectdiscovery/nuclei-templates.git
-                 wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
-                 tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
-                 
-      - name: Input Files
-        run: |
-                 echo "$TARGET_SUBDOMAINS_LIST" > targets.txt
-
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
       - name: Nuclei scan
-        run: |         
-                 ./nuclei -l targets.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
-                 
-      - name: Send Output Files Slack Channel
-        run: |
-                 if [[ -f nuclie-output.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Scan-Results -F filename="$TARGET_DOMAIN"-nuclei-scan.txt -F file=@nuclie-output.txt; fi
+        run: |        
+         ./nuclei -l targets.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
+         if [[ -f nuclie-output.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Scan-Results -F filename="$TARGET_DOMAIN"-nuclei-scan.txt -F file=@nuclie-output.txt; fi
                  
