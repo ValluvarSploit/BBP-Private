@@ -46,7 +46,6 @@ jobs:
       - name: Assetfinder
         run: |
          ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> output.txt                                 
-     
       - name: Crt.sh
         run: |
          curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> output.txt     
@@ -156,3 +155,48 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-HTTP-Resolved-Results-Raw -F filename="$TARGET_DOMAIN"-http-resolved-raw.txt -F file=@live-httpx-subdomains-raw-output.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-HTTP-Resolved-Url-Results -F filename="$TARGET_DOMAIN"-http-resolved.txt -F file=@live-httpx-subdomains-output.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-HTTP-Resolved-Hosts-Results -F filename="$TARGET_DOMAIN"-http-resolved-hosts.txt -F file=@live-httpx-subdomains-hosts-output.txt
+      - name: Artifact Files
+        run: |
+         mkdir bbp-private-artifacts && cp live-httpx-subdomains-output.txt bbp-private-artifacts/
+      - name: Upload BBP-Private Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded
+         path: bbp-private-artifacts/
+
+  subdomain-takeover:
+    runs-on: ubuntu-latest
+    needs: [massdns-resolver]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded 
+      - name: Install Dependencies
+        run: |
+         go get -u -v github.com/lukasikic/subzy && cp /home/runner/go/bin/subzy .
+         go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
+      - name: Subzy
+        run: |
+         ./subzy --targets=live-httpx-subdomains-output.txt -concurrency 50 | tee subzy-logs.txt
+         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt   
+      - name: Subjack
+        run: |
+         ./subjack -w live-httpx-subdomains-output.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt
+      - name: Nuclei
+        run: |
+         ./nuclei -l live-httpx-subdomains-output.txt -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
+      - name: Combine Outputs
+        run: |
+         if [[ -f subzy-logs.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subzy-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
+         if [[ -f subjack-logs.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subjack-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
+         if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+         if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+         if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+      - name: Send Output Files Slack Channel
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Logs -F filename="$TARGET_DOMAIN"-subdomain-takeover-logs.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-logs.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Results -F filename="$TARGET_DOMAIN"-subdomain-takeover-results.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-results.txt
