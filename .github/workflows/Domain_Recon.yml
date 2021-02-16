@@ -302,6 +302,24 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Whatweb-Results -F filename="$TARGET_DOMAIN"-whatweb-logs.txt -F file=@whatweb-logs.json
 
 
+  web-screenshot:
+    runs-on: ubuntu-latest
+    needs: [httpx-resolver] 
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded 
+      - name: Install Dependencies
+        run: git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh        
+      - name: Eyewitness
+        run: |
+         python3 EyeWitness/Python/EyeWitness.py --web -f live-httpx-subdomains-output.txt --timeout 120 --no-prompt
+         mv `date +"%Y"`* eyewitness_output
+         zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip        
+      - name: Send Output Files Slack Channel
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Web-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.zip.xz -F file=@eyewitness_output.zip.xz
+                 
 
   url-collector:
     runs-on: ubuntu-latest 
