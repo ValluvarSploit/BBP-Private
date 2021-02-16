@@ -23,7 +23,7 @@ jobs:
          echo "$TARGET_IP" > targets-ips.txt
 
       - name: Nmap scan
-        run: nmap -Pn -sC -sV -iL targets-ips.txt -oA nmap-full-scan
+        run: nmap -Pn -sC -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
 
       - name: Send Files to Slack Channel
         run: |
