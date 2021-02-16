@@ -46,9 +46,7 @@ jobs:
       - name: Assetfinder
         run: |
          ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> output.txt                                 
-      - name: RapidDNS
-        run: |
-         curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> output.txt
+     
       - name: Crt.sh
         run: |
          curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> output.txt     
