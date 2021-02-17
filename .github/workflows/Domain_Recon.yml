@@ -325,8 +325,12 @@ jobs:
 
   url-collector:
     runs-on: ubuntu-latest 
+    needs: [httpx-resolver]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: bbp-private-artifacts-uploaded 
       - name: Install Dependencies
         run: |
          go get -u github.com/tomnomnom/gf && cp /home/runner/go/bin/gf .
@@ -335,7 +339,9 @@ jobs:
          go get github.com/tomnomnom/waybackurls && cp /home/runner/go/bin/waybackurls .
          wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz && tar xvf gau_1.1.0_linux_amd64.tar.gz
       - name: waybackurls
-        run: ./waybackurls "$TARGET_DOMAIN" | tee waybackurls-output.txt 
+        run: |
+         ./waybackurls "$TARGET_DOMAIN" | tee waybackurls-output.txt 
+         cat live-httpx-subdomains-output.txt | ./waybackurls | tee -a waybackurls-output.txt 
       - name: gau
         run: echo "$TARGET_DOMAIN" | ./gau | tee gau-output.txt      
       - name: Combine Output Files
