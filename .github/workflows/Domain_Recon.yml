@@ -6,12 +6,14 @@
 #       https://docs.example.com
 #  3. DOMAIN_IGNORE_IPS
 #       0.0.0.0
+#  4. Host subdomains.txt file then change url below wget https://[ngrok-server-hostname]/subdomains.txt
+#       $ python3 -m http.server
+#       $ ngrok http 8000
+
 
 name: Domain Recon
- 
 on:
   workflow_dispatch:
-
 env:
      TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
      TARGET_IGNORE_HOSTS: $ {{ secrets.DOMAIN_IGNORE_HOSTS }}
