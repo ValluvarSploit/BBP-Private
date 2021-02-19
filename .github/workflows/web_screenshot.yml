@@ -6,37 +6,31 @@
 #       https://example.com
 #       https://info.example.com
 
-# Workflow Dependency: subdomain_enumeration.yml
-
 name: Web Screenshot
-
 on:
   workflow_dispatch:
-
-jobs:
-  web-screenshot:
-    runs-on: ubuntu-latest
-    env:
+env:
        TARGET_DOMAIN: ${{ secrets.DOMAIN }}
        TARGET_SUBDOMAINS_LIST: ${{ secrets.DOMAIN_SUBDOMAINS_HTTPS }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
-
+jobs:
+  web-screenshot:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Install Dependencies
-        run: |
-         git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh    
+        run: git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh    
       - name: Input Files
-        run: |
-         echo "$TARGET_SUBDOMAINS_LIST" > targets.txt    
+        run: echo "$TARGET_SUBDOMAINS_LIST" > targets.txt    
       - name: Eyewitness
         run: |
          python3 EyeWitness/Python/EyeWitness.py --web -f targets.txt --timeout 120 --no-prompt
          mv `date +"%Y"`* eyewitness_output
-         zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip   
+         zip -r eyewitness_output.zip eyewitness_output
+         ls -la 
+         xz eyewitness_output.zip
+         ls -la
       - name: Send Output Files Slack Channel
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Web-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.zip.xz -F file=@eyewitness_output.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Web-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.zip.xz -F file=@eyewitness_output.zip.xz
                  
