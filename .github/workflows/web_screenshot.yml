@@ -27,10 +27,7 @@ jobs:
         run: |
          python3 EyeWitness/Python/EyeWitness.py --web -f targets.txt --timeout 120 --no-prompt
          mv `date +"%Y"`* eyewitness_output
-         zip -r eyewitness_output.zip eyewitness_output
-         ls -la 
-         xz eyewitness_output.zip
-         ls -la
+         zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
       - name: Send Output Files Slack Channel
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Web-Screenshots -F filename="$TARGET_DOMAIN"-web-screens.zip.xz -F file=@eyewitness_output.zip.xz
                  
