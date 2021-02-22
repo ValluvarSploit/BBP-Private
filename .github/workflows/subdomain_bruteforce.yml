@@ -9,12 +9,11 @@ on:
   workflow_dispatch:
 env:
      TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
-     TARGET_SUBDOMAINS: ${{ secrets.DOMAIN_SUBDOMAINS_HTTPS }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
 jobs:
-  subdomain bruteforce:
+  subdomain-bruteforce:
     runs-on: ubuntu-latest          
     steps:
       - uses: actions/checkout@v2
