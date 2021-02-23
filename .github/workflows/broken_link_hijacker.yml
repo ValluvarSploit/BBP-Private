@@ -14,30 +14,22 @@ name: Broken Link Hijacking
 on:
   workflow_dispatch:
 
+env:
+   TARGET_DOMAIN: ${{ secrets.DOMAIN }}
+   TARGET_SUBDOMAINS: ${{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
+   SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+   SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}  
+                
 jobs:
   broken-link-hijacking:
     runs-on: ubuntu-latest
-    env:
-                TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                TARGET_SUBDOMAINS: ${{ secrets.TARGET_SUBDOMAINS_HTTP_RESOLVED_LIST }}
-                SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}                
     steps:
       - uses: actions/checkout@v2
-        
-      - name: Install Dependencies
-        run: |
-                 sudo npm install broken-link-checker -g
-
       - name: Input Files
-        run: |
-                 echo "$TARGET_SUBDOMAINS" > targets.txt
-                           
+        run: echo "$TARGET_SUBDOMAINS" > targets.txt
+      - name: Install Dependencies
+        run: sudo npm install broken-link-checker -g                         
       - name: blh
-        run: |
-                 while read url ; do printf "Site: $url" | tee -a blh-output.txt; blc -rof --filter-level 3 $url | tee -a blh-output.txt; done < targets.txt
-
+        run: while read url ; do printf "Site: $url" | tee -a blh-output.txt; blc -rof --filter-level 3 $url | tee -a blh-output.txt; done < targets.txt
       - name: Send Output Files Slack Channel
-        run: |
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Broken-Link-Hijacker-Results -F filename="$TARGET_DOMAIN"-blh.txt -F file=@blh-output.txt
-                 
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-blh-Results -F filename="$TARGET_DOMAIN"-blh.txt -F file=@blh-output.txt
