@@ -19,13 +19,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         echo "$TARGET_IGNORE_SUBDOMAINS" > ignore-hosts.txt
          go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
          sudo snap install amass
          wget --quiet https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && mv jq-linux64 jq && chmod +x jq
          wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux && mv findomain-linux findomain && chmod +x findomain
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz && tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
-         pip3 install dnsgen && cp ~/.local/bin/dnsgen .
       - name: Certspotter
         run: curl -s "https://api.certspotter.com/v1/issuances?domain="$TARGET_DOMAIN"&expand=dns_names" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" | uniq | tee output.txt
       - name: Amass
@@ -40,17 +38,8 @@ jobs:
         run: ./subfinder -d "$TARGET_DOMAIN" -all --silent >> output.txt  
       - name: Unique subdomains
         run: cat output.txt | sed 's/\*\.//g' | uniq > subdomains-tools-output.txt
-      - name: Create Wordlists
-        run: |
-         sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
-         ./dnsgen subdomains-tools-output.txt >> custom-wordlist.txt
-         cat subdomains-tools-output.txt >> custom-wordlist.txt
-         sort -u custom-wordlist.txt -o custom-wordlist.txt
-         grep -vf ignore-hosts.txt custom-wordlist.txt > massdns-input.txt
       - name: Send Subdomain Tools Output Files to Slack
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomains-Tools-Results -F filename="$TARGET_DOMAIN"-tools-subdomains.txt -F file=@subdomains-tools-output.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomains-MassDNS -F filename="$TARGET_DOMAIN"-massdns-input.txt -F file=@massdns-input.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomains-Tools-Results -F filename="$TARGET_DOMAIN"-tools-subdomains.txt -F file=@subdomains-tools-output.txt
     
   amass-brute:
     runs-on: ubuntu-latest
