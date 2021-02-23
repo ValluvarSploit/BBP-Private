@@ -1,7 +1,7 @@
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. DOMAIN_SUBDOMAINS_HTTPS   
 #       https://example.com
-name: Broken Link Hijacking
+name: Broken Link Checker
 on:
   workflow_dispatch:
 env:
@@ -9,7 +9,7 @@ env:
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}  
 jobs:
-  broken-link-hijacking:
+  broken-link-checker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
