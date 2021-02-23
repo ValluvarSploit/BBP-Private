@@ -24,7 +24,7 @@ jobs:
 
       - name: Nmap scan
         run: |
-         nmap -Pn -sS -sV -p0-65535 -T 2 -oA nmap-full-scan www.privatedivision.com 
+         sudo nmap -Pn -sS -sV -p0-65535 -T 2 -oA nmap-full-scan www.privatedivision.com 
         #nmap -Pn -sC -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
 
       - name: Send Files to Slack Channel
