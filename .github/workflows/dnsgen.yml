@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget https://[ngrok-server]/subdomains-tools-output.txt
+         wget https://4dd2c517607f.ngrok.io/dyson.com-subdomains.txt
          pip3 install dnsgen && cp ~/.local/bin/dnsgen .
       - name: DNSgen
         run: ./dnsgen subdomains-tools-output.txt > dnsgen-wordlist.txt
