@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget https://4dd2c517607f.ngrok.io/subdomains.txt
+         wget https://0af23265d9e4.ngrok.io/subdomains.txt
          pip3 install dnsgen && cp ~/.local/bin/dnsgen .
       - name: DNSgen
         run: |
