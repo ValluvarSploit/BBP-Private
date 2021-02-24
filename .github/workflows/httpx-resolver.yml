@@ -25,7 +25,13 @@ jobs:
       - name: HTTPx Resolver
         run: |
          ./httpx -l massdns-input.txt -o httpx-resolved.txt -threads 10000 -status-code -title -vhost -cname
+         ls -l
+         cat httpx-resolved.txt
          sed -Ei '/Not\sFound/d' httpx-resolved.txt
+         ls -l
+         cat httpx-resolved.txt
       - name: Send MassDNS Output Files to Slack
         run: |
+         ls -l
+         cat httpx-resolved.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-resolved -F filename="$TARGET_DOMAIN"-httpx-resolved.txt -F file=@httpx-resolved.txt
