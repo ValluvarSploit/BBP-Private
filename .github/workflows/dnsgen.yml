@@ -14,23 +14,15 @@ jobs:
       - name: Install Dependencies
         run: |
          wget https://0af23265d9e4.ngrok.io/subdomains.txt
-         ls -l
          pip3 install dnsgen && cp ~/.local/bin/dnsgen .
-         ls -l
       - name: DNSgen
         run: |
-         ls -l
          ./dnsgen subdomains.txt > dnsgen-wordlist.txt
-         ls -l
          zip dnsgen-wordlist.zip dnsgen-wordlist.txt
-         ls -l
-         xz dnsgen-wordlist.zip
-         ls -l
+         xz dnsgen-wordlist.txt
       - name: Send dnsgen Output Files to Slack
         run: |
-         ls -l
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-Results -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.zip -F file=@dnsgen-wordlist.zip
-         ls -l
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-Results -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.txt -F file=@dnsgen-wordlist.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-Results -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.txt -F file=@dnsgen-wordlist.txt.xz
                                   
                  
