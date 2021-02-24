@@ -1,0 +1,36 @@
+#Important Note:
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. TARGET_DOMAIN
+#       example.com
+#  2. Enter Ngrok server url below - wget https://[ngrok-server]/massdns-input.txt
+
+name: MassDNS Resolver
+on:
+  workflow_dispatch:
+env:
+     TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
+     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+
+jobs:
+  massdns-resolver:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2             
+      - name: Install Dependencies
+        run: |
+         wget https://[ngrok-server]/massdns-input.txt
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
+      - name: DNS Resolver-MassDNS
+        run: |
+         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt subdomains.txt
+         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' > live-hosts-temp-output.txt
+         cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output-temp.txt         
+         tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt
+         sort -u live-hosts-output.txt -o live-hosts-output.txt
+         sort -u live-ips-output.txt -o live-ips-output.txt  
+      - name: Send MassDNS Output Files to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-Hosts -F filename="$TARGET_DOMAIN"-live-hosts.txt -F file=@live-hosts-output.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-IPs -F filename="$TARGET_DOMAIN"-live-ips.txt -F file=@live-ips-output.txt  
