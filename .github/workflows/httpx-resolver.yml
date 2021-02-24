@@ -24,7 +24,7 @@ jobs:
          wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz
       - name: HTTPx Resolver
         run: |
-         ./httpx -l massdns-input.txt -o mass-subdomains-txt -threads 10000 -silent -stats -status-code -title -vhost -cname
+         ./httpx -l massdns-input.txt -o mass-subdomains-txt -threads 10000 -status-code -title -vhost -cname
          cat mass-subdomains-txt | grep -Ev "Not\sFound" | tee httpx-resolved.txt
       - name: Send MassDNS Output Files to Slack
         run: |
