@@ -24,7 +24,7 @@ jobs:
          git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh     
       - name: Eyewitness
         run: |
-         python3 EyeWitness/Python/EyeWitness.py --web -f http-resolved-url.txt --timeout 120 --no-prompt
+         python3 EyeWitness/Python/EyeWitness.py --web -f http-resolved-url.txt --timeout 60 --no-prompt
          mv `date +"%Y"`* eyewitness_output
          zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
       - name: Send Output Files Slack Channel
