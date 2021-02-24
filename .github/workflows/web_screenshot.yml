@@ -11,7 +11,6 @@ on:
   workflow_dispatch:
 env:
        TARGET_DOMAIN: ${{ secrets.DOMAIN }}
-       TARGET_SUBDOMAINS_LIST: ${{ secrets.DOMAIN_SUBDOMAINS_HTTPS }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 jobs:
@@ -20,12 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh    
-      - name: Input Files
-        run: echo "$TARGET_SUBDOMAINS_LIST" > targets.txt    
+        run: |
+         wget https://8660345fac04.ngrok.io/http-resolved-url.txt
+         git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh     
       - name: Eyewitness
         run: |
-         python3 EyeWitness/Python/EyeWitness.py --web -f targets.txt --timeout 120 --no-prompt
+         python3 EyeWitness/Python/EyeWitness.py --web -f http-resolved-url.txt --timeout 120 --no-prompt
          mv `date +"%Y"`* eyewitness_output
          zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
       - name: Send Output Files Slack Channel
