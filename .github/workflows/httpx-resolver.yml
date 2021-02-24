@@ -25,7 +25,7 @@ jobs:
       - name: HTTPx Resolver
         run: |
          cat massdns-input.txt
-         ./httpx -l massdns-input.txt -o mass-subdomains-txt -threads 10000 -status-code -title -vhost -cname
+         ./httpx -l massdns-input.txt -o mass-subdomains-txt -status-code -title -vhost -cname
          cat mass-subdomains-txt
          cat mass-subdomains-txt | grep -Ev "Not\sFound" >> httpx-resolved.txt
          cat httpx-resolved.txt
