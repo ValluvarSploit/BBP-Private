@@ -26,11 +26,9 @@ jobs:
       - name: DNS Resolver-MassDNS
         run: |
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
-         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' > live-hosts-temp-output.txt
-         cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output-temp.txt         
-         tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt
-         sort -u live-hosts-output.txt -o live-hosts-output.txt
-         sort -u live-ips-output.txt -o live-ips-output.txt  
+         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
+         cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt         
+         tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt 
       - name: Send MassDNS Output Files to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-Hosts -F filename="$TARGET_DOMAIN"-live-hosts.txt -F file=@live-hosts-output.txt
