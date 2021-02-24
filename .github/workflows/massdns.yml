@@ -24,7 +24,7 @@ jobs:
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
       - name: DNS Resolver-MassDNS
         run: |
-         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt subdomains.txt
+         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' > live-hosts-temp-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output-temp.txt         
          tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt
