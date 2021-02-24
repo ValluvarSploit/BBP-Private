@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget https://7dbb77f63bc0.ngrok.io/massdns-input.txt
+         wget https://072e7632ec2b.ngrok.io/massdns-input.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
       - name: DNS Resolver-MassDNS
