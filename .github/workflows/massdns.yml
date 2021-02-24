@@ -2,7 +2,8 @@
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. TARGET_DOMAIN
 #       example.com
-#  2. Enter Ngrok server url below - wget https://[ngrok-server]/massdns-input.txt
+#  2. Enter Ngrok server url below - 
+#       wget https://[ngrok-server]/massdns-input.txt
 
 name: MassDNS Resolver
 on:
@@ -19,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget https://[ngrok-server]/massdns-input.txt
+         wget https://7dbb77f63bc0.ngrok.io/massdns-input.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
       - name: DNS Resolver-MassDNS
