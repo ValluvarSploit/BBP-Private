@@ -22,7 +22,7 @@ jobs:
          xz dnsgen-wordlist.txt
       - name: Send dnsgen Output Files to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-Results -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.zip -F file=@dnsgen-wordlist.zip
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-Results -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.txt -F file=@dnsgen-wordlist.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-zip -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.zip -F file=@dnsgen-wordlist.zip
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-xz -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.txt.xz -F file=@dnsgen-wordlist.txt.xz
                                   
                  
