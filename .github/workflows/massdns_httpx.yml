@@ -53,7 +53,7 @@ jobs:
          wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz
       - name: HTTPx Resolver
         run: ./httpx -l live-hosts-output.txt -o mass-subdomains-txt -threads 10000 -silent -stats -status-code -title -vhost -cname
-      - name: Send MassDNS Output Files to Slack
+      - name: Send HTTPX Output Files to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-resolved -F filename="$TARGET_DOMAIN"-resolved.txt -F file=@mass-subdomains-txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-IPs -F filename="$TARGET_DOMAIN"-live-ips.txt -F file=@live-ips-output.txt  
+          
