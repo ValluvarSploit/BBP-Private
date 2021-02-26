@@ -6,7 +6,7 @@
 #       https://example.com
 #       https://info.example.com
 
-name: Web Screenshot
+name: Eyewitness-Web Screenshot
 on:
   workflow_dispatch:
 env:
@@ -14,7 +14,7 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 jobs:
-  web-screenshot:
+ eyewitness:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
