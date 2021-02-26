@@ -1,0 +1,33 @@
+name: Dev-Test CI
+on:
+  workflow_dispatch:
+env:
+   TARGET_DOMAIN: ${{ secrets.DOMAIN }}
+   TARGETS: https://ea87d8f33f6f.ngrok.io/http-resolved-url.txt
+   SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+   SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+
+jobs:  
+  Subzy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $TARGETS -O targets.txt && cat targets.txt
+         go get -u -v github.com/lukasikic/subzy
+         ls -l /home/runner/go
+         ls -l /home/runner/go/bin/
+         ls -l /home/runner/go/bin/subzy/
+         cp /home/runner/go/bin/subzy .         
+      - name: Subzy
+        run: |
+         ls -l
+         ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
+         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-vulnerable.txt   
+      - name: Send Output to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Logs -F filename="$TARGET_DOMAIN"-subzy-logs.txt -F file=@subzy-logs.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Vulnerable -F filename="$TARGET_DOMAIN"-subzy-vulnerable.txt -F file=@subzy-vulnerable.txt
+
+
