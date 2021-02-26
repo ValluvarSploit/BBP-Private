@@ -1,28 +1,30 @@
-name: Dev-Test CI
+name: Directory Bruteforce
 on:
   workflow_dispatch:
 env:
    TARGET_DOMAIN: ${{ secrets.DOMAIN }}
-   TARGETS: https://ea87d8f33f6f.ngrok.io
+   TARGETS: ${{ secrets.NGROK_URL }}
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
 jobs:  
-  Subzy:
+  dirsearch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $TARGETS/http-resolved-url.txt -O targets.txt && cat targets.txt
-         wget $TARGETS/subzy && sudo chmod +x subzy
-      - name: Subzy
+         git clone https://github.com/maurosoria/dirsearch.git
+        # sudo apt-get install python3-setuptools
+        # pip install setuptools-rust
+       #pip3 install -r dirsearch/requirements.txt
+      - name: Dirsearch
         run: |
-         ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
-         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-vulnerable.txt   
+         python3 dirsearch/dirsearch.py -u http://media.dyson.com -e .* -w wordlists/dirsearch-wordlist-small.txt
+         zip -r dirsearch.zip dirsearch/reports && xz dirsearch.zip
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Logs -F filename="$TARGET_DOMAIN"-subzy-logs.txt -F file=@subzy-logs.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Vulnerable -F filename="$TARGET_DOMAIN"-subzy-vulnerable.txt -F file=@subzy-vulnerable.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-dirsearch -F filename="$TARGET_DOMAIN"-dirsearch.zip.xz -F file=@dirsearch.zip.xz
+    
 
 
