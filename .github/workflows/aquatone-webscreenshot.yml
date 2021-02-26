@@ -20,12 +20,11 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $TARGETS/http-resolved-url.txt -O targets.txt
-         wget $TARGETS/aquatone && sudo chmod +x aquatone
+       #wget $TARGETS/aquatone && sudo chmod +x aquatone
       - name: Aquatone
         run: |
-         mkdir aquatone
-         cat targets.txt | aquatone -out aquatone-output/
+         mkdir aquatone-output
+         cat targets.txt | ./binaries/aquatone -out aquatone-output/
          zip -r aquatone.zip aquatone/ && xz aquatone.zip
       - name: Send Output to Slack
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Aquatone-Webscreenshot -F filename="$TARGET_DOMAIN"-aquatone.zip.xz -F file=@aquatone.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Aquatone-Webscreenshot -F filename="$TARGET_DOMAIN"-aquatone.zip.xz -F file=@aquatone.zip.xz
