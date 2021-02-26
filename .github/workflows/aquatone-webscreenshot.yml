@@ -1,0 +1,31 @@
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. DOMAIN 
+#       example.com
+#  2. NGROK_URL
+#       https://ngrok.io
+name: Aquatone-Webscreenshot
+on:
+  workflow_dispatch:
+env:
+   TARGET_DOMAIN: ${{ secrets.DOMAIN }}
+   TARGETS: ${{ secrets.NGROK_URL }}
+   SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+   SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+
+jobs:       
+  aquatone-webscreenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $TARGETS/http-resolved-url.txt -O targets.txt
+         wget $TARGETS/aquatone && sudo chmod +x aquatone
+      - name: Aquatone
+        run: |
+         mkdir aquatone
+         cat targets.txt | aquatone -out aquatone-output/
+         zip -r aquatone.zip aquatone/ && xz aquatone.zip
+      - name: Send Output to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Aquatone-Webscreenshot -F filename="$TARGET_DOMAIN"-aquatone.zip.xz -F file=@aquatone.zip.xz
