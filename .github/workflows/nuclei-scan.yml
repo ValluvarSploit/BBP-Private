@@ -7,7 +7,7 @@
 name: Nuclei Scan
 on:
   workflow_dispatch:
-    env:
+env:
      TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
      TARGETS: ${{ secrets.NGROK_URL }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
