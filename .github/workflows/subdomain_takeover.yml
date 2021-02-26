@@ -1,14 +1,8 @@
-#Stage 2
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. DOMAIN 
 #       example.com
-#  2. DOMAIN_SUBDOMAINS_HTTPS
-#       https://example.com
-#       https://info.example.com
-
-# Workflow Dependency: subdomain_enumeration.yml
-
+#  2. wget https://[ngrok-server]/http-resolved-url.txt -O targets.txt
 name: Subdomain Takeover
 
 on:
@@ -19,22 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     env:
                  TARGET_DOMAIN: ${{ secrets.DOMAIN }}
-                 TARGET_SUBDOMAINS_LIST: ${{ secrets.DOMAIN_SUBDOMAINS_HTTPS }}
                  SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
                  SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
     steps:
       - uses: actions/checkout@v2
-      - name: INput Files
-        run: echo "TARGET_SUBDOMAINS_LIST" >> targets.txt
       - name: Install Dependencies
         run: |
+         wget https://ea87d8f33f6f.ngrok.io/http-resolved-url.txt -O targets.txt
          go get -u -v github.com/lukasikic/subzy && cp /home/runner/go/bin/subzy .
          go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
       - name: Subzy
         run: |
+         cat targets.txt
          ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt   
       - name: Subjack
