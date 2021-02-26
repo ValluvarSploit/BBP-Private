@@ -4,7 +4,6 @@
 #       example.com
 #  2. wget https://[ngrok-server]/http-resolved-url.txt -O targets.txt
 name: Subdomain Takeover
-
 on:
   workflow_dispatch:
 env:
