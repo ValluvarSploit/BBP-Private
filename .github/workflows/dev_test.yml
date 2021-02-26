@@ -15,15 +15,9 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $TARGETS/http-resolved-url.txt -O targets.txt && cat targets.txt
-         wget $TARGETS/subzy
-         ls -l
-         sudo chmod +x subzy
-         ls -l subzy
-       #go get -u -v github.com/lukasikic/subzy
-       #cp /home/runner/go/bin/subzy .         
+         wget $TARGETS/subzy && sudo chmod +x subzy
       - name: Subzy
         run: |
-         ls -l
          ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-vulnerable.txt   
       - name: Send Output to Slack
