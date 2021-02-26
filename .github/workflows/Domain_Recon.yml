@@ -24,10 +24,10 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $TARGETS/http-resolved-url.txt -O targets.txt
-         wget $TARGETS/subzy && sudo chmod +x subzy
+         sudo chmod +x binaries/subzy
       - name: Subzy
         run: |
-         ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
+         ./binaries/subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-vulnerable.txt   
       - name: Send Output to Slack
         run: |
@@ -41,10 +41,10 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $TARGETS/http-resolved-url.txt -O targets.txt
-         go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
+         sudo chmod +x binaries/subjack
       - name: Subjack
         run: |
-         ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         ./binaries/subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-vulnerable.txt
       - name: Send Output to Slack
         run: |
@@ -59,9 +59,9 @@ jobs:
         run: |
          wget $TARGETS/http-resolved-url.txt -O targets.txt
          git clone https://github.com/projectdiscovery/nuclei-templates.git
-         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
+         sudo chmod +x binaries/nuclei
       - name: Nuclei
-        run: ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-vulnerable.txt
+        run: ./binaries/nuclei -l targets.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-vulnerable.txt
       - name: Send Output Files Slack Channel
         run: if [[ -f nuclie-vulnerable.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Vulnerable -F filename="$TARGET_DOMAIN"-nuclei-vulnerable.txt -F file=@nuclie-vulnerable.txt ; fi
 
@@ -72,11 +72,10 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/projectdiscovery/nuclei-templates.git
-         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz
-         tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
+         sudo chmod +x binaries/nuclei
       - name: Nuclei scan
         run: |        
-         ./nuclei -l live-httpx-subdomains-output.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
+         ./binaries/nuclei -l live-httpx-subdomains-output.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
          if [[ -f nuclie-output.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Scan-Results -F filename="$TARGET_DOMAIN"-nuclei-scan.txt -F file=@nuclie-output.txt; fi
          
   js-hunter:
