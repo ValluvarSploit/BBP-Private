@@ -29,8 +29,8 @@ jobs:
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-vulnerable.txt   
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Logs -F filename="$TARGET_DOMAIN"-subzy-logs.txt -F file=@"$TARGET_DOMAIN"-subzy-logs.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Vulnerable -F filename="$TARGET_DOMAIN"-subzy-vulnerable.txt -F file=@"$TARGET_DOMAIN"-subzy-vulnerable.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Logs -F filename="$TARGET_DOMAIN"-subzy-logs.txt -F file=@subzy-logs.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Vulnerable -F filename="$TARGET_DOMAIN"-subzy-vulnerable.txt -F file=@subzy-vulnerable.txt
 
   Subjack:
     runs-on: ubuntu-latest
@@ -46,8 +46,8 @@ jobs:
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-vulnerable.txt
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subjack-Logs -F filename="$TARGET_DOMAIN"-subjack-logs.txt -F file=@"$TARGET_DOMAIN"-subjack-logs.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subjack-Vulnerable -F filename="$TARGET_DOMAIN"-subjack-vulnerable.txt -F file=@"$TARGET_DOMAIN"-subjack-vulnerable.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subjack-Logs -F filename="$TARGET_DOMAIN"-subjack-logs.txt -F file=@subjack-logs.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subjack-Vulnerable -F filename="$TARGET_DOMAIN"-subjack-vulnerable.txt -F file=@subjack-vulnerable.txt
 
   Nuclei:
     runs-on: ubuntu-latest
@@ -59,8 +59,8 @@ jobs:
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
       - name: Nuclei
-        run: ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-Vulnerable.txt
+        run: ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-vulnerable.txt
       - name: Send Output Files Slack Channel
-        run: if [[ -f nuclie-Vulnerable.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Vulnerable -F filename="$TARGET_DOMAIN"-nuclei-vulnerable.txt -F file=@"$TARGET_DOMAIN"-nuclei-vulnerable.txt ; fi
+        run: if [[ -f nuclie-vulnerable.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Vulnerable -F filename="$TARGET_DOMAIN"-nuclei-vulnerable.txt -F file=@nuclie-vulnerable.txt ; fi
 
 
