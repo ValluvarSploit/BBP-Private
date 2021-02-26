@@ -37,11 +37,10 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $TARGETS/http-resolved-url.txt -O targets.txt
-         wget $TARGETS/subjack && sudo chmod +x subjack   
-         wget $TARGETS/subjack_fingerprints.json -O fingerprints.json
+         go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
       - name: Subjack
         run: |
-         ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c fingerprints.json
+         ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-vulnerable.txt
       - name: Send Output to Slack
         run: |
@@ -56,7 +55,7 @@ jobs:
         run: |
          wget $TARGETS/http-resolved-url.txt -O targets.txt
          git clone https://github.com/projectdiscovery/nuclei-templates.git
-         wget $TARGETS/nuclei && sudo chmod +x nuclei
+         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
       - name: Nuclei
         run: ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-vulnerable.txt
       - name: Send Output Files Slack Channel
