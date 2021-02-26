@@ -17,6 +17,8 @@ jobs:
          wget $TARGETS/http-resolved-url.txt -O targets.txt && cat targets.txt
          wget $TARGETS/subzy
          ls -l
+         sudo chmod +x subzy
+         ls -l subzy
        #go get -u -v github.com/lukasikic/subzy
        #cp /home/runner/go/bin/subzy .         
       - name: Subzy
