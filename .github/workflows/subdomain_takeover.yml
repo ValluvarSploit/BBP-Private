@@ -20,10 +20,12 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $TARGETS -O targets.txt && cat targets.txt
-         go get -u -v github.com/lukasikic/subzy && cp /home/runner/go/bin/subzy .         
+         go install -v github.com/lukasikic/subzy
+         ls -l /home/runner/go/bin/
+       #go get -u -v github.com/lukasikic/subzy && cp /home/runner/go/bin/subzy .         
       - name: Subzy
         run: |
-         ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
+         subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-vulnerable.txt   
       - name: Send Output to Slack
         run: |
