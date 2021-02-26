@@ -12,42 +12,58 @@ on:
   workflow_dispatch:
 env:
      TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
+     TARGETS: ${{ secrets.NGROK_URL }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
 jobs:     
-  subdomain-takeover:
+  Subzy-sto:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         go get -u -v github.com/lukasikic/subzy && cp /home/runner/go/bin/subzy .
-         go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
-         git clone https://github.com/projectdiscovery/nuclei-templates.git
-         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
+         wget $TARGETS/http-resolved-url.txt -O targets.txt
+         wget $TARGETS/subzy && sudo chmod +x subzy
       - name: Subzy
         run: |
-         ./subzy --targets=live-httpx-subdomains-output.txt -concurrency 50 | tee subzy-logs.txt
-         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt   
+         ./subzy --targets=targets.txt -concurrency 50 | tee subzy-logs.txt
+         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-vulnerable.txt   
+      - name: Send Output to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Logs -F filename="$TARGET_DOMAIN"-subzy-logs.txt -F file=@subzy-logs.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subzy-Vulnerable -F filename="$TARGET_DOMAIN"-subzy-vulnerable.txt -F file=@subzy-vulnerable.txt
+         
+  Subjack-sto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $TARGETS/http-resolved-url.txt -O targets.txt
+         go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
       - name: Subjack
         run: |
-         ./subjack -w live-httpx-subdomains-output.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
-         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt
+         ./subjack -w targets.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
+         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-vulnerable.txt
+      - name: Send Output to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subjack-Logs -F filename="$TARGET_DOMAIN"-subjack-logs.txt -F file=@subjack-logs.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subjack-Vulnerable -F filename="$TARGET_DOMAIN"-subjack-vulnerable.txt -F file=@subjack-vulnerable.txt
+         
+  Nuclei-sto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $TARGETS/http-resolved-url.txt -O targets.txt
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz          
       - name: Nuclei
-        run: ./nuclei -l live-httpx-subdomains-output.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-output.txt
-      - name: Combine Outputs
-        run: |
-         if [[ -f subzy-logs.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subzy-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
-         if [[ -f subjack-logs.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; cat subjack-logs.txt >> "$TARGET_DOMAIN"-subdomain-takeover-logs.txt; fi
-         if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-         if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-         if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
+        run: ./nuclei -l targets.txt -c 100 -stats -t nuclei-templates/takeovers/ -o nuclie-vulnerable.txt
       - name: Send Output Files Slack Channel
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Logs -F filename="$TARGET_DOMAIN"-subdomain-takeover-logs.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-logs.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Results -F filename="$TARGET_DOMAIN"-subdomain-takeover-results.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-results.txt
-
+        run: if [[ -f nuclie-vulnerable.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Vulnerable -F filename="$TARGET_DOMAIN"-nuclei-vulnerable.txt -F file=@nuclie-vulnerable.txt ; fi
 
   nuclei-scan:
     runs-on: ubuntu-latest    
@@ -62,7 +78,6 @@ jobs:
         run: |        
          ./nuclei -l live-httpx-subdomains-output.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-output.txt
          if [[ -f nuclie-output.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Scan-Results -F filename="$TARGET_DOMAIN"-nuclei-scan.txt -F file=@nuclie-output.txt; fi
-         
          
   js-hunter:
     runs-on: ubuntu-latest          
