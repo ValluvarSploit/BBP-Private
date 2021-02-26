@@ -24,7 +24,7 @@ jobs:
          zip -r dirsearch.zip dirsearch/reports && xz dirsearch.zip
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-dirsearcg -F filename="$TARGET_DOMAIN"-dirsearch -F file=@dirsearch.zip.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-dirsearch -F filename="$TARGET_DOMAIN"-dirsearch.zip.xz -F file=@dirsearch.zip.xz
     
 
 
