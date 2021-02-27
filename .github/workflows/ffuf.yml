@@ -19,13 +19,16 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $TARGETS/http-resolved-url.txt
+         wget $TARGETS/http-resolved-url.txt && cat http-resolved-url.txt | cut -d "/" -f 3 > target.txt
          wget --quiet https://github.com/ffuf/ffuf/releases/download/v1.1.0/ffuf_1.1.0_linux_amd64.tar.gz
          tar -xvf ffuf_1.1.0_linux_amd64.tar.gz         
       - name: Fuzz Sesitive Files
         run: |
-         for url in $(cat http-resolved-url.txt); do ./ffuf -w wordlists/sensitive-wordlist.txt -u $url/FUZZ -se -sf -mc all -fc 300,301,302,303,307,400,404,500 | tee -a fuzz-sensitive-files.txt ; done;
+         mkdir ffuf-output
+         for host in $(cat target.txt); do ./ffuf -w wordlists/sensitive-wordlist.txt -u https://$host/FUZZ -se -sf -mc all -fc 300,301,302,303,307,400,404,500 -of html -o ffuf-output/"$host".html ; done;
+         zip -r ffuf-output.zip ffuf-output/
+         xz ffuf-output.zip
       - name: Send Files to Slack Channel            
-        run: |           
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Fuzz-Sensitive-Files-Results -F filename=fuzz-sensitive-files.txt -F file=@fuzz-sensitive-files.txt
+        run: |  
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Fuzz-Sensitive-Files -F filename=ffuf-output.zip.xz -F file=@ffuf-output.zip.xz
 
