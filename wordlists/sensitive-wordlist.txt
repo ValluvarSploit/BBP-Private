@@ -1,4 +1,3 @@
-
 .access
 access
 access-log
@@ -401,11 +400,8 @@ users
 user.sql
 users.sql
 u.sql
-version
 web
-Web_store
 webtools
-wim
 windows
 wireless
 work
