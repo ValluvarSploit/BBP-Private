@@ -323,6 +323,7 @@ admin.php4?reg_login=1
 admin.php?en_log_id=0&action=config
 admin.php?en_log_id=0&action=users
 admin/phpinfo.php
+admin/phpMyAdmin/setup/index.php
 AdminProps
 AdminRealm
 adminrecyclebin.aspx
@@ -9365,6 +9366,7 @@ phpmyadmin/
 phpMyAdmin/
 PHPMYADMINdb_details_importdocsql.php?submit_show=true&do=import&docpath=../../../../../../../etc
 PHPMYADMINexport.php?what=../../../../../../../../../../../../etc/passwd%00
+phpMyAdmin/setup/index.php
 php/mylog.html?screen=/etc/passwd
 php/mylog.phtml?screen=/etc/passwd
 phpnuke/html/.php?name=Network_Tools&file=index&func=ping_host&hinput=%3Bid
