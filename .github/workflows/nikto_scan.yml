@@ -2,7 +2,7 @@ name: Nikto Scan
 on:
   workflow_dispatch:
 env:
-   TARGETS: google.com
+   TARGETS: ${{ secrets.DOMAIN }}
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 
