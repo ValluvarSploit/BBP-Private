@@ -1,34 +1,78 @@
 name: NMAP Full Scan
- 
 on:
   workflow_dispatch:
-
+env:         
+      HOST: ${{ secrets.NGROK_URL }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}  
 jobs:
-  nmap-full-scan:
-    runs-on: ubuntu-latest
-    env:
-                 TARGET_DOMAIN: ${{ secrets.DOMAIN }}
-                 TARGET_IP: ${{ secrets.DOMAIN_IP_LIST }}
-                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}  
-    
+  nmap-vulnscan:
+    runs-on: ubuntu-latest    
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-      
-        run: sudo apt-get update && sudo apt-get install nmap -y
-
-      - name: Input Files
         run: |
-       # echo "$TARGET_IP" > targets-ips.txt
-
+         wget $HOST/live-ips.out -O targets-ips.txt
+         sudo apt-get update && sudo apt-get install nmap -y
+         git clone https://github.com/scipag/vulscan scipag_vulscan 
+         sudo ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
       - name: Nmap scan
+        run: nmap -Pn -sV -p0-65535 --script=vulscan/vulscan.nse -iL targets-ips.txt -oN nmap-vulnscan.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vulnscan -F filename=nmap-vulnscan.txt -F file=@nmap-vulnscan.txt
+        
+  nmap-vulners:
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
         run: |
-         sudo nmap -Pn -sS -sV -p0-65535 -T 2 -oA nmap-full-scan www.privatedivision.com 
-        #nmap -Pn -sC -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
-
-      - name: Send Files to Slack Channel
+         wget $HOST/live-ips.out -O targets-ips.txt
+         sudo apt-get update && sudo apt-get install nmap -y
+         cd /usr/share/nmap/scripts/
+         sudo git clone https://github.com/vulnersCom/nmap-vulners.git
+      - name: Nmap scan
+        run: nmap -Pn -sV -p0-65535 --script nmap-vulners -iL targets-ips.txt -oN nmap-vulners.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vulners-Scan -F filename=nmap-vulners.txt -F file=@nmap-vulners.txt
+        
+  nmap-vuln:
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Full-Scan -F filename="$TARGET_DOMAIN"-nmap-scan.nmap -F file=@nmap-full-scan.nmap
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Full-Scan -F filename="$TARGET_DOMAIN"-nmap-scan.xml -F file=@nmap-full-scan.xml
-
+         wget $HOST/live-ips.out -O targets-ips.txt
+         sudo apt-get update && sudo apt-get install nmap -y
+      - name: Nmap scan
+        run: nmap -Pn -sV -p0-65535 --script vuln -iL targets-ips.txt -oN nmap-vuln.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vuln -F filename=nmap-vuln.txt -F file=@nmap-vuln.txt
+        
+#  nmap-tcp-scan:
+#    runs-on: ubuntu-latest    
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install Dependencies
+#        run: |
+#         wget $HOST/live-ips.out -O targets-ips.txt
+#         sudo apt-get update && sudo apt-get install nmap -y
+#      - name: Nmap scan
+#        run: nmap -Pn -sV -p- -iL targets-ips.txt -oA nmap-tcp-scan
+#      - name: Send Output to Slack
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-TCP-Scan -F filename=nmap-tcp-scan.xml -F file=@nmap-tcp-scan.xml
+  
+  nmap-udp-scan:
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $HOST/live-ips.out -O targets-ips.txt
+         sudo apt-get update && sudo apt-get install nmap -y
+      - name: Nmap UDP scan
+        run: sudo nmap -Pn -sV -sU -p- -iL targets-ips.txt -oA nmap-udp-scan
+      - name: Send Output to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.xml -F file=@nmap-udp-scan.xml
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
