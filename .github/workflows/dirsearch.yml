@@ -17,7 +17,7 @@ jobs:
          git clone https://github.com/maurosoria/dirsearch.git
       - name: Dirsearch
         run: |
-         python3 dirsearch/dirsearch.py -l target.txt -e .* -w raft-large-files.txt --simple-report=dirsearch.out
+         python3 dirsearch/dirsearch.py -l target.txt -e .* -w raft-large-files.txt --simple-report=dirsearch.out -t 50
          zip -r reports-all.zip dirsearch/reports && xz reports-all.zip
       - name: Send Output to Slack
         run: |
