@@ -13,4 +13,4 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/maurosoria/dirsearch.git
-         python3 dirsearch/dirsearch.py -h
+         python3 dirsearch/dirsearch.py -l target.txt -e .* -w 
