@@ -1,4 +1,5 @@
 .access
+.svn
 access
 access-log
 access.log
