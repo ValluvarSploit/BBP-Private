@@ -17,7 +17,6 @@ jobs:
          wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
       - name: GoChopChop
         run: |
-         ./binaries/gochopchop scan --url-file target.txt --export-filename gochopchop
-         zip -r gochopchop.zip gochopchop/ && xz gochopchop.zip
+         ./binaries/gochopchop scan --url-file target.txt --export json --export-filename gochopchop-out
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoChopChop -F filename=gochopchop.zip.xz -F file=@gochopchop.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json
