@@ -20,7 +20,7 @@ jobs:
        #nikto -h $TARGETS -o nikto-output.txt
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Slack Test -F filename=out.txt -F file=@out.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Slack-Test -F filename=out.txt -F file=@out.txt
        #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto -F filename="$TARGET"-nikto-output.txt -F file=@nikto-output.txt
     
 
