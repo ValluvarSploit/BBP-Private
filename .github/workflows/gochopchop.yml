@@ -1,0 +1,22 @@
+name: Hakrawler
+on:
+  workflow_dispatch:
+env:
+       HOST: ${{ secrets.NGROK_URL }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+jobs:
+ hakrawler-crawler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $HOST/http-resolved-url.txt -O target.txt
+         sudo chmod +x binaries/hakrawler
+      - name: Hakrawler
+        run: |
+         cat target.txt | ./binaries/hakrawler -depth 2 -outdir hakrawler_out
+         zip -r hakrawler_out.zip hakrawler_out/ && xz hakrawler_out.zip
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Hakrawler -F filename=hakrawler_out.zip.xz -F file=@hakrawler_out.zip.xz
