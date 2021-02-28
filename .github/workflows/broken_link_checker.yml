@@ -4,7 +4,7 @@ on:
 env:
    HOST: ${{ secrets.NGROK_URL }}
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-   SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}  
+   SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}  
 jobs:
   broken-link-checker:
     runs-on: ubuntu-latest
