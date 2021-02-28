@@ -1,4 +1,4 @@
-name: Web Crawler
+name: Hakrawler
 on:
   workflow_dispatch:
 env:
@@ -6,21 +6,6 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 jobs:
- gospider-crawler:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         wget $HOST/http-resolved-url.txt -O target.txt
-         sudo chmod +x binaries/gospider
-      - name: Gospider
-        run: |
-         ./binaries/gospider -S target.txt --depth 3 --no-redirect -t 50 -c 3 --other-source -o gospider_out
-         zip -r gospider_out.zip gospider_out/ && xz gospider_out.zip
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Gospider-Crawler -F filename=gospider_out.zip.xz -F file=@gospider_out.zip.xz
-                 
  hakrawler-crawler:
     runs-on: ubuntu-latest
     steps:
