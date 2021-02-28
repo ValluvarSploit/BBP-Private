@@ -30,7 +30,7 @@ jobs:
          wget $HOST/live-ips.out -O targets-ips.txt
          sudo apt-get update && sudo apt-get install nmap -y
          cd /usr/share/nmap/scripts/
-         git clone https://github.com/vulnersCom/nmap-vulners.git
+         sudo git clone https://github.com/vulnersCom/nmap-vulners.git
       - name: Nmap scan
         run: nmap -Pn -sV -p0-65535 --script nmap-vulners -iL targets-ips.txt -oN nmap-vulners.txt
       - name: Send Output to Slack
