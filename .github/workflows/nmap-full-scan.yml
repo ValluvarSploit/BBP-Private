@@ -12,12 +12,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/live-ips.out -O targets-ips.txt
+         echo "62.189.28.163" > targets-ips.txt
          sudo apt-get update && sudo apt-get install nmap -y
+       #wget $HOST/live-ips.out -O targets-ips.txt
       - name: Nmap scan
-        run: nmap -Pn -sC -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
+        run: nmap -Pn -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan -F filename=nmap-scan.nmap -F file=@nmap-full-scan.nmap
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan -F filename=nmap-scan.xml -F file=@nmap-full-scan.xml
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan -F filename=nmap-scan.xml -F file=@nmap-full-scan.xml
+       #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan -F filename=nmap-scan.nmap -F file=@nmap-full-scan.nmap
+        
 
