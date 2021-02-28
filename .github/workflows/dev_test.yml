@@ -2,7 +2,7 @@ name: Dev-Test
 on:
   workflow_dispatch:
 env:
-   TARGETS: google.com
+   HOST: ${{ secrets.NGROK_URL }}
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 
@@ -13,8 +13,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Dev
         run : |
-         sudo apt-get install brutespray -y
-         brutespray -h
+         wget $HOST/masscan.xml
+         sudo apt-get update && sudo apt-get install nmap -y
+         pip install python-libnmap
+         sudo apt-get install git gcc make libpcap-dev
+         python masscan_to_nmap.py masscan.xml
+       #sudo apt-get install brutespray -y
+       #brutespray 
      #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto -F filename="$TARGET"-nikto-output.txt -F file=@nikto-output.txt
     
 
