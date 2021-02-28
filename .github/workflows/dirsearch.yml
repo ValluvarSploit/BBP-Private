@@ -19,7 +19,8 @@ jobs:
         run: |
          python3 dirsearch/dirsearch.py -l target.txt -e .* -w raft-large-files.txt --simple-report=dirsearch.out -t 50
          zip -r reports-all.zip dirsearch/reports && xz reports-all.zip
+         zip dirsearch.out.zip dirsearch.out && xz dirsearch.out.zip
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Dirsearch-Report -F filename=dirsearch.out -F file=@dirsearch.out
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Dirsearch-Report -F filename=dirsearch.out -F file=@dirsearch.out.zip
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Dirsearch-Report-All -F filename=reports-all.zip.xz -F file=@reports-all.zip.xz
