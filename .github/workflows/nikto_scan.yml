@@ -14,7 +14,11 @@ jobs:
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install nikto -y
       - name: Nikto Scan
-        run: nikto -h $TARGET -o nikto-output.txt
+        run: |
+         nikto -h $TARGET -o nikto-80-output.txt
+         nikto -h $TARGET:443 -o nikto-443-output.txt
+         echo "--------------------------------------------------------"
+         cat nikto-443-output.txt >> nikto-80-output.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto-Scan -F filename="$TARGET"-nikto-output.txt -F file=@nikto-output.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto-Scan -F filename="$TARGET"-nikto-output.txt -F file=@nikto-80-output.txt
   
