@@ -1,4 +1,4 @@
-name: Slack Channel Creation
+name: Dev-Test
 on:
   workflow_dispatch:
 env:
@@ -7,7 +7,7 @@ env:
    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 
 jobs:  
-  nikto-scan:
+  dev-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
