@@ -12,6 +12,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/http-resolved-url.txt -O target.txt
          git clone https://github.com/maurosoria/dirsearch.git
          python3 dirsearch/dirsearch.py -h
