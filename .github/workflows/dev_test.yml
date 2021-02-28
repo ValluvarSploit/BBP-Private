@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Dev
         run : |
-         sudo npm install broken-link-checker -g 
-         blc --help
+         sudo apt-get install brutespray -y
+         brutespray -h
      #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto -F filename="$TARGET"-nikto-output.txt -F file=@nikto-output.txt
     
 
