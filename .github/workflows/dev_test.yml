@@ -16,7 +16,7 @@ jobs:
          wget $HOST/live-ips.out -O targets-ips.txt
          sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap UDP scan
-        run: nmap -Pn -sV -sU -p- -iL targets-ips.txt -oA nmap-udp-scan
+        run: sudo nmap -Pn -sV -sU -p- -iL targets-ips.txt -oA nmap-udp-scan
       - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.xml -F file=@nmap-udp-scan.xml
