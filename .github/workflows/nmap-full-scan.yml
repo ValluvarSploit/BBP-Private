@@ -1,34 +1,23 @@
 name: NMAP Full Scan
- 
 on:
   workflow_dispatch:
-
+env:         
+      HOST: ${{ secrets.NGROK_URL }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}  
 jobs:
   nmap-full-scan:
-    runs-on: ubuntu-latest
-    env:
-                 TARGET_DOMAIN: ${{ secrets.DOMAIN }}
-                 TARGET_IP: ${{ secrets.DOMAIN_IP_LIST }}
-                 SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                 SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}  
-    
+    runs-on: ubuntu-latest    
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-      
-        run: sudo apt-get update && sudo apt-get install nmap -y
-
-      - name: Input Files
         run: |
-       # echo "$TARGET_IP" > targets-ips.txt
-
+         wget $HOST/live-ips.out -O targets-ips.txt
+         sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap scan
+        run: nmap -Pn -sC -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
+      - name: Send Output to Slack
         run: |
-         sudo nmap -Pn -sS -sV -p0-65535 -T 2 -oA nmap-full-scan www.privatedivision.com 
-        #nmap -Pn -sC -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
-
-      - name: Send Files to Slack Channel
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Full-Scan -F filename="$TARGET_DOMAIN"-nmap-scan.nmap -F file=@nmap-full-scan.nmap
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Full-Scan -F filename="$TARGET_DOMAIN"-nmap-scan.xml -F file=@nmap-full-scan.xml
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan -F filename=nmap-scan.nmap -F file=@nmap-full-scan.nmap
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan -F filename=nmap-scan.xml -F file=@nmap-full-scan.xml
 
