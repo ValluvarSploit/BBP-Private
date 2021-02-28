@@ -1,17 +1,10 @@
-#Important Note:
-# Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN
-#       example.com
-#  2. Enter Ngrok server url below - 
-#       wget https://[ngrok-server]/massdns-input.txt
-
-name: MassDNS-HTTPx Resolver
+name: MassDNS Resolver
 on:
   workflow_dispatch:
 env:
-     TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
+     HOST: ${{ secrets.NGROK_URL }} 
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 
 jobs:
   massdns-resolver:
@@ -20,41 +13,17 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget https://072e7632ec2b.ngrok.io/massdns-input.txt.xz
+         wget $HOST/massdns-input.txt.xz
          xz -d massdns-input.txt.xz
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
-      - name: DNS Resolver-MassDNS
+      - name: MassDNS
         run: |
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt massdns-input.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt         
          tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt 
-      - name: Send MassDNS Output Files to Slack
+      - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-Hosts -F filename="$TARGET_DOMAIN"-live-hosts.txt -F file=@live-hosts-output.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-MassDNS-Live-IPs -F filename="$TARGET_DOMAIN"-live-ips.txt -F file=@live-ips-output.txt  
-      - name: Upload BBP-Private Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: bbp-private-artifacts-uploaded
-         path: live-hosts-output.txt
-
-
-  httpx-resolver:
-    runs-on: ubuntu-latest
-    needs: [massdns-resolver]
-    steps:
-      - uses: actions/checkout@v2 
-      - uses: actions/download-artifact@v2
-        with:
-         name: bbp-private-artifacts-uploaded
-      - name: Install Dependencies
-        run: |
-         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz
-      - name: HTTPx Resolver
-        run: ./httpx -l live-hosts-output.txt -o mass-subdomains-txt -threads 10000 -silent -stats -status-code -title -vhost -cname
-      - name: Send HTTPX Output Files to Slack
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-resolved -F filename="$TARGET_DOMAIN"-resolved.txt -F file=@mass-subdomains-txt
-          
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts-output.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips-output.txt  
