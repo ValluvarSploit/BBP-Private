@@ -59,7 +59,7 @@ def print_scan(nmap_report):
 
 
 def main():
-    options = '-sV -p '
+    options = '-Pn -sV -p '
 
     try:
         report = NmapParser.parse_fromfile('masscan.xml')
