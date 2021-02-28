@@ -1,9 +1,5 @@
 #Important Note:
-# Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN
-#       example.com
-#  2. NGROK_URL
-#       https://ngrok.io
+# Before running this action, make sure yo
 
 name: HTTProber
 on:
