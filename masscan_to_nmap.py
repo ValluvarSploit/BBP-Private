@@ -79,6 +79,7 @@ def main():
         report = do_scan(target, options + ports_formatted)
 
         if report:
+            print(report)
             print_scan(report)
         else:
             print('No results returned')
