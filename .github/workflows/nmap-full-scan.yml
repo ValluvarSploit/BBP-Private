@@ -49,7 +49,7 @@ jobs:
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vuln -F filename=nmap-vuln.txt -F file=@nmap-vuln.txt
         
-#  nmap-full-scan:
+#  nmap-tcp-scan:
 #    runs-on: ubuntu-latest    
 #    steps:
 #      - uses: actions/checkout@v2
@@ -58,9 +58,9 @@ jobs:
 #         wget $HOST/live-ips.out -O targets-ips.txt
 #         sudo apt-get update && sudo apt-get install nmap -y
 #      - name: Nmap scan
-#        run: nmap -Pn -sV -p0-65535 -iL targets-ips.txt -oA nmap-full-scan
+#        run: nmap -Pn -sV -p- -iL targets-ips.txt -oA nmap-tcp-scan
 #      - name: Send Output to Slack
-#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan -F filename=nmap-scan.xml -F file=@nmap-full-scan.xml
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-TCP-Scan -F filename=nmap-tcp-scan.xml -F file=@nmap-tcp-scan.xml
   
   
 #  nmap-udp-scan:
