@@ -13,10 +13,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         git clone https://github.com/ValluvarSploit/SubWalker.git
-         cd subwalker; chmod +x install.sh subwalker.sh; sudo ./install.sh
-      - name: Subsmasher
-        run: ./subwalker.sh -d "$TARGET" -o subdomains.out
+         git clone https://github.com/ValluvarSploit/SubSmasher
+         cd SubSmasher; chmod +x install.sh subsmasher.sh; sudo ./install.sh
+      - name: SubSmasher
+        run: ./subsmasher.sh -d "$TARGET" -o subdomains.out
       - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subsmasher -F filename=subdomains.out -F file=@subdomains.out
