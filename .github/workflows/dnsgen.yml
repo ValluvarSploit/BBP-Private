@@ -2,9 +2,9 @@ name: DNSGen Wordlist Generator
 on:
   workflow_dispatch:
 env:
-    TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
+    HOST: ${{ secrets.NGROK_URL }} 
     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-    SLACK_CHANNEL_NAME: ${{ secrets.NGROK_URL }} 
+    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
                  
 jobs:
   dnsgen-wordlist-generator:
@@ -13,16 +13,16 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget https://0af23265d9e4.ngrok.io/subdomains.txt
+         wget $HOST/dnsgen.txt -O target.txt
          pip3 install dnsgen && cp ~/.local/bin/dnsgen .
       - name: DNSgen
         run: |
-         ./dnsgen subdomains.txt > dnsgen-wordlist.txt
+         ./dnsgen target.txt > dnsgen-wordlist.txt
          zip dnsgen-wordlist.zip dnsgen-wordlist.txt
-         xz dnsgen-wordlist.txt
+         xz dnsgen-wordlist.zip
       - name: Send dnsgen Output Files to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-zip -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.zip -F file=@dnsgen-wordlist.zip
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-DNSgen-xz -F filename="$TARGET_DOMAIN"-dnsgen-wordlist.txt.xz -F file=@dnsgen-wordlist.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=DNSGen-Wordlist-Generator -F filename=dnsgen-wordlist.zip.xz -F file=@dnsgen-wordlist.zip.xz
+         
                                   
                  
