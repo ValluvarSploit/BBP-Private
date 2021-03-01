@@ -24,4 +24,6 @@ jobs:
       - name: Send Output to Slack
         run: |
          ls -l
+         ls -l SubSmasher
+         cp SubSmasher/subdomains.out .
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subsmasher -F filename=subdomains.out -F file=@subdomains.out
