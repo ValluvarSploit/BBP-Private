@@ -4,7 +4,7 @@ on:
 env:
     TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }} 
+    SLACK_CHANNEL_NAME: ${{ secrets.NGROK_URL }} 
                  
 jobs:
   dnsgen-wordlist-generator:
