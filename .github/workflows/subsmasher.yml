@@ -15,8 +15,13 @@ jobs:
         run: |
          git clone https://github.com/ValluvarSploit/SubSmasher
          cd SubSmasher; chmod +x install.sh subsmasher.sh; sudo ./install.sh
+         ls -l
       - name: SubSmasher
-        run: ./subsmasher.sh -d "$TARGET" -o subdomains.out
+        run: |
+         ls -l
+         cd SubSmasher
+         ./subsmasher.sh -d "$TARGET" -o subdomains.out
       - name: Send Output to Slack
         run: |
+         ls -l
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subsmasher -F filename=subdomains.out -F file=@subdomains.out
