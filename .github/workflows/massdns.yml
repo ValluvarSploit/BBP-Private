@@ -25,6 +25,6 @@ jobs:
       - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips-output.txt  
-       #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS -F filename=massdns.out -F file=@massdns-output.txt
-       #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts-output.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS -F filename=massdns.out -F file=@massdns-output.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts-output.txt
          
