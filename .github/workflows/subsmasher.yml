@@ -2,7 +2,7 @@ name: Subsmasher
 on:
   workflow_dispatch:
 env:
-   HOST: ${{ secrets.NGROK_URL }}
+   TARGET: ${{ secrets.DOMAIN }}
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 
@@ -16,8 +16,7 @@ jobs:
          git clone https://github.com/ValluvarSploit/SubWalker.git
          cd subwalker; chmod +x install.sh subwalker.sh; sudo ./install.sh
       - name: Subsmasher
-        run: ./subwalker.sh 
+        run: ./subwalker.sh -d "$TARGET" -o subdomains.out
       - name: Send Output to Slack
         run: |
-        #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.xml -F file=@nmap-udp-scan.xml
-        #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subsmasher -F filename=subdomains.out -F file=@subdomains.out
