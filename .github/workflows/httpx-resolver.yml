@@ -28,3 +28,26 @@ jobs:
       - name: Send MassDNS Output Files to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-httpx-resolved -F filename="$TARGET_DOMAIN"-httpx-resolved.txt -F file=@httpx-resolved.txt
+
+
+  httpx-resolver-mass:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2             
+      - name: Install Dependencies
+        run: |
+         wget $HOST/wordlist-medium.txt.zip.xz
+         xz -d wordlist-medium.txt.zip.xz
+         unzip wordlist-medium.txt.zip
+         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz
+      - name: HTTPx Resolver
+        run: |
+         ./httpx -l wordlist-medium.txt -o httpx-resolved.txt -threads 10000 -status-code -content-length -title -cname 
+         cat httpx-resolved.txt | grep -v '403 Forbidden' | grep -v '301 Moved Permanently' > 200-ok.txt
+         zip httpx-resolved.txt.zip httpx-resolved.txt
+         xz httpx-resolved.txt.zip
+      - name: Send MassDNS Output Files to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=HTTP-Resolved -F filename=httpx-resolved.txt.zip.xz -F file=@httpx-resolved.txt.zip.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=HTTP-Resolved-200 -F filename=200-ok.txt -F file=@200-ok.txt
+         
