@@ -34,17 +34,17 @@ jobs:
       - name: Send Subdomain Tools Output Files to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Tools-Subdomains -F filename=tools-subdomains.txt -F file=@subdomains-tools-output.txt
     
-  amass-brute:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         sudo snap install amass  
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-      - name: Amass
-        run: |
-         amass enum -active -brute -d "$TARGET_DOMAIN" -o amass-brute.txt -rf resolvers.txt -max-dns-queries 3000
-      - name: Send Subdomain Tools Output Files to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Amass-Brute -F filename=amass-brute.txt -F file=@amass-brute.txt
+#  amass-brute:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install Dependencies
+#        run: |
+#         sudo snap install amass  
+#         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+#      - name: Amass
+#        run: |
+#         amass enum -active -brute -d "$TARGET_DOMAIN" -o amass-brute.txt -rf resolvers.txt -max-dns-queries 3000
+#      - name: Send Subdomain Tools Output Files to Slack
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Amass-Brute -F filename=amass-brute.txt -F file=@amass-brute.txt
  
