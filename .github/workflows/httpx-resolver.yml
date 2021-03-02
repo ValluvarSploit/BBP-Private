@@ -29,14 +29,14 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget $HOST/wordlist-medium.txt.zip.xz
-         xz -d wordlist-medium.txt.zip.xz
-         unzip wordlist-medium.txt.zip
+         wget $HOST/wordlist-hugh.txt.zip.xz
+         xz -d wordlist-hugh.txt.zip.xz
+         unzip wordlist-hugh.txt.zip
          wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz
       - name: HTTPx Resolver
         run: |
-         ./httpx -l wordlist-medium.txt -o httpx-resolved.txt -threads 10000 -status-code -content-length -title -cname 
-         cat httpx-resolved.txt | grep -v '403 Forbidden' | grep -v '301 Moved Permanently' > 200-ok.txt
+         ./httpx -l wordlist-hugh.txt -o httpx-resolved.txt -threads 10000 -status-code -content-length -title -cname -follow-redirects
+         cat httpx-resolved.txt | grep -v '403 Forbidden' > 200-ok.txt
          zip httpx-resolved.txt.zip httpx-resolved.txt
          xz httpx-resolved.txt.zip
       - name: Send MassDNS Output Files to Slack
