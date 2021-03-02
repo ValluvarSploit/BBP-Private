@@ -22,8 +22,6 @@ jobs:
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz && tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
       - name: Certspotter
         run: curl -s "https://api.certspotter.com/v1/issuances?domain="$TARGET_DOMAIN"&expand=dns_names" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" | uniq | tee output.txt
-      - name: Amass
-        run: amass enum -passive -d "$TARGET_DOMAIN" >> output.txt
       - name: Assetfinder
         run: ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> output.txt                                 
       - name: Crt.sh
