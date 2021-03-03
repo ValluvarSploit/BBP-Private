@@ -20,17 +20,7 @@ jobs:
   subdomain-enumeration:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Targets
-        run: |
-         echo "$TARGET_DOMAIN"
-         
-      - name: Input Files
-        run: |
-         mkdir bbp-public-artifacts
-         echo "$TARGET_IGNORE_HOSTS" > bbp-public-artifacts/ignore-hosts.txt
-         echo "$TARGET_IGNORE_IPS" > bbp-public-artifacts/ignore-ips.txt
-                 
+      - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
          go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
@@ -42,57 +32,22 @@ jobs:
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz && tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
          pip3 install dnsgen && cp ~/.local/bin/dnsgen .
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
-         
-      - name: Sublist3r
-        run: |
-         python Sublist3r/sublist3r.py -d "$TARGET_DOMAIN" -p 80,443,21,22 -o subdomains-tools-output.txt >/dev/null
-         
+         git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make         
       - name: Amass
-        run: |
-         amass enum -passive -d "$TARGET_DOMAIN" >> subdomains-tools-output.txt
-         
+        run: amass enum -passive -d "$TARGET" >> subdomains-all.txt
       - name: Assetfinder
-        run: |
-         ./assetfinder --subs-only "$TARGET_DOMAIN" -silent >> subdomains-tools-output.txt
-                         
-      - name: Certspotter
-        run: |
-         curl -s https://certspotter.com/api/v0/certs\?domain\="$TARGET_DOMAIN" | ./jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep "$TARGET_DOMAIN" >> subdomains-tools-output.txt
-                
-      - name: RapidDNS
-        run: |
-         curl -s "https://rapiddns.io/subdomain/"$TARGET_DOMAIN"?full=1" | grep -oP '_blank">\K[^<]*' | grep -v http >> subdomains-tools-output.txt
-         
-      - name: Crt.sh
-        run: |
-         curl https://crt.sh/?q=%."$TARGET_DOMAIN" | grep "$TARGET_DOMAIN" | cut -d '>' -f2 | cut -d '<' -f1 | grep -v " " | uniq >> subdomains-tools-output.txt
-                
+        run: ./assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt           
       - name: Findomain
-        run: |
-         ./findomain -t "$TARGET_DOMAIN" -q >> subdomains-tools-output.txt
-                
+        run: ./findomain -t "$TARGET" -q >> subdomains-all.txt    
       - name: Subfinder
-        run: |
-         ./subfinder -d "$TARGET_DOMAIN" -all --silent >> subdomains-tools-output.txt
-                
+        run: ./subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
       - name: Unique subdomains
         run: |
-         mv subdomains-tools-output.txt temp_file1.txt && cat temp_file1.txt | sed 's/\*\.//g' > temp_file2.txt
-         cat temp_file2.txt > subdomains-tools-output.txt
-            
-      - name: dnsgen
-        run: |
-         ./dnsgen subdomains-tools-output.txt >> dnsgen-temp-output.txt
-         cat dnsgen-temp-output.txt | grep -v "www" > dnsgen-output.txt
-              
-      - name: Create Wordlists
-        run: |
-         sed "s/$/.$TARGET_DOMAIN/" wordlists/subdomain-wordlists.txt > custom-wordlist.txt
-         cat dnsgen-output.txt >> custom-wordlist.txt
-         cat subdomains-tools-output.txt custom-wordlist.txt > massdns-input2.txt
-         grep -vf bbp-public-artifacts/ignore-hosts.txt massdns-input2.txt > massdns-input.txt
-         sort -u massdns-input.txt -o massdns-input.txt
+         echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
+         cat subdomains-all.txt | sed 's/\*\.//g' | sort -u > subdomains.txt
+         
+         echo Total Uniq Subdomains: $(cat subdomains.txt | wc -l)              
+
                  
       - name: DNS Resolver-MassDNS
         run: |
