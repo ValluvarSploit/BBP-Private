@@ -9,14 +9,14 @@ jobs:
         with:
          token: ${{ secrets.TOKEN }} 
       - name: Download binaries
-        run: |         
-         git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; cd ..; mv massdns/bin/massdns binaries/massdns
+        run: | 
+         binaries/massdns -h
+       #git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; cd ..; mv massdns/bin/massdns binaries/massdns
          
-      - name: Commit
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add binaries/
-          git commit -m "binaries" -a
-          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/BBP-Private.git" HEAD:main --follow-tags
-
+#      - name: Commit
+#        run: |
+#          git config --local user.email "action@github.com"
+#          git config --local user.name "GitHub Action"
+#          git add binaries/
+#          git commit -m "binaries" -a
+#          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/BBP-Private.git" HEAD:main --follow-tags
