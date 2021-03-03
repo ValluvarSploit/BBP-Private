@@ -530,7 +530,37 @@ jobs:
          ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json    
-    
+  
+  nikto-scan-80:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts 
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install nikto -y
+      - name: Nikto Scan
+        run: for url in $(cat subdomains-resolved.txt); do nikto -h $url | tee -a nikto-80-output.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nikto-Scan-80 -F filename=nikto-80-output.txt -F file=@nikto-80-output.txt
+        
+  nikto-scan-443:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts 
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install nikto -y
+      - name: Nikto Scan
+        run: for url in $(cat subdomains-resolved.txt); do nikto -h $url:443 | tee -a nikto-443-output.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nikto-Scan-443 -F filename=nikto-443-output.txt -F file=@nikto-443-output.txt    
+  
 #HTTP Smuggling
 #  http-smuggler:
 #    runs-on: ubuntu-latest
