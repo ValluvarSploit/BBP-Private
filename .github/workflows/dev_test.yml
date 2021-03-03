@@ -19,6 +19,7 @@ jobs:
       - name: Install Dependencies
         run: |
           wget $HOST/subdomains.txt 
+          sudo apt-get install python3-setuptools
           git clone https://github.com/initstring/cloud_enum.git
           pip3 install -r cloud_enum/requirements.txt
           cat subdomains.txt | cut -d "." -f 1 > wordlist.txt
@@ -27,3 +28,19 @@ jobs:
         run: python3 cloud_enum/cloud_enum.py -k instabug.com -b wordlist.txt -l cloud-enum.log
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Cloud-Enum -F filename=cloud-enum.log -F file=@cloud-enum.log
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+         path: |
+           subdomains.txt 
+           cloud-enum.log
+           
+  cloud-enum2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+           cat subdomains.txt 
+           cat cloud-enum.log
