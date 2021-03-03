@@ -55,7 +55,7 @@ jobs:
          echo Total Resolved Subdomains: $(cat subdomains-resolved.txt | wc -l)
       - name: Artifact Files
         run: |
-         cp subdomains-resolved.txt bbp-public-artifacts/
+         cp subdomains-resolved.txt subdomains.txt bbp-public-artifacts/
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -88,12 +88,18 @@ jobs:
       - name: Nuclei
         run: |
          ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers/subdomain-takeover.yaml -o nuclie-output.txt   
+      - name: SubOver
+        run: |
+         cd binaries
+         ./SubOver -l subdomains.txt -o subover.txt
+         cd ..
       - name: Combine Output Files
         run: |
          cat subzy-logs.txt subjack-logs.txt >> sto.log
          if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > subdomain-takeovers.txt; cat subzy-output.txt >> subdomain-takeovers.txt; fi
          if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> subdomain-takeovers.txt; cat subjack-output.txt >> subdomain-takeovers.txt; fi
          if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> subdomain-takeovers.txt; cat nuclie-output.txt >> subdomain-takeovers.txt; fi
+         if [[ -f subover.txt ]]; then echo "*****SubOver*****" >> subdomain-takeovers.txt; cat subover.txt >> subdomain-takeovers.txt; fi
       - name: Send Output Files Slack Channel
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomain-Takeover -F filename=subdomain-takeovers.txt -F file=@subdomain-takeovers.txt
