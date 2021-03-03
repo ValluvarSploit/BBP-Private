@@ -6,18 +6,21 @@ env:
    SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:  
-  favicon-hash-extraction:
+  parameter-discovery:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2      
+      - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         sudo apt-get install python3-setuptools
-         git clone https://github.com/devanshbatham/FavFreak
-         pip3 install -r FavFreak/requirements.txt
-      - name: FavFreak
+         git clone https://github.com/devanshbatham/ParamSpider
+         cd ParamSpider; pip3 install -r requirements.txt; cd ..
+      - name: ParamSpider
         run: |
-         echo https://$TARGET | python3 FavFreak/favfreak.py > favers.txt
-         cat favers.txt | grep 'h]' | cut -d ] -f2 | cut -d " " -f2 > favihash.txt
-      - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-FaviHash -F filename=favihash.txt -F file=@favihash.txt; fi
+         python3 ParamSpider/paramspider.py -d "$TARGET" -l high -o paramspider.txt --exclude woff,css,js,png,svg,php,jpg;
+         ls -l paramspider.txt
+         mkdir paramspider-artifacts; cp paramspider.txt paramspider-artifacts/
+      - name: Upload BBP-Public Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: paramspider-artifacts
+         path: paramspider-artifacts/
