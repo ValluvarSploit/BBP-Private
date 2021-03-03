@@ -1,7 +1,7 @@
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. DOMAIN
+#  1. PUBLIC_DOMAIN
 #       example.com
-name: Subdomain Enumeration
+name: Amass Bruteforce
 on:
   workflow_dispatch:
 env:
