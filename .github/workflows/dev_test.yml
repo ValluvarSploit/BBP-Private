@@ -23,7 +23,7 @@ jobs:
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
          #./binaries/shuffledns -d $TARGET --list wordlist-hugh.txt -r resolvers.txt -v -o shuffledns.txt 
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
-            - name: Send Output to Slack
+      - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-hosts-temp-output.txt -F file=@live-hosts-temp-output.txt
 
