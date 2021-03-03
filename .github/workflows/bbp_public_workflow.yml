@@ -8,8 +8,6 @@ on:
 env:
       TARGET: ${{ secrets.PUBLIC_DOMAIN }}
       HOST: ${{ secrets.NGROK_URL }}
-      TARGET_IGNORE_HOSTS: ${{ secrets.TARGET_IGNORE_HOSTS_LIST }}
-      TARGET_IGNORE_IPS: ${{ secrets.TARGET_IGNORE_IPS_LIST }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
@@ -169,70 +167,56 @@ jobs:
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Broken-Link-Hijacker-Results -F filename="$TARGET_DOMAIN"-blh.txt -F file=@blh-output.txt
 
-#Collect URLs of specified targets.
+#Collect URLs.
   url-collector:
     runs-on: ubuntu-latest
-    needs: [subdomain-enumeration]
- 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Targets
-        run: |
-         echo "TARGET IS:" "$TARGET_DOMAIN"
-         
-      - name: Input Files
-        run: |
-         echo "$TARGET_IGNORE_HOSTS" > ignore-hosts.txt
-         
       - name: Install Dependencies
         run: |
+         cd binaries
+         chmod +x waybackurls gau
+         cd ..
          go get -u github.com/tomnomnom/gf && cp /home/runner/go/bin/gf .
          git clone https://github.com/1ndianl33t/Gf-Patterns && mkdir ~/.gf && cp -r Gf-Patterns/*.json ~/.gf/
-         wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz && tar xvf qsreplace-linux-386-0.0.1.tgz
-         go get github.com/tomnomnom/waybackurls && cp /home/runner/go/bin/waybackurls .
-         wget --quiet https://github.com/lc/gau/releases/download/v1.1.0/gau_1.1.0_linux_amd64.tar.gz && tar xvf gau_1.1.0_linux_amd64.tar.gz
-
+        # wget --quiet https://github.com/tomnomnom/qsreplace/releases/download/v0.0.1/qsreplace-linux-386-0.0.1.tgz && tar xvf qsreplace-linux-386-0.0.1.tgz
+        # go get github.com/tomnomnom/waybackurls && cp /home/runner/go/bin/waybackurls .
       - name: waybackurls
-        run: |
-         ./waybackurls "$TARGET_DOMAIN" | tee waybackurls-output.txt 
-
+        run: ./binaries/waybackurls "$TARGET" > waybackurls.txt 
       - name: gau
         run: |
-         echo "$TARGET_DOMAIN" | ./gau | tee gau-output.txt
-                
-      - name: Combine Output Files
-        run: |
-         cat waybackurls-output.txt gau-output.txt | tee all-urls-tmp.txt
-         grep -vf ignore-hosts.txt all-urls-tmp.txt > all-urls.txt
-         sort -u all-urls.txt -o all-urls.txt
-         cat all-urls.txt | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | tee temp-output.txt
-         cat temp-output.txt | ./qsreplace FUZZ | tee -a all-urls-unqiue.txt
- 
-      - name: Patterns
-        run: |
-         mkdir bbp-public-artifacts-url-collector
-         cat all-urls.txt | ./gf interestingEXT | tee -a bbp-public-artifacts-url-collector/interestingEXT-params.txt
-         cat all-urls.txt | ./gf jsvar | tee -a bbp-public-artifacts-url-collector/jsvar-params.txt          
-         cat all-urls-unqiue.txt | ./gf interestingparams | tee -a bbp-public-artifacts-url-collector/interestingparams-params.txt
-         cat all-urls-unqiue.txt | ./gf xss | tee -a bbp-public-artifacts-url-collector/xss-params.txt
-         cat all-urls-unqiue.txt | ./gf sqli | tee -a bbp-public-artifacts-url-collector/sqli-params.txt          
-         cat all-urls-unqiue.txt | ./gf lfi | tee -a bbp-public-artifacts-url-collector/lfi-params.txt          
-         cat all-urls-unqiue.txt | ./gf ssrf | tee -a bbp-public-artifacts-url-collector/ssrf-params.txt          
-         cat all-urls-unqiue.txt | ./gf redirect | tee -a bbp-public-artifacts-url-collector/redirect-params.txt          
-         cat all-urls-unqiue.txt | ./gf ssti | tee -a bbp-public-artifacts-url-collector/ssti-params.txt          
-         cat all-urls-unqiue.txt | ./gf rce | tee -a bbp-public-artifacts-url-collector/rce-params.txt          
-         cat all-urls-unqiue.txt | ./gf idor | tee -a bbp-public-artifacts-url-collector/idor-params.txt          
-         cat all-urls-unqiue.txt | ./gf debug_logic | tee -a bbp-public-artifacts-url-collector/debug_logic-params.txt
-         cat all-urls-unqiue.txt | ./gf img-traversal | tee -a bbp-public-artifacts-url-collector/img-traversal-params.txt
-         cat all-urls-unqiue.txt | ./gf interestingsubs | tee -a bbp-public-artifacts-url-collector/interestingsubs-params.txt 
-
+         ./binaries/gau "$TARGET" > gau.txt
+         cat gau.txt | sort -u >> waybackurls.txt 
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: bbp-public-artifacts-url-collector-uploaded
-         path: bbp-public-artifacts-url-collector/     
+         path: waybackurls.txt
+      - name: Patterns
+        run: |
+         mkdir bbp-public-artifacts-url-collector
+         ./gf xss waybackurls.txt | cut -d : -f3- | sort -u > bbp-public-artifacts-url-collector/xss-params.txt
+         ./gf ssti waybackurls.txt | sort -u > bbp-public-artifacts-url-collector/ssti-params.txt  
+         ./gf ssrf waybackurls.txt | sort -u > bbp-public-artifacts-url-collector/ssrf-params.txt 
+         ./gf sqli waybackurls.txt | sort -u > bbp-public-artifacts-url-collector/sqli-params.txt
+         ./gf redirect waybackurls.txt | cut -d : -f3- | sort -u > bbp-public-artifacts-url-collector/redirect-params.txt
+         ./gf rce waybackurls.txt | sort -u > bbp-public-artifacts-url-collector/rce-params.txt
+         ./gf lfi waybackurls.txt | sort -u > bbp-public-artifacts-url-collector/lfi-params.txt
+         ./gf potential waybackurls.txt | cut -d : -f3- | sort -u > bbp-public-artifacts-url-collector/potential-params.txt
 
+#Parameter Discovery
+  parameter-discovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         git clone https://github.com/devanshbatham/ParamSpider
+         cd ParamSpider
+         pip3 install -r requirements.txt
+         cd ..
+      - name: ParamSpider
+        run: python3 ParamSpider/paramspider.py -d "$TARGET" -l high -o paramspider.txt --exclude woff,css,js,png,svg,php,jpg;
 
 #Hunt XSS vulnerability on specified target urls.
   xss-hunter:
