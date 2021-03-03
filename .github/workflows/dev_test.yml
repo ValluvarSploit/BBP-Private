@@ -29,6 +29,9 @@ jobs:
     needs: [cloud-enum]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
       - name: Install Dependencies
         run: |
            cat subdomains.txt 
