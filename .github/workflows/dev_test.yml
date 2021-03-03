@@ -18,6 +18,7 @@ jobs:
          git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns; cd .. ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          sed "s/$/.$TARGET/" wordlists/subdomain-wordlists.txt > wordlist-hugh.txt
+         cat wordlist-hugh.txt | head
       - name: ShuffleDNS
         run: ./binaries/shuffledns -d $TARGET --list wordlist-hugh.txt -r resolvers.txt -v -o shuffledns.txt 
 
