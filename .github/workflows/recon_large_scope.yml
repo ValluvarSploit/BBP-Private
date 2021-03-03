@@ -512,7 +512,25 @@ jobs:
          zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Aquatone-Webscreenshot -F filename=aquatone.zip.xz -F file=@aquatone-output.zip.xz     
-     
+    
+  gochopchop:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts 
+      - name: Install Dependencies
+        run: |
+         sudo chmod +x binaries/gochopchop
+         wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
+      - name: GoChopChop
+        run: |
+         ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json    
+    
 #HTTP Smuggling
 #  http-smuggler:
 #    runs-on: ubuntu-latest
