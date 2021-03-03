@@ -112,7 +112,7 @@ jobs:
          ./binaries/nuclei -l subdomains-resolved.txt -c 500 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
        #./binaries/nuclei -l subdomains-resolved.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-scan.txt        
       - name: Send Output Files Slack Channel
-        run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
+        run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
 
 #Naabu Ports Scan
   naabu-ports-scan:
@@ -218,7 +218,7 @@ jobs:
         run: |
          if [[ -f xss-vulnerable-urls.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS -F filename=xss-vulnerable-urls.txt -F file=@xss-vulnerable-urls.txt; fi
        #count=$(cat xss-vulnerable-urls.txt | wc -w)
-       #if [[ -f xss-vulnerable-urls.txt ]] && [[ "$count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-XSS-Results -F filename="$TARGET_DOMAIN"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
+       #if [[ -f xss-vulnerable-urls.txt ]] && [[ "$count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS-Results -F filename="$TARGET"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
 
 #Github Scanning
   github-scanning:
@@ -372,7 +372,7 @@ jobs:
          python3 sqlmap/sqlmap.py -m sqli-params.txt --batch --banner --dbs --output-dir sqlmap-output
          zip -r sqlmap-output.zip sqlmap-output                         
       - name: Send Files to Slack Channel            
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip
 
 #HTTP Smuggling
 #  http-smuggler:
@@ -388,7 +388,7 @@ jobs:
 #      - name: HTTP Smuggler
 #        run: cat httpx-subdomains-output.txt | python3 smuggler/smuggler.py --log http-smuggler.txt      
 #      - name: Send Files to Slack Channel
-#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-HTTP-Smuggler -F filename=http-smuggler.txt -F file=@http-smuggler.txt
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-HTTP-Smuggler -F filename=http-smuggler.txt -F file=@http-smuggler.txt
 
 #Masscan and Nmap Scan 
 #  masscan-nmap:
@@ -410,6 +410,6 @@ jobs:
 #      - name: Masscan to Nmap
 #        run: python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt      
 #     - name: Send File to Slack Channel            
-#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Masscan -F filename=nmap-masscan.txt -F file=@nmap-masscan.txt
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Masscan -F filename=nmap-masscan.txt -F file=@nmap-masscan.txt
 
 
