@@ -1,0 +1,20 @@
+name: Download Binaries
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+         token: ${{ secrets.TOKEN }} 
+      - name: Download binaries
+        run: go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
+      - name: Commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add assetfinder
+          git commit -m "binaries" -a
+          git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/BBP-Private.git" HEAD:main --follow-tags
+
