@@ -318,6 +318,7 @@ jobs:
          name: subdomain-enumeration-artifacts       
       - name: Install Dependencies
         run: |
+         sudo apt-get install python3-setuptools
          git clone https://github.com/m4ll0k/SecretFinder.git
          cd SecretFinder; pip3 install -r requirements.txt
       - name: Secrets Finder
