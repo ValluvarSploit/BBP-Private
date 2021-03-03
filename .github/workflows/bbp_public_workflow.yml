@@ -28,7 +28,7 @@ jobs:
          cd binaries; chmod +x shuffledns assetfinder findomain subfinder; cd ..
          git clone https://github.com/m8r0wn/subscraper
          cd subscraper; sudo python3 setup.py install; cd ..
-       #git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns       
+         git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns       
       - name: SubScraper
         run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
       - name: Amass
