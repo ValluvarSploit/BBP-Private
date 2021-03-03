@@ -7,23 +7,33 @@ env:
    SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:  
-  parameter-discovery:
+
+
+  sub-enum:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         sed "s/$/.$TARGET/" wordlists/subdomain-wordlists.txt > wordlist-hugh.txt
-       #git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; cd .. ;
-       #cd binaries; chmod +x shuffledns; cd ..
-       #git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns; cd .. ;
-      - name: ShuffleDNS
-        run: |
-         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
-         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
-       #./binaries/shuffledns -d $TARGET --list wordlist-hugh.txt -r resolvers.txt -v -o shuffledns.txt 
-      - name: Send Output to Slack
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-hosts-temp-output.txt -F file=@live-hosts-temp-output.txt
+      - name: subdomain
+        run: echo "wolt.com" > subdomains-resolved.txt
+      - name: Subdomain Enumeration Artifacts
+        run: mkdir subdomain-enum-artifacts; cp subdomains-resolved.txt subdomain-enum-artifacts/
+      - name: Upload Subdomain Enumeration Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+         path: subdomain-enum-artifacts/
 
+#Naabu Ports Scan
+  naabu-ports-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+      - name: Install Dependencies
+        run: chmod +x binaries/naabu
+      - name: Naabu
+        run: ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
