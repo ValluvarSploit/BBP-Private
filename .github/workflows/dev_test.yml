@@ -3,38 +3,27 @@ on:
   workflow_dispatch:
 env:
    TARGET: ${{ secrets.PUBLIC_DOMAIN }}
+   HOST: https://33f66254def1.ngrok.io
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:  
-
-
-  sub-enum:
+  cloud-enum:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: subdomain
-        run: echo "wolt.com" > subdomains-resolved.txt
-      - name: Upload Subdomain Enumeration Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts
-         path: subdomains-resolved.txt
-
-#Naabu Ports Scan
-  naabu-ports-scan:
-    runs-on: ubuntu-latest
-    needs: [sub-enum]
+    needs: []
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
          name: subdomain-enumeration-artifacts
       - name: Install Dependencies
-        run: chmod +x binaries/naabu
-      - name: Naabu
         run: |
-         ls -l
-         ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
+          wget $HOST/subdomains.txt 
+          https://github.com/initstring/cloud_enum.git
+          pip3 install -r cloud_enum/requirements.txt
+          cat subdomains.txt | cut -d "." -f 1 > wordlist.txt
+          cat cloud_enum/enum_tools/fuzz.txt >> wordlist.txt
+      - name: Cloud Enum
+        run: python3 cloud_enum/cloud_enum.py -k instabug.com -b wordlist.txt -l cloud-enum.log
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Cloud-Enum -F filename=cloud-enum.log -F file=@cloud-enum.log
