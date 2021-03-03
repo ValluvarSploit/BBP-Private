@@ -22,6 +22,7 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
+         sudo apt-get install python3-setuptools
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          cd binaries; chmod +x shuffledns assetfinder findomain subfinder; cd ..
