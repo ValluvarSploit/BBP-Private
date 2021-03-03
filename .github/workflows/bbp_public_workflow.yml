@@ -194,11 +194,12 @@ jobs:
       - name: ParamSpider
         run: |
          python3 ParamSpider/paramspider.py -d "$TARGET" -l high -o paramspider.txt --exclude woff,css,js,png,svg,php,jpg;
+         mkdir paramspider-artifacts; cp paramspider.txt paramspider-artifacts/
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: paramspider-artifacts
-         path: paramspider.txt
+         path: paramspider-artifacts/
          
 #XSS Automation
   xss-hunter:
