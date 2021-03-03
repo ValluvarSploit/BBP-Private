@@ -44,15 +44,12 @@ jobs:
          ./subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
          echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
       - name: ShuffleDNS
-        run: ./binaries/shuffledns -d "$TARGET" -w 
+        run: ./binaries/shuffledns -d "$TARGET" -w wordlists/subdomain-wordlists.txt -r resolvers.txt -v -o shuffledns-brute.txt 
       - name: Unique subdomains
         run: |
-         
+         cat shuffledns-brute.txt >> subdomains-all.txt
          cat subdomains-all.txt | sed 's/\*\.//g' | sort -u > subdomains-uniq.txt
          echo Total Uniq Subdomains: $(cat subdomains-uniq.txt | wc -l)
-         
-         
-         
          grep -vFf subdomains-exclude.txt subdomains-uniq.txt > subdomains.txt
          echo Total Subdomains to do Recon: $(cat subdomains.txt | wc -l)
 
