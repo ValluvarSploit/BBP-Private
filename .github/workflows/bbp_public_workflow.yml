@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.PUBLIC_DOMAIN }}
-      HOST: ${{ secrets.NGROK_URL }}
+      EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget --quiet $HOST/subdomains-exclude.txt
+         echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          cd binaries; chmod +x shuffledns assetfinder findomain subfinder; cd ..
