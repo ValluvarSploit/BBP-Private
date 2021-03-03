@@ -25,13 +25,17 @@ jobs:
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          cd binaries; chmod +x shuffledns assetfinder findomain subfinder; cd ..
+         git clone https://github.com/m8r0wn/subscraper
+         cd subscraper; sudo python3 setup.py install; cd ..
        #git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns       
+      - name: SubScraper
+        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
       - name: Amass
-        run: amass enum -passive -d "$TARGET" >> subdomains-all.txt
+        run: amass enum -passive -d "$TARGET" >> subdomains-all.txt;
       - name: Assetfinder
-        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt           
+        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt;          
       - name: Findomain
-        run: ./binaries/findomain -t "$TARGET" -q >> subdomains-all.txt    
+        run: ./binaries/findomain -t "$TARGET" -q >> subdomains-all.txt; 
       - name: Subfinder
         run: |
          ./binaries/subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
