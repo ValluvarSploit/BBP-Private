@@ -9,14 +9,20 @@ jobs:
         with:
          token: ${{ secrets.TOKEN }} 
       - name: Download binaries
-        run: |
-         go get -u github.com/tomnomnom/assetfinder && cp /home/runner/go/bin/assetfinder .
-         mv assetfinder binaries/assetfinder
+        run: |         
+         wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux 
+         mv findomain-linux binaries/findomain
+         wget --quiet https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+         mv jq-linux64 binaries/jq
+         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
+         tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
+         mv subfinder binaries/subfinder
+         
       - name: Commit
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add .
+          git add binaries/
           git commit -m "binaries" -a
           git push "https://ValluvarSploit:${{ secrets.TOKEN }}@github.com/ValluvarSploit/BBP-Private.git" HEAD:main --follow-tags
 
