@@ -24,21 +24,21 @@ jobs:
       - name: Install Dependencies
         run: |
          wget --quiet $HOST/subdomains-exclude.txt
-         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz && tar -xvf httpx_1.0.3_linux_amd64.tar.gz
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         chmod +x binaries/shuffledns
-         chmod +x binaries/assetfinder
+         cd binaries
+         chmod +x shuffledns assetfinder findomain subfinder
+         cd ..
        #git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns       
       - name: Amass
         run: amass enum -passive -d "$TARGET" >> subdomains-all.txt
       - name: Assetfinder
         run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt           
       - name: Findomain
-        run: ./findomain -t "$TARGET" -q >> subdomains-all.txt    
+        run: ./binaries/findomain -t "$TARGET" -q >> subdomains-all.txt    
       - name: Subfinder
         run: |
-         ./subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
+         ./binaries/subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
          echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
       - name: ShuffleDNS
         run: ./binaries/shuffledns -d "$TARGET" -w wordlists/subdomain-wordlists.txt -r resolvers.txt -v -o shuffledns-brute.txt 
@@ -51,14 +51,11 @@ jobs:
          echo Total Subdomains to do Recon: $(cat subdomains.txt | wc -l)       
       - name: HTTP/HTTPS Resolver
         run: |
-         cat subdomains.txt | ./httpx -follow-redirects -status-code -vhost -threads 300 -silent | sort -u | grep "[200]" | cut -d [ -f1 | sort -u | sed 's/[[:blank:]]*$//'
-         ./httpx -l live-hosts-output.txt -o httpx-subdomains-output.txt -threads 10000 -silent -stats
-         cat httpx-subdomains-output.txt | cut -d "/" -f 3 | tee -a live-httpx-hosts.txt
-      
+         cat subdomains.txt | ./binaries/httpx -follow-redirects -status-code -vhost -threads 300 -silent | sort -u | grep "[200]" | cut -d [ -f1 | sort -u | sed 's/[[:blank:]]*$//' >> subdomains-resolved.txt
+         echo Total Resolved Subdomains: $(cat subdomains-resolved.txt | wc -l)
       - name: Artifact Files
         run: |
-         cp httpx-subdomains-output.txt live-ips-output.txt live-httpx-hosts.txt bbp-public-artifacts/
-      
+         cp subdomains-resolved.txt bbp-public-artifacts/
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -69,28 +66,20 @@ jobs:
   subdomain-takeover:
     runs-on: ubuntu-latest
     needs: [subdomain-enumeration]
-    
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
          name: bbp-public-artifacts-uploaded
-
-      - name: Targets
-        run: |
-         echo "TARGET IS:" "$TARGET_DOMAIN"
-         cat httpx-subdomains-output.txt | head
-         
       - name: Install Dependencies
         run: |
-         go get -u -v github.com/lukasikic/subzy && cp /home/runner/go/bin/subzy .
-         go get -v github.com/haccer/subjack && cp /home/runner/go/bin/subjack .
          git clone https://github.com/projectdiscovery/nuclei-templates.git
-         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.2.0/nuclei_2.2.0_linux_amd64.tar.gz && tar -xzvf nuclei_2.2.0_linux_amd64.tar.gz
-      
+         cd binaries
+         chmod +x subjack subzy nuclei
+         cd ..
       - name: Subzy
         run: |
-         ./subzy --targets=httpx-subdomains-output.txt -concurrency 50 | tee subzy-logs.txt
+         ./subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt
       
       - name: Subjack
