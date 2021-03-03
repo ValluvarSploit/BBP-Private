@@ -38,6 +38,7 @@ jobs:
            
   cloud-enum2:
     runs-on: ubuntu-latest
+    needs: [cloud-enum]
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
