@@ -494,7 +494,25 @@ jobs:
          python3 S3Scanner/s3scanner.py -l targets-3.txt -o buckets-3.txt
       - name: Send Outpt to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner-3 -F filename=buckets-3.txt -F file=@buckets-3.txt
-         
+     
+  aquatone-webscreenshot:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts 
+      - name: Install Dependencies
+        run: chmod +x ./binaries/aquatone
+      - name: Aquatone
+        run: |
+         mkdir aquatone-output
+         cat subdomains-resolved.txt | ./binaries/aquatone -out aquatone-output/
+         zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Aquatone-Webscreenshot -F filename=aquatone.zip.xz -F file=@aquatone-output.zip.xz     
+     
 #HTTP Smuggling
 #  http-smuggler:
 #    runs-on: ubuntu-latest
