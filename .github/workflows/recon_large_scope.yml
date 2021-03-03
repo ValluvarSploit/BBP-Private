@@ -4,13 +4,14 @@
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
-name: Public Large Scope
+name: Recon Large Scope
 on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.PUBLIC_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
+      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
@@ -437,7 +438,7 @@ jobs:
       - name: Send Files to Slack Channel            
         run: if [[ ! -z $(ls -A sqlmap-output) ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip; fi 
 
-  s3-scanner:
+  s3-scanner-1:
     runs-on: ubuntu-latest
     needs: [subdomain-enumeration]
     steps:
@@ -447,16 +448,53 @@ jobs:
          name: subdomain-enumeration-artifacts 
       - name: Install Dependencies
         run: |
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > targets.txt
+         cat subdomains-resolved.txt | cut -d "/" -f 3 > targets-1.txt
          mkdir ~/.aws
          echo "$AWS_CREDS" > ~/.aws/credentials
          git clone https://github.com/sa7mon/S3Scanner.git
          pip3 install -r S3Scanner/requirements.txt
-      - name: S3 Scanner
-        run: python3 S3Scanner/s3scanner.py -l targets.txt -o buckets.txt
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner -F filename=buckets.txt -F file=@buckets.txt
+      - name: S3 Scanner - 1
+        run: |
+         python3 S3Scanner/s3scanner.py -l targets-1.txt -o buckets-1.txt
+      - name: Send Outpt to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner-1 -F filename=buckets-1.txt -F file=@buckets-1.txt
+        
+  s3-scanner-2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         mkdir ~/.aws
+         echo "$AWS_CREDS" > ~/.aws/credentials
+         git clone https://github.com/sa7mon/S3Scanner.git
+         pip3 install -r S3Scanner/requirements.txt
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word.$TARGET >> targets-2.txt ; done;
+         sort -u targets-2.txt -o targets-2.txt
+      - name: S3 Scanner - 2
+        run: |
+         python3 S3Scanner/s3scanner.py -l targets-2.txt -o buckets-2.txt
+      - name: Send Outpt to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner-2 -F filename=buckets-2.txt -F file=@buckets-2.txt
 
+  s3-scanner-3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         mkdir ~/.aws
+         echo "$AWS_CREDS" > ~/.aws/credentials
+         git clone https://github.com/sa7mon/S3Scanner.git
+         pip3 install -r S3Scanner/requirements.txt
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word-$TARGET >> targets-3.txt ; done;
+         sort -u targets-3.txt -o targets-3.txt
+      - name: S3 Scanner - 2
+        run: |
+         python3 S3Scanner/s3scanner.py -l targets-3.txt -o buckets-3.txt
+      - name: Send Outpt to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner-3 -F filename=buckets-3.txt -F file=@buckets-3.txt
+         
 #HTTP Smuggling
 #  http-smuggler:
 #    runs-on: ubuntu-latest
