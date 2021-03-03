@@ -8,6 +8,7 @@ on:
 env:
       TARGET: ${{ secrets.PUBLIC_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
+      HOST: ${{ secrets.NGROK_URL }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
@@ -21,6 +22,7 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
+         wget $HOST/fdns-local.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
@@ -29,7 +31,9 @@ jobs:
          cd subscraper; sudo python3 setup.py install; cd ..
          git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns       
       - name: SubScraper
-        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
+        run: |
+         python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
+         cat fdns-local.txt >> subdomains-all.txt
       - name: Amass
         run: amass enum -passive -d "$TARGET" >> subdomains-all.txt;
       - name: Assetfinder
