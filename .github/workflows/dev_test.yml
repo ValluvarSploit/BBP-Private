@@ -2,26 +2,34 @@ name: Dev-Test
 on:
   workflow_dispatch:
 env:
-   HOST: ${{ secrets.NGROK_URL }}
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-   SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+   SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:  
-  nmap-udp-scan:
-    runs-on: ubuntu-latest    
+  javascript-scan:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2      
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains.txt 
-         wget $HOST/exclude.txt
-         grep -vFf exclude.txt subdomains.txt > uniq.txt
-         cat uniq.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Test -F filename=uniq.txt -F file=@uniq.txt
-#         sudo apt-get update && sudo apt-get install nmap -y
-#      - name: Nmap UDP scan
-#        run: sudo nmap -Pn -sV -sU -p- -iL targets-ips.txt -oA nmap-udp-scan
-#      - name: Send Output to Slack
-#        run: |
-#         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.xml -F file=@nmap-udp-scan.xml
-#         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
+         sudo apt-get install python3-setuptools
+         cd binaries; chmod +x gau subjs hakrawler httpx; cd ..
+         git clone https://github.com/GerbenJavado/LinkFinder.git
+         cd LinkFinder; python3 setup.py install; pip3 install -r requirements.txt; cd ..
+         wget https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/getjswords.py
+         wget https://gist.githubusercontent.com/KathanP19/d2cda2f99c0b60d64b76ee6039b37e47/raw/eb105a4de06502b2732df9d682c61189c3703685/jsvar.sh
+      - name: Javascript Scan
+        run: |
+         echo "$TARGET" | ./binaries/gau | grep -iE "\.js$" | sort -u > js-file-links.txt
+         echo "$TARGET" | ./binaries/subjs >> js-file-links.txt
+         echo "$TARGET" | ./binaries/hakrawler -js -depth 2 -scope subs -plain >> js-file-links.txt
+         cat js-file-links.txt | ./binaries/httpx -follow-redirects -silent -status-code | grep "[200]" | cut -d ' ' -f1 | sort -u > js-file-links-live.txt;
+         python3 LinkFinder/linkfinder.py -d -i "$TARGET" -o cli >> js-endpoints.txt
+         cat js-file-links-live.txt | python3 getjswords.py | sort -u > js-words.txt;
+         cat js-file-links-live.txt | while read url ; do bash jsvar.sh $url | sort -u | tee js-xss.txt ; done;
+      - name: Send Outputs to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-URL -F filename=js-file-links-live.txt -F file=@js-file-links-live.txt;
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Endpoints -F filename=js-endpoints.txt -F file=@js-endpoints.txt;
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-Words -F filename=js-words.txt -F file=@js-words.txt;
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-XSS -F filename=js-xss.txt -F file=@js-xss.txt;
