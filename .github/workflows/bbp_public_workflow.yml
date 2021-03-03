@@ -100,7 +100,7 @@ jobs:
       - name: Nuclei
         run: ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers/subdomain-takeover.yaml -o nuclie-output.txt   
       - name: SubOver
-        run: cd binaries; ./SubOver -l subdomains.txt -o subover.txt; cd ..
+        run: cd binaries; chmod +x SubOver; ./SubOver -l subdomains.txt -o subover.txt; cd ..
       - name: Combine Output Files
         run: |
          cat subzy-logs.txt subjack-logs.txt >> sto.log
