@@ -125,6 +125,23 @@ jobs:
       - name: Send Output Files Slack Channel
         run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
 
+
+#Naabu Ports Scan
+  naabu-ports-scan:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: bbp-public-artifacts-uploaded
+      - name: Install Dependencies
+        run: chmod +x binaries/naabu
+      - name: Naabu
+        run: ./binaries/naabu iL subdomains.txt > naabu-portscan.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
+         
 #Broken Link Hijacking on specified targets.
   broken-link-hijacking:
     runs-on: ubuntu-latest
