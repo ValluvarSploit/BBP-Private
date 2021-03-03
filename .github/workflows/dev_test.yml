@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 env:
    TARGET: ${{ secrets.PUBLIC_DOMAIN }}
-   HOST: https://33f66254def1.ngrok.io
+   HOST: https://5707fa009689.ngrok.io
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
