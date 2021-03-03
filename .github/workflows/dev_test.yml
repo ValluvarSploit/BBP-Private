@@ -10,24 +10,12 @@ env:
 jobs:  
   cloud-enum:
     runs-on: ubuntu-latest
-#    needs: []
     steps:
       - uses: actions/checkout@v2
-#      - uses: actions/download-artifact@v2
-#        with:
-#         name: subdomain-enumeration-artifacts
       - name: Install Dependencies
         run: |
-          wget $HOST/subdomains.txt 
-          sudo apt-get install python3-setuptools
-          git clone https://github.com/initstring/cloud_enum.git
-          pip3 install -r cloud_enum/requirements.txt
-          cat subdomains.txt | cut -d "." -f 1 > wordlist.txt
-          cat cloud_enum/enum_tools/fuzz.txt >> wordlist.txt
-      - name: Cloud Enum
-        run: python3 cloud_enum/cloud_enum.py -k instabug.com -b wordlist.txt -l cloud-enum.log --disable-azure --disable-gcp
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Cloud-Enum -F filename=cloud-enum.log -F file=@cloud-enum.log
+         echo "bingo" > subdomains.txt
+         echo "jingo" > cloud-enum.log
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
