@@ -291,96 +291,134 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-Words -F filename=js-words.txt -F file=@js-words.txt;
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-XSS -F filename=js-xss.txt -F file=@js-xss.txt;
 
-#Hunt HTTP Smuggling Vulnerability on specified urls.
-  http-smuggler:
+#Secrets Finder
+  secrets-finder:
     runs-on: ubuntu-latest
     needs: [subdomain-enumeration]
-                                
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: bbp-public-artifacts-uploaded
-
-      - name: Targets
-        run: |
-         echo "TARGET IS:" "$TARGET_DOMAIN" 
-         cat httpx-subdomains-output.txt | head
-
+         name: subdomain-enumeration-artifacts       
       - name: Install Dependencies
         run: |
-         git clone https://github.com/defparam/smuggler.git
-          
-      - name: Smuggler
+         git clone https://github.com/m4ll0k/SecretFinder.git
+         cd secretfinder
+         pip3 install -r requirements.txt
+      - name: Secrets Finder
         run: |
-         cat httpx-subdomains-output.txt | python3 smuggler/smuggler.py --log http-smuggler.txt
-                 
-      - name: Send Files to Slack Channel
+         cat subdomains-resolved.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
+         cat secret-finder.txt | grep 'google_api' -B 1 | sort -u > gmapapi.txt;
+      - name: Send Outputs to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-HTTP-Smuggler-Results -F filename="$TARGET_DOMAIN"-http-smuggler.txt -F file=@http-smuggler.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Secret-Finder -F filename=secret-finder.txt -F file=@secret-finder.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gmap-api -F filename=gmapapi.txt -F file=@gmapapi.txt
 
-#Scan all ports on specified targets and run nmap on masscan results. 
-  masscan-nmap:
+#Directory Fuzzing
+  directory-fuzzing:
     runs-on: ubuntu-latest
-    needs: [subdomain-enumeration]             
-    
+    needs: [subdomain-enumeration]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: bbp-public-artifacts-uploaded
-
-      - name: Targets
-        run: |
-         echo "TARGET IS:" "$TARGET_DOMAIN" 
-         cat live-ips-output.txt | head
-
+         name: subdomain-enumeration-artifacts       
       - name: Install Dependencies
         run: |
-         sudo apt-get update && sudo apt-get install nmap -y
-         pip install python-libnmap
-         sudo apt-get install git gcc make libpcap-dev
-         git clone https://github.com/robertdavidgraham/masscan && cd masscan && make -j && cp bin/masscan ../masscanb
-           
-      - name: Masscan
-        run: | 
-         sudo ./masscanb -iL live-ips-output.txt --rate 10000 -p1-65535 -oX masscan.xml
-                 
-      - name: Masscan to Nmap
+         git clone https://github.com/maurosoria/dirsearch.git
+         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-big.txt
+      - name: Directory Fuzzing
         run: |
-         python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt
-                 
-      - name: Send File to Slack Channel            
-        run: |           
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Masscan-Results -F filename="$TARGET_DOMAIN"-nmap-masscan.txt -F file=@nmap-masscan.txt
+         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-big.txt;
+         zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
+      - name: Send Outputs to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
 
+#CORS Scanner
+  CORS-scanner:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts       
+      - name: Install Dependencies
+        run: pip3 install corscanner
+      - name: CORS Scanner
+        run: corscanner -i subdomains-resolved.txt -t 200 > cors.txt;
+      - name: Send Outputs to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
+
+#HeartBleed Scanner
+  heartbleed-scanner:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts       
+      - name: Install Dependencies
+        run: pip3 install corscanner
+      - name: HeartBleed Scan
+        run: cat subdomains-resolved.txt | while read line ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe; done
+#      - name: Send Outputs to Slack
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
+
+
+#HTTP Smuggling
+#  http-smuggler:
+#    runs-on: ubuntu-latest
+#    needs: [subdomain-enumeration]                            
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/download-artifact@v2
+#        with:
+#         name: bbp-public-artifacts-uploaded
+#      - name: Install Dependencies
+#        run: git clone https://github.com/defparam/smuggler.git
+#      - name: HTTP Smuggler
+#        run: cat httpx-subdomains-output.txt | python3 smuggler/smuggler.py --log http-smuggler.txt      
+#      - name: Send Files to Slack Channel
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-HTTP-Smuggler -F filename=http-smuggler.txt -F file=@http-smuggler.txt
+
+#Masscan and Nmap Scan 
+#  masscan-nmap:
+#    runs-on: ubuntu-latest
+#    needs: [subdomain-enumeration]             
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/download-artifact@v2
+#        with:
+#         name: bbp-public-artifacts-uploaded
+#      - name: Install Dependencies
+#        run: |
+#         sudo apt-get update && sudo apt-get install nmap -y
+#         pip install python-libnmap
+#         sudo apt-get install git gcc make libpcap-dev
+#         git clone https://github.com/robertdavidgraham/masscan && cd masscan && make -j && cp bin/masscan ../masscanb 
+#      - name: Masscan
+#        run: sudo ./masscanb -iL live-ips-output.txt --rate 10000 -p1-65535 -oX masscan.xml    
+#      - name: Masscan to Nmap
+#        run: python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt      
+#     - name: Send File to Slack Channel            
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nmap-Masscan -F filename=nmap-masscan.txt -F file=@nmap-masscan.txt
 
   sql-injection:
     runs-on: ubuntu-latest   
     needs: [url-collector]            
-    
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
          name: bbp-public-artifacts-url-collector
-
-      - name: Targets
-        run: |
-         echo "TARGET IS:" "$TARGET_DOMAIN"
-         cat sqli-params.txt | head    
-        
-
       - name: Install Dependencies
-        run: |
-         git clone https://github.com/sqlmapproject/sqlmap.git
-           
+        run: git clone https://github.com/sqlmapproject/sqlmap.git
       - name: sqlmap
         run: | 
          mkdir sqlmap-output
          python3 sqlmap/sqlmap.py -m sqli-params.txt --batch --banner --dbs --output-dir sqlmap-output
-         zip -r sqlmap-output.zip sqlmap-output
-                                  
+         zip -r sqlmap-output.zip sqlmap-output                         
       - name: Send Files to Slack Channel            
-        run: |           
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-sqlmap-Results -F filename="$TARGET_DOMAIN"-sqlmap-output.zip -F file=@sqlmap-output.zip
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip
