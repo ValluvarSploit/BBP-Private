@@ -561,6 +561,29 @@ jobs:
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nikto-Scan-443 -F filename=nikto-443-output.txt -F file=@nikto-443-output.txt    
   
+  Subdomainizer:
+    runs-on: ubuntu-latest              
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts 
+      - name: Install Dependencies
+        run: |
+         sudo apt-get install python3-setuptools
+         git clone https://github.com/nsonaniya2010/SubDomainizer.git && pip3 install -r SubDomainizer/requirements.txt            
+      - name: Subdomanizer
+        run: python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt
+      - name: Send Output to Slack
+        run: |
+         subdomains_count=$(cat subdomains.txt | wc -w)
+         secrets_count=$(cat secrets.txt | wc -w)
+         cloud_count=$(cat cloud.txt | wc -w)
+         if [[ -f subdomains.txt ]] && [[ "$subdomains_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Subdomains -F filename=subdomainizer-subdomains.txt -F file=@subdomains.txt ; fi
+         if [[ -f cloud.txt ]] && [[ "$cloud_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Cloud -F filename=subdomainizer-cloud.txt -F file=@cloud.txt ; fi
+         if [[ -f secrets.txt ]] && [[ "$secrets_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Secrets -F filename=subdomainizer-secrets.txt -F file=@secrets.txt ; fi
+
 #HTTP Smuggling
 #  http-smuggler:
 #    runs-on: ubuntu-latest
