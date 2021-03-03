@@ -25,7 +25,7 @@ jobs:
           cat subdomains.txt | cut -d "." -f 1 > wordlist.txt
           cat cloud_enum/enum_tools/fuzz.txt >> wordlist.txt
       - name: Cloud Enum
-        run: python3 cloud_enum/cloud_enum.py -k instabug.com -b wordlist.txt -l cloud-enum.log
+        run: python3 cloud_enum/cloud_enum.py -k instabug.com -b wordlist.txt -l cloud-enum.log --disable-azure --disable-gcp
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Cloud-Enum -F filename=cloud-enum.log -F file=@cloud-enum.log
       - name: Upload Artifacts
