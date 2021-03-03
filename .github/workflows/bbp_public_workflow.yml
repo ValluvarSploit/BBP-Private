@@ -437,6 +437,26 @@ jobs:
       - name: Send Files to Slack Channel            
         run: if [[ ! -z $(ls -A sqlmap-output) ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip; fi 
 
+  s3-scanner:
+    runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts 
+      - name: Install Dependencies
+        run: |
+         cat subdomains-resolved.txt | cut -d "/" -f 3 > targets.txt
+         mkdir ~/.aws
+         echo "$AWS_CREDS" > ~/.aws/credentials
+         git clone https://github.com/sa7mon/S3Scanner.git
+         pip3 install -r S3Scanner/requirements.txt
+      - name: S3 Scanner
+        run: python3 S3Scanner/s3scanner.py -l targets.txt -o buckets.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner -F filename=buckets.txt -F file=@buckets.txt
+
 #HTTP Smuggling
 #  http-smuggler:
 #    runs-on: ubuntu-latest
