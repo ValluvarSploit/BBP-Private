@@ -10,13 +10,7 @@ jobs:
          token: ${{ secrets.TOKEN }} 
       - name: Download binaries
         run: |         
-         wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux 
-         mv findomain-linux binaries/findomain
-         wget --quiet https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-         mv jq-linux64 binaries/jq
-         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz
-         tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
-         mv subfinder binaries/subfinder
+         git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; cd ..; mv massdns/bin/massdns binaries/massdns
          
       - name: Commit
         run: |
