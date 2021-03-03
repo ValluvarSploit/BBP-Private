@@ -19,7 +19,7 @@ jobs:
       - name: Install Dependencies
         run: |
           wget $HOST/subdomains.txt 
-          https://github.com/initstring/cloud_enum.git
+          git clone https://github.com/initstring/cloud_enum.git
           pip3 install -r cloud_enum/requirements.txt
           cat subdomains.txt | cut -d "." -f 1 > wordlist.txt
           cat cloud_enum/enum_tools/fuzz.txt >> wordlist.txt
