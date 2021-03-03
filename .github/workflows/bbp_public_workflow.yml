@@ -13,7 +13,6 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
-
 #Subdomain Enumeration on specified target.  
   subdomain-enumeration:
     runs-on: ubuntu-latest
@@ -55,12 +54,15 @@ jobs:
          cat subdomains.txt | ./binaries/httpx -follow-redirects -status-code -vhost -threads 300 -silent | sort -u | grep "[200]" | cut -d [ -f1 | sort -u | sed 's/[[:blank:]]*$//' >> subdomains-resolved.txt
          echo Total Resolved Subdomains: $(cat subdomains-resolved.txt | wc -l)
       - name: Subdomain Enumeration Artifacts
-        run: mkdir subdomain-enum-artifacts; cp subdomains-resolved.txt subdomains.txt subdomain-enum-artifacts/
+        run: mkdir subdomain-enum-artifacts; cp subdomains-resolved.txt subdomain-enum-artifacts/
       - name: Upload Subdomain Enumeration Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: subdomain-enumeration-artifacts
          path: subdomain-enum-artifacts/
+      - name: Send Output to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.txt -F file=@subdomains-resolved.txt
       
 #Subdomain Takeover on specified targets.
   subdomain-takeover:
@@ -75,13 +77,14 @@ jobs:
         run: |
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          cd binaries; chmod +x subjack subzy nuclei; cd ..
+         cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
       - name: Subzy
         run: |
          ./binaries/subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt
       - name: Subjack
         run: |
-         ./binaries/subjack -w subdomains-resolved.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c subjack_fingerprints.json
+         ./binaries/subjack -w subdomains-resolved.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt 
       - name: Nuclei
         run: ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers/subdomain-takeover.yaml -o nuclie-output.txt   
@@ -131,7 +134,7 @@ jobs:
       - name: Install Dependencies
         run: chmod +x binaries/naabu
       - name: Naabu
-        run: ./binaries/naabu iL subdomains.txt > naabu-portscan.txt
+        run: ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
          
@@ -147,9 +150,9 @@ jobs:
       - name: Install Dependencies
         run: sudo npm install broken-link-checker -g
       - name: blh
-        run: while read url ; do printf ***"$url"*** | tee -a blh-output.txt; blc -rof --filter-level 3 $url | tee -a blh-output.txt; done < httpx-subdomains-output.txt
+        run: while read url ; do printf ***"$url"*** | tee -a blh-output.txt; blc -rof --filter-level 3 $url | tee -a blh-output.txt; done < subdomains-resolved.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Broken-Link-Hijacker-Results -F filename="$TARGET"-blh.txt -F file=@blh-output.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Broken-Link-Checker -F filename=blh.txt -F file=@blh-output.txt
 
 #Collect URLs.
   url-collector:
@@ -181,11 +184,15 @@ jobs:
          ./gf rce waybackurls.txt | sort -u > url-collector-artifacts/rce-params.txt
          ./gf lfi waybackurls.txt | sort -u > url-collector-artifacts/lfi-params.txt
          ./gf potential waybackurls.txt | cut -d : -f3- | sort -u > url-collector-artifacts/potential-params.txt
+         zip -r url-collector-artifacts.zip url-collector-artifacts/
+         xz url-collector-artifacts.zip
       - name: Upload URL Collector Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: url-collector-artifacts
          path: url-collector-artifacts/
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-URL-Pattern-Collector -F filename=url-collector-artifacts.zip.xz -F file=@url-collector-artifacts.zip.xz
 
 #Parameter Discovery
   parameter-discovery:
@@ -205,6 +212,8 @@ jobs:
         with:
          name: paramspider-artifacts
          path: paramspider-artifacts/
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Parameter-Discovery -F filename=paramspider.txt -F file=@output/paramspider.txt
          
 #XSS Automation
   xss-hunter:
@@ -237,7 +246,7 @@ jobs:
       - name: Install Dependencies
         run: chmod +x binaries/git-hound   
       - name: Git-Hound
-        run: cat subdomains-resolved.txt | git-hound --dig-files --dig-commits > githound.txt
+        run: cat subdomains-resolved.txt | ./binaries/git-hound --dig-files --dig-commits > githound.txt
       - name: Send Outputs to Slack
         run: if [[ -f githound.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GitHound -F filename=githound.txt -F file=@githound.txt; fi
 
@@ -299,7 +308,7 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/m4ll0k/SecretFinder.git
-         cd secretfinder; pip3 install -r requirements.txt
+         cd SecretFinder; pip3 install -r requirements.txt
       - name: Secrets Finder
         run: |
          cat subdomains-resolved.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
@@ -339,7 +348,9 @@ jobs:
         with:
          name: subdomain-enumeration-artifacts       
       - name: Install Dependencies
-        run: pip3 install corscanner
+        run: |
+         sudo apt-get install python3-setuptools
+         pip3 install corscanner
       - name: CORS Scanner
         run: corscanner -i subdomains-resolved.txt -t 200 > cors.txt;
       - name: Send Outputs to Slack
@@ -354,8 +365,6 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: subdomain-enumeration-artifacts       
-      - name: Install Dependencies
-        run: pip3 install corscanner
       - name: HeartBleed Scan
         run: cat subdomains-resolved.txt | while read line ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe; done
 #      - name: Send Outputs to Slack
