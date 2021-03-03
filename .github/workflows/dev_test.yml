@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 env:
    TARGET: ${{ secrets.PUBLIC_DOMAIN }}
-   HOST: https://5707fa009689.ngrok.io
    AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
    SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
    SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
@@ -17,7 +16,6 @@ jobs:
         run: |
          mkdir ~/.aws
          echo "$AWS_CREDS" > ~/.aws/credentials
-         wget $HOST/credentials -O ~/.aws/credentials
          git clone https://github.com/sa7mon/S3Scanner.git
          pip3 install -r S3Scanner/requirements.txt
          python3 S3Scanner/s3scanner.py -l S3Scanner/sites.txt -o buckets.txt
