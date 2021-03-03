@@ -31,6 +31,7 @@ jobs:
          wget --quiet https://github.com/Findomain/Findomain/releases/download/2.1.5/findomain-linux && mv findomain-linux findomain && chmod +x findomain
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.5/subfinder_2.4.5_linux_amd64.tar.gz && tar -xzvf subfinder_2.4.5_linux_amd64.tar.gz
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         chmod +x binaries/shuffledns
          git clone https://github.com/blechschmidt/massdns.git ; cd massdns/ ; make ; sudo mv bin/massdns /usr/bin/massdns       
       - name: Amass
         run: amass enum -passive -d "$TARGET" >> subdomains-all.txt
@@ -42,6 +43,8 @@ jobs:
         run: |
          ./subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
          echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
+      - name: ShuffleDNS
+        run: ./binaries/shuffledns -d "$TARGET" -w 
       - name: Unique subdomains
         run: |
          
