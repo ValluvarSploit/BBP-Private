@@ -136,7 +136,7 @@ jobs:
         run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
 
 #Nmap Quick Scan
-  nmap-vulnscan:
+  nmap-quick-scan:
     runs-on: ubuntu-latest    
     needs: [subdomain-enumeration]
     steps:
@@ -145,13 +145,31 @@ jobs:
         with:
          name: subdomain-enumeration-artifacts
       - name: Install Dependencies
-        run: |
-         sudo apt-get update && sudo apt-get install nmap -y
-      - name: Nmap scan
-        run: nmap -Pn -sV -p0-65535 -iL live-ips.txt -oX nmap-log.xml
+        run:  sudo apt-get update && sudo apt-get install nmap -y
+      - name: Nmap Quick Scan
+        run: nmap -Pn -sV -sC -iL live-ips.txt -oA nmap-quick-scan
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Quick-Scan -F filename=nmap-log.xml
--F file=@nmap-log.xml
+        run: |
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Quick-Scan-XML -F filename=nmap-quick-scan.xml -F file=@nmap-quick-scan.xml
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Quick-Scan-NMAP -F filename=nmap-quick-scan.nmap -F file=@nmap-quick-scan.nmap
+   
+#Nmap Full Scan
+  nmap-full-scan:
+    runs-on: ubuntu-latest    
+    needs: [subdomain-enumeration]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install nmap -y
+      - name: Nmap Full Scan
+        run: nmap -Pn -sV -sC -p0-65535 -iL live-ips.txt -oA nmap-full-scan
+      - name: Send Output to Slack
+        run: |
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan-XML -F filename=nmap-full-scan.xml -F file=@nmap-full-scan.xml
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan-NMAP -F filename=nmap-full-scan.nmap -F file=@nmap-full-scan.nmap
 
 #Naabu Ports Scan
 #  naabu-ports-scan:
