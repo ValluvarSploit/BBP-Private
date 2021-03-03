@@ -1,0 +1,26 @@
+# Before running this action, make sure you updated following secrets variables in settings.
+#  1. DOMAIN
+#       example.com
+name: Subdomain Enumeration
+on:
+  workflow_dispatch:
+env:
+     TARGET: ${{ secrets.PUBLIC_DOMAIN }}
+     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+jobs:
+ 
+  amass-brute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         sudo snap install amass  
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+      - name: Amass
+        run: |
+         amass enum -active -brute -d "$TARGET" -o amass-brute.txt -rf resolvers.txt -max-dns-queries 3000
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Amass-Brute -F filename=amass-brute.txt -F file=@amass-brute.txt
+ 
