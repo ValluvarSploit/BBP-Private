@@ -1,295 +1,260 @@
 <h1 align="left">
-  <img src="static/subfinder-logo.png" alt="subfinder" width="170px"></a>
+  <img src="static/httpx-logo.png" alt="httpx" width="200px"></a>
   <br>
 </h1>
 
-
 [![License](https://img.shields.io/badge/license-MIT-_red.svg)](https://opensource.org/licenses/MIT)
-[![Go Report Card](https://goreportcard.com/badge/github.com/projectdiscovery/subfinder)](https://goreportcard.com/report/github.com/projectdiscovery/subfinder)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/projectdiscovery/subfinder/issues)
-[![GitHub Release](https://img.shields.io/github/release/projectdiscovery/subfinder)](https://github.com/projectdiscovery/subfinder/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/projectdiscovery/httpx)](https://goreportcard.com/report/github.com/projectdiscovery/httpx)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/projectdiscovery/httpx/issues)
+[![GitHub Release](https://img.shields.io/github/release/projectdiscovery/httpx)](https://github.com/projectdiscovery/httpx/releases)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/pdiscoveryio.svg?logo=twitter)](https://twitter.com/pdiscoveryio)
-[![Docker Images](https://img.shields.io/docker/pulls/projectdiscovery/subfinder.svg)](https://hub.docker.com/r/projectdiscovery/subfinder)
+[![Docker Images](https://img.shields.io/docker/pulls/projectdiscovery/httpx.svg)](https://hub.docker.com/r/projectdiscovery/httpx)
 [![Chat on Discord](https://img.shields.io/discord/695645237418131507.svg?logo=discord)](https://discord.gg/KECAGdH)
 
-
-
-subfinder is a subdomain discovery tool that discovers valid subdomains for websites by using passive online sources. It has a simple modular architecture and is optimized for speed. subfinder is built for doing one thing only - passive subdomain enumeration, and it does that very well.
-
-We have designed subfinder to comply with all passive sources licenses, and usage restrictions, as well as maintained a consistently passive model to make it useful to both penetration testers and bug bounty hunters alike.
-
+httpx is a fast and multi-purpose HTTP toolkit allow to run multiple probers using [retryablehttp](https://github.com/projectdiscovery/retryablehttp-go) library, it is designed to maintain the result reliability with increased threads.
 
 # Resources
+- [Resources](#resources)
 - [Features](#features)
 - [Usage](#usage)
-- [Installation Instuctions (direct)](#direct-installation)
 - [Installation Instructions](#installation-instructions)
     - [From Binary](#from-binary)
     - [From Source](#from-source)
     - [From Github](#from-github)
-- [Upgrading](#upgrading)
-- [Post Installation Instructions](#post-installation-instructions)
-- [Running subfinder](#running-subfinder)
-- [Running in a Docker Container](#running-in-a-docker-container)
-
+- [Running httpx with stdin](#running-httpx-with-stdin)
+- [Running httpx with file input](#running-httpx-with-file-input)
+- [Running httpx with CIDR input](#running-httpx-with-cidr-input)
+- [Running httpX with subfinder](#running-httpx-with-subfinder)
+- [Notes](#-notes)
+- [Thanks](#thanks)
 
  # Features
 
 <h1 align="left">
-  <img src="static/subfinder-run.png" alt="subfinder" width="700px"></a>
+  <img src="static/httpx-run.png" alt="httpx" width="700px"></a>
   <br>
 </h1>
 
-
  - Simple and modular code base making it easy to contribute.
- - Fast And Powerful Resolution and wildcard elimination module
- - **Curated** passive sources to maximize results (35 Sources as of now)
- - Multiple Output formats supported (Json, File, Stdout)
- - Optimized for speed, very fast and **lightweight** on resources
- - **Stdin** and **stdout** support for integrating in workflows
+ - Fast And fully configurable flags to probe mutiple elements.
+ - Supports multiple HTTP based probings.
+ - Smart auto fallback from https to http as default. 
+ - Supports hosts, URLs and CIDR as input.
+ - Handles edge cases doing retries, backoffs etc for handling WAFs.
 
+ ### Supported probes:-
 
-# Usage
-
-```sh
-subfinder -h
-```
-This will display help for the tool. Here are all the switches it supports.
-
-| Flag | Description | Example |
-|------|-------------|---------|
-| -all | Use all sources (slow) for enumeration | subfinder -d uber.com -all |
-| -cd | Upload results to the Chaos API (api-key required) | subfinder -d uber.com -cd |
-| -config string | Configuration file for API Keys, etc  | subfinder -config config.yaml |
-| -d | Domain to find subdomains for | subfinder -d uber.com |
-| -dL  | File containing list of domains to enumerate | subfinder -dL hackerone-hosts.txt |
-| -exclude-sources | List of sources to exclude from enumeration | subfinder -exclude-sources archiveis |
-| -max-time | Minutes to wait for enumeration results (default 10) | subfinder -max-time 1 |
-| -nC | Don't Use colors in output | subfinder -nC |
-| -nW | Remove Wildcard & Dead Subdomains from output | subfinder -nW |
-| -ls | List all available sources | subfinder -ls |
-| -o  | File to write output to (optional) | subfinder -o output.txt |
-| -oD | Directory to write enumeration results to (optional) | subfinder -oD ~/outputs |
-| -oI | Write output in Host,IP format | subfinder -oI |
-| -oJ | Write output in JSON lines Format | subfinder -oJ |
-| -r | Comma-separated list of resolvers to use | subfinder -r 1.1.1.1,1.0.0.1 |
-| -rL | Text file containing list of resolvers to use | subfinder -rL resolvers.txt
-| -recursive | Enumeration recursive subdomains | subfinder -d news.yahoo.com -recursive
-| -silent | Show only subdomains in output | subfinder -silent |
-| -sources | Comma separated list of sources to use | subfinder -sources shodan,censys |
-| -t | Number of concurrent goroutines for resolving (default 10) | subfinder -t 100 |
-| -timeout | Seconds to wait before timing out (default 30) | subfinder -timeout 30 |
-| -v | 	Show Verbose output | subfinder -v |
-| -version | Show current program version | subfinder -version |
+| Probes             | Status  | Default check   |
+|--------------------|---------|-----------------|
+| URL                | ✔       | true            |
+| Title              | ✔       | true            |
+| Status Code        | ✔       | true            |
+| Content Length     | ✔       | true            |
+| TLS Certificate    | ✔       | true            |
+| CSP Header         | ✔       | true            |
+| HTTP2              | ✔       | false           |
+| HTTP 1.1 Pipeline  | ✔       | false           |
+| Virtual host       | ✔       | false           |
+| Location Header    | ✔       | true            |
+| Web Server         | ✔       | true            |
+| Web Socket         | ✔       | true            |
+| Path               | ✔       | false           |
+| Ports              | ✔       | false           |
+| Request method     | ✔       | false           |
+| IP                 | ✔       | true            |
+| CNAME              | ✔       | true            |
+| CDN                | ✔       | false           |
+| Response Time      | ✔       | true            |
 
 
 # Installation Instructions
 
+
 ### From Binary
 
-The installation is easy. You can download the pre-built binaries for different platforms from the [releases](https://github.com/projectdiscovery/subfinder/releases/) page. Extract them using tar, move it to your `$PATH` and you're ready to go.
+The installation is easy. You can download the pre-built binaries for your platform from the [Releases](https://github.com/projectdiscovery/httpx/releases/) page. Extract them using tar, move it to your `$PATH`and you're ready to go.
 
 ```sh
-▶ # download release from https://github.com/projectdiscovery/subfinder/releases/
-▶ tar -xzvf subfinder-linux-amd64.tar.gz
-▶ mv subfinder /usr/local/bin/
-▶ subfinder -h
+Download latest binary from https://github.com/projectdiscovery/httpx/releases
+
+▶ tar -xvf httpx-linux-amd64.tar
+▶ mv httpx-linux-amd64 /usr/local/bin/httpx
+▶ httpx -h
 ```
 
 ### From Source
 
-subfinder requires **go1.14+** to install successfully. Run the following command to get the repo -
+httpx requires **go1.14+** to install successfully. Run the following command to get the repo - 
 
 ```sh
-GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder
+▶ GO111MODULE=auto go get -u -v github.com/projectdiscovery/httpx/cmd/httpx
 ```
 
 ### From Github
 
 ```sh
-git clone https://github.com/projectdiscovery/subfinder.git
-cd subfinder/v2/cmd/subfinder
-go build .
-mv subfinder /usr/local/bin/
-subfinder -h
+▶ git clone https://github.com/projectdiscovery/httpx.git; cd httpx/cmd/httpx; go build; mv httpx /usr/local/bin/; httpx -version
 ```
 
-## Post Installation Instructions
-
-Subfinder will work after using the installation instructions however to configure Subfinder to work with certain services, you will need to have setup API keys. The following services do not work without an API key:
-
-- [Binaryedge](https://binaryedge.io)
-- [Certspotter](https://sslmate.com/certspotter/api/)
-- [Censys](https://censys.io)
-- [Chaos](https://chaos.projectdiscovery.io)
-- [DnsDB](https://api.dnsdb.info)
-- [Github](https://github.com)
-- [Intelx](https://intelx.io)
-- [Passivetotal](http://passivetotal.org)
-- [Recon.dev](https://recon.dev)
-- [Robtex](https://www.robtex.com/api/)
-- [SecurityTrails](http://securitytrails.com)
-- [Shodan](https://shodan.io)
-- [Spyse](https://spyse.com)
-- [Threatbook](https://threatbook.cn/api)
-- [Virustotal](https://www.virustotal.com)
-- [Zoomeye](https://www.zoomeye.org)
-
-Theses values are stored in the `$HOME/.config/subfinder/config.yaml` file which will be created when you run the tool for the first time. The configuration file uses the YAML format. Multiple API keys can be specified for each of these services from which one of them will be used for enumeration.
-
-For sources that require multiple keys, namely `Censys`, `Passivetotal`, they can be added by separating them via a colon (:).
-
-An example config file -
-
-```yaml
-resolvers:
-  - 1.1.1.1
-  - 1.0.0.1
-sources:
-  - binaryedge
-  - bufferover
-  - censys
-  - passivetotal
-  - sitedossier
-binaryedge:
-  - 0bf8919b-aab9-42e4-9574-d3b639324597
-  - ac244e2f-b635-4581-878a-33f4e79a2c13
-censys:
-  - ac244e2f-b635-4581-878a-33f4e79a2c13:dd510d6e-1b6e-4655-83f6-f347b363def9
-certspotter: []
-passivetotal:
-  - sample-email@user.com:sample_password
-securitytrails: []
-shodan:
-  - AAAAClP1bJJSRMEYJazgwhJKrggRwKA
-github:
-  - d23a554bbc1aabb208c9acfbd2dd41ce7fc9db39
-  - asdsd54bbc1aabb208c9acfbd2dd41ce7fc9db39
-```
-
-# Running Subfinder
-
-To run the tool on a target, just use the following command.
-```sh
-▶ subfinder -d freelancer.com
-```
-
-This will run the tool against freelancer.com. There are a number of configuration options that you can pass along with this command. The verbose switch (-v) can be used to display verbose information.
-
-```
-[threatcrowd] ns1.hosting.freelancer.com
-[threatcrowd] ns2.hosting.freelancer.com
-[threatcrowd] flash.freelancer.com
-[threatcrowd] auth.freelancer.com
-[chaos] alertmanager.accounts.freelancer.com
-[chaos] analytics01.freelancer.com
-[chaos] apidocs.freelancer.com
-[chaos] brains.freelancer.com
-[chaos] consul.accounts.freelancer.com
-```
-
-The `-silent` switch can be used to show only subdomains found without any other info.
-
-
-The `-o` command can be used to specify an output file.
+# Usage
 
 ```sh
-▶ subfinder -d freelancer.com -o output.txt
+httpx -h
 ```
 
-To run the tool on a list of domains, `-dL` option can be used. This requires a directory to write the output files. Subdomains for each domain from the list are written in a text file in the directory specified by the `-oD` flag with their name being the domain name.
+This will display help for the tool. Here are all the switches it supports.
+
+| Flag                    | Description                                             | Example                                            |
+|-------------------------|---------------------------------------------------------|----------------------------------------------------|
+| H                       | Custom Header input                                     | httpx -H 'x-bug-bounty: hacker'                    |
+| follow-redirects        | Follow URL redirects (default false)                    | httpx -follow-redirects                            |
+| follow-host-redirects   | Follow URL redirects only on same host(default false)   | httpx -follow-host-redirects                       |
+| http-proxy              | URL of the proxy server                                 | httpx -http-proxy hxxp://proxy-host:80             |
+| l                       | File containing HOST/URLs/CIDR to process               | httpx -l hosts.txt                                 |
+| no-color                | Disable colors in the output.                           | httpx -no-color                                    |
+| o                       | File to save output result (optional)                   | httpx -o output.txt                                |
+| json                    | Prints all the probes in JSON format (default false)    | httpx -json                                        |
+| vhost                   | Probes to detect vhost from list of subdomains          | httpx -vhost                                       |
+| threads                 | Number of threads (default 50)                          | httpx -threads 100                                 |
+| http2                   | HTTP2 probing                                           | httpx -http2                                       |
+| pipeline                | HTTP1.1 Pipeline probing                                | httpx -pipeline                                    |
+| ports                   | Ports ranges to probe (nmap syntax: eg 1,2-10,11)       | httpx -ports 80,443,100-200                        |
+| title                   | Prints title of page if available                       | httpx -title                                       |
+| path                    | Request path/file                                       | httpx -path /api                                   |
+| content-length          | Prints content length in the output                     | httpx -content-length                              |
+| ml                      | Match content length in the output                      | httpx -content-length -ml 125                      |
+| fl                      | Filter content length in the output                     | httpx -content-length -fl 0,43                     |
+| status-code             | Prints status code in the output                        | httpx -status-code                                 |
+| mc                      | Match status code in the output                         | httpx -status-code -mc 200,302                     |
+| fc                      | Filter status code in the output                        | httpx -status-code -fc 404,500                     |
+| tls-probe               | Send HTTP probes on the extracted TLS domains           | httpx -tls-probe                                   |
+| content-type            | Prints content-type                                     | httpx -content-type                                |
+| location                | Prints location header                                  | httpx -location                                    |
+| csp-probe               | Send HTTP probes on the extracted CSP domains           | httpx -csp-probe                                   |
+| web-server              | Prints running web sever if available                   | httpx -web-server                                  |
+| sr                      | Store responses to file (default false)                 | httpx -sr                                          |
+| srd                     | Directory to store response (optional)                  | httpx -srd httpx-output                            |
+| unsafe                  | Send raw requests skipping golang normalization         | httpx -unsafe                                      | 
+| request                 | File containing raw request to process                  | httpx -request                                     | 
+| retries                 | Number of retries                                       | httpx -retries                                     |
+| silent                  | Prints only results in the output                       | httpx -silent                                      |
+| timeout                 | Timeout in seconds (default 5)                          | httpx -timeout 10                                  |
+| verbose                 | Verbose Mode                                            | httpx -verbose                                     |
+| version                 | Prints current version of the httpx                     | httpx -version                                     |
+| x                       | Request Method (default 'GET')                          | httpx -x HEAD                                      |
+| method                  | Output requested method                                 | httpx -method                                      |
+| response-time           | Output the response time                                | httpx -response-time                               |
+| response-in-json        | Include response in stdout (only works with -json)      | httpx -response-in-json                            |
+| websocket               | Prints if a websocket is exposed                        | httpx -websocket                                   |
+| ip                      | Prints the host IP                                      | httpx -ip                                          |
+| cname                   | Prints the cname record if available                    | httpx -cname                                       |
+| cdn                     | Check if domain's ip belongs to known CDN               | httpx -cdn                                         |
+| filter-string           | Filter results based on filtered string                 | httpx -filter-string XXX                           |
+| match-string            | Filter results based on matched string                  | httpx -match-string XXX                            |
+| filter-regex            | Filter results based on filtered regex                  | httpx -filter-regex XXX                            |
+| match-regex             | Filter results based on matched regex                   | httpx -match-regex XXX                             |
+
+
+### Running httpx with stdin  
+
+This will run the tool against all the hosts and subdomains in `hosts.txt` and returns URLs running HTTP webserver. 
 
 ```sh
-▶ cat domains.txt
-hackerone.com
-google.com
+▶ cat hosts.txt | httpx 
 
-▶ subfinder -dL domains.txt -oD ~/path/to/output
-▶ ls ~/path/to/output
+    __    __  __       _  __
+   / /_  / /_/ /_____ | |/ /
+  / __ \/ __/ __/ __ \|   / 
+ / / / / /_/ /_/ /_/ /   |  
+/_/ /_/\__/\__/ .___/_/|_|   v1.0  
+             /_/            
 
-hackerone.com.txt
-google.com.txt
-```
+		projectdiscovery.io
 
-You can also get output in json format using `-oJ` switch. This switch saves the output in the JSON lines format.
+[WRN] Use with caution. You are responsible for your actions
+[WRN] Developers assume no liability and are not responsible for any misuse or damage.
 
-If you use the JSON format, or the `Host:IP` format, then it becomes mandatory for you to use the **-nW** format as resolving is essential for these output format. By default, resolving the found subdomains is disabled.
-
-```sh
-▶ subfinder -d hackerone.com -o output.json -oJ -nW
-▶ cat output.json
-
-{"host":"www.hackerone.com","ip":"104.16.99.52"}
-{"host":"mta-sts.hackerone.com","ip":"185.199.108.153"}
-{"host":"hackerone.com","ip":"104.16.100.52"}
-{"host":"mta-sts.managed.hackerone.com","ip":"185.199.110.153"}
-```
-
-
-**The new highlight of this release is the addition of stdin/stdout features.** Now, domains can be piped to subfinder and enumeration can be ran on them. For example -
-
-```sh
-▶ echo hackerone.com | subfinder
-▶ cat targets.txt | subfinder
-```
-
-The subdomains discovered can be piped to other tools too. For example, you can pipe the subdomains discovered by subfinder to httpx [httpx](https://github.com/projectdiscovery/httpx) which will then find running http servers on the host.
-
-```sh
-▶ echo hackerone.com | subfinder -silent | httpx -silent
-
-http://hackerone.com
-http://www.hackerone.com
-http://docs.hackerone.com
-http://api.hackerone.com
+https://mta-sts.managed.hackerone.com
+https://mta-sts.hackerone.com
+https://mta-sts.forwarding.hackerone.com
 https://docs.hackerone.com
-http://mta-sts.managed.hackerone.com
+https://www.hackerone.com
+https://resources.hackerone.com
+https://api.hackerone.com
+https://support.hackerone.com
 ```
 
-## Running in a Docker Container
+### Running httpx with file input  
 
-You can use the official dockerhub image at [subfinder](https://hub.docker.com/r/projectdiscovery/subfinder). Simply run -
+This will run the tool against all the hosts and subdomains in `hosts.txt` and returns URLs running HTTP webserver.
 
 ```sh
-▶ docker pull projectdiscovery/subfinder
+▶ httpx -l hosts.txt -silent
+
+https://docs.hackerone.com
+https://mta-sts.hackerone.com
+https://mta-sts.managed.hackerone.com
+https://mta-sts.forwarding.hackerone.com
+https://www.hackerone.com
+https://resources.hackerone.com
+https://api.hackerone.com
+https://support.hackerone.com
 ```
 
-The above command will pull the latest tagged release from the dockerhub repository.
-
-If you want to build the container yourself manually, git clone the repo, then build and run the following commands
-
-- Clone the repo using `git clone https://github.com/projectdiscovery/subfinder.git`
-- Build your docker container
-```sh
-docker build -t projectdiscovery/subfinder .
-```
-
-- After building the container using either way, run the following -
-```sh
-docker run -it projectdiscovery/subfinder
-```
-▶ The above command is the same as running `-h`
-
-If you are using docker, you need to first create your directory structure holding subfinder configuration file. After modifying the default config.yaml file, you can run:
+### Running httpx with CIDR input   
 
 ```sh
-▶ mkdir -p $HOME/.config/subfinder
-▶ cp config.yaml $HOME/.config/subfinder/config.yaml
-▶ nano $HOME/.config/subfinder/config.yaml
+▶ echo 173.0.84.0/24 | httpx -silent
+
+https://173.0.84.29
+https://173.0.84.43
+https://173.0.84.31
+https://173.0.84.44
+https://173.0.84.12
+https://173.0.84.4
+https://173.0.84.36
+https://173.0.84.45
+https://173.0.84.14
+https://173.0.84.25
+https://173.0.84.46
+https://173.0.84.24
+https://173.0.84.32
+https://173.0.84.9
+https://173.0.84.13
+https://173.0.84.6
+https://173.0.84.16
+https://173.0.84.34
 ```
 
-After that, you can pass it as a volume using the following sample command.
+
+### Running httpx with subfinder
+
+
 ```sh
-▶ docker run -v $HOME/.config/subfinder:/root/.config/subfinder -it projectdiscovery/subfinder -d freelancer.com
+▶ subfinder -d hackerone.com -silent | httpx -title -content-length -status-code -silent
+
+https://mta-sts.forwarding.hackerone.com [404] [9339] [Page not found · GitHub Pages]
+https://mta-sts.hackerone.com [404] [9339] [Page not found · GitHub Pages]
+https://mta-sts.managed.hackerone.com [404] [9339] [Page not found · GitHub Pages]
+https://docs.hackerone.com [200] [65444] [HackerOne Platform Documentation]
+https://www.hackerone.com [200] [54166] [Bug Bounty - Hacker Powered Security Testing | HackerOne]
+https://support.hackerone.com [301] [489] []
+https://api.hackerone.com [200] [7791] [HackerOne API]
+https://hackerone.com [301] [92] []
+https://resources.hackerone.com [301] [0] []
 ```
 
-For example, this runs the tool against uber.com and output the results to your host file system:
-```sh
-docker run -v $HOME/.config/subfinder:/root/.config/subfinder -it projectdiscovery/subfinder -d uber.com > uber.com.txt
-```
+# 📋 Notes
 
-# License
+- As default, **httpx** checks for `HTTPS` probe and fall-back to `HTTP` only if `HTTPS` is not reachable.
+- For printing both HTTP/HTTPS results, `no-fallback` flag can be used.
+- `vhost`, `http2`, `pipeline`, `ports`, `csp-probe`, `tls-probe` and `path` are unique flag with different probes.
+- Unique flags should be used for specific use cases instead of running them as default with other flags.
+- When using `json` flag, all the information (default probes) included in the JOSN output.
 
-subfinder is made with 🖤 by the [projectdiscovery](https://projectdiscovery.io) team. Community contributions have made the project what it is. See the **[Thanks.md](https://github.com/projectdiscovery/subfinder/blob/master/THANKS.md)** file for more details.
 
-Read the disclaimer for usage at [DISCLAIMER.md](https://github.com/projectdiscovery/subfinder/blob/master/DISCLAIMER.md) and [contact us](mailto:contact@projectdiscovery.io) for any API removal.
+# Thanks
+
+httpx is made with 🖤 by the [projectdiscovery](https://projectdiscovery.io) team. Community contributions have made the project what it is. See the **[Thanks.md](https://github.com/projectdiscovery/httpx/blob/master/THANKS.md)** file for more details. Do also check out these similar awesome projects that may fit in your workflow:
+
+Probing feature is inspired by [@tomnomnom/httprobe](https://github.com/tomnomnom/httprobe) work :heart:
