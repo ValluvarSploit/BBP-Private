@@ -79,27 +79,25 @@ jobs:
          cd ..
       - name: Subzy
         run: |
-         ./subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt
+         ./binaries/subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt
-      
       - name: Subjack
         run: |
-         ./subjack -w httpx-subdomains-output.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c /home/runner/go/src/github.com/haccer/subjack/fingerprints.json
-         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt
-                 
+         ./binaries/subjack -w subdomains-resolved.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c subjack_fingerprints.json
+         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt 
       - name: Nuclei
         run: |
-         ./nuclei -l httpx-subdomains-output.txt -c 100 -stats -t nuclei-templates/subdomain-takeover/ -o nuclie-output.txt
-                
+         ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers/subdomain-takeover.yaml -o nuclie-output.txt   
       - name: Combine Output Files
         run: |
-         if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subzy-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-         if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat subjack-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-         if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; cat nuclie-output.txt >> "$TARGET_DOMAIN"-subdomain-takeover-results.txt; fi
-      
+         cat subzy-logs.txt subjack-logs.txt >> sto.log
+         if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > subdomain-takeovers.txt; cat subzy-output.txt >> subdomain-takeovers.txt; fi
+         if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> subdomain-takeovers.txt; cat subjack-output.txt >> subdomain-takeovers.txt; fi
+         if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> subdomain-takeovers.txt; cat nuclie-output.txt >> subdomain-takeovers.txt; fi
       - name: Send Output Files Slack Channel
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Subdomain-Takeover-Results -F filename="$TARGET_DOMAIN"-bbp-public-subdomain-takeover.txt -F file=@"$TARGET_DOMAIN"-subdomain-takeover-results.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomain-Takeover -F filename=subdomain-takeovers.txt -F file=@subdomain-takeovers.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomain-Takeover-Logs -F filename=sto.log -F file=@sto.log
       
 #Scan for low hanging fruits on specified targets.
   nuclei-scan:
