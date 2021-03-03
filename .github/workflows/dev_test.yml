@@ -34,6 +34,8 @@ jobs:
       - name: Install Dependencies
         run: chmod +x binaries/naabu
       - name: Naabu
-        run: ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
+        run: |
+         ls -l
+         ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
