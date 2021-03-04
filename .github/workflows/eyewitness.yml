@@ -16,7 +16,6 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $HOST/subdomains-resolved.out -O http-resolved-url.txt 
-         wget https://e1b9fbc091de.ngrok.io/http-resolved-url.txt
          git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh     
       - name: Eyewitness
         run: |
