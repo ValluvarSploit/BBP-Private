@@ -11,3 +11,17 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
+  CORS-scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2      
+      - name: Install Dependencies
+        run: |
+         echo https://vivy.com > subdomains-resolved.txt
+         pip3 install wheel
+         sudo apt-get install python3-setuptools
+         pip3 install corscanner
+      - name: CORS Scanner
+        run: corscanner -i subdomains-resolved.txt -t 200 > cors.txt;
+      - name: Send Outputs to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
