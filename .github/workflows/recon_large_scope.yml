@@ -29,7 +29,7 @@ jobs:
          sudo apt-get install python3-setuptools
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         cd binaries; chmod +x assetfinder findomain subfinder; cd ..
+         cd binaries; chmod +x assetfinder findomain subfinder httpx; cd ..
          git clone https://github.com/m8r0wn/subscraper
          cd subscraper; sudo python3 setup.py install; cd ..
       - name: SubScraper
@@ -61,7 +61,7 @@ jobs:
          echo Total Subdomains to do Recon: $(cat subdomains.txt | wc -l)       
       - name: HTTP/HTTPS Resolver
         run: |
-         httpx -l domains.txt -follow-redirects -status-code -title -cname -vhost -threads 300 -silent -o httpx.log
+         ./binaries/httpx -l domains.txt -follow-redirects -status-code -title -cname -vhost -threads 300 -silent -o httpx.log
          cat httpx.log | grep "[200]" | cut -d " " -f 1 | sort -u > subdomains-resolved.txt 
          echo Total Resolved Subdomains: $(cat subdomains-resolved.txt | wc -l)
       - name: Upload Artifacts
