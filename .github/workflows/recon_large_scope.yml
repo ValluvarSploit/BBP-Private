@@ -15,9 +15,7 @@ env:
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
-
 jobs:
-#Subdomain Enumeration.
   subdomain-enumeration:
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +49,7 @@ jobs:
          sed "s/$/.$TARGET/" wordlists/subdomain-wordlists.txt > wordlist-hugh.txt
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt
-         cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips.txt
+         cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
       - name: Unique subdomains
         run: |
          cat live-hosts.txt >> subdomains-all.txt
@@ -61,7 +59,7 @@ jobs:
          echo Total Subdomains to do Recon: $(cat subdomains.txt | wc -l)       
       - name: HTTP/HTTPS Resolver
         run: |
-         ./binaries/httpx -l domains.txt -follow-redirects -status-code -title -cname -vhost -threads 300 -silent -o httpx.log
+         ./binaries/httpx -l subdomains.txt -follow-redirects -status-code -title -cname -vhost -threads 300 -silent -o httpx.log
          cat httpx.log | grep "[200]" | cut -d " " -f 1 | sort -u > subdomains-resolved.txt 
          echo Total Resolved Subdomains: $(cat subdomains-resolved.txt | wc -l)
       - name: Upload Artifacts
@@ -73,7 +71,7 @@ jobs:
            live-hosts.txt
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.txt -F file=@subdomains-resolved.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.out -F file=@subdomains-resolved.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-httpx-logs -F filename=httpx.log -F file=@httpx.log
