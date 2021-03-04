@@ -69,6 +69,7 @@ jobs:
          path: |
            subdomains-resolved.txt 
            live-hosts.txt
+           live-ips.txt
       - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.out -F file=@subdomains-resolved.txt
