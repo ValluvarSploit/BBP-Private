@@ -297,7 +297,7 @@ jobs:
         run: |
          chmod +x binaries/git-hound 
          mkdir ~/.githound
-         echo "$GIT_CONFIG" > ~/.githound/config.yml
+         echo "$MY_GIT_CONFIG" > ~/.githound/config.yml
       - name: Git-Hound
         run: cat subdomains-resolved.txt | ./binaries/git-hound --dig-files --dig-commits --config-file ~/.githound/config.yml > githound.txt
       - name: Send Outputs to Slack
