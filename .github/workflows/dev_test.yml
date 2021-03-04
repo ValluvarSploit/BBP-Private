@@ -1,25 +1,3 @@
 name: Dev-Test
 on:
   workflow_dispatch:
-env:
-   TARGET: ${{ secrets.PUBLIC_DOMAIN }}
-   AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
-   SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-   SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
-
-jobs:  
-  s3-scanner:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         mkdir ~/.aws
-         echo "$AWS_CREDS" > ~/.aws/credentials
-         git clone https://github.com/sa7mon/S3Scanner.git
-         pip3 install -r S3Scanner/requirements.txt
-         python3 S3Scanner/s3scanner.py -l S3Scanner/sites.txt -o buckets.txt
-         ls -l
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner -F filename=buckets.txt -F file=@buckets.txt
-         
