@@ -403,10 +403,12 @@ jobs:
          name: subdomain-enumeration-artifacts       
       - name: Install Dependencies
         run: |
+         pip3 install wheel
          sudo apt-get install python3-setuptools
-         pip3 install corscanner
+         git clone https://github.com/chenjj/CORScanner.git
+         sudo pip3 install -r CORScanner/requirements.txt
       - name: CORS Scanner
-        run: corscanner -i subdomains-resolved.txt -t 200 > cors.txt;
+        run: python3 CORScanner/cors_scan.py -i subdomains-resolved.txt -t 200 > cors.txt;
       - name: Send Outputs to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
 
