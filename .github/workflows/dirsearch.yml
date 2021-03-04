@@ -2,7 +2,7 @@ name: Dirsearch
 on:
   workflow_dispatch:
 env:
-       HOST: ${{ secrets.NGROK_URL }}
+       TARGET: https://mobileapi.paylution.com
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 jobs:
