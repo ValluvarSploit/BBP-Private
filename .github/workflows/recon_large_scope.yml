@@ -90,6 +90,7 @@ jobs:
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          cd binaries; chmod +x subjack subzy nuclei; cd ..
          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
+         cp subdomains.txt binaries/
       - name: Subzy
         run: |
          ./binaries/subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt
