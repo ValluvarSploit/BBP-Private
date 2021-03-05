@@ -384,7 +384,7 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/maurosoria/dirsearch.git
-         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-big.txt
+         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
       - name: Directory Fuzzing
         run: |
          python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-big.txt;
