@@ -11,6 +11,22 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
+  subdomain-enumeration:
+    runs-on: ubuntu-latest
+    needs: subdomain-enumeration
+    steps:
+      - uses: actions/checkout@v2             
+      - name: Install Dependencies
+        run: |
+         echo "$EXCLUDE_HOST" > subdomains-exclude.txt
+         wget $HOST/fdns-local.txt
+         sudo apt-get install python3-setuptools
+         sudo snap install amass
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         cd binaries; chmod +x assetfinder findomain subfinder httpx; cd ..
+         git clone https://github.com/m8r0wn/subscraper
+         cd subscraper; sudo python3 setup.py install; cd ..
+         
 #Naabu Ports Scan
   naabu-ports-scan:
     runs-on: ubuntu-latest
