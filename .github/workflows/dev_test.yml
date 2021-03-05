@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         echo "paylution.com" > subdomains-resolved.txt
+         echo "https://paylution.com" > subdomains-resolved.txt
          sudo chmod +x binaries/gochopchop
          wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
       - name: GoChopChop
