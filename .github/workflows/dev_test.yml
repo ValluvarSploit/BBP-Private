@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         echo "vivy.com" > subdomains-resolved.txt
+         echo "https://vivy.com" > subdomains-resolved.txt
          chmod +x binaries/naabu
       - name: Naabu
         run: ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
