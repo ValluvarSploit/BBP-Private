@@ -158,7 +158,7 @@ jobs:
 #Nmap Full Scan
   nmap-full-scan:
     runs-on: ubuntu-latest    
-    needs: [subdomain-enumeration]
+    needs: subdomain-enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -173,22 +173,20 @@ jobs:
           curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan-XML -F filename=nmap-full-scan.xml -F file=@nmap-full-scan.xml
           curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Full-Scan-NMAP -F filename=nmap-full-scan.nmap -F file=@nmap-full-scan.nmap
 
-#Naabu Ports Scan
-#  naabu-ports-scan:
-#    runs-on: ubuntu-latest
-#    needs: [subdomain-enumeration]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions/download-artifact@v2
-#        with:
-#         name: subdomain-enumeration-artifacts
-#      - name: Install Dependencies
-#        run: chmod +x binaries/naabu
-#      - name: Naabu
-#        run: ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
-#      - name: Send Output to Slack
-#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
-         
+  naabu-ports-scan:
+    runs-on: ubuntu-latest
+    needs: subdomain-enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
+          chmod +x binaries/naabu
+      - name: Naabu
+        run: ./binaries/naabu -iL subdomains.txt > naabu-portscan.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
+
 #Broken Link Hijacking on specified targets.
   broken-link-hijacking:
     runs-on: ubuntu-latest
