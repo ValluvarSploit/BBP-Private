@@ -11,16 +11,18 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
-#Naabu Ports Scan
-  naabu-ports-scan:
+  gochopchop:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         echo "https://vivy.com" > subdomains-resolved.txt
-         chmod +x binaries/naabu
-      - name: Naabu
-        run: ./binaries/naabu -iL subdomains-resolved.txt > naabu-portscan.txt
+         echo "https://paylution.com" > subdomains-resolved.txt
+         sudo chmod +x binaries/gochopchop
+         wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
+      - name: GoChopChop
+        run: |
+         ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
+         ls -l
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json  
