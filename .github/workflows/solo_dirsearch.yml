@@ -1,4 +1,4 @@
-name: Dirsearch
+name: Solo-Dirsearch
 on:
   workflow_dispatch:
 env:
