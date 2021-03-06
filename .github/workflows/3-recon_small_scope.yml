@@ -69,22 +69,6 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
 
 
-#Broken Link Hijacking on specified targets.
-  broken-link-hijacking:
-    runs-on: ubuntu-latest
-    needs: [http-probe]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: http-probe-artifacts
-      - name: Install Dependencies
-        run: sudo npm install broken-link-checker -g
-      - name: blh
-        run: while read url ; do printf ***"$url"*** | tee -a blh-output.txt; blc -rof --filter-level 3 $url | tee -a blh-output.txt; done < subdomains-resolved.txt
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Broken-Link-Checker -F filename=blh.txt -F file=@blh-output.txt
-
 #Collect URLs.
   url-collector:
     runs-on: ubuntu-latest
