@@ -14,6 +14,6 @@ jobs:
          wget $HOST/paramspider.txt
          git clone https://github.com/s0md3v/XSStrike.git
          pip3 install -r XSStrike/requirements.txt
-      - name: GoChopChop
-        run: for url in $(cat paramspider.txt); do echo "checking $url"; python3 ~/Desktop/bugBounty/tools/XSStrike/xsstrike.py --url $url; echo Completed- $url ; done;
+      - name: XSStrike
+        run: for url in $(cat paramspider.txt); do echo "checking $url"; python3 XSStrike/xsstrike.py --url $url; echo Completed- $url ; done;
 
