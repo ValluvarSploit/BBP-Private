@@ -1,4 +1,4 @@
-name: DNSGen Wordlist Generator
+name: Solo-DNSGen Wordlist Generator
 on:
   workflow_dispatch:
 env:
