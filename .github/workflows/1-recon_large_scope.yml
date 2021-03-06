@@ -8,11 +8,11 @@ name: 1-Recon Large Scope
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.PUBLIC_DOMAIN }}
+      TARGET: ${{ secrets.LARGE_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
-      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
+      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 jobs:
