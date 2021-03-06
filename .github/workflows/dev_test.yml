@@ -11,18 +11,15 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
-  gochopchop:
+  xsstrike:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         echo "https://paylution.com" > subdomains-resolved.txt
-         sudo chmod +x binaries/gochopchop
-         wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
+         wget HOST/paramspider.txt
+         git clone https://github.com/s0md3v/XSStrike.git
+         pip3 install -r XSStrike/requirements.txt
       - name: GoChopChop
-        run: |
-         ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
-         ls -l
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json  
+        run: for url in $(cat paramspider.txt); do echo "checking $url"; python3 ~/Desktop/bugBounty/tools/XSStrike/xsstrike.py --url $url; echo Completed- $url ; done;
+
