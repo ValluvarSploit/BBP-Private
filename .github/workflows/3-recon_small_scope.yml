@@ -83,7 +83,6 @@ jobs:
          cd binaries; chmod +x waybackurls gau; cd ..
          go get -u github.com/tomnomnom/gf && cp /home/runner/go/bin/gf .
          git clone https://github.com/1ndianl33t/Gf-Patterns && mkdir ~/.gf && cp -r Gf-Patterns/*.json ~/.gf/
-         cd ~/.gf/; wget https://raw.githubusercontent.com/devanshbatham/ParamSpider/master/gf_profiles/potential.json
       - name: waybackurls
         run: for url in $(cat subdomains-resolved.txt); do ./binaries/waybackurls "$url" >> waybackurls.txt ; done ; 
       - name: gau
@@ -100,7 +99,6 @@ jobs:
          ./gf redirect waybackurls.txt | cut -d : -f3- | sort -u > url-collector-artifacts/redirect-params.txt
          ./gf rce waybackurls.txt | sort -u > url-collector-artifacts/rce-params.txt
          ./gf lfi waybackurls.txt | sort -u > url-collector-artifacts/lfi-params.txt
-         ./gf potential waybackurls.txt | cut -d : -f3- | sort -u > url-collector-artifacts/potential-params.txt
          zip -r url-collector-artifacts.zip url-collector-artifacts/
          xz url-collector-artifacts.zip
       - name: Upload URL Collector Artifacts
