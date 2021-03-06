@@ -6,13 +6,14 @@ env:
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 jobs:
-#Directory Fuzzing
-  directory-fuzzing:
+  sensitive-files-fuzzing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2     
       - name: Install Dependencies
-        run: git clone https://github.com/maurosoria/dirsearch.git
+        run: |
+         wget $HOST/subdomains-resolved.txt
+         git clone https://github.com/maurosoria/dirsearch.git
       - name: Directory Fuzzing
         run: |
          python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
