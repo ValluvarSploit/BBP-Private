@@ -19,6 +19,7 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$TARGET" > subdomains.txt
+         cat subdomains.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          chmod +x binaries/httpx; 
       - name: HTTP Probe
@@ -47,7 +48,7 @@ jobs:
          ./binaries/nuclei -l subdomains-resolved.txt -c 500 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
        #./binaries/nuclei -l subdomains-resolved.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-scan.txt        
       - name: Send Output to Slack
-        run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
+        run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
 
 #Naabu Portscan
   naabu-ports-scan:
@@ -124,7 +125,7 @@ jobs:
          name: url-collector-artifacts
          path: url-collector-artifacts/
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=URL-Pattern-Collector -F filename=url-collector-artifacts.zip.xz -F file=@url-collector-artifacts.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-URL-Pattern-Collector -F filename=url-collector-artifacts.zip.xz -F file=@url-collector-artifacts.zip.xz
 
 #Parameter Discovery
   parameter-discovery:
@@ -165,7 +166,7 @@ jobs:
         run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file paramspider.txt > xss-vulnerable-urls.txt
       - name: Send Outputs to Slack
         run: |
-         if [[ -f xss-vulnerable-urls.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=XSS -F filename=xss-vulnerable-urls.txt -F file=@xss-vulnerable-urls.txt; fi
+         if [[ -f xss-vulnerable-urls.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS -F filename=xss-vulnerable-urls.txt -F file=@xss-vulnerable-urls.txt; fi
        #count=$(cat xss-vulnerable-urls.txt | wc -w)
        #if [[ -f xss-vulnerable-urls.txt ]] && [[ "$count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS-Results -F filename="$TARGET"-xss-poc-urls.txt -F file=@xss-vulnerable-urls.txt; fi
 
@@ -219,8 +220,8 @@ jobs:
          cat secret-finder.txt | grep 'google_api' -B 1 | sort -u > gmapapi.txt;
       - name: Send Outputs to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=-Secret-Finder -F filename=secret-finder.txt -F file=@secret-finder.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Gmap-api -F filename=gmapapi.txt -F file=@gmapapi.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Secret-Finder -F filename=secret-finder.txt -F file=@secret-finder.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gmap-api -F filename=gmapapi.txt -F file=@gmapapi.txt
 
 #Directory Fuzzing
   directory-fuzzing:
@@ -240,7 +241,7 @@ jobs:
          python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
          zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
 
 #CORS Scanner
   CORS-scanner:
@@ -260,21 +261,7 @@ jobs:
       - name: CORS Scanner
         run: python3 CORScanner/cors_scan.py -i subdomains-resolved.txt -t 200 > cors.txt;
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=CORS-Scanner -F filename=cors.txt -F file=@cors.txt
-
-#HeartBleed Scanner
-  heartbleed-scanner:
-    runs-on: ubuntu-latest
-    needs: http-probe
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: http-probe-artifacts       
-      - name: HeartBleed Scan
-        run: cat subdomains-resolved.txt | while read line ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe; done
-#      - name: Send Outputs to Slack
-#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
 
   sql-injection:
     runs-on: ubuntu-latest   
@@ -309,7 +296,7 @@ jobs:
       - name: GoChopChop
         run: ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
       - name: Send Output to Slack
-        run: if [[ -f gochopchop-out.json ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json; fi;
+        run: if [[ -f gochopchop-out.json ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json; fi;
     
   Subdomainizer:
     runs-on: ubuntu-latest              
