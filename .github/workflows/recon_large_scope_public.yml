@@ -1,6 +1,6 @@
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. PUBLIC_DOMAIN
+#  1. PUBLIC_LARGE_DOMAIN
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
@@ -8,7 +8,7 @@ name: 1-Recon Large Scope
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.LARGE_DOMAIN }}
+      TARGET: ${{ secrets.PUBLIC_LARGE_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
