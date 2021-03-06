@@ -8,7 +8,7 @@ name: Recon Large Scope-Private
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.LARGE_DOMAIN }}
+      TARGET: ${{ secrets.PRIVATE_LARGE_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
