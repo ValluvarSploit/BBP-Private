@@ -1,0 +1,21 @@
+name: Dirsearch Sensitive Files
+on:
+  workflow_dispatch:
+env:
+      HOST: ${{ secrets.NGROK_URL }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
+jobs:
+#Directory Fuzzing
+  directory-fuzzing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2     
+      - name: Install Dependencies
+        run: git clone https://github.com/maurosoria/dirsearch.git
+      - name: Directory Fuzzing
+        run: |
+         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
+         zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
+      - name: Send Outputs to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
