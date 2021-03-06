@@ -4,7 +4,7 @@
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
-name: Recon Large Scope
+name: 1-Recon Large Scope
 on:
   workflow_dispatch:
 env:
