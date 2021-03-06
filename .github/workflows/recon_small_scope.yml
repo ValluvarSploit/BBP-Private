@@ -194,10 +194,10 @@ jobs:
          cat js-file-links-live.txt | while read url ; do bash jsvar.sh $url | sort -u | tee js-xss.txt ; done;
       - name: Send Outputs to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-URL -F filename=js-file-links-live.txt -F file=@js-file-links-live.txt;
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Endpoints -F filename=js-endpoints.txt -F file=@js-endpoints.txt;
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-Words -F filename=js-words.txt -F file=@js-words.txt;
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-XSS -F filename=js-xss.txt -F file=@js-xss.txt;
+         if [[ -f js-file-links-live.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-URL -F filename=js-file-links-live.txt -F file=@js-file-links-live.txt; fi;
+         if [[ -f js-endpoints.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Endpoints -F filename=js-endpoints.txt -F file=@js-endpoints.txt; fi;
+         if [[ -f js-words.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-Words -F filename=js-words.txt -F file=@js-words.txt; fi ;
+         if [[ -f js-xss.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-XSS -F filename=js-xss.txt -F file=@js-xss.txt; fi;
 
 #Secrets Finder
   secrets-finder:
