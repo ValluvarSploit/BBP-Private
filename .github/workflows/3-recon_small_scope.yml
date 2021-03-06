@@ -1,9 +1,9 @@
 #Important Note:
 # Before running this action, make sure you updated following secrets variables in settings.
-#  1. SUBDOMAINS
+#  1. SMALL_DOMAINS
 #       example.com
 #       info.example.com
-name: Recon Small Scope
+name: 3-Recon Small Scope
 on:
   workflow_dispatch:
 env:
