@@ -10,8 +10,6 @@ on:
 env:
       TARGET: ${{ secrets.LARGE_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
-      HOST: ${{ secrets.NGROK_URL }}
-      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
@@ -22,7 +20,6 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget $HOST/fdns-local.txt
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
