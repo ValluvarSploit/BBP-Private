@@ -7,8 +7,8 @@ name: Recon Small Scope
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.SUBDOMAINS }}
-      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER_BLIND_URL_TOKEN }}
+      TARGET: ${{ secrets.SMALL_DOMAINS }}
+      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 jobs:
