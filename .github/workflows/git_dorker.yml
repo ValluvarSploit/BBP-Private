@@ -21,9 +21,9 @@ jobs:
        #echo "$TARGET_USERS_FILE" > git-users.txt
       - name: Git-Dorker
         run: |
-         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
-        #  python3 GitDorker/GitDorker.py --dorks test.txt --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-output.txt
-        #python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 -q "$TARGET_DOMAIN"  --token "$GITHUB_TOKEN" -o git-output.txt       
+         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
+        #  python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-output.txt
+        #python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET_DOMAIN"  --token "$GITHUB_TOKEN" -o git-output.txt       
       - name: Send Output Files Slack Channel
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Gitdorker-Results -F filename=gitdorker.csv -F file=@git-output.txt_gh_dorks.csv
                  
