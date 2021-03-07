@@ -2,9 +2,7 @@
 # Before running this action, make sure you updated following secrets variables in settings.
 #  1. PUBLIC_LARGE_DOMAIN
 #       example.com
-#  2. NGROK_URL
-#       ngrok.io
-name: 1-Recon Large Scope
+name: Recon Large Scope-Public
 on:
   workflow_dispatch:
 env:
