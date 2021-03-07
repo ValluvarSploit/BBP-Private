@@ -253,21 +253,21 @@ jobs:
 
 
 #FavIcon Hash Extraction
-  favicon-hash-extraction:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2      
-      - name: Install Dependencies
-        run: |
-         sudo apt-get install python3-setuptools
-         git clone https://github.com/devanshbatham/FavFreak
-         pip3 install -r FavFreak/requirements.txt
-      - name: FavFreak
-        run: |
-         echo https://$TARGET | python3 FavFreak/favfreak.py > favers.txt
-         cat favers.txt | grep 'h]' | cut -d ] -f2 | cut -d " " -f2 > favihash.txt
-      - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-FaviHash -F filename=favihash.txt -F file=@favihash.txt;
+#  favicon-hash-extraction:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2      
+#      - name: Install Dependencies
+#        run: |
+#         sudo apt-get install python3-setuptools
+#         git clone https://github.com/devanshbatham/FavFreak
+#         pip3 install -r FavFreak/requirements.txt
+#      - name: FavFreak
+#        run: |
+#         echo https://$TARGET | python3 FavFreak/favfreak.py > favers.txt
+#         cat favers.txt | grep 'h]' | cut -d ] -f2 | cut -d " " -f2 > favihash.txt
+#      - name: Send Outputs to Slack
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-FaviHash -F filename=favihash.txt -F file=@favihash.txt;
 
 #Javascript Scan
   javascript-scan:
