@@ -1,4 +1,4 @@
-name: Amass Subdomain Enumeration With API Key
+name: Amass With API Key
 on:
   workflow_dispatch:
 env:
