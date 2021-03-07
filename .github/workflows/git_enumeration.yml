@@ -1,79 +1,29 @@
-
-#Stage 8
-#Important Note:
-# Before running this action, make sure you updated following secrets variables in settings.
-#  1. TARGET_DOMAIN    , formtat below
-#       example.com
-#  2. TARGET_GITHUB_ORG    , format below      (Optional)
-#       orgname
-#        or
-#  3. TARGET_GITHUB_USERS_LIST    format below    (Optional)
-#       user_name1
-#       user_name2
-
-# Workflow Dependency: No
-
-
-name: Git Enumeration
-
+name: Git Dorker
 on:
   workflow_dispatch:
-
 jobs:
-  git-enumeration:
+  git-dorker:
     runs-on: ubuntu-latest
     env:
-        #        GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
-        #        GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
-                TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
-                TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
-                TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
-                GITHUB_TOKEN: ${{ secrets.TOKEN }}
-                SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-                SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                
+       TARGET_DOMAIN: ${{ secrets.TARGET_DOMAIN }}
+       TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
+       TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
+       GITHUB_TOKEN: ${{ secrets.TOKEN }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}                
     steps:
       - uses: actions/checkout@v2
-        
       - name: Install Dependencies
         run: |
-                 sudo apt-get install python3-setuptools
-                 git clone https://github.com/obheda12/GitDorker.git
-                 pip3 install -r GitDorker/requirements.txt
-                
-      - name: Input Files
-        run: |
-         echo "$TARGET_USERS_FILE" > git-users.txt
-                           
+         sudo apt-get install python3-setuptools
+         git clone https://github.com/obheda12/GitDorker.git
+         pip3 install -r GitDorker/requirements.txt 
+       #echo "$TARGET_USERS_FILE" > git-users.txt
       - name: Git-Dorker
         run: |
-          python3 GitDorker/GitDorker.py --dorks test.txt --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-output.txt
-        #python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 -q "$TARGET_DOMAIN"  --token "$GITHUB_TOKEN" -o git-output.txt
-     #      python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
-            
-     
-                
+         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-output.txt
+        #  python3 GitDorker/GitDorker.py --dorks test.txt --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-output.txt
+        #python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv2 -q "$TARGET_DOMAIN"  --token "$GITHUB_TOKEN" -o git-output.txt       
       - name: Send Output Files Slack Channel
-        run: |
-                 curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Gitdorker-Results -F filename="$TARGET_DOMAIN"-gitdorker.csv -F file=@git-output.txt_gh_dorks.csv
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Gitdorker-Results -F filename=gitdorker.csv -F file=@git-output.txt_gh_dorks.csv
                  
-
-
-
-#Github Scanning
-  github-scanning:
-    runs-on: ubuntu-latest
-    needs: [subdomain-enumeration]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts       
-      - name: Install Dependencies
-        run: |
-         chmod +x binaries/git-hound 
-         mkdir ~/.githound
-         echo "$MY_GIT_CONFIG" > ~/.githound/config.yml
-      - name: Git-Hound
-        run: cat subdomains-resolved.txt | ./binaries/git-hound --dig-files --dig-commits --config-file ~/.githound/config.yml > githound.txt
-      - name: Send Outputs to Slack
-        run: if [[ -f githound.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GitHound -F filename=githound.txt -F file=@githound.txt; fi
