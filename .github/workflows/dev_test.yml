@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/waybackurls.txt
+         wget https://853638f69582.ngrok.io/waybackurls.txt
          cd binaries; chmod +x waybackurls gau; cd ..
          go get -u github.com/tomnomnom/gf && cp /home/runner/go/bin/gf .
          mkdir ~/.gf && cp -r binaries/gf/ ~/.gf/
