@@ -6,26 +6,21 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
-#Collect URLs.
-  url-collector:
+#Github Scanning
+  github-scanning:
     runs-on: ubuntu-latest
+    needs: [subdomain-enumeration]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts       
       - name: Install Dependencies
         run: |
-         wget https://9ab5972690b7.ngrok.io/test.txt -O waybackurls.txt
-         cd binaries; chmod +x waybackurls gau; cd ..
-         go get -u github.com/tomnomnom/gf && cp /home/runner/go/bin/gf .
-         mkdir ~/.gf && cp -r binaries/gf/ ~/.gf/
-      - name: Patterns  
-        run: |
-         cat waybackurls.txt | sort -u | grep -iE 'access=|admin=|dbg=|debug=|edit=|grant=|test=|alter=|clone=|create=|delete=|disable=|enable=|exec=|execute=|load=|make=|modify=|rename=|reset=|shell=|toggle=|adm=|root=|cfg=|dest=|redirect=|uri=|path=|continue=|url=|window=|next=|data=|reference=|site=|html=|val=|validate=|domain=|callback=|return=|page=|feed=|host=|port=|to=|out=|view=|dir=|show=|navigation=|open=|file=|document=|folder=|pg=|php_path=|style=|doc=|img=|filename=' > ssrf-params.txt
-         cat waybackurls.txt | sort -u | grep -iE 'id=|select=|report=|role=|update=|query=|user=|name=|sort=|where=|search=|params=|process=|row=|view=|table=|from=|sel=|results=|sleep=|fetch=|order=|keyword=|column=|field=|delete=|string=|number=|filter=' > sqli-params.txt
-         cat waybackurls.txt | sort -u | grep -iE 'template=|preview=|id=|view=|activity=|name=|content=|redirect=' > ssti-params.txt
-         cat waybackurls.txt | sort -u | grep -iE 'q=|s=|search=|lang=|keyword=|query=|page=|keywords=|year=|view=|email=|type=|name=|p=|callback=|jsonp=|api_key=|api=|password=|email=|emailto=|token=|username=|csrf_token=|unsubscribe_token=|id=|item=|page_id=|month=|immagine=|list_type=|url=|terms=|categoryid=|key=|l=|begindate=|enddate=' > xss-params.txt
-         cat waybackurls.txt | sort -u | grep -iE 'file=|document=|folder=|root=|path=|pg=|style=|pdf=|template=|php_path=|doc=|page=|name=|cat=|dir=|action=|board=|date=|detail=|download=|prefix=|include=|inc=|locate=|show=|site=|type=|view=|content=|layout=|mod=|conf=|url=' > lfi-params.txt
-         cat waybackurls.txt | sort -u | grep -iE 'daemon=|upload=|dir=|download=|log=|ip=|cli=|cmd=|exec=|command=|execute=|ping=|query=|jump=|code=|reg=|do=|func=|arg=|option=|load=|process=|step=|read=|function|req=|feature=|exe=|module=|payload=|run=|print=' > rce-params.txt
-         cat waybackurls.txt | sort -u | grep -iE 'Lmage_url=|Open=|callback=|cgi-bin/redirect.cgi|cgi-bin/redirect.cgi?|checkout=|checkout_url=|continue=|data=|dest=|destination=|dir=|domain=|feed=|file=|file_name=|file_url=|folder=|folder_url=|forward=|from_url=|go=|goto=|host=|html=|image_url=|img_url=|load_file=|load_url=|login?to=|login_url=|logout=|navigation=|next=|next_page=|out=|page=|page_url=|path=|port=|redir=|redirect=|redirect_to=|redirect_uri=|redirect_url=|reference=|return=|returnTo=|return_path=|return_to=|return_url=|rt=|rurl=|show=|site=|target=|to=|uri=|url=|val=|validate=|view=|window=' > redirect-params.txt
-         cat waybackurls.txt | sort -u | grep -iE '=.*.jpg|=.*.jpeg|=.*.gif|=.*.png' > img-traversal.txt
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=URL-Pattern-Collector -F filename=ssrf-params.txt -F file=@ssrf-params.txt
+         chmod +x binaries/git-hound 
+         mkdir ~/.githound
+         echo "$MY_GIT_CONFIG" > ~/.githound/config.yml
+      - name: Git-Hound
+        run: cat subdomains-resolved.txt | ./binaries/git-hound --dig-files --dig-commits --config-file ~/.githound/config.yml > githound.txt
+      - name: Send Outputs to Slack
+        run: if [[ -f githound.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GitHound -F filename=githound.txt -F file=@githound.txt; fi
