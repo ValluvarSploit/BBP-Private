@@ -8,6 +8,8 @@ env:
       NETWORKSDB: ${{ secrets.AMASS_NETWORKSDB }}
       RECONDEV: ${{ secrets.AMASS_RECONDEV }}
       WHOISXMLAPI: ${{ secrets.AMASS_WHOISXMLAPI }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
   xsstrike:
