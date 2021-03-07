@@ -2,7 +2,12 @@ name: Dev-Test
 on:
   workflow_dispatch:
 env:
-      HOST: ${{ secrets.NGROK_URL }}
+      ALIENT_VALUT: ${{ secrets.AMASS_ALIENVALUT }}
+      CLOUDFLARE: ${{ secrets.AMASS_CLOUDFLARE }}
+      FACEBOOK: ${{ secrets.AMASS_FACEBOOK }}
+      NETWORKSDB: ${{ secrets.AMASS_NETWORKSDB }}
+      RECONDEV: ${{ secrets.AMASS_RECONDEV }}
+      WHOISXMLAPI: ${{ secrets.AMASS_WHOISXMLAPI }}
 
 jobs:
   xsstrike:
@@ -11,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/paramspider.txt
+         
          git clone https://github.com/s0md3v/XSStrike.git
          pip3 install -r XSStrike/requirements.txt
       - name: XSStrike
