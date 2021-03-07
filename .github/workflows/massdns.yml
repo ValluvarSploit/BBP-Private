@@ -13,11 +13,11 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget $HOST/httpx-url-valid-url-ok.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
       - name: MassDNS
         run: |
+         sed "s/$/.$TARGET/" wordlists/subdomain-wordlists.txt > wordlist-hugh.txt
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt httpx-url-valid-url-ok.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt         
