@@ -19,10 +19,15 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$ALIENT_VALUT" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
          echo "$CLOUDFLARE" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
          echo "$FACEBOOK" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
          echo "$NETWORKSDB" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
          echo "$RECONDEV" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
          echo "$WHOISXMLAPI" >> binaries/amass-config.ini
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=AMASS -F filename=amass-config.ini -F file=@binaries/amass-config.ini
