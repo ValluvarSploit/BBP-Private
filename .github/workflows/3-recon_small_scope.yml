@@ -33,7 +33,7 @@ jobs:
 #Nuclei Template Scan.
   nuclei-scan:
     runs-on: ubuntu-latest
-    needs: [http-probe]
+    needs: http-probe
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -49,25 +49,6 @@ jobs:
        #./binaries/nuclei -l subdomains-resolved.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-scan.txt        
       - name: Send Output to Slack
         run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
-
-#Naabu Portscan
-  naabu-ports-scan:
-    runs-on: ubuntu-latest
-    needs: [http-probe]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: http-probe-artifacts
-      - name: Install Dependencies
-        run: |
-          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
-          chmod +x binaries/naabu
-      - name: Naabu
-        run: ./binaries/naabu -iL subdomains.txt > naabu-portscan.txt
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
-
 
 #Collect URLs.
   url-collector:
