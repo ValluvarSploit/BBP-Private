@@ -19,6 +19,7 @@ jobs:
          mkdir ~/.gf && cp -r binaries/gf/ ~/.gf/
       - name: Patterns
         run: |
+         ./gf -list
          ./gf ssrf waybackurls.txt | sort -u > ssrf-params.txt 
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=URL-Pattern-Collector -F filename=ssrf-params.txt -F file=@ssrf-params.txt
