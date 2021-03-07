@@ -1,0 +1,46 @@
+name: Recon Large Scope-Private
+on:
+  workflow_dispatch:
+env:
+      ALIENT_VALUT: ${{ secrets.AMASS_ALIENVALUT }}
+      CLOUDFLARE: ${{ secrets.AMASS_CLOUDFLARE }}
+      FACEBOOK: ${{ secrets.AMASS_FACEBOOK }}
+      NETWORKSDB: ${{ secrets.AMASS_NETWORKSDB }}
+      RECONDEV: ${{ secrets.AMASS_RECONDEV }}
+      WHOISXMLAPI: ${{ secrets.AMASS_WHOISXMLAPI }}
+      TARGET: ${{ secrets.PRI_LARGE_DOMAIN }}
+      EXCLUDE_HOST: ${{ secrets.PRI_EXCLUDE_HOST }}
+      HOST: ${{ secrets.NGROK_URL }}
+      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
+      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+jobs:
+  Amass-Subdomain-Enum:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         echo "$ALIENT_VALUT" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
+         echo "$CLOUDFLARE" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
+         echo "$FACEBOOK" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
+         echo "$NETWORKSDB" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
+         echo "$RECONDEV" >> binaries/amass-config.ini
+         echo "" >> binaries/amass-config.ini
+         echo "$WHOISXMLAPI" >> binaries/amass-config.ini   
+         sudo snap install amass
+      - name: Amass 
+        run: amass enum -d "$TARGET" -config binaries/amass-config.ini -o amss-out.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: Amass-artifacts
+         path: amss-out.txt
+      - name: Send Output to Slack
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Amass -F filename=amss-out.txt -F file=@amss-out.txt
