@@ -1,4 +1,6 @@
-/
+/conf
+conf/tomcat-users.xml
+/tomcat-users.xml
 /.access
 /access
 /access-log
@@ -59,6 +61,7 @@
 /auth.sql
 /AuthZ2.sql
 /AuthZ.sql
+/autoconfig
 /ba4.nsf
 /backdoor
 /back.sql
@@ -73,6 +76,7 @@
 /.bash_history
 /.bash_profile
 /.bashrc
+/beans
 /beta
 /~bin
 /bin
@@ -92,6 +96,7 @@
 /config
 /config.js
 /config.php
+/configprops
 /config.sql
 /config.xml
 /conf.ini
@@ -186,12 +191,15 @@
 /dir/
 /drop.sql
 /drop_table.sql
+/dump
 /dump.sql
+/env
 /error
 /errors
 /etc
 /exchange
 /exe
+/features
 /file
 /fileadmin
 /files/
@@ -224,6 +232,7 @@
 /imanager
 /import
 /inetd.conf
+/info
 /information
 /InitialSchema.sql
 /insert_data.sql
@@ -273,6 +282,7 @@
 /members.sql
 /menu.sql
 /META-INF
+/metrics
 /motd
 /msql/
 /mssql_basic.sql
@@ -358,6 +368,7 @@
 /registry
 /~root
 /root
+/routes
 /sample_data.sql
 /sampledata.sql
 /sample.sql
@@ -420,6 +431,7 @@
 /tables.sql
 /test
 /tomcat
+/trace
 /undeploy
 /update
 /updates
