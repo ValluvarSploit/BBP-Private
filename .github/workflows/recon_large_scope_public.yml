@@ -28,8 +28,7 @@ jobs:
          git clone https://github.com/m8r0wn/subscraper
          cd subscraper; sudo python3 setup.py install; cd ..
       - name: SubScraper
-        run: |
-         python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
+        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
       - name: Amass
         run: amass enum -passive -d "$TARGET" >> subdomains-all.txt;
       - name: Assetfinder
@@ -69,8 +68,8 @@ jobs:
       - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.out -F file=@subdomains-resolved.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-httpx-logs -F filename=httpx.log -F file=@httpx.log
       
 #Subdomain Takeover
@@ -462,7 +461,7 @@ jobs:
     
   gochopchop:
     runs-on: ubuntu-latest
-    needs: [subdomain-enumeration]
+    needs: subdomain-enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -476,7 +475,7 @@ jobs:
         run: |
          ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
       - name: Send Output to Slack
-        run: if [[ -f gochopchop-out.json ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json    
+        run: if [[ -f gochopchop-out.json ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json; fi;
     
   Subdomainizer:
     runs-on: ubuntu-latest              
