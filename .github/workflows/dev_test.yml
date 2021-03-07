@@ -6,3 +6,19 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
+#Collect URLs.
+  url-collector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $HOST/waybackurls.txt
+         cd binaries; chmod +x waybackurls gau; cd ..
+         go get -u github.com/tomnomnom/gf && cp /home/runner/go/bin/gf .
+         mkdir ~/.gf && cp -r binaries/gf/ ~/.gf/
+      - name: Patterns
+        run: |
+         ./gf ssrf waybackurls.txt | sort -u > ssrf-params.txt 
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=URL-Pattern-Collector -F filename=ssrf-params.txt -F file=@ssrf-params.txt
