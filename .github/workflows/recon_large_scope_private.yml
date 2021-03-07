@@ -37,6 +37,7 @@ jobs:
       - name: Amass
         run: |
          amass enum -passive -d "$TARGET" > amass-passive.txt
+         cat amass-passive.txt | wc -l
          cat amass-passive.txt >> subdomains-all.txt;
       - name: Assetfinder
         run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt;          
