@@ -12,6 +12,7 @@ env:
       EXCLUDE_HOST: ${{ secrets.PRI_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
+      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 jobs:
