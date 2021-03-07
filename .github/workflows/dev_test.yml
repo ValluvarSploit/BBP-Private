@@ -4,23 +4,21 @@ on:
 env:
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
+      MY_GIT_CONFIG: ${{ secrets.GIT_CONFIG }}
 
 jobs:
 #Github Scanning
   github-scanning:
     runs-on: ubuntu-latest
-    needs: [subdomain-enumeration]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts       
+      - uses: actions/checkout@v2     
       - name: Install Dependencies
         run: |
+         echo "stripe.com" > subdomains-resolved.txt
          chmod +x binaries/git-hound 
          mkdir ~/.githound
          echo "$MY_GIT_CONFIG" > ~/.githound/config.yml
       - name: Git-Hound
-        run: cat subdomains-resolved.txt | ./binaries/git-hound --dig-files --dig-commits --config-file ~/.githound/config.yml > githound.txt
+        run: ./binaries/git-hound --subdomain-file subdomains-resolved.txt --dig-files --dig-commits --config-file ~/.githound/config.yml > githound.txt
       - name: Send Outputs to Slack
         run: if [[ -f githound.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GitHound -F filename=githound.txt -F file=@githound.txt; fi
