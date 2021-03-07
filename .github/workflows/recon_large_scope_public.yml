@@ -30,7 +30,6 @@ jobs:
       - name: SubScraper
         run: |
          python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
-         cat fdns-local.txt >> subdomains-all.txt
       - name: Amass
         run: amass enum -passive -d "$TARGET" >> subdomains-all.txt;
       - name: Assetfinder
@@ -133,10 +132,9 @@ jobs:
       - name: Send Output to Slack
         run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
 
-#Naabu Portscan
-  naabu-ports-scan:
-    runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+  masscan-nmap-scan:
+    runs-on: ubuntu-latest    
+    needs: [subdomain-enumeration]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -144,12 +142,37 @@ jobs:
          name: subdomain-enumeration-artifacts
       - name: Install Dependencies
         run: |
-          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
-          chmod +x binaries/naabu
-      - name: Naabu
-        run: ./binaries/naabu -iL subdomains.txt > naabu-portscan.txt
-      - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
+         sudo apt-get update && sudo apt-get install nmap -y
+         pip install python-libnmap
+         sudo apt-get install git gcc make libpcap-dev
+         git clone https://github.com/robertdavidgraham/masscan
+         cd masscan && make -j && cp bin/masscan ../masscanb              
+      - name: Masscan
+        run: sudo ./masscanb -iL live-ips.txt --rate 10000 -p0-65535 -oX masscan.xml
+      - name: Nmap Scan
+        run: python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt      
+      - name: Send Output to Slack             
+        run: |           
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Masscan -F filename=masscan.xml -F file=@masscan.xml
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Scan -F filename=nmap-scan.out -F file=@nmap-masscan.txt
+
+#Naabu Portscan
+#  naabu-ports-scan:
+#    runs-on: ubuntu-latest
+#    needs: subdomain-enumeration
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/download-artifact@v2
+#        with:
+#         name: subdomain-enumeration-artifacts
+#      - name: Install Dependencies
+#       run: |
+#          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
+#          chmod +x binaries/naabu
+#      - name: Naabu
+#        run: ./binaries/naabu -iL subdomains.txt > naabu-portscan.txt
+#      - name: Send Output to Slack
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Naabu-Portscan -F filename=naabu-portscan.txt -F file=@naabu-portscan.txt
 
 
 #Collect URLs.
