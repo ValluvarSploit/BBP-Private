@@ -493,10 +493,7 @@ jobs:
         run: python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
       - name: Send Output to Slack
         run: |
-         subdomains_count=$(cat subdomains.txt | wc -w)
-         secrets_count=$(cat secrets.txt | wc -w)
-         cloud_count=$(cat cloud.txt | wc -w)
-         if [[ -f subdomains.txt ]] && [[ "$subdomains_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Subdomains -F filename=subdomainizer-subdomains.txt -F file=@subdomains.txt ; fi
-         if [[ -f cloud.txt ]] && [[ "$cloud_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Cloud -F filename=subdomainizer-cloud.txt -F file=@cloud.txt ; fi
-         if [[ -f secrets.txt ]] && [[ "$secrets_count" -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Secrets -F filename=subdomainizer-secrets.txt -F file=@secrets.txt ; fi
+         if [[ -f subdomains.txt ]] && [[ `cat subdomains.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Subdomains -F filename=subdomainizer-subdomains.txt -F file=@subdomains.txt ; fi
+         if [[ -f cloud.txt ]] && [[ `cat secrets.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Cloud -F filename=subdomainizer-cloud.txt -F file=@cloud.txt ; fi
+         if [[ -f secrets.txt ]] && [[ `cat cloud.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Secrets -F filename=subdomainizer-secrets.txt -F file=@secrets.txt ; fi
 
