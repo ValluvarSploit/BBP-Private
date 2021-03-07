@@ -2,7 +2,7 @@ name: MassDNS Resolver
 on:
   workflow_dispatch:
 env:
-     HOST: ${{ secrets.NGROK_URL }} 
+     TARGET: stripe.com
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 
@@ -13,12 +13,12 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         wget $HOST/httpx-url-valid-url-ok.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
       - name: MassDNS
         run: |
-         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt httpx-url-valid-url-ok.txt
+         sed "s/$/.$TARGET/" wordlists/bitquark-subdomains-top100000.txt > wordlist-hugh.txt
+         ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt         
          tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt 
