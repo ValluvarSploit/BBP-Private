@@ -117,31 +117,6 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=-httpx-logs -F filename=httpx.log -F file=@httpx.log
       
-  Amass-Subdomain-Enum:
-    runs-on: ubuntu-latest
-    needs: subdomain-enumeration
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts
-      - name: Install Dependencies
-        run: |
-         echo "$ALIENT_VALUT" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$CLOUDFLARE" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$FACEBOOK" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$NETWORKSDB" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$RECONDEV" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$WHOISXMLAPI" >> binaries/amass-config.ini   
-         sudo snap install amass
-      - name: Amass 
-        run: amass enum -d "$TARGET" -config binaries/amass-config.ini -o amss-out.txt
-      
 #Subdomain Takeover
   subdomain-takeover:
     runs-on: ubuntu-latest
@@ -184,7 +159,7 @@ jobs:
 #Nuclei Template Scan.
   nuclei-scan:
     runs-on: ubuntu-latest
-    needs: [subdomain-enumeration]
+    needs: subdomain-enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
