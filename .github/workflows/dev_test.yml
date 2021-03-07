@@ -2,12 +2,6 @@ name: Dev-Test
 on:
   workflow_dispatch:
 env:
-      ALIENT_VALUT: ${{ secrets.AMASS_ALIENVALUT }}
-      CLOUDFLARE: ${{ secrets.AMASS_CLOUDFLARE }}
-      FACEBOOK: ${{ secrets.AMASS_FACEBOOK }}
-      NETWORKSDB: ${{ secrets.AMASS_NETWORKSDB }}
-      RECONDEV: ${{ secrets.AMASS_RECONDEV }}
-      WHOISXMLAPI: ${{ secrets.AMASS_WHOISXMLAPI }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
