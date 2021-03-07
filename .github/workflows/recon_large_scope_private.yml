@@ -8,12 +8,6 @@ name: Recon Large Scope-Private
 on:
   workflow_dispatch:
 env:
-      ALIENT_VALUT: ${{ secrets.AMASS_ALIENVALUT }}
-      CLOUDFLARE: ${{ secrets.AMASS_CLOUDFLARE }}
-      FACEBOOK: ${{ secrets.AMASS_FACEBOOK }}
-      NETWORKSDB: ${{ secrets.AMASS_NETWORKSDB }}
-      RECONDEV: ${{ secrets.AMASS_RECONDEV }}
-      WHOISXMLAPI: ${{ secrets.AMASS_WHOISXMLAPI }}
       TARGET: ${{ secrets.PRI_LARGE_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PRI_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
@@ -22,46 +16,13 @@ env:
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 jobs:
-  Amass-Subdomain-Enum:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         echo "$ALIENT_VALUT" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$CLOUDFLARE" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$FACEBOOK" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$NETWORKSDB" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$RECONDEV" >> binaries/amass-config.ini
-         echo "" >> binaries/amass-config.ini
-         echo "$WHOISXMLAPI" >> binaries/amass-config.ini   
-         sudo snap install amass
-      - name: Amass 
-        run: amass enum -d "$TARGET" -config binaries/amass-config.ini -o amss-out.txt
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: Amass-artifacts
-         path: amss-out.txt
-      - name: Send Output to Slack
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Amass -F filename=amss-out.txt -F file=@amss-out.txt
-
   subdomain-enumeration:
     runs-on: ubuntu-latest
-    needs: Amass-Subdomain-Enum
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: Amass-artifacts           
+      - uses: actions/checkout@v2         
       - name: Install Dependencies
         run: |
-         wget $HOST/fdns-local.txt
+         wget $HOST/fdns.txt
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
@@ -72,10 +33,11 @@ jobs:
       - name: SubScraper
         run: |
          python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
-         cat fdns-local.txt >> subdomains-all.txt
-         cat amss-out.txt >> subdomains-all.txt
+         cat fdns.txt >> subdomains-all.txt
       - name: Amass
-        run: amass enum -passive -d "$TARGET" >> subdomains-all.txt;
+        run: |
+         amass enum -passive -d "$TARGET" > amass-passive.txt
+         cat amass-passive.txt >> subdomains-all.txt;
       - name: Assetfinder
         run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt;          
       - name: Findomain
