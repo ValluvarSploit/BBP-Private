@@ -31,7 +31,9 @@ jobs:
          echo "$WHOISXMLAPI" >> binaries/amass-config.ini   
          sudo snap install amass
       - name: Amass 
-        run: amass enum -d "$TARGET" -config binaries/amass-config.ini -o amss-out.txt
+        run: |
+         amass enum -d "$TARGET" -config binaries/amass-config.ini -o amss-out.txt
+         cat amss-out.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
