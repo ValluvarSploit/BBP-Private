@@ -17,8 +17,8 @@ jobs:
          GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
       - name: Git-Dorker-Users
         run: |
-         for url in $(cat git_repo_url.txt); do gitleaks --repo-url=$url > gitleaks.txt ; done;
-         
+         cp ~/go/bin/gitleaks .
+         for url in $(cat git_repo_url.txt); do ./gitleaks --repo-url=$url > gitleaks.txt ; done;
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gileaks-F filename=gitleaks.txt-F file=@gitleaks.txt
         
