@@ -3,6 +3,23 @@
 #  1. SMALL_DOMAINS
 #       example.com
 #       info.example.com
+
+#Jobs Modules:
+#http-probe
+#nuclei-scan
+#nmap-vulnerability-scan
+#nmap-udp-scan
+#url-collector
+#parameter-discovery
+#xss-hunter
+#javascript-scan
+#secrets-finder
+#directory-fuzzing
+#sensitive-files-fuzzing
+#CORS-scanner
+#sql-injection
+#gochopchop
+#Subdomainizer
 name: Recon Small Scope
 on:
   workflow_dispatch:
