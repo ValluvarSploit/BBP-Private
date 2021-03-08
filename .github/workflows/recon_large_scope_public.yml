@@ -3,6 +3,30 @@
 #  1. PUBLIC_LARGE_DOMAIN
 #       example.com
 #  2. Comment out git-dorks jobs if not required.
+
+# Jobs Modules:
+#subdomain-enumeration
+#subdomain-takeover
+#nuclei-scan
+#masscan-nmap-scan
+#url-collector
+#parameter-discovery
+#xss-hunter
+#javascript-scan
+#secrets-finder
+#directory-fuzzing
+#sensitive-files-fuzzing
+#CORS-scanner
+#heartbleed-scanner
+#sql-injection
+#s3-scanner
+#aquatone-webscreenshot
+#gochopchop
+#Subdomainizer
+#git-dorker-ORG
+#git-dorker-Users
+#git-dorker-Domain
+#eyewitness-screenshot
 name: Recon Large Scope-Public
 on:
   workflow_dispatch:
