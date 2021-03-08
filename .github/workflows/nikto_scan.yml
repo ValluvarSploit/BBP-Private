@@ -13,12 +13,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         sudo apt-get update && sudo apt-get install nikto -y
+         wget https://github.com/sullo/nikto/archive/master.zip ; unzip master.zip ;
          echo "$TARGET" > targets.txt
+         #sudo apt-get update && sudo apt-get install nikto -y
       - name: Nikto Scan
         run: |
-         for host in $(cat targets.txt) ; do nikto -h $host >> nikto-80-output.txt
-         nikto -h $host:443 >> nikto-443-output.txt
+         cd nikto-master/program
+         for host in $(cat targets.txt) ; do perl nikto.pl -host $host >> nikto-80-output.txt
+         for host in $(cat targets.txt) ; do perl nikto.pl -host $host:443 >> nikto-443-output.txt
          cat nikto-80-output.txt
          cat nikto-443-output.txt
 
