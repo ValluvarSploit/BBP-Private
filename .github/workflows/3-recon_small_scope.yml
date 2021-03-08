@@ -3,7 +3,7 @@
 #  1. SMALL_DOMAINS
 #       example.com
 #       info.example.com
-name: 3-Recon Small Scope
+name: Recon Small Scope
 on:
   workflow_dispatch:
 env:
