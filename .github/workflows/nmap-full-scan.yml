@@ -19,7 +19,7 @@ jobs:
          sudo git clone https://github.com/scipag/vulscan
          cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh
       - name: Nmap scan
-        run: nmap -Pn -sV -p443 --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -iL targets-ips.txt -oN nmap-vulnerability-scan.txt 
+        run: nmap -Pn -sV -p- --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -iL targets-ips.txt -oN nmap-vulnerability-scan.txt 
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
           
@@ -32,6 +32,6 @@ jobs:
          wget $HOST/live-ips.out -O targets-ips.txt
          sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap UDP scan
-        run: sudo nmap -Pn -sV -sU -iL targets-ips.txt -oA nmap-udp-scan
+        run: sudo nmap -Pn -sV -p- -sU -iL targets-ips.txt -oA nmap-udp-scan
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
