@@ -19,4 +19,6 @@ jobs:
         run: |
          for host in $(cat targets.txt) ; do nikto -h $host >> nikto-80-output.txt
          nikto -h $host:443 >> nikto-443-output.txt
+         cat nikto-80-output.txt
+         cat nikto-443-output.txt
 
