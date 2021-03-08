@@ -4,6 +4,30 @@
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
+#subdomain-enumeration
+#subdomain-takeover
+#nuclei-scan
+#masscan-nmap-scan
+#url-collector
+#parameter-discovery
+#xss-hunter
+#favicon-hash-extraction
+#javascript-scan
+#secrets-finder
+#directory-fuzzing
+#sensitive-files-fuzzing
+#CORS-scanner
+#heartbleed-scanner
+#sql-injection
+#s3-scanner
+#aquatone-webscreenshot
+#gochopchop
+#Subdomainizer
+#git-dorker-ORG
+#git-dorker-Users
+#git-dorker-Domain
+#eyewitness-screenshot
+#whatweb
 name: Recon Large Scope-Private
 on:
   workflow_dispatch:
