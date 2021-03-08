@@ -40,6 +40,6 @@ jobs:
          sudo chmod +x updateFiles.sh
          sudo ./updateFiles.sh
       - name: Nmap scan
-        run: nmap -Pn -sV -p443 --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oN nmap-vulners.txt stripe.com
+        run: nmap -Pn -sV -p443 --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -oN nmap-vulners.txt stripe.com
  
         
