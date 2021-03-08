@@ -271,7 +271,6 @@ jobs:
          name: http-probe-artifacts    
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains-resolved.out
          git clone https://github.com/maurosoria/dirsearch.git
       - name: Directory Fuzzing
         run: |
