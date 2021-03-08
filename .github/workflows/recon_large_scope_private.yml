@@ -562,3 +562,25 @@ jobs:
          zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
       - name: Send Output Files Slack Channel
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Web-Screenshots -F filename=web-screens.zip.xz -F file=@eyewitness_output.zip.xz
+
+  whatweb:
+    runs-on: ubuntu-latest  
+    needs: subdomain-enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+      - name: Install Dependencies
+        run: |
+         git clone https://github.com/urbanadventurer/WhatWeb.git
+         sudo gem install bundler
+         cd WhatWeb/ && bundle install    
+      - name: Whatweb
+        run: |
+         cat subdomains-resolved.txt | cut -d "/" -f 3 > WhatWeb/targets.txt
+         cd WhatWeb/
+         ./whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
+         cp whatweb-logs.json ../  
+      - name: Send Outputs to Slack Channel     
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Whatweb-Results -F filename="$TARGET"-whatweb-logs.txt -F file=@whatweb-logs.json
