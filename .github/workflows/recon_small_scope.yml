@@ -51,7 +51,7 @@ jobs:
           subdomains-resolved-url.txt 
           subdomains-resolved-host.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Scopes -F filename=subdomains-resolved.txt -F file=@subdomains-resolved-url.txt; fi
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Scopes -F filename=subdomains-resolved.txt -F file=@subdomains-resolved-url.txt
          
 #Nuclei Template Scan.
   nuclei-scan:
