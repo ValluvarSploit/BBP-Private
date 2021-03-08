@@ -17,7 +17,7 @@ jobs:
          sudo git clone https://github.com/scipag/vulscan
          cd vulscan/utilities/updater/
          chmod +x updateFiles.sh
-         ./updateFiles.sh
+         sudo ./updateFiles.sh
        #sudo git clone https://github.com/scipag/vulscan scipag_vulscan 
        #sudo ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
       - name: Nmap scan
