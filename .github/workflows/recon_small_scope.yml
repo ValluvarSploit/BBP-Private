@@ -123,8 +123,8 @@ jobs:
         run: cd binaries; chmod +x waybackurls gau; cd ..
       - name: waybackurls & gau
         run: |
-         for domain in $(cat subdomains-resolved-host.txt) ; do ./binaries/waybackurls "$domain" >> waybackurls.txt ;
-         for domain in $(cat subdomains-resolved-host.txt) ; do ./binaries/gau "$domain" >> gau.txt ;
+         for domain in $(cat subdomains-resolved-host.txt) ; do ./binaries/waybackurls "$domain" >> waybackurls.txt ; done;
+         for domain in $(cat subdomains-resolved-host.txt) ; do ./binaries/gau "$domain" >> gau.txt ; done;
          cat gau.txt | sort -u >> waybackurls.txt
       - name: Patterns
         run: |
