@@ -6,23 +6,23 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
 
 jobs:
-  nmap-vulnscan:
-    runs-on: ubuntu-latest    
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         sudo apt-get update && sudo apt-get install nmap -y
-         cd /usr/share/nmap/scripts
-         sudo git clone https://github.com/scipag/vulscan
-         cd vulscan/utilities/updater/
-         sudo chmod +x updateFiles.sh
-         sudo ./updateFiles.sh
-       #sudo git clone https://github.com/scipag/vulscan scipag_vulscan 
-       #sudo ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
-      - name: Nmap scan
-        run: |
-         nmap -Pn -sV -p443 --script vulscan -oN nmap-vulnscan.txt stripe.com
-       #nmap -Pn -sV -p443 --script=vulscan/vulscan.nse -iL targets-ips.txt -oN nmap-vulnscan.txt
+  #  nmap-vulnscan:
+  #    runs-on: ubuntu-latest    
+  #    steps:
+  #      - uses: actions/checkout@v2
+  #      - name: Install Dependencies
+  #        run: |
+  #         sudo apt-get update && sudo apt-get install nmap -y
+  #         cd /usr/share/nmap/scripts
+  #         sudo git clone https://github.com/scipag/vulscan
+  #         cd vulscan/utilities/updater/
+  #         sudo chmod +x updateFiles.sh
+  #         sudo ./updateFiles.sh
+  #       #sudo git clone https://github.com/scipag/vulscan scipag_vulscan 
+  #       #sudo ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
+  #      - name: Nmap scan
+  #        run: |
+  #         nmap -Pn -sV -p443 --script vulscan -oN nmap-vulnscan.txt stripe.com
+  #       #nmap -Pn -sV -p443 --script=vulscan/vulscan.nse -iL targets-ips.txt -oN nmap-vulnscan.txt
 
         
