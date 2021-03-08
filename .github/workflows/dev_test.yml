@@ -4,21 +4,25 @@ on:
 env:
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.PUBLIC_SLACK_CHANNEL_NAME }}
-      MY_GIT_CONFIG: ${{ secrets.GIT_CONFIG }}
 
 jobs:
-#Github Scanning
-  github-scanning:
-    runs-on: ubuntu-latest
+  nmap-vulnscan:
+    runs-on: ubuntu-latest    
     steps:
-      - uses: actions/checkout@v2     
+      - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         echo "stripe.com" > subdomains-resolved.txt
-         chmod +x binaries/git-hound 
-         mkdir ~/.githound
-         echo "$MY_GIT_CONFIG" > ~/.githound/config.yml
-      - name: Git-Hound
-        run: ./binaries/git-hound --subdomain-file subdomains-resolved.txt --dig-files --dig-commits --config-file ~/.githound/config.yml > githound.txt
-      - name: Send Outputs to Slack
-        run: if [[ -f githound.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GitHound -F filename=githound.txt -F file=@githound.txt; fi
+         sudo apt-get update && sudo apt-get install nmap -y
+         cd /usr/share/nmap/scripts
+         sudo git clone https://github.com/scipag/vulscan
+         cd vulscan/utilities/updater/
+         chmod +x updateFiles.sh
+         ./updateFiles.sh
+       #sudo git clone https://github.com/scipag/vulscan scipag_vulscan 
+       #sudo ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan
+      - name: Nmap scan
+        run: |
+         nmap -Pn -sV -p443 --script vulscan -oN nmap-vulnscan.txt stripe.com
+       #nmap -Pn -sV -p443 --script=vulscan/vulscan.nse -iL targets-ips.txt -oN nmap-vulnscan.txt
+
+        
