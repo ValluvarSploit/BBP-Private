@@ -17,7 +17,6 @@ jobs:
          GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
       - name: Git-Dorker-Users
         run: |
-         find / -name gitleaks
          for url in $(cat git_repo_url.txt); do gitleaks --repo-url=$url > gitleaks.txt ; done;
          
       - name: Send Output to Slack
