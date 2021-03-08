@@ -20,6 +20,7 @@
 #sql-injection
 #gochopchop
 #Subdomainizer
+#nikto-scan
 name: Recon Small Scope
 on:
   workflow_dispatch:
@@ -122,9 +123,8 @@ jobs:
         run: cd binaries; chmod +x waybackurls gau; cd ..
       - name: waybackurls & gau
         run: |
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > target.txt
-         for domain in $(cat target.txt) ; do ./binaries/waybackurls "$domain" >> waybackurls.txt ;
-         for domain in $(cat target.txt) ; do ./binaries/gau "$domain" >> gau.txt ;
+         for domain in $(cat subdomains-resolved-host.txt) ; do ./binaries/waybackurls "$domain" >> waybackurls.txt ;
+         for domain in $(cat subdomains-resolved-host.txt) ; do ./binaries/gau "$domain" >> gau.txt ;
          cat gau.txt | sort -u >> waybackurls.txt
       - name: Patterns
         run: |
@@ -162,7 +162,7 @@ jobs:
          git clone https://github.com/devanshbatham/ParamSpider
          cd ParamSpider; pip3 install -r requirements.txt; cd ..
       - name: ParamSpider
-        run: for url in $(cat subdomains-resolved.txt); do python3 ParamSpider/paramspider.py -d "$url" -l high --exclude woff,css,js,png,svg,php,jpg >> paramspider.txt; done ;
+        run: for url in $(cat subdomains-resolved-url.txt); do python3 ParamSpider/paramspider.py -d "$url" -l high --exclude woff,css,js,png,svg,php,jpg >> paramspider.txt; done ;
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -203,11 +203,11 @@ jobs:
          wget https://gist.githubusercontent.com/KathanP19/d2cda2f99c0b60d64b76ee6039b37e47/raw/eb105a4de06502b2732df9d682c61189c3703685/jsvar.sh
       - name: Javascript Scan
         run: |
-         for url in $(cat subdomains-resolved.txt); do echo "$url" | ./binaries/gau | grep -iE "\.js$" | sort -u >> js-file-links.txt; done;
-         for url in $(cat subdomains-resolved.txt); do echo "$url" | ./binaries/subjs >> js-file-links.txt; done;
-         for url in $(cat subdomains-resolved.txt); do echo "$url" | ./binaries/hakrawler -js -depth 2 -scope subs -plain >> js-file-links.txt; done;
+         for url in $(cat subdomains-resolved-url.txt); do echo "$url" | ./binaries/gau | grep -iE "\.js$" | sort -u >> js-file-links.txt; done;
+         for url in $(cat subdomains-resolved-url.txt); do echo "$url" | ./binaries/subjs >> js-file-links.txt; done;
+         for url in $(cat subdomains-resolved-url.txt); do echo "$url" | ./binaries/hakrawler -js -depth 2 -scope subs -plain >> js-file-links.txt; done;
          cat js-file-links.txt | ./binaries/httpx -follow-redirects -silent -status-code | grep "[200]" | cut -d ' ' -f1 | sort -u > js-file-links-live.txt;
-         for url in $(cat subdomains-resolved.txt); do python3 LinkFinder/linkfinder.py -d -i "$url" -o cli >> js-endpoints.txt; done;
+         for url in $(cat subdomains-resolved-url.txt); do python3 LinkFinder/linkfinder.py -d -i "$url" -o cli >> js-endpoints.txt; done;
          cat js-file-links-live.txt | python3 getjswords.py | sort -u > js-words.txt;
          cat js-file-links-live.txt | while read url ; do bash jsvar.sh $url | sort -u | tee js-xss.txt ; done;
       - name: Send Outputs to Slack
@@ -233,7 +233,7 @@ jobs:
          cd SecretFinder; pip3 install -r requirements.txt
       - name: Secrets Finder
         run: |
-         cat subdomains-resolved.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
+         cat subdomains-resolved-url.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
          cat secret-finder.txt | grep 'google_api' -B 1 | sort -u > gmapapi.txt;
       - name: Send Outputs to Slack
         run: |
@@ -255,7 +255,7 @@ jobs:
          wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
       - name: Directory Fuzzing
         run: |
-         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
+         python3 dirsearch/dirsearch.py -l subdomains-resolved-url.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
          zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
       - name: Send Outputs to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
@@ -275,7 +275,7 @@ jobs:
          git clone https://github.com/maurosoria/dirsearch.git
       - name: Directory Fuzzing
         run: |
-         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
+         python3 dirsearch/dirsearch.py -l subdomains-resolved-url.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
          zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
       - name: Send Outputs to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
@@ -296,7 +296,7 @@ jobs:
          git clone https://github.com/chenjj/CORScanner.git
          sudo pip3 install -r CORScanner/requirements.txt
       - name: CORS Scanner
-        run: python3 CORScanner/cors_scan.py -i subdomains-resolved.txt -t 200 > cors.txt;
+        run: python3 CORScanner/cors_scan.py -i subdomains-resolved-url.txt -t 200 > cors.txt;
       - name: Send Outputs to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
 
@@ -332,7 +332,7 @@ jobs:
          wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
       - name: GoChopChop
         run: |
-         ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
+         ./binaries/gochopchop scan --url-file subdomains-resolved-url.txt --export json --export-filename gochopchop-out
          zip gochopchop-out.json.zip gochopchop-out.json
       - name: Send Output to Slack
         run: if [[ -f gochopchop-out.json.zip ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoChopChop -F filename=gochopchop-out.json.zip -F file=@gochopchop-out.json.zip; fi;
@@ -351,7 +351,25 @@ jobs:
          git clone https://github.com/nsonaniya2010/SubDomainizer.git && pip3 install -r SubDomainizer/requirements.txt            
       - name: Subdomanizer
         run: |
-         python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
+         python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved-url.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
          zip subdomanizer.zip cloud.txt secrets.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer -F filename=subdomanizer.zip -F file=@subdomanizer.zip
+
+  nikto-scan:
+    runs-on: ubuntu-latest
+    needs: http-probe
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: http-probe-artifacts 
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install nikto -y
+      - name: Nikto Scan
+        run: |
+         for host in $(cat subdomains-resolved-host.txt) ; do nikto -host $host >> nikto-80-output.txt; done;
+         for host in $(cat subdomains-resolved-host.txt) ; do nikto -host $host:443 >> nikto-443-output.txt; done;
+         zip nikto-scan.zip nikto-80-output.txt nikto-443-output.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto-Scan -F filename=nikto-scan.zip -F file=@nikto-scan.zip
