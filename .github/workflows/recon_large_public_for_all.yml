@@ -27,7 +27,7 @@
 #git-dorker-Users
 #git-dorker-Domain
 #eyewitness-screenshot
-name: Recon Large Scope-Public
+name: Recon Large Scope For All-Public
 on:
   workflow_dispatch:
 env:
