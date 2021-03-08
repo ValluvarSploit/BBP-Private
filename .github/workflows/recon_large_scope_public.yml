@@ -481,7 +481,6 @@ jobs:
 
   git-dorker-Domain:
     runs-on: ubuntu-latest 
-    needs: git-dorker-Users
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
