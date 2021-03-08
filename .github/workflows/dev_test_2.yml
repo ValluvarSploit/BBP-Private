@@ -14,6 +14,7 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$TARGET_GIT_REPO_URLS" > git_repo_url.txt
+         GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
       - name: Git-Dorker-Users
         run: |
          find / -name gitleaks
