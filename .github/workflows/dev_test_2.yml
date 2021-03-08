@@ -1,0 +1,24 @@
+name: Dev-Test-2
+on:
+  workflow_dispatch:
+env:
+       TARGET_DOMAIN: ${{ secrets.TARGET_GITHUB_DOMAIN }}
+       TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
+       TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
+       GITHUB_TOKEN: ${{ secrets.TOKEN }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
+jobs:
+  git-repo-enum:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $HOST/git_repo_url.txt
+         chmod +x binaries/trufflehog 
+      - name: Git-Dorker-Users
+        run: for repo in $(cat git_repo_url.txt); do ./trufflehog --regex $repo >> git-trufflehog.txt ; done ;
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_ORG"-Git-Repo-Enum -F filename=git-trufflehog.txt -F file=@git-trufflehog.txt
+        
