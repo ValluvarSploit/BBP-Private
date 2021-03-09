@@ -11,7 +11,21 @@ env:
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
      XSS_HUNTER_TOKEN: ${{ secrets.XSS_HUNTER }}
-jobs:               
+jobs:     
+  kxss:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2       
+      - name: Install Dependencies
+        run: |
+         wget $HOST/xss-parameter.txt
+         chmod +x binaries/kxss     
+      - name: KXSS
+        run: cat xss-parameter.txt | kxss | cut -d " " -f 9 > kxss-url.txt
+      - name: Send Outputs to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS -F filename=kxss-url.txt -F file=@kxss-url.txt
+
+
   xss-hunter:
     runs-on: ubuntu-latest
     steps:
