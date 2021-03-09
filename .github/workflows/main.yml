@@ -1,0 +1,24 @@
+name: Dev-Test-2
+on:
+  workflow_dispatch:
+env:
+       TARGET: stripe.com
+       TARGET_GIT_REPO_URLS: ${{ secrets.GIT_REPO_URLS }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
+jobs:
+  git-repo-enum:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         echo "$TARGET_GIT_REPO_URLS" > git_repo_url.txt
+         GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
+      - name: Git-Dorker-Users
+        run: |
+         cat git_repo_url.txt
+         cp ~/go/bin/gitleaks .
+         for url in $(cat git_repo_url.txt); do ./gitleaks --repo-url=$url > gitleaks.txt ; done;
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gileaks-F filename=gitleaks.txt-F file=@gitleaks.txt
