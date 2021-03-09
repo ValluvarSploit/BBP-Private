@@ -33,11 +33,5 @@ jobs:
       - name: Amass 
         run: |
          amass enum -d "$TARGET" -config binaries/amass-config.ini -o amss-out.txt
-         cat amss-out.txt
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: Amass-artifacts
-         path: amss-out.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Amass -F filename=amss-out.txt -F file=@amss-out.txt
