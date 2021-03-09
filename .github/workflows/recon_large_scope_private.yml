@@ -1,18 +1,7 @@
-#Important Note:
-# Before running this action, make sure you updated following secrets variables in settings.
 #  1. PUBLIC_DOMAIN
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
-#  3. SLACK_WEBHOOK_PRIVATE
-
-#Job Moduels:
-#subdomain-enumeration
-#subdomain-takeover
-#nuclei-scan
-#masscan-nmap-scan
-#url-collector
-#parameter-discovery
 name: Recon Large Scope-Private
 on:
   workflow_dispatch:
