@@ -12,18 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads
-         go get -u github.com/tomnomnom/waybackurls
-         go get -u github.com/tomnomnom/gf
-         mkdir ~/.gf; cp -r ~/Downloads/src/github.com/tomnomnom/gf/examples ~/.gf
-         git clone https://github.com/1ndianl33t/Gf-Patterns
-         mv Gf-Patterns/*.json ~/.gf
-         echo "https://google.com/images?url=bingo.com" > urls.txt
-      - name: Git-Dorker-Users
-        run: |
-         cp ~/Downloads/bin/gf .
-         cat urls.txt | ./gf ssrf | tee -a ssfrparams.txt
-         cat ssfrparams.txt
+        run: bignobbgb
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Patterns -F filename=ssfrparams.txt -F file=@ssfrparams.txt
+        if: job.failure
+        run: echo bingo
