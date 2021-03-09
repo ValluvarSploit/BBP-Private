@@ -194,6 +194,7 @@ jobs:
          git clone https://github.com/1ndianl33t/Gf-Patterns
          mv Gf-Patterns/*.json ~/.gf
          cp ~/Downloads/bin/gf . ; cp ~/Downloads/bin/waybackurls .
+         chmod +x binaries/gau
       - name: waybackurls & gau
         run: |
          ./waybackurls "$TARGET" > waybackurls.txt 
@@ -232,14 +233,14 @@ jobs:
          cd ParamSpider; pip3 install -r requirements.txt; cd ..
       - name: ParamSpider
         run: |
-         python3 ParamSpider/paramspider.py -d "$TARGET" -l high -o paramspider.txt --exclude woff,css,js,png,svg,php,jpg;
+         python3 ParamSpider/paramspider.py -d "$TARGET" -l high --exclude woff,css,js,png,svg,php,jpg > paramspider.txt;
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: paramspider-artifacts
-         path: output/paramspider.txt 
+         path: paramspider.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Parameter-Discovery -F filename=paramspider.txt -F file=@output/paramspider.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Parameter-Discovery -F filename=paramspider.txt -F file=@paramspider.txt
          
 #XSS Automation
   xss-hunter:
