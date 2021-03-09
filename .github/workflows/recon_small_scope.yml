@@ -69,7 +69,7 @@ jobs:
       - name: Nmap scan
         run: nmap -Pn -sV -p- --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -iL subdomains-resolved-host.txt -oN nmap-vulnerability-scan.txt 
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
 
 #NMAP UDP Full Scan
   nmap-udp-scan:
@@ -85,7 +85,7 @@ jobs:
       - name: Nmap UDP scan
         run: sudo nmap -Pn -sV -p- -sU -iL subdomains-resolved-host.txt -oA nmap-udp-scan
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
 
 #Collect URLs.
   url-collector:
@@ -242,7 +242,7 @@ jobs:
          python3 dirsearch/dirsearch.py -l subdomains-resolved-url.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
          zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
 
 #Fuzz Sensitive Files
   sensitive-files-fuzzing:
@@ -281,7 +281,7 @@ jobs:
       - name: CORS Scanner
         run: python3 CORScanner/cors_scan.py -i subdomains-resolved-url.txt -t 200 > cors.txt;
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
 
   sql-injection:
     runs-on: ubuntu-latest   
