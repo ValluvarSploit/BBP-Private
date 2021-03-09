@@ -32,6 +32,6 @@ jobs:
          sudo snap install amass
       - name: Amass 
         run: |
-         amass enum -d "$TARGET" -config binaries/amass-config.ini -o amss-out.txt
+         amass enum -d "$TARGET" -config binaries/amass-config.ini -o amass-key.out
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass -F filename=amss-out.txt -F file=@amss-out.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Key -F filename=amass-key.out -F file=@amass-key.out
