@@ -23,10 +23,6 @@
 #aquatone-webscreenshot
 #gochopchop
 #Subdomainizer
-#git-dorker-ORG
-#git-dorker-Users
-#git-dorker-Domain
-#eyewitness-screenshot
 name: Recon Large Scope For All-Public
 on:
   workflow_dispatch:
@@ -481,18 +477,3 @@ jobs:
          if [[ -f subdomains.txt ]] && [[ `cat subdomains.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer-Subdomains -F filename=subdomainizer-subdomains.txt -F file=@subdomains.txt ; fi
          if [[ -f cloud.txt ]] && [[ `cat secrets.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer-Cloud -F filename=subdomainizer-cloud.txt -F file=@cloud.txt ; fi
          if [[ -f secrets.txt ]] && [[ `cat cloud.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer-Secrets -F filename=subdomainizer-secrets.txt -F file=@secrets.txt ; fi
-
-  git-dorker-Domain:
-    runs-on: ubuntu-latest 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         sudo apt-get install python3-setuptools
-         git clone https://github.com/obheda12/GitDorker.git
-         pip3 install -r GitDorker/requirements.txt 
-      - name: Git-Dorker-Domain
-        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET"  --token "$GITHUB_TOKEN" -o git-dorker-Domain      
-      - name: Send Output Files Slack Channel
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitdorker-Domain -F filename=git-dorker-Domain.csv -F file=@git-dorker-Domain_gh_dorks.csv   
-
