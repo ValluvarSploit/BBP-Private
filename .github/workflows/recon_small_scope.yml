@@ -1,34 +1,11 @@
-#Important Note:
-# Before running this action, make sure you updated following secrets variables in settings.
-#  1. SMALL_DOMAINS
-#       example.com
-#       info.example.com
-
-#Jobs Modules:
-#http-probe
-#nuclei-scan
-#nmap-vulnerability-scan
-#nmap-udp-scan
-#url-collector
-#parameter-discovery
-#xss-hunter
-#javascript-scan
-#secrets-finder
-#directory-fuzzing
-#sensitive-files-fuzzing
-#CORS-scanner
-#sql-injection
-#gochopchop
-#Subdomainizer
-#nikto-scan
 name: Recon Small Scope
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.SMALL_DOMAINS }}
+      TARGET: ${{ secrets.DOMAIN_SMALL_PUBLIC }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_SMALL_NAME }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SMALL }}
 jobs:
   http-probe:
     runs-on: ubuntu-latest
