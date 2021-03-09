@@ -14,5 +14,5 @@ jobs:
       - name: Install Dependencies
         run: bignobbgb
       - name: Send Output to Slack
-        if: failure()
+        if: success()
         run: echo bingo
