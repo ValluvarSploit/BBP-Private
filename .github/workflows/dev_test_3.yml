@@ -1,0 +1,29 @@
+name: Dev-Test-3
+on:
+  workflow_dispatch:
+env:
+       TARGET: stripe.com
+       TARGET_GIT_REPO_URLS: ${{ secrets.GIT_REPO_URLS }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
+jobs:
+  gf-patterns:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads
+         go get -u github.com/tomnomnom/waybackurls
+         go get -u github.com/tomnomnom/gf
+         echo 'source ~/Downloads/src/github.com/tomnomnom/gf/gf-completion.bash' >> ~/.bashrc
+         source ~/.bashrc
+         mkdir ~/.gf
+         cp -r ~/Downloads/src/github.com/tomnomnom/gf/examples ~/.gf
+         git clone https://github.com/1ndianl33t/Gf-Patterns
+         mv ~/Gf-Patterns/*.json ~/.gf
+         echo "https://google.com/images?url=bingo.com" > urls.txt
+      - name: Git-Dorker-Users
+        run: cat urls.txt | gf ssrf | tee -a ssfrparams.txt
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Patterns -F filename=ssfrparams.txt -F file=@ssfrparams.txt
