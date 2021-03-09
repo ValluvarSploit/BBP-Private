@@ -8,9 +8,9 @@ env:
       NETWORKSDB: ${{ secrets.AMASS_NETWORKSDB }}
       RECONDEV: ${{ secrets.AMASS_RECONDEV }}
       WHOISXMLAPI: ${{ secrets.AMASS_WHOISXMLAPI }}
-      TARGET: ${{ secrets.PRI_LARGE_DOMAIN }}
+      TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PUBLIC }}
 jobs:
   Amass-Subdomain-Enum:
     runs-on: ubuntu-latest
