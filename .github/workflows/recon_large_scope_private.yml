@@ -412,6 +412,7 @@ jobs:
          name: subdomain-enumeration-artifacts 
       - name: Install Dependencies
         run: |
+         sudo apt-get install python3-setuptools
          cat subdomains-resolved.txt | cut -d "/" -f 3 > targets-1.txt
          mkdir ~/.aws
          echo "$AWS_CREDS" > ~/.aws/credentials
