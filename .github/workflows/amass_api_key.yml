@@ -8,7 +8,7 @@ env:
       NETWORKSDB: ${{ secrets.AMASS_NETWORKSDB }}
       RECONDEV: ${{ secrets.AMASS_RECONDEV }}
       WHOISXMLAPI: ${{ secrets.AMASS_WHOISXMLAPI }}
-      TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
+      TARGET: ${{ secrets.DOMAIN_LARGE_PUBLIC }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PUBLIC }}
 jobs:
