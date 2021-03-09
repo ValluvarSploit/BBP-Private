@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 env:
      TARGET_DOMAIN: ${{ secrets.PRI_LARGE_DOMAIN }}
+     HOST: ${{ secrets.NGROK_URL }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
      XSS_HUNTER_TOKEN: ${{ secrets.XSS_HUNTER }}
