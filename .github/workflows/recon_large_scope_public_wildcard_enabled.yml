@@ -10,19 +10,7 @@
 #nuclei-scan
 #masscan-nmap-scan
 #url-collector
-#parameter-discovery
-#xss-hunter
-#javascript-scan
-#secrets-finder
-#directory-fuzzing
-#sensitive-files-fuzzing
-#CORS-scanner
-#heartbleed-scanner
-#sql-injection
-#s3-scanner
-#aquatone-webscreenshot
-#gochopchop
-#Subdomainizer
+
 name: Recon Large Scope-Wildcard-Public
 on:
   workflow_dispatch:
