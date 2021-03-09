@@ -34,7 +34,7 @@ name: Recon Large Scope-Private
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.PRI_LARGE_DOMAIN }}
+      TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
       EXCLUDE_HOST: ${{ secrets.PRI_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
@@ -43,7 +43,7 @@ env:
       GIT_ORG: ${{ secres.TARGET_GITHUB_ORG }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PRIVATE }}
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
 jobs:
   subdomain-enumeration:
