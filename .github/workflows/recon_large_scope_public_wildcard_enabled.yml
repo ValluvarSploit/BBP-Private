@@ -23,7 +23,7 @@
 #aquatone-webscreenshot
 #gochopchop
 #Subdomainizer
-name: Recon Large Scope-Public
+name: Recon Large Scope-Wildcard-Public
 on:
   workflow_dispatch:
 env:
