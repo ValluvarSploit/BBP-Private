@@ -197,7 +197,7 @@ jobs:
       - name: waybackurls & gau
         run: |
          ./waybackurls "$TARGET" > waybackurls.txt 
-         ./gau "$TARGET" > gau.txt
+         ./binaries/gau "$TARGET" > gau.txt
          cat gau.txt | sort -u >> waybackurls.txt
       - name: Patterns
         run: |
