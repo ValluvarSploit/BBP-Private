@@ -24,6 +24,9 @@ jobs:
          mv Gf-Patterns/*.json ~/.gf
          echo "https://google.com/images?url=bingo.com" > urls.txt
       - name: Git-Dorker-Users
-        run: cat urls.txt | gf ssrf | tee -a ssfrparams.txt
+        run: |
+         cp ~/Downloads/bin/gf .
+         cat urls.txt | ./gf ssrf | tee -a ssfrparams.txt
+         cat ssfrparams.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Patterns -F filename=ssfrparams.txt -F file=@ssfrparams.txt
