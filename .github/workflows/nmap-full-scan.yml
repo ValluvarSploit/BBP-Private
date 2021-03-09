@@ -2,9 +2,10 @@ name: NMAP Full Scan
 on:
   workflow_dispatch:
 env:         
-      HOST: ${{ secrets.NGROK_URL }}
+      TARGET: ${{ secrets.PRI_LARGE_DOMAIN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}  
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+      DOMAIN_IP_LIST: ${{ secrets.DOMAIN_IP_LIST }}
 jobs:
   nmap-vulnerability-scan:
     runs-on: ubuntu-latest    
@@ -12,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/live-ips.out -O targets-ips.txt
+         echo "$DOMAIN_IP_LIST" targets-ips.txt
          sudo apt-get update && sudo apt-get install nmap -y
          cd /usr/share/nmap/scripts/
          sudo git clone https://github.com/vulnersCom/nmap-vulners.git
@@ -29,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/live-ips.out -O targets-ips.txt
+         echo "$DOMAIN_IP_LIST" targets-ips.txt
          sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap UDP scan
         run: sudo nmap -Pn -sV -p- -sU -iL targets-ips.txt -oA nmap-udp-scan
