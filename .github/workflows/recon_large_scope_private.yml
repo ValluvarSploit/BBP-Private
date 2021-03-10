@@ -96,6 +96,7 @@ jobs:
          name: subdomain-enumeration-artifacts
       - name: Install Dependencies
         run: |
+         touch subjack-logs.txt;
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          cd binaries; chmod +x subjack subzy nuclei; cd ..
          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
