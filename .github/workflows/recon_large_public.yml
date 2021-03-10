@@ -39,7 +39,7 @@ jobs:
         run: |
          ./binaries/subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
          echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
-         cat fdns.txt >> subdomains-all.txt
+       #cat fdns.txt >> subdomains-all.txt
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" wordlists/subdomain-wordlists.txt > wordlist-hugh.txt
