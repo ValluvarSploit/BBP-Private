@@ -83,7 +83,7 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-Hosts -F filename=live-hosts.out -F file=@live-hosts.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=httpx-logs -F filename=httpx.log -F file=@httpx.log
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-All -F filename=massdns-output.txt.zip -F file=@massdns-output.txt.zip
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-All -F filename=massdns-output.txt.zip.xz -F file=@massdns-output.txt.zip.xz
 
 #Subdomain Takeover
   subdomain-takeover:
