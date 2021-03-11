@@ -21,7 +21,9 @@ jobs:
         run: |
          xz -d wordlists/subdomains-w1.txt.xz
          xz -d wordlists/subdomains-w2.txt.xz
-         cat subdomains-w2.txt subdomains-w1.txt >> subdomain-wordlists.txt
+         cat wordlists/subdomains-w2.txt wordlists/subdomains-w1.txt >> subdomain-wordlists.txt
+         wc -l subdomain-wordlists.txt
+         ls -l subdomain-wordlists.txt
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
