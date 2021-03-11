@@ -1,4 +1,4 @@
-#  1. PUBLIC_DOMAIN
+#  1. DOMAIN_LARGE_PRIVATE
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
@@ -18,7 +18,7 @@ env:
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PRIVATE }}
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
 jobs:
-  subdomain-enumeration:
+  Subdomain-Enumeration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2         
@@ -86,9 +86,9 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-All -F filename=massdns-output.txt.zip.xz -F file=@massdns-output.txt.zip.xz
 
 #Subdomain Takeover
-  subdomain-takeover:
+  Subdomain-Takeover:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -126,9 +126,9 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomain-Takeover-Logs -F filename=sto.log -F file=@sto.log
       
 #Nuclei Template Scan.
-  nuclei-scan:
+  Nuclei-Template-Scan:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -145,9 +145,9 @@ jobs:
       - name: Send Output to Slack
         run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
 
-  masscan-nmap-scan:
+  Mass-Nmap-Scan:
     runs-on: ubuntu-latest    
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -174,9 +174,9 @@ jobs:
          name: nmap-output
          path: nmap-masscan.txt
 
-  nmap-vulnerability-scan:
+  Nmap-Vulnerability-Scan:
     runs-on: ubuntu-latest    
-    needs: masscan-nmap-scan
+    needs: Mass-Nmap-Scan
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -196,9 +196,9 @@ jobs:
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
           
-  nmap-udp-scan:
+  Nmap-UDP-Scan:
     runs-on: ubuntu-latest    
-    needs: [subdomain-enumeration,masscan-nmap-scan]
+    needs: [Subdomain-Enumeration,Mass-Nmap-Scan]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -212,7 +212,7 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
 
 #Collect URLs.
-  url-collector:
+  URL-Enumeration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -225,10 +225,11 @@ jobs:
          git clone https://github.com/1ndianl33t/Gf-Patterns
          mv Gf-Patterns/*.json ~/.gf
          cp ~/Downloads/bin/gf . ; cp ~/Downloads/bin/waybackurls .
+         chmod +x binaries/gau
       - name: waybackurls & gau
         run: |
          ./waybackurls "$TARGET" > waybackurls.txt 
-         ./gau "$TARGET" > gau.txt
+         ./binaries/gau "$TARGET" > gau.txt
          cat gau.txt | sort -u >> waybackurls.txt
       - name: Patterns
         run: |
@@ -253,7 +254,7 @@ jobs:
 
 
 #Parameter Discovery
-  parameter-discovery:
+  Parameter-Discovery:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -272,9 +273,9 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Parameter-Discovery -F filename=paramspider.txt -F file=@output/paramspider.txt
          
 #XSS Automation
-  xss-hunter:
+  XSS-Hunter:
     runs-on: ubuntu-latest
-    needs: parameter-discovery
+    needs: Parameter-Discovery
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -285,12 +286,10 @@ jobs:
       - name: Dalfox
         run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file paramspider.txt > xss-vulnerable-urls.txt
       - name: Send Outputs to Slack
-        run: |
-         if [[ -f xss-vulnerable-urls.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=XSS -F filename=xss-vulnerable-urls.txt -F file=@xss-vulnerable-urls.txt; fi
-
+        run: if [[ -f xss-vulnerable-urls.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=XSS -F filename=xss-vulnerable-urls.txt -F file=@xss-vulnerable-urls.txt; fi
 
 #FavIcon Hash Extraction
-  favicon-hash-extraction:
+  Favicon-Hash-Extraction:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2      
@@ -307,7 +306,7 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=FaviHash -F filename=favihash.txt -F file=@favihash.txt;
 
 #Javascript Scan
-  javascript-scan:
+  Javascript-Scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2      
@@ -336,9 +335,9 @@ jobs:
          if [[ -f js-xss.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=JS-XSS -F filename=js-xss.txt -F file=@js-xss.txt; fi;
 
 #Secrets Finder
-  secrets-finder:
+  Secrets-Finder:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -359,9 +358,9 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Gmap-api -F filename=gmapapi.txt -F file=@gmapapi.txt
 
 #Directory Fuzzing
-  directory-fuzzing:
+  Directory-Fuzz:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -379,9 +378,9 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
 
 #Dirsearch sensitive files
-  sensitive-files-fuzzing:
+  File-Fuzz:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -397,9 +396,9 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Sensitive-File-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
 
 #CORS Scanner
-  CORS-scanner:
+  CORS-Scanner:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -417,9 +416,9 @@ jobs:
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=CORS-Scanner -F filename=cors.txt -F file=@cors.txt
 
 #HeartBleed Scanner
-  heartbleed-scanner:
+  Heartbleed-Scanner:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -428,9 +427,9 @@ jobs:
       - name: HeartBleed Scan
         run: cat subdomains-resolved.txt | while read line ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe; done
 
-  sql-injection:
+  SQL-Injection:
     runs-on: ubuntu-latest   
-    needs: url-collector      
+    needs: URL-Enumeration      
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -446,9 +445,9 @@ jobs:
       - name: Send Files to Slack Channel            
         run: if [[ ! -z $(ls -A sqlmap-output) ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip; fi 
 
-  s3-scanner:
+  S3-Scanner:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -477,9 +476,9 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=S3-Scanner-2 -F filename=buckets-2.txt -F file=@buckets-2.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=S3-Scanner-3 -F filename=buckets-3.txt -F file=@buckets-3.txt
          
-  aquatone-webscreenshot:
+  Aquatone-Webshot:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -495,9 +494,9 @@ jobs:
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Aquatone-Webscreenshot -F filename=aquatone.zip.xz -F file=@aquatone-output.zip.xz     
     
-  gochopchop:
+  Gochopchop-Scan:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -516,7 +515,7 @@ jobs:
     
   Subdomainizer:
     runs-on: ubuntu-latest              
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -534,7 +533,7 @@ jobs:
          if [[ -f cloud.txt ]] && [[ `cat secrets.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Cloud -F filename=subdomainizer-cloud.txt -F file=@cloud.txt ; fi
          if [[ -f secrets.txt ]] && [[ `cat cloud.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Secrets -F filename=subdomainizer-secrets.txt -F file=@secrets.txt ; fi
 
-  git-dorker-ORG:
+  Git-Dorker-ORG:
     runs-on: ubuntu-latest               
     steps:
       - uses: actions/checkout@v2
@@ -548,9 +547,9 @@ jobs:
       - name: Send Output Files Slack Channel
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_ORG"-Gitdorker-ORG -F filename=git-dorker-org.csv -F file=@git-dorker-org_gh_dorks.csv
         
-  eyewitness-screenshot:
+  Eyewitness-Webshot:
     runs-on: ubuntu-latest
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -566,9 +565,9 @@ jobs:
       - name: Send Output Files Slack Channel
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Web-Screenshots -F filename=web-screens.zip.xz -F file=@eyewitness_output.zip.xz
 
-  whatweb:
+  Whatweb:
     runs-on: ubuntu-latest  
-    needs: subdomain-enumeration
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
