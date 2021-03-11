@@ -1,0 +1,11 @@
+name: URL Collector
+
+on:
+  workflow_dispatch:
+jobs:
+  url-collector:
+    runs-on: ubuntu-latest
+    env:
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+ 
