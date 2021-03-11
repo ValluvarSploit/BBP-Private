@@ -390,9 +390,10 @@ jobs:
       - name: Directory Fuzzing
         run: |
          python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
-         zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
+         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
+         zip -r dirsearch-reports.zip dir-report && xz dirsearch-reports.zip
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Directory-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Directory-Fuzzing -F filename=dir-reports.zip.xz -F file=@dirsearch-reports.zip.xz
 
 #Dirsearch sensitive files
   File-Fuzz:
@@ -408,9 +409,10 @@ jobs:
       - name: Directory Fuzzing
         run: |
          python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
-         zip -r dirsearch-reports.zip dirsearch/reports && xz dirsearch-reports.zip
+         mkdir file-report ; cp -r dirsearch/reports file-report ;
+         zip -r dirsearch-reports.zip file-report && xz dirsearch-reports.zip
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Sensitive-File-Fuzzing -F filename=dirsearch-reports.zip.xz -F file=@dirsearch-reports.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Sensitive-File-Fuzzing -F filename=file-reports.zip.xz -F file=@dirsearch-reports.zip.xz
 
 #CORS Scanner
   CORS-Scanner:
