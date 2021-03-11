@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
+         echo "$TARGET" > targets.txt
          go env -w GOPATH=~/Downloads
          go get -u github.com/tomnomnom/waybackurls
          go get -u github.com/tomnomnom/gf
@@ -23,8 +24,8 @@ jobs:
          chmod +x binaries/gau
       - name: waybackurls & gau
         run: |
-         for url in $(cat subdomains-resolved-host.txt); do ./waybackurls "$url" >> waybackurls.txt; done;
-         for url in $(cat subdomains-resolved-host.txt); do ./binaries/gau "$url" >> gau.txt; done;
+         for url in $(cat targets.txt); do ./waybackurls "$url" >> waybackurls.txt; done;
+         for url in $(cat targets.txt); do ./binaries/gau "$url" >> gau.txt; done;
          cat gau.txt | sort -u >> waybackurls.txt
       - name: Patterns
         run: |
