@@ -105,10 +105,11 @@ jobs:
          git clone https://github.com/1ndianl33t/Gf-Patterns
          mv Gf-Patterns/*.json ~/.gf
          cp ~/Downloads/bin/gf . ; cp ~/Downloads/bin/waybackurls .
+         chmod +x binaries/gau
       - name: waybackurls & gau
         run: |
          for url in $(cat subdomains-resolved-host.txt); do ./waybackurls "$url" >> waybackurls.txt; done;
-         for url in $(cat subdomains-resolved-host.txt); do ./gau "$url" >> gau.txt; done;
+         for url in $(cat subdomains-resolved-host.txt); do ./binaries/gau "$url" >> gau.txt; done;
          cat gau.txt | sort -u >> waybackurls.txt
       - name: Patterns
         run: |
