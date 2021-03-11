@@ -2,7 +2,7 @@ name: Amass No Key
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.DOMAIN_LARGE_PUBLIC }}
+      TARGET: mywirelessclaim.com
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PUBLIC }}
 jobs:
