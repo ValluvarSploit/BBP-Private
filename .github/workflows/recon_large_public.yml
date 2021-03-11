@@ -26,7 +26,7 @@ jobs:
          cd binaries; chmod +x assetfinder findomain subfinder httpx; cd ..
          git clone https://github.com/m8r0wn/subscraper
          cd subscraper; sudo python3 setup.py install; cd ..
-       #wget $HOST/fdns.txt
+         wget $HOST/fdns.txt
       - name: SubScraper
         run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
       - name: Amass
@@ -39,7 +39,7 @@ jobs:
         run: |
          ./binaries/subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
          echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
-       #cat fdns.txt >> subdomains-all.txt
+         cat fdns.txt >> subdomains-all.txt
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" wordlists/subdomain-wordlists.txt > wordlist-hugh.txt
