@@ -3,9 +3,26 @@ on:
   workflow_dispatch:
 env:
        TARGET_DOMAIN: ${{ secrets.TARGET_GITHUB_DOMAIN }}
-       TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
-       TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
-       GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
 jobs:
+  nmap-vulnerability-scan:
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $HOST/nmap-scan.out
+         cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt
+         cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt
+         echo "$DOMAIN_IP_LIST" > targets-ips.txt
+         sudo apt-get update && sudo apt-get install nmap -y
+         cd /usr/share/nmap/scripts/
+         sudo git clone https://github.com/vulnersCom/nmap-vulners.git
+         sudo git clone https://github.com/scipag/vulscan
+         cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh
+      - name: Nmap scan
+        run: exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -sV -p $port --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -oN nmap-vulnerability-scan.txt $ip  ; done ;
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
