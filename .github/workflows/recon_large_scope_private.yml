@@ -39,8 +39,7 @@ jobs:
          cat fdns.txt >> subdomains-all.txt
       - name: Amass
         run: |
-         amass enum -passive -d "$TARGET" > amass-passive.txt
-         cat amass-passive.txt | wc -l
+         amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt
          cat amass-passive.txt >> subdomains-all.txt;
       - name: Assetfinder
         run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt;          
@@ -48,7 +47,7 @@ jobs:
         run: ./binaries/findomain -t "$TARGET" -q >> subdomains-all.txt; 
       - name: Subfinder
         run: |
-         ./binaries/subfinder -d "$TARGET" -all --silent >> subdomains-all.txt
+         ./binaries/subfinder -d "$TARGET" -all --silent -rL resolvers.txt >> subdomains-all.txt
          echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
       - name: MassDNS
         run: |
