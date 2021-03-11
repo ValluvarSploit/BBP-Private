@@ -5,7 +5,7 @@ name: Amass Bruteforce
 on:
   workflow_dispatch:
 env:
-     TARGET: ${{ secrets.PRI_LARGE_DOMAIN }}
+     TARGET: ${{ secrets.DOMAIN_LARGE_PUBLIC }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
 jobs:
@@ -18,7 +18,7 @@ jobs:
          sudo snap install amass  
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: Amass
-        run: amass enum -active -brute -d "$TARGET" -o amass-brute.txt -rf resolvers.txt -max-dns-queries 3000
+        run: amass enum -active -brute -d "$TARGET" -ip -o amass-brute.txt -rf resolvers.txt -max-dns-queries 3000
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F filename=amass-brute.txt -F file=@amass-brute.txt
  
