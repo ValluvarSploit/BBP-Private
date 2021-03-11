@@ -3,6 +3,7 @@ name: URL Collector
 on:
   workflow_dispatch:
 env:
+       TARGET: ${{ secrets.DOMAIN_SMALL_PUBLIC }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
 jobs:
