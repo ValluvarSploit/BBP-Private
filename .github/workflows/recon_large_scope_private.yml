@@ -26,6 +26,7 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON LARGE SCOPE PRIVATE STARTED FOR DOMAIN - $TARGET"}' "$SLACK_WEBHOOK"
          wget $HOST/fdns.txt
+         wget $HOST/fdns-ips.txt
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
@@ -56,6 +57,8 @@ jobs:
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt
          cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
          zip massdns-output.txt.zip massdns-output.txt ; xz massdns-output.txt.zip
+         cat fdns-ips.txt >> live-ips.txt
+         sort -u live-ips.txt -o live-ips.txt
       - name: Unique subdomains
         run: |
          cat live-hosts.txt >> subdomains-all.txt
