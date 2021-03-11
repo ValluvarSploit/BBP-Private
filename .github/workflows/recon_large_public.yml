@@ -27,6 +27,7 @@ jobs:
          git clone https://github.com/m8r0wn/subscraper
          cd subscraper; sudo python3 setup.py install; cd ..
          wget $HOST/fdns.txt
+         wget $HOST/fdns-ips.txt
       - name: SubScraper
         run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
       - name: Amass
@@ -47,6 +48,8 @@ jobs:
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt
          cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
          zip massdns-output.txt.zip massdns-output.txt ; xz massdns-output.txt.zip
+         cat fdns-ips.txt >> live-ips.txt
+         sort -u live-ips.txt -o live-ips.txt
       - name: Unique subdomains
         run: |
          cat live-hosts.txt >> subdomains-all.txt
