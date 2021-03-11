@@ -28,10 +28,11 @@ jobs:
          cd subscraper; sudo python3 setup.py install; cd ..
          wget $HOST/fdns.txt
          wget $HOST/fdns-ips.txt
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: SubScraper
         run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
       - name: Amass
-        run: amass enum -passive -d "$TARGET" >> subdomains-all.txt;
+        run: amass enum -passive -d "$TARGET" -rf resolvers.txt  >> subdomains-all.txt;
       - name: Assetfinder
         run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt;          
       - name: Findomain
