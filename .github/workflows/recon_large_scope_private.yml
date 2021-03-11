@@ -254,6 +254,21 @@ jobs:
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Pattern-Collector -F filename=url-collector-artifacts.zip.xz -F file=@url-collector-artifacts.zip.xz
 
+  XSS-Hunt-URL-Collector:
+    runs-on: ubuntu-latest
+    needs: URL-Enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: url-collector-artifacts 
+      - name: Install Dependencies
+        run: sudo snap install dalfox       
+      - name: Dalfox
+        run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file xss-params.txt > xss-url-collector.txt
+      - name: Send Outputs to Slack
+        run: |
+         if [[ -f xss-url-collector.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS-URL-Collector -F filename=xss-url-collector.txt -F file=@xss-url-collector.txt; fi
 
 #Parameter Discovery
   Parameter-Discovery:
@@ -274,7 +289,6 @@ jobs:
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Parameter-Discovery -F filename=paramspider.txt -F file=@output/paramspider.txt
          
-#XSS Automation
   XSS-Hunter:
     runs-on: ubuntu-latest
     needs: Parameter-Discovery
@@ -286,9 +300,9 @@ jobs:
       - name: Install Dependencies
         run: sudo snap install dalfox       
       - name: Dalfox
-        run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file paramspider.txt > xss-vulnerable-urls.txt
+        run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file paramspider.txt > xss-paramspider.txt
       - name: Send Outputs to Slack
-        run: if [[ -f xss-vulnerable-urls.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=XSS -F filename=xss-vulnerable-urls.txt -F file=@xss-vulnerable-urls.txt; fi
+        run: if [[ -f xss-paramspider.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=XSS-Paramspider -F filename=xss-paramspider.txt -F file=@xss-paramspider.txt; fi
 
 #FavIcon Hash Extraction
   Favicon-Hash-Extraction:
