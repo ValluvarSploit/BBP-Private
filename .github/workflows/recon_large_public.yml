@@ -156,6 +156,48 @@ jobs:
         run: |           
           curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Masscan -F filename=masscan.xml -F file=@masscan.xml
           curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Scan -F filename=nmap-scan.out -F file=@nmap-masscan.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: nmap-output
+         path: nmap-masscan.txt
+
+  nmap-vulnerability-scan:
+    runs-on: ubuntu-latest    
+    needs: masscan-nmap-scan
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: nmap-output
+      - name: Install Dependencies
+        run: |
+         cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt
+         cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt
+         sudo apt-get update && sudo apt-get install nmap -y
+         cd /usr/share/nmap/scripts/
+         sudo git clone https://github.com/vulnersCom/nmap-vulners.git
+         sudo git clone https://github.com/scipag/vulscan
+         cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh
+      - name: Nmap scan
+        run: exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -sV -p $port --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -oN nmap-vulnerability-scan.txt $ip  ; done ;
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
+          
+  nmap-udp-scan:
+    runs-on: ubuntu-latest    
+    needs: [subdomain-enumeration,masscan-nmap-scan]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install nmap -y
+      - name: Nmap UDP scan
+        run: sudo nmap -Pn -sV -p- -sU -iL live-ips.txt -oA nmap-udp-scan
+      - name: Send Output to Slack
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
 
 #Collect URLs.
   url-collector:
