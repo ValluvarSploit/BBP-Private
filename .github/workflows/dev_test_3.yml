@@ -14,14 +14,10 @@ jobs:
         run: |
          sudo apt-get install python-dnspython -y
          git clone https://github.com/TheRook/subbrute.git
-         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          xz -d wordlists/subdomains-1m-1.txt.xz;
-        # sudo apt-get install -y aptitude
-        # sudo aptitude install python-dnspython -y
       - name: SubBrute
-        run: |
-         cd subbrute
-         ./subbrute.py -s wordlists/subdomains-1m-1.txt "$TARGET" -o subbrute.txt -r resolvers.txt -c 15
+        run: python subbrute/subbrute.py -s wordlists/subdomains-1m-1.txt "$TARGET" -o subbrute.txt -r resolvers.txt -c 15
       - name: Send Output to Slack
         if: success()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-1 -F filename=subbrute-1.txt -F file=@subbrute.txt
