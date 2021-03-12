@@ -2,9 +2,9 @@ name: Amass Bruteforce
 on:
   workflow_dispatch:
 env:
-     TARGET: ${{ secrets.AMASS_DOMAIN }}
+     TARGET: ${{ secrets.DOMAIN }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PRIVATE }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }}
 jobs:
   amass-brute:
     runs-on: ubuntu-latest
