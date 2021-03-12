@@ -1,4 +1,4 @@
-name: Dev-Test
+name: DNSsearch
 on:
   workflow_dispatch:
 env:
