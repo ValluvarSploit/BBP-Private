@@ -87,8 +87,8 @@ jobs:
          name: dnsgen-artifacts
       - name: Install Dependencies
         run: |
-         xz -d subdomains-w1.txt.xz subdomains-w2.txt.xz
-         cat subdomains-w1.txt subdomains-w2.txt > subdomain-wordlists.txt
+         xz -d wordlists/subdomains-w1.txt.xz wordlists/subdomains-w2.txt.xz
+         cat wordlists/subdomains-w1.txt wordlists/subdomains-w2.txt > subdomain-wordlists.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: MassDNS
         run: |
