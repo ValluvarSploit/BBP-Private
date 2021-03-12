@@ -17,5 +17,6 @@ jobs:
       - name: Amass
         run: amass enum -active -brute -d "$TARGET" -o amass-brute.txt -rf resolvers.txt -max-dns-queries 10000
       - name: Send Output to Slack
+        if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F filename=amass-brute.txt -F file=@amass-brute.txt
  
