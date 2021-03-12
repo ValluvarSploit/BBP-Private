@@ -26,6 +26,7 @@ jobs:
         run: |
          wget $HOST/subdomains-local.txt -O subdomains-manual.txt 
          wget $HOST/ips-local.txt
+         wget $HOST/amass-brute.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON LARGE SCOPE PRIVATE STARTED FOR DOMAIN - $TARGET"}' "$SLACK_WEBHOOK"
          sudo apt-get install python3-setuptools
          sudo snap install amass
