@@ -19,7 +19,7 @@ jobs:
       - name: SubBrute
         run: python subbrute/subbrute.py -s wordlists/subdomains-1m-1.txt "$TARGET" -o subbrute.txt -r resolvers.txt -c 50
       - name: Send Output to Slack
-        if: success()
+        if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-1 -F filename=subbrute-1.txt -F file=@subbrute.txt
 
   SubBrute-2:
