@@ -43,10 +43,8 @@ jobs:
       - name: Assetfinder
         run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;          
       - name: Findomain
-        run: ./binaries/findomain -t "$TARGET" -q >> subdomains-auto.txt; 
-      - name: Subfinder
         run: |
-         ./binaries/subfinder -d "$TARGET" -all --silent -rL resolvers.txt >> subdomains-auto.txt
+         ./binaries/findomain -t "$TARGET" -q >> subdomains-auto.txt; 
          cat subdomains-auto.txt >> subdomains-manual.txt
          sort -u subdomains-manual.txt -o subdomains-manual.txt
       - name: Upload Artifacts
