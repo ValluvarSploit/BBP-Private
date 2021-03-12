@@ -1,6 +1,3 @@
-# Before running this action, make sure you updated following secrets variables in settings.
-#  1. PRI_LARGE_DOMAIN
-#       example.com
 name: Amass Bruteforce
 on:
   workflow_dispatch:
