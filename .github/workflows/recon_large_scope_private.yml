@@ -82,7 +82,7 @@ jobs:
   MassDNS-Resolver:
     runs-on: ubuntu-latest
     if: always()
-    needs: DNSgen
+    needs: [DNSgen,Subdomain-Enumeration]
     steps:
       - uses: actions/checkout@v2 
       - uses: actions/download-artifact@v2
