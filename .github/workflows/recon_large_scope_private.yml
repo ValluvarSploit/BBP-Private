@@ -25,8 +25,7 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON LARGE SCOPE PRIVATE STARTED FOR DOMAIN - $TARGET"}' "$SLACK_WEBHOOK"
-         wget $HOST/fdns.txt
-         wget $HOST/fdns-ips.txt
+         wget $HOST/subdomains-manual.txt
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
@@ -34,25 +33,27 @@ jobs:
          cd binaries; chmod +x assetfinder findomain subfinder httpx; cd ..
          git clone https://github.com/m8r0wn/subscraper
          cd subscraper; sudo python3 setup.py install; cd ..
+         xz -d subdomains-w1.txt.xz subdomains-w2.txt.xz
+         cat subdomains-w1.txt subdomains-w2.txt > subdomain-wordlists.txt
       - name: SubScraper
-        run: |
-         python3 subscraper/subscraper.py "$TARGET" -o subdomains-all.txt;
-         cat fdns.txt >> subdomains-all.txt
+        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-auto.txt;
       - name: Amass
         run: |
          amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt
-         cat amass-passive.txt >> subdomains-all.txt;
+         cat amass-passive.txt >> subdomains-auto.txt;
       - name: Assetfinder
-        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-all.txt;          
+        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;          
       - name: Findomain
-        run: ./binaries/findomain -t "$TARGET" -q >> subdomains-all.txt; 
+        run: ./binaries/findomain -t "$TARGET" -q >> subdomains-auto.txt; 
       - name: Subfinder
         run: |
-         ./binaries/subfinder -d "$TARGET" -all --silent -rL resolvers.txt >> subdomains-all.txt
-         echo Total Discovered Subdomains: $(cat subdomains-all.txt | wc -l)
+         ./binaries/subfinder -d "$TARGET" -all --silent -rL resolvers.txt >> subdomains-auto.txt
+         cat subdomains-auto.txt >> subdomains-manual.txt
+         sort -u subdomains-manual.txt -o subdomains-manual.txt
+         echo Total Discovered Subdomains: $(cat subdomains-manual.txt | wc -l)
       - name: MassDNS
         run: |
-         sed "s/$/.$TARGET/" wordlists/subdomain-wordlists.txt > wordlist-hugh.txt
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt
          cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
@@ -61,8 +62,8 @@ jobs:
          sort -u live-ips.txt -o live-ips.txt
       - name: Unique subdomains
         run: |
-         cat live-hosts.txt >> subdomains-all.txt
-         cat subdomains-all.txt | sed 's/\*\.//g' | sort -u > subdomains-uniq.txt
+         cat live-hosts.txt >> subdomains-auto.txt;
+         cat subdomains-auto.txt | sed 's/\*\.//g' | sort -u > subdomains-uniq.txt
          echo Total Uniq Subdomains: $(cat subdomains-uniq.txt | wc -l)
          grep -vFf subdomains-exclude.txt subdomains-uniq.txt > subdomains.txt
          echo Total Subdomains to do Recon: $(cat subdomains.txt | wc -l)       
