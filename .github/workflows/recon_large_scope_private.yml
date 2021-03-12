@@ -47,6 +47,8 @@ jobs:
          ./binaries/findomain -t "$TARGET" -q >> subdomains-auto.txt; 
          cat subdomains-auto.txt >> subdomains-manual.txt
          sort -u subdomains-manual.txt -o subdomains-manual.txt
+         cat subdomains-manual.txt | wc -l
+         cat ips-local.txt | wc -l
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -66,7 +68,9 @@ jobs:
       - name: Install Dependencies
         run: pip3 install dnsgen && cp ~/.local/bin/dnsgen .
       - name: DNSgen
-        run: ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt       
+        run: |
+         ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt  
+         cat dnsgen-wordlist.txt | wc -l
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -95,6 +99,7 @@ jobs:
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
          cat dnsgen-wordlist.txt >> wordlist-hugh.txt
          sort -u wordlist-hugh.txt -o wordlist-hugh.txt
+         cat wordlist-hugh.txt | wc -l
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt
          cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
