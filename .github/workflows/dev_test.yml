@@ -6,14 +6,16 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PRIVATE }} 
 jobs:
-  nmap-vulnerability-scan:
+  DNSsearch:
     runs-on: ubuntu-latest    
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         echo bingo > nmap-vulnerability-scan.txt
-         bvbnbjfnfjbbjgngjb
-      - name: Send Output to Slack
-        if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
+         go get github.com/evilsocket/dnssearch
+         cd dnssearch
+         go build -o dnssearch main.go
+         ./dnssearch
+#      - name: Send Output to Slack
+#        if: always()
+#        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
