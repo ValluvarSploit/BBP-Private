@@ -182,7 +182,7 @@ jobs:
 
   Nmap-Vulnerability-Scan:
     runs-on: ubuntu-latest    
-    needs: Mass-Nmap-Scan
+    needs: [Mass-Nmap-Scan, Subdomain-Enumeration]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -263,7 +263,7 @@ jobs:
 
   XSS-Hunt-URL-Collector:
     runs-on: ubuntu-latest
-    needs: URL-Enumeration
+    needs: [URL-Enumeration, Subdomain-Enumeration]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -281,6 +281,7 @@ jobs:
 #Parameter Discovery
   Parameter-Discovery:
     runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -300,7 +301,7 @@ jobs:
          
   XSS-Hunter:
     runs-on: ubuntu-latest
-    needs: Parameter-Discovery
+    needs: [Parameter-Discovery, Subdomain-Enumeration]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -317,6 +318,7 @@ jobs:
 #FavIcon Hash Extraction
   Favicon-Hash-Extraction:
     runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2      
       - name: Install Dependencies
@@ -335,6 +337,7 @@ jobs:
 #Javascript Scan
   Javascript-Scan:
     runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2      
       - name: Install Dependencies
@@ -464,7 +467,7 @@ jobs:
 
   SQL-Injection:
     runs-on: ubuntu-latest   
-    needs: URL-Enumeration      
+    needs: [URL-Enumeration, Subdomain-Enumeration]      
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -574,7 +577,8 @@ jobs:
          if [[ -f secrets.txt ]] && [[ `cat cloud.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Subdomainizer-Secrets -F filename=subdomainizer-secrets.txt -F file=@secrets.txt ; fi
 
   Git-Dorker-ORG:
-    runs-on: ubuntu-latest               
+    runs-on: ubuntu-latest  
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -629,3 +633,12 @@ jobs:
       - name: Send Outputs to Slack Channel  
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Whatweb-Results -F filename="$TARGET"-whatweb-logs.txt -F file=@whatweb-logs.json
+
+  Slack-Notification:
+    runs-on: ubuntu-latest  
+    needs: [Subdomain-Enumeration, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, Nmap-UDP-Scan, URL-Enumeration, XSS-Hunt-URL-Collector, Parameter-Discovery, XSS-Hunter, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, Directory-Fuzz, File-Fuzz, CORS-Scanner, Heartbleed-Scanner, SQL-Injection, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-ORG, Eyewitness-Webshot, Whatweb]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Slack 
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON PRIVATE LARGE COMPLETED FOR DOMAIN - $TARGET"}' "$SLACK_WEBHOOK"
