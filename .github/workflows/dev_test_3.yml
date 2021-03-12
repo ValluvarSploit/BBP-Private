@@ -91,7 +91,7 @@ jobs:
         
   SubBrute-6:
     runs-on: ubuntu-latest  
-    needs: SubBrute-2
+    needs: SubBrute-3
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -108,7 +108,7 @@ jobs:
         
   SubBrute-7:
     runs-on: ubuntu-latest 
-    needs: SubBrute-3
+    needs: SubBrute-4
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -125,7 +125,7 @@ jobs:
         
   SubBrute-8:
     runs-on: ubuntu-latest 
-    needs: SubBrute-3
+    needs: SubBrute-5
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -142,7 +142,7 @@ jobs:
         
   SubBrute-9:
     runs-on: ubuntu-latest  
-    needs: SubBrute-4
+    needs: SubBrute-6
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
