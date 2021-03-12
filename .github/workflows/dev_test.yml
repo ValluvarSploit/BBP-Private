@@ -15,7 +15,7 @@ jobs:
          go env -w GOPATH=~/Downloads
          go get github.com/evilsocket/dnssearch
          cp ~/Downloads/bin/dnssearch .
-         ./dnssearch
+         ./dnssearch -domain stripe.com -wordlist ~/Desktop/bugBounty/wordlists/subdomains/ct_subdomain.txt | tee out.txt
        #cd dnssearch
        #go build -o dnssearch main.go
          
