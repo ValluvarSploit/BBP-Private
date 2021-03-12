@@ -4,22 +4,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  ip-host-hunter:
+  knockpy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: fnvngbjnbjgjb
-      - name: echo
-        run: echo bongo
+        run: |
+         git clone https://github.com/guelfoweb/knock.git
+         cd knock
+         sudo apt-get install python-dnspython -y
+         python knock/knockpy/knockpy.py -h
+      - name: Knockpy
+        if: always()
+        run: knockpy -h
       
-  ip:
-    runs-on: ubuntu-latest
-    needs: ip-host-hunter
-    if: always()
-    steps:
-      - uses: actions/checkout@v2
-      - name: echo
-        run: echo bingo
-                
+
                        
