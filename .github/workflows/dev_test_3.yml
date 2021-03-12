@@ -2,17 +2,175 @@ name: Dev-Test-3
 on:
   workflow_dispatch:
 env:
-       TARGET: stripe.com
-       TARGET_GIT_REPO_URLS: ${{ secrets.GIT_REPO_URLS }}
+       TARGET: ${{ secrets.DOMAIN }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }} 
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
 jobs:
-  gf-patterns:
+  SubBrute-1:
     runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: bignobbgb
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-1.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-1.txt "$TARGET" -o subbrute.txt -r resolvers.txt
       - name: Send Output to Slack
         if: success()
-        run: echo bingo
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-1 -F filename=subbrute-1.txt -F file=@subbrute.txt
+
+  SubBrute-2:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-2.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-2.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-2 -F filename=subbrute-2.txt -F file=@subbrute.txt
+        
+  SubBrute-3:
+    runs-on: ubuntu-latest
+    needs: SubBrute-1
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-3.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-3.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-3 -F filename=subbrute-3.txt -F file=@subbrute.txt
+        
+  SubBrute-4:
+    runs-on: ubuntu-latest  
+    needs: SubBrute-1
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-1.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-1.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-1 -F filename=subbrute-1.txt -F file=@subbrute.txt
+        
+  SubBrute-5:
+    runs-on: ubuntu-latest 
+    needs: SubBrute-2
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-5.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-5.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-5 -F filename=subbrute-5.txt -F file=@subbrute.txt
+        
+  SubBrute-6:
+    runs-on: ubuntu-latest  
+    needs: SubBrute-2
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-6.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-6.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-6 -F filename=subbrute-6.txt -F file=@subbrute.txt
+        
+  SubBrute-7:
+    runs-on: ubuntu-latest 
+    needs: SubBrute-3
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-7.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-1.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-7 -F filename=subbrute-7.txt -F file=@subbrute.txt
+        
+  SubBrute-8:
+    runs-on: ubuntu-latest 
+    needs: SubBrute-3
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-1.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-8.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-8 -F filename=subbrute-8.txt -F file=@subbrute.txt
+        
+  SubBrute-9:
+    runs-on: ubuntu-latest  
+    needs: SubBrute-4
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         aptitude install python-dnspython
+         git clone https://github.com/TheRook/subbrute.git
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -O subbrute/resolvers.txt
+         xz -d wordlists/subdomains-1m-9.txt.xz;
+      - name: SubBrute
+        run: |
+         cd subbrute
+         ./subbrute.py -s wordlists/subdomains-1m-9.txt "$TARGET" -o subbrute.txt -r resolvers.txt
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-9 -F filename=subbrute-9.txt -F file=@subbrute.txt
