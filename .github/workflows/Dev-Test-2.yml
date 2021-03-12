@@ -11,12 +11,9 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/guelfoweb/knock.git
-         cd knock
          sudo apt-get install python-dnspython -y
          python knock/knockpy/knockpy.py -h
-      - name: Knockpy
-        if: always()
-        run: knockpy -h
+
       
 
                        
