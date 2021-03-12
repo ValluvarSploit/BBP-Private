@@ -6,12 +6,19 @@ on:
 jobs:
   ip-host-hunter:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-        
       - name: Install Dependencies
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON LARGE SCOPE PRIVATE STARTED FOR DOMAIN - $TARGET"}' "$SLACK_WEBHOOK"
+        run: fnvngbjnbjgjb
+      - name: echo
+        run: echo bongo
+      
+  ip:
+    runs-on: ubuntu-latest
+    needs: ip-host-hunter
+    steps:
+      - uses: actions/checkout@v2
+      - name: echo
+        run: echo bingo
                 
                        
