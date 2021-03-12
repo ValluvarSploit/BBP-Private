@@ -118,7 +118,6 @@ jobs:
           
   HTTProber:
     runs-on: ubuntu-latest
-    if: always()
     needs: [Subdomain-Enumeration, MassDNS-Resolver]
     steps:
       - uses: actions/checkout@v2
