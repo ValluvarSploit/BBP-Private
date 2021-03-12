@@ -6,22 +6,7 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
 jobs:
-  DNSsearch-1:
-    runs-on: ubuntu-latest  
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
-      - name: DNSsearch
-        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/commonspeak2-subdomains-1.txt | tee dnssearch.txt ;
-      - name: Send Output to Slack
-        if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-1 -F filename=dnssearch-1.txt -F file=@dnssearch.txt
-
-  DNSsearch-2:
+  DNSsearch:
     runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
