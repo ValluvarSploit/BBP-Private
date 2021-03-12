@@ -17,7 +17,8 @@ jobs:
          cp ~/Downloads/bin/dnssearch .
          cd wordlists
          xz -d subdomains-1m-1.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-1.txt | tee dnssearch.txt ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-1.txt | tee dnssearch.txt ;
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-1 -F filename=dnssearch-1.txt -F file=@dnssearch.txt
@@ -34,14 +35,15 @@ jobs:
          cp ~/Downloads/bin/dnssearch .
          cd wordlists
          xz -d subdomains-1m-2.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-2.txt | tee dnssearch.txt ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-2.txt | tee dnssearch.txt ;
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-2 -F filename=dnssearch-2.txt -F file=@dnssearch.txt
 
   DNSsearch-3:
     runs-on: ubuntu-latest 
-    needs: DNSsearch-2
+    needs: DNSsearch-1
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -51,12 +53,103 @@ jobs:
          cp ~/Downloads/bin/dnssearch .
          cd wordlists
          xz -d subdomains-1m-3.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-3.txt | tee dnssearch.txt ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-3.txt | tee dnssearch.txt ;
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-3 -F filename=dnssearch-3.txt -F file=@dnssearch.txt
         
   DNSsearch-4:
+    runs-on: ubuntu-latest  
+    needs: DNSsearch-1
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads
+         go get github.com/evilsocket/dnssearch
+         cp ~/Downloads/bin/dnssearch .
+         cd wordlists
+         xz -d subdomains-1m-4.txt.xz; cd .. ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-4.txt | tee dnssearch.txt ;
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-4 -F filename=dnssearch-4.txt -F file=@dnssearch.txt
+        
+  DNSsearch-5:
+    runs-on: ubuntu-latest  
+    needs: DNSsearch-2
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads
+         go get github.com/evilsocket/dnssearch
+         cp ~/Downloads/bin/dnssearch .
+         cd wordlists
+         xz -d subdomains-1m-5.txt.xz; cd .. ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-5.txt | tee dnssearch.txt ;
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-5 -F filename=dnssearch-5.txt -F file=@dnssearch.txt
+        
+  DNSsearch-6:
+    runs-on: ubuntu-latest   
+    needs: DNSsearch-2
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads
+         go get github.com/evilsocket/dnssearch
+         cp ~/Downloads/bin/dnssearch .
+         cd wordlists
+         xz -d subdomains-1m-6.txt.xz; cd .. ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-6.txt | tee dnssearch.txt ;
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-6 -F filename=dnssearch-6.txt -F file=@dnssearch.txt
+        
+  DNSsearch-7:
+    runs-on: ubuntu-latest  
+    needs: DNSsearch-2
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads
+         go get github.com/evilsocket/dnssearch
+         cp ~/Downloads/bin/dnssearch .
+         cd wordlists
+         xz -d subdomains-1m-7.txt.xz; cd .. ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-7.txt | tee dnssearch.txt ;
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-7 -F filename=dnssearch-7.txt -F file=@dnssearch.txt
+        
+  DNSsearch-8:
+    runs-on: ubuntu-latest   
+    needs: DNSsearch-3
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads
+         go get github.com/evilsocket/dnssearch
+         cp ~/Downloads/bin/dnssearch .
+         cd wordlists
+         xz -d subdomains-1m-8.txt.xz; cd .. ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-8.txt | tee dnssearch.txt ;
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-8 -F filename=dnssearch-8.txt -F file=@dnssearch.txt
+        
+  DNSsearch-9:
     runs-on: ubuntu-latest  
     needs: DNSsearch-3
     steps:
@@ -67,93 +160,9 @@ jobs:
          go get github.com/evilsocket/dnssearch
          cp ~/Downloads/bin/dnssearch .
          cd wordlists
-         xz -d subdomains-1m-4.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-4.txt | tee dnssearch.txt ;
-      - name: Send Output to Slack
-        if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-4 -F filename=dnssearch-4.txt -F file=@dnssearch.txt
-        
-  DNSsearch-5:
-    runs-on: ubuntu-latest  
-    needs: DNSsearch-4
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
-         cd wordlists
-         xz -d subdomains-1m-5.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-5.txt | tee dnssearch.txt ;
-      - name: Send Output to Slack
-        if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-5 -F filename=dnssearch-5.txt -F file=@dnssearch.txt
-        
-  DNSsearch-6:
-    runs-on: ubuntu-latest   
-    needs: DNSsearch-5
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
-         cd wordlists
-         xz -d subdomains-1m-6.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-6.txt | tee dnssearch.txt ;
-      - name: Send Output to Slack
-        if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-6 -F filename=dnssearch-6.txt -F file=@dnssearch.txt
-        
-  DNSsearch-7:
-    runs-on: ubuntu-latest  
-    needs: DNSsearch-6
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
-         cd wordlists
-         xz -d subdomains-1m-7.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-7.txt | tee dnssearch.txt ;
-      - name: Send Output to Slack
-        if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-7 -F filename=dnssearch-7.txt -F file=@dnssearch.txt
-        
-  DNSsearch-8:
-    runs-on: ubuntu-latest   
-    needs: DNSsearch-7
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
-         cd wordlists
-         xz -d subdomains-1m-8.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-8.txt | tee dnssearch.txt ;
-      - name: Send Output to Slack
-        if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-8 -F filename=dnssearch-8.txt -F file=@dnssearch.txt
-        
-  DNSsearch-9:
-    runs-on: ubuntu-latest  
-    needs: DNSsearch-8
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
-         cd wordlists
          xz -d subdomains-1m-9.txt.xz; cd .. ;
-         ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-9.txt | tee dnssearch.txt ;
+      - name: DNSsearch
+        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/subdomains-1m-9.txt | tee dnssearch.txt ;
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-9 -F filename=dnssearch-9.txt -F file=@dnssearch.txt
