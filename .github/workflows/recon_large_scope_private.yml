@@ -12,7 +12,7 @@ env:
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       GIT_USERS: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
-      GIT_ORG: ${{ secres.TARGET_GITHUB_ORG }}
+      GIT_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PRIVATE }}
