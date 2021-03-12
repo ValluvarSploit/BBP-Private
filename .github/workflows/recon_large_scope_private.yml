@@ -79,7 +79,6 @@ jobs:
        
   MassDNS-Resolver:
     runs-on: ubuntu-latest
-    if: always()
     needs: [DNSgen,Subdomain-Enumeration]
     steps:
       - uses: actions/checkout@v2 
