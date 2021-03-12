@@ -117,6 +117,7 @@ jobs:
          path: |
           live-hosts.txt
           subdomains-manual.txt
+          live-ips.txt
           
   HTTProber:
     runs-on: ubuntu-latest
@@ -141,7 +142,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
          name: httprober-artifacts
-         path: subdomains-resolved.txt 
+         path: |
+          subdomains-resolved.txt 
+          live-ips.txt
       - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.out -F file=@subdomains-resolved.txt
