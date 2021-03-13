@@ -5,6 +5,7 @@ env:
        TARGET: ${{ secrets.DOMAIN }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
 jobs:
   SubBrute-1:
     runs-on: ubuntu-latest  
@@ -149,3 +150,8 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-SubBrute-9 -F filename=subbrute-9.txt -F file=@subbrute.txt
+
+      - name: Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"SubBrute Bruteforce COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
