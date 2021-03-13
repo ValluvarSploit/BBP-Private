@@ -21,4 +21,7 @@ jobs:
         run: |
          xz amass-brute.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F filename=amass-brute.txt.xz -F file=@amass-brute.txt.xz
- 
+      - name: Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"AMASS Bruteforce COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
