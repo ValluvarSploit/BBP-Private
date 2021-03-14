@@ -55,7 +55,11 @@ jobs:
          path: |
           subdomains-manual.txt
           ips-manual.txt
-      - name: Slack
+      - name: Slack Test
+        if: always()
+        run : |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Bingo"}' "$SLACK_WEBHOOK"
+      - name: Job Failure Slack Notification
         if: failure()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
@@ -83,6 +87,10 @@ jobs:
           dnsgen-wordlist.txt 
           subdomains-manual.txt
           ips-manual.txt
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
        
   MassDNS-Resolver:
     runs-on: ubuntu-latest
@@ -125,7 +133,11 @@ jobs:
           live-hosts.txt
           live-ips.txt
           subdomains-manual.txt
-                   
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"          
+          
   HTTProber:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, MassDNS-Resolver]
@@ -156,6 +168,10 @@ jobs:
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.out -F file=@subdomains-resolved.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-httpx-logs -F filename=httpx.log -F file=@httpx.log
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Subdomain Takeover
   Subdomain-Takeover:
@@ -197,7 +213,11 @@ jobs:
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomain-Takeover -F filename=subdomain-takeovers.txt -F file=@subdomain-takeovers.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomain-Takeover-Logs -F filename=sto.log -F file=@sto.log
-      
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+
 #Nuclei Template Scan.
   Nuclei-Template-Scan:
     runs-on: ubuntu-latest
@@ -218,6 +238,10 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
   Mass-Nmap-Scan:
     runs-on: ubuntu-latest    
@@ -248,6 +272,10 @@ jobs:
         with:
          name: nmap-output
          path: nmap-masscan.txt
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
   Nmap-Vulnerability-Scan:
     runs-on: ubuntu-latest    
@@ -271,7 +299,11 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
-          
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+
   Nmap-UDP-Scan:
     runs-on: ubuntu-latest    
     needs: [Subdomain-Enumeration,Mass-Nmap-Scan, HTTProber]
@@ -287,6 +319,10 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Collect URLs.
   URL-Enumeration:
@@ -330,6 +366,10 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Pattern-Collector -F filename=url-collector-artifacts.zip.xz -F file=@url-collector-artifacts.zip.xz
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
   XSS-Hunt-URL-Collector:
     runs-on: ubuntu-latest
@@ -347,6 +387,10 @@ jobs:
         if: always()
         run: |
          if [[ -f xss-url-collector.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS-URL-Collector -F filename=xss-url-collector.txt -F file=@xss-url-collector.txt; fi
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Parameter Discovery
   Parameter-Discovery:
@@ -368,7 +412,11 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Parameter-Discovery -F filename=paramspider.txt -F file=@output/paramspider.txt
-         
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+
   XSS-Hunter:
     runs-on: ubuntu-latest
     needs: [Parameter-Discovery, Subdomain-Enumeration, HTTProber]
@@ -384,6 +432,10 @@ jobs:
       - name: Send Outputs to Slack
         if: always()
         run: if [[ -f xss-paramspider.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS-Paramspider -F filename=xss-paramspider.txt -F file=@xss-paramspider.txt; fi
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #FavIcon Hash Extraction
   Favicon-Hash-Extraction:
@@ -403,6 +455,10 @@ jobs:
       - name: Send Outputs to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-FaviHash -F filename=favihash.txt -F file=@favihash.txt;
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Javascript Scan
   Javascript-Scan:
@@ -434,6 +490,10 @@ jobs:
          if [[ -f js-endpoints.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Endpoints -F filename=js-endpoints.txt -F file=@js-endpoints.txt; fi;
          if [[ -f js-words.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-Words -F filename=js-words.txt -F file=@js-words.txt; fi;
          if [[ -f js-xss.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-XSS -F filename=js-xss.txt -F file=@js-xss.txt; fi;
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Secrets Finder
   Secrets-Finder:
@@ -459,6 +519,10 @@ jobs:
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Secret-Finder -F filename=secret-finder.txt.zip.xz -F file=@secret-finder.txt.zip.xz
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gmap-api -F filename=gmapapi.txt -F file=@gmapapi.txt
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Directory Fuzzing
   Directory-Fuzz:
@@ -481,6 +545,10 @@ jobs:
       - name: Send Outputs to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Directory-Fuzzing -F filename=dir-reports.zip.xz -F file=@dirsearch-reports.zip.xz
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Dirsearch sensitive files
   File-Fuzz:
@@ -501,6 +569,10 @@ jobs:
       - name: Send Outputs to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Sensitive-File-Fuzzing -F filename=file-reports.zip.xz -F file=@dirsearch-reports.zip.xz
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #CORS Scanner
   CORS-Scanner:
@@ -522,6 +594,10 @@ jobs:
       - name: Send Outputs to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #HeartBleed Scanner
   Heartbleed-Scanner:
@@ -533,26 +609,33 @@ jobs:
         with:
          name: httprober-artifacts       
       - name: HeartBleed Scan
-        run: cat subdomains-resolved.txt | while read line ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe; done
-
-  SQL-Injection:
-    runs-on: ubuntu-latest   
-    needs: [URL-Enumeration, Subdomain-Enumeration, HTTProber]      
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: url-collector-artifacts
-      - name: Install Dependencies
-        run: git clone https://github.com/sqlmapproject/sqlmap.git
-      - name: sqlmap
-        run: | 
-         mkdir sqlmap-output
-         python3 sqlmap/sqlmap.py -m sqli-params.txt --batch --banner --dbs --output-dir sqlmap-output
-         zip -r sqlmap-output.zip sqlmap-output                         
+        run: for line in $(cat subdomains-resolved.out) ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe >> hearbleed.txt ; done
       - name: Send Files to Slack Channel 
         if: always()
-        run: if [[ ! -z $(ls -A sqlmap-output) ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip; fi 
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Heartbleed -F filename=hearbleed.txt -F file=@hearbleed.txt
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+
+#  SQL-Injection:
+#    runs-on: ubuntu-latest   
+#    needs: [URL-Enumeration, Subdomain-Enumeration, HTTProber]      
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/download-artifact@v2
+#        with:
+#         name: url-collector-artifacts
+#      - name: Install Dependencies
+#        run: git clone https://github.com/sqlmapproject/sqlmap.git
+#      - name: sqlmap
+#        run: | 
+#         mkdir sqlmap-output
+#         python3 sqlmap/sqlmap.py -m sqli-params.txt --batch --banner --dbs --output-dir sqlmap-output
+#         zip -r sqlmap-output.zip sqlmap-output                         
+#      - name: Send Files to Slack Channel 
+#        if: always()
+#        run: if [[ ! -z $(ls -A sqlmap-output) ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip; fi 
 
   S3-Scanner:
     runs-on: ubuntu-latest
@@ -585,7 +668,11 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner-1 -F filename=buckets-1.txt -F file=@buckets-1.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner-2 -F filename=buckets-2.txt -F file=@buckets-2.txt
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-S3-Scanner-3 -F filename=buckets-3.txt -F file=@buckets-3.txt
-         
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+
   Aquatone-Webshot:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
@@ -604,7 +691,11 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Aquatone-Webscreenshot -F filename=aquatone.zip.xz -F file=@aquatone-output.zip.xz     
-    
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+
   Gochopchop-Scan:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
@@ -624,7 +715,11 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: if [[ -f gochopchop-out.json.zip ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoChopChop -F filename=gochopchop-out.json -F file=@gochopchop-out.json; fi;
-    
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+
   Subdomainizer:
     runs-on: ubuntu-latest              
     needs: [Subdomain-Enumeration, HTTProber]
@@ -645,6 +740,10 @@ jobs:
          if [[ -f subdomains.txt ]] && [[ `cat subdomains.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer-Subdomains -F filename=subdomainizer-subdomains.txt -F file=@subdomains.txt ; fi
          if [[ -f cloud.txt ]] && [[ `cat secrets.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer-Cloud -F filename=subdomainizer-cloud.txt -F file=@cloud.txt ; fi
          if [[ -f secrets.txt ]] && [[ `cat cloud.txt | wc -w` -gt 0 ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer-Secrets -F filename=subdomainizer-secrets.txt -F file=@secrets.txt ; fi
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
   Git-Dorker-Domain:
     runs-on: ubuntu-latest  
@@ -661,6 +760,10 @@ jobs:
       - name: Send Output Files Slack Channel
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitdorker-DOMAIN -F filename=git-dorker-domain.csv -F file=@git-dorker-domain_gh_dorks.csv
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
         
   Eyewitness-Webshot:
     runs-on: ubuntu-latest
@@ -680,6 +783,10 @@ jobs:
       - name: Send Output Files Slack Channel
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Web-Screenshots -F filename=web-screens.zip.xz -F file=@eyewitness_output.zip.xz
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
   Whatweb:
     runs-on: ubuntu-latest  
@@ -703,6 +810,10 @@ jobs:
       - name: Send Outputs to Slack Channel  
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Whatweb -F filename="$TARGET"-whatweb-logs.txt -F file=@whatweb-logs.json
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
 #Collect CNAME
   DNSC:
@@ -722,12 +833,20 @@ jobs:
       - name: Send Outputs to Slack  
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSC -F filename=dnsc.csv -F file=@dnsc.csv
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
   Slack-Notification:
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration, DNSgen,MassDNS-Resolver, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, Nmap-UDP-Scan, URL-Enumeration, XSS-Hunt-URL-Collector, Parameter-Discovery, XSS-Hunter, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, Directory-Fuzz, File-Fuzz, CORS-Scanner, Heartbleed-Scanner, SQL-Injection, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC]
+    needs: [Subdomain-Enumeration, DNSgen,MassDNS-Resolver, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, Nmap-UDP-Scan, URL-Enumeration, XSS-Hunt-URL-Collector, Parameter-Discovery, XSS-Hunter, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, Directory-Fuzz, File-Fuzz, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON PRIVATE LARGE COMPLETED FOR DOMAIN - $TARGET"}' "$SLACK_WEBHOOK"
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
