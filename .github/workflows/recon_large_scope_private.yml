@@ -26,7 +26,6 @@ jobs:
         run: |
          wget $HOST/subdomains-manual.txt
          wget $HOST/ips-manual.txt
-         wget $HOST/subdomains-brute.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON STARTED FOR LARGE SCOPE (PRIVATE) - '$TARGET'"}' "$SLACK_WEBHOOK"
          sudo apt-get install python3-setuptools
          sudo snap install amass
@@ -56,7 +55,6 @@ jobs:
          path: |
           subdomains-manual.txt
           ips-manual.txt
-          subdomains-brute.txt
 
   DNSgen:
     runs-on: ubuntu-latest
@@ -81,7 +79,6 @@ jobs:
           dnsgen-wordlist.txt 
           subdomains-manual.txt
           ips-manual.txt
-          subdomains-brute.txt
        
   MassDNS-Resolver:
     runs-on: ubuntu-latest
@@ -93,17 +90,20 @@ jobs:
          name: dnsgen-artifacts
       - name: Install Dependencies
         run: |
+         echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          xz -d wordlists/subdomains-w1.txt.xz wordlists/subdomains-w2.txt.xz
          cat wordlists/subdomains-w1.txt wordlists/subdomains-w2.txt > subdomain-wordlists.txt
+         xz -d subdomains-1m-1.txt.xz subdomains-1m-2.txt.xz subdomains-1m-3.txt.xz subdomains-1m-4.txt.xz subdomains-1m-5.txt.xz subdomains-1m-6.txt.xz subdomains-1m-7.txt.xz subdomains-1m-8.txt.xz subdomains-1m-9.txt.xz subdomains-1m-10.txt.xz subdomains-1m-11.txt.xz subdomains-1m-12.txt.xz subdomains-1m-13.txt.xz
+         cat subdomains-1m-1.txt subdomains-1m-2.txt subdomains-1m-3.txt subdomains-1m-4.txt subdomains-1m-5.txt subdomains-1m-6.txt subdomains-1m-7.txt subdomains-1m-8.txt subdomains-1m-9.txt subdomains-1m-10.txt subdomains-1m-11.txt subdomains-1m-12.txt subdomains-1m-13.txt >> subdomain-wordlists.txt
+         sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
          cat dnsgen-wordlist.txt >> wordlist-hugh.txt
-         cat subdomains-brute.txt >> wordlist-hugh.txt
          sort -u wordlist-hugh.txt -o wordlist-hugh.txt
-         cat wordlist-hugh.txt | wc -l
-         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
+         grep -vFf subdomains-exclude.txt wordlist-hugh.txt > wordlist-all.txt
+         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-all.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt
          cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
          zip massdns-output.txt.zip massdns-output.txt ; xz massdns-output.txt.zip
