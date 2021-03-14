@@ -1,4 +1,4 @@
-name: Masscan Vs Nmap Scan
+name: Solo-Masscan Vs Nmap Scan
 on:
   workflow_dispatch:
 env:        
