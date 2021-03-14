@@ -20,9 +20,11 @@ jobs:
          sudo git clone https://github.com/scipag/vulscan
          cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh
       - name: Nmap scan
-        run: nmap -Pn -sV -p- --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -iL targets-ips.txt -oN nmap-vulnerability-scan.txt 
+        run: |
+         nmap -Pn -sV -p- --script nmap-vulners,vulscan,vuln --script-args vulscandb=scipvuldb.csv -iL targets-ips.txt -oN nmap-vulnerability-scan.txt 
+         xz nmap-vulnerability-scan.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt.xz  -F file=@nmap-vulnerability-scan.txt.xz
           
   nmap-udp-scan:
     runs-on: ubuntu-latest    
