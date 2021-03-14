@@ -2,6 +2,18 @@ name: Dev-Test-2
 
 on:
   workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
+      EXCLUDE_HOST: ${{ secrets.PRI_EXCLUDE_HOST }}
+      HOST: ${{ secrets.NGROK_URL }}
+      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
+      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
+      GIT_USERS: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
+      GIT_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
+      GIT_TOKEN: ${{ secrets.TOKEN }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PRIVATE }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
 
 jobs:
   Git-Dorker-Domain:
@@ -14,7 +26,7 @@ jobs:
          git clone https://github.com/obheda12/GitDorker.git
          pip3 install -r GitDorker/requirements.txt 
       - name: Git-Dorker-ORG
-        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET"  --token "$GITHUB_TOKEN" -o git-dorker-domain
+        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET"  --token "$GIT_TOKEN" -o git-dorker-domain
       - name: Send Output Files Slack Channel
         if: always()
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitdorker-DOMAIN -F filename=git-dorker-domain.csv -F file=@git-dorker-domain_gh_dorks.csv
