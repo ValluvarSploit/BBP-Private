@@ -25,6 +25,10 @@ jobs:
          xz nmap-vulnerability-scan.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt.xz  -F file=@nmap-vulnerability-scan.txt.xz
+      - name: Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"NMAP FULL SCAN COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"          
           
   nmap-udp-scan:
     runs-on: ubuntu-latest    
@@ -38,3 +42,7 @@ jobs:
         run: sudo nmap -Pn -sV -p- -sU -iL targets-ips.txt -oA nmap-udp-scan
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
+      - name: Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"NMAP UDP SCAN COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"          
