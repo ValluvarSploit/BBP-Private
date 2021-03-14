@@ -2,9 +2,9 @@ name: MassDNS Resolver
 on:
   workflow_dispatch:
 env:
-     TARGET: stripe.com
+     TARGET: ${{ secrets.DOMAIN }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CHANNEL_NAME }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }}
 
 jobs:
   massdns-resolver:
@@ -17,11 +17,15 @@ jobs:
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
       - name: MassDNS
         run: |
-         sed "s/$/.$TARGET/" wordlists/bitquark-subdomains-top100000.txt > wordlist-hugh.txt
+         cd wordlists
+         xz -d subdomains-w1.txt.xz subdomains-w2.txt.xz subdomains-1m-1.txt.xz subdomains-1m-2.txt.xz subdomains-1m-3.txt.xz subdomains-1m-4.txt.xz subdomains-1m-5.txt.xz subdomains-1m-6.txt.xz subdomains-1m-7.txt.xz subdomains-1m-8.txt.xz subdomains-1m-9.txt.xz subdomains-1m-10.txt.xz subdomains-1m-11.txt.xz subdomains-1m-12.txt.xz subdomains-1m-13.txt.xz
+         cat subdomains-w1.txt subdomains-w2.txt bitquark-subdomains-top100000.txt subdomains-1m-1.txt subdomains-1m-2.txt subdomains-1m-3.txt subdomains-1m-4.txt subdomains-1m-5.txt subdomains-1m-6.txt subdomains-1m-7.txt subdomains-1m-8.txt subdomains-1m-9.txt subdomains-1m-10.txt subdomains-1m-11.txt subdomains-1m-12.txt subdomains-1m-13.txt > subdomain-wordlists.txt
+         sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt
+         cd ..
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
-         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts-temp-output.txt
+         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt         
-         tr A-Z a-z < live-hosts-temp-output.txt | tee live-hosts-output.txt 
       - name: Send Output to Slack
         run: |
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips-output.txt  
