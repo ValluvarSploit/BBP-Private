@@ -56,8 +56,9 @@ jobs:
           subdomains-manual.txt
           ips-manual.txt
       - name: Slack
+        if: failure()
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
   DNSgen:
     runs-on: ubuntu-latest
