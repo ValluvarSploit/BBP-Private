@@ -55,10 +55,6 @@ jobs:
          path: |
           subdomains-manual.txt
           ips-manual.txt
-      - name: Slack Test
-        if: always()
-        run : |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"Bingo"}' "$SLACK_WEBHOOK"
       - name: Job Failure Slack Notification
         if: failure()
         run: |
