@@ -255,14 +255,18 @@ jobs:
          git clone https://github.com/robertdavidgraham/masscan
          cd masscan && make -j && cp bin/masscan ../masscanb              
       - name: Masscan
-        run: sudo ./masscanb -iL live-ips.txt --rate 10000 -p0-65535 -oX masscan.xml
+        run: |
+         sudo ./masscanb -iL live-ips.txt --rate 10000 -p0-65535 -oX masscan.xml
+         xz masscan.xml
       - name: Nmap Scan
-        run: python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt      
+        run: |
+         python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt      
+         xz nmap-masscan.txt
       - name: Send Output to Slack
         if: always()
         run: |           
-          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Masscan -F filename=masscan.xml -F file=@masscan.xml
-          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Scan -F filename=nmap-scan.out -F file=@nmap-masscan.txt
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Masscan -F filename=masscan.xml.xz -F file=@masscan.xml.xz
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Scan -F filename=nmap-scan.out.xz -F file=@nmap-masscan.txt.xz
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
