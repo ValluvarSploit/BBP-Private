@@ -4,15 +4,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  knockpy:
-    runs-on: ubuntu-latest
+  Git-Dorker-Domain:
+    runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         git clone https://github.com/guelfoweb/knock.git
-         sudo apt-get install python-dnspython -y
-         python knock/knockpy/knockpy.py -h
+         sudo apt-get install python3-setuptools
+         git clone https://github.com/obheda12/GitDorker.git
+         pip3 install -r GitDorker/requirements.txt 
+      - name: Git-Dorker-ORG
+        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET"  --token "$GITHUB_TOKEN" -o git-dorker-domain
+      - name: Send Output Files Slack Channel
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitdorker-DOMAIN -F filename=git-dorker-domain.csv -F file=@git-dorker-domain_gh_dorks.csv
+      - name: Job Failure Slack Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$SLACK_WEBHOOK"
 
       
 
