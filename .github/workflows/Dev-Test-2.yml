@@ -14,7 +14,7 @@ env:
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PRIVATE }}
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
-      CURL: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" 
+      SLACK_URL: https://slack.com/api/files.upload
 
 jobs:
   Git-Dorker-Domain:
@@ -26,7 +26,7 @@ jobs:
       - name: Send Output Files Slack Channel
         if: always()
         run: |
-         "$CURL" -F title=Slack-Test -F filename=slack.txt -F file=@slack.txt
+         curl "$SLACK_URL" token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Slack-Test -F filename=slack.txt -F file=@slack.txt
         
       #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitdorker-DOMAIN -F filename=git-dorker-domain.csv -F file=@git-dorker-domain_gh_dorks.csv
 
