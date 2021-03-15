@@ -810,9 +810,9 @@ jobs:
          cd WhatWeb/
          ./whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
          cp whatweb-logs.json ../  
-      - name: Send Outputs to Slack Channel  
+      - name: Send Output to Slack
         if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Whatweb -F filename="$TARGET"-whatweb-logs.txt -F file=@whatweb-logs.json
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Whatweb -F filename=whatweb-logs.json -F file=@whatweb-logs.json
       - name: Job Failure Slack Notification
         if: failure()
         run: |
