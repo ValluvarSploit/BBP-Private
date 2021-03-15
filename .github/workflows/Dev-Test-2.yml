@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Slack Test
-        run: echo slack_test > slack.txt
+        run: njnjnj slack_test > slack.txt
       - name: Send Output Files Slack Channel
         if: always()
         run: |
