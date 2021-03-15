@@ -147,7 +147,8 @@ jobs:
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          cat live-hosts.txt >> subdomains-manual.txt;
          cat subdomains-manual.txt | sed 's/\*\.//g' | sort -u > subdomains-uniq.txt
-         grep -vFf subdomains-exclude.txt subdomains-uniq.txt > subdomains.txt
+         grep -vFf subdomains-exclude.txt subdomains-uniq.txt > subdomains-uniq2.txt
+         cat subdomains-uniq2.txt | tr A-Z a-z | sort -u > subdomains.txt
          chmod +x binaries/httpx
       - name: HTTProber
         run: |
