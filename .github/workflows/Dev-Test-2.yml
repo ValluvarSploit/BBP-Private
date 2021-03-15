@@ -27,7 +27,7 @@ jobs:
       - name: Send Output Files Slack Channel
         if: always()
         run: |
-         "$SLACK_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Slack-Test -F filename=slack.txt -F file=@slack.txt
+         curl "$SLACK_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Slack-Test -F filename=slack.txt -F file=@slack.txt
        #"$CURL" -F title=Slack-Test -F filename=slack.txt -F file=@slack.txt
         
       #curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitdorker-DOMAIN -F filename=git-dorker-domain.csv -F file=@git-dorker-domain_gh_dorks.csv
