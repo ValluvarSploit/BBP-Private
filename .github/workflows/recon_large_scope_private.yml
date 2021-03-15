@@ -114,13 +114,11 @@ jobs:
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-all.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts.txt
          cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
-         zip massdns-output.txt.zip massdns-output.txt ; xz massdns-output.txt.zip
          cat ips-manual.txt >> live-ips.txt
          sort -u live-ips.txt -o live-ips.txt
+         zip massdns-output.zip massdns-output.txt live-ips.txt ; xz massdns-output.zip
       - name: Send Output to Slack
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-IPs -F filename=live-ips.out -F file=@live-ips.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-All -F filename=massdns-output.txt.zip.xz -F file=@massdns-output.txt.zip.xz
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F filename=massdns-output.zip -F file=@massdns-output.zip
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -154,6 +152,7 @@ jobs:
         run: |
          ./binaries/httpx -l subdomains.txt -follow-redirects -status-code -title -cname -vhost -threads 300 -silent -o httpx.log
          cat httpx.log | grep "[200]" | cut -d " " -f 1 | sort -u > subdomains-resolved.txt 
+         zip httpx.zip httpx.log subdomains-resolved.txt ; xz httpx.zip
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -163,8 +162,7 @@ jobs:
           live-ips.txt
       - name: Send Output to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomains -F filename=subdomains-resolved.out -F file=@subdomains-resolved.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-httpx-logs -F filename=httpx.log -F file=@httpx.log
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-httpx -F filename=httpx.zip -F file=@httpx.zip
       - name: Job Failure Slack Notification
         if: failure()
         run: |
@@ -205,6 +203,7 @@ jobs:
          if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> subdomain-takeovers.txt; cat subjack-output.txt >> subdomain-takeovers.txt; fi
          if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> subdomain-takeovers.txt; cat nuclie-output.txt >> subdomain-takeovers.txt; fi
          if [[ -f subover.txt ]]; then echo "*****SubOver*****" >> subdomain-takeovers.txt; cat subover.txt >> subdomain-takeovers.txt; fi
+         zip subdomain-takeover.zip subdomain-takeovers.txt sto.log
       - name: Send Output to Slack
         if: always()
         run: |
