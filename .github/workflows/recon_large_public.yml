@@ -12,7 +12,7 @@ env:
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       S_CHANNEL: ${{ secrets.SLACK_CN_PUBLIC }}
       HOST: ${{ secrets.NGROK_URL }}
-      S_WEBHOOK: ${{ secrets. }}
+      S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PUBLIC }}
 
 jobs:
   Subdomain-Enumeration:
