@@ -45,8 +45,7 @@ jobs:
          chmod +x binaries/nuclei   
       - name: Nuclei scan
         run: |
-         ./binaries/nuclei -l subdomains-resolved-url.txt -c 500 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
-       #./binaries/nuclei -l subdomains-resolved-url.txt -c 500 -stats -silent -t nuclei-templates/ -exclude nuclei-templates/fuzzing/wp-plugin-scan.yaml -exclude nuclei-templates/fuzzing/basic-auth-bruteforce.yaml -exclude nuclei-templates/default-credentials/ -o nuclie-scan.txt        
+         ./binaries/nuclei -l subdomains-resolved-url.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
       - name: Send Output to Slack
         run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
 
@@ -358,3 +357,18 @@ jobs:
          zip nikto-scan.zip nikto-80-output.txt nikto-443-output.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto-Scan -F filename=nikto-scan.zip -F file=@nikto-scan.zip
+
+#HeartBleed Scanner
+  Heartbleed-Scanner:
+    runs-on: ubuntu-latest
+    needs: http-probe
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: http-probe-artifacts       
+      - name: HeartBleed Scan
+        run: for line in $(cat subdomains-resolved-url.txt) ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe >> heartbleed.txt ; done
+      - name: Send Files to Slack Channel 
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Heartbleed -F file=@heartbleed.txt
