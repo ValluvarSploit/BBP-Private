@@ -3,9 +3,10 @@ on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.DOMAIN_SMALL_PUBLIC }}
-      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
-      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SMALL }}
+      XSS_HUNTER: ${{ secrets.XSS_HUNTER }}
+      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      S_CHANNEL: ${{ secrets.SLACK_CN_SMALL }}
+      S_URL: https://slack.com/api/files.upload
 jobs:
   http-probe:
     runs-on: ubuntu-latest
@@ -28,7 +29,7 @@ jobs:
           subdomains-resolved-url.txt 
           subdomains-resolved-host.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Scopes -F filename=subdomains-resolved.txt -F file=@subdomains-resolved-url.txt
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Scopes -F file=@subdomains-resolved-url.txt
          
 #Nuclei Template Scan.
   nuclei-scan:
@@ -46,8 +47,9 @@ jobs:
       - name: Nuclei scan
         run: |
          ./binaries/nuclei -l subdomains-resolved-url.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
+         xz nuclie-scan.txt
       - name: Send Output to Slack
-        run: if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nuclei-Template-Scan -F filename=nuclie-scan.txt -F file=@nuclie-scan.txt; fi
+        run: if [[ -f nuclie-scan.txt.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Nuclei-Template-Scan -F file=@nuclie-scan.txt; fi
 
 #NMAP Vulnerability Full Scan
   nmap-vulnerability-scan:
@@ -67,9 +69,11 @@ jobs:
          sudo git clone https://github.com/scipag/vulscan
          cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh
       - name: Nmap scan
-        run: nmap -Pn -sV -p- --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -iL subdomains-resolved-host.txt -oN nmap-vulnerability-scan.txt 
+        run: |
+         nmap -Pn -sV -p- --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -iL subdomains-resolved-host.txt -oN nmap-vulnerability-scan.txt 
+         xz nmap-vulnerability-scan.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-Vulnerability-Scan -F filename=nmap-vulnerability-scan.txt  -F file=@nmap-vulnerability-scan.txt
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=-Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt.xz
 
 #NMAP UDP Full Scan
   nmap-udp-scan:
@@ -85,7 +89,7 @@ jobs:
       - name: Nmap UDP scan
         run: sudo nmap -Pn -sV -p- -sU -iL subdomains-resolved-host.txt -oA nmap-udp-scan
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nmap-UDP-Scan -F filename=nmap-udp-scan.nmap -F file=@nmap-udp-scan.nmap
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-UDP-Scan -F file=@nmap-udp-scan.nmap
 
 #Collect URLs.
   url-collector:
@@ -130,7 +134,7 @@ jobs:
          name: url-collector-artifacts
          path: url-collector-artifacts/
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-URL-Pattern-Collector -F filename=url-collector-artifacts.zip.xz -F file=@url-collector-artifacts.zip.xz
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=URL-Pattern-Collector -F file=@url-collector-artifacts.zip.xz
 
 
 #Parameter Discovery
@@ -154,7 +158,7 @@ jobs:
          name: paramspider-artifacts
          path: paramspider.txt 
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Parameter-Discovery -F filename=paramspider.txt -F file=@paramspider.txt
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Parameter-Discovery -F file=@paramspider.txt
          
 #XSS Automation
   xss-hunter:
@@ -171,7 +175,7 @@ jobs:
         run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file paramspider.txt > xss-vulnerable-urls.txt
       - name: Send Outputs to Slack
         run: |
-         if [[ -f xss-vulnerable-urls.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-XSS -F filename=xss-vulnerable-urls.txt -F file=@xss-vulnerable-urls.txt; fi
+         if [[ -f xss-vulnerable-urls.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS -F file=@xss-vulnerable-urls.txt; fi
        
 #Javascript Scan
   javascript-scan:
@@ -195,12 +199,10 @@ jobs:
          for url in $(cat subdomains-resolved-url.txt); do python3 LinkFinder/linkfinder.py -d -i "$url" -o cli >> js-endpoints.txt; done;
          cat js-file-links-live.txt | python3 getjswords.py | sort -u > js-words.txt;
          cat js-file-links-live.txt | while read url ; do bash jsvar.sh $url | sort -u | tee js-xss.txt ; done;
+         zip js-endpoints.txt js-words.txt js-file-links-live.txt js-xss.txt ; xz js-scan.zip
       - name: Send Outputs to Slack
         run: |
-         if [[ -f js-file-links-live.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-URL -F filename=js-file-links-live.txt -F file=@js-file-links-live.txt; fi;
-         if [[ -f js-endpoints.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Endpoints -F filename=js-endpoints.txt -F file=@js-endpoints.txt; fi;
-         if [[ -f js-words.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-Files-Words -F filename=js-words.txt -F file=@js-words.txt; fi ;
-         if [[ -f js-xss.txt ]] ; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-JS-XSS -F filename=js-xss.txt -F file=@js-xss.txt; fi;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=JS-Scan -F file=@js-scan.zip.xz ; fi;
 
 #Secrets Finder
   secrets-finder:
@@ -220,10 +222,10 @@ jobs:
         run: |
          cat subdomains-resolved-url.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
          cat secret-finder.txt | grep 'google_api' -B 1 | sort -u > gmapapi.txt;
+         zip secrets.zip secret-finder.txt gmapapi.txt; xz secrets.zip
       - name: Send Outputs to Slack
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Secret-Finder -F filename=secret-finder.txt -F file=@secret-finder.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gmap-api -F filename=gmapapi.txt -F file=@gmapapi.txt
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Secret-Finder -F file=@secrets.zip
 
 #Directory Fuzzing
   directory-fuzzing:
@@ -282,7 +284,7 @@ jobs:
       - name: CORS Scanner
         run: python3 CORScanner/cors_scan.py -i subdomains-resolved-url.txt -t 200 > cors.txt;
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CORS-Scanner -F filename=cors.txt -F file=@cors.txt
 
   sql-injection:
     runs-on: ubuntu-latest   
@@ -319,7 +321,7 @@ jobs:
          ./binaries/gochopchop scan --url-file subdomains-resolved-url.txt --export json --export-filename gochopchop-out
          if [[ -f gochopchop-out.json ]]; then zip gochopchop-out.json.zip gochopchop-out.json; fi;
       - name: Send Output to Slack
-        run: if [[ -f gochopchop-out.json.zip ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoChopChop -F filename=gochopchop-out.json.zip -F file=@gochopchop-out.json.zip; fi;
+        run: if [[ -f gochopchop-out.json.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=GoChopChop -F filename=gochopchop-out.json.zip -F file=@gochopchop-out.json.zip; fi;
     
   Subdomainizer:
     runs-on: ubuntu-latest              
@@ -338,7 +340,7 @@ jobs:
          python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved-url.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
          zip subdomanizer.zip cloud.txt secrets.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Subdomainizer -F filename=subdomanizer.zip -F file=@subdomanizer.zip
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F filename=subdomanizer.zip -F file=@subdomanizer.zip
 
   nikto-scan:
     runs-on: ubuntu-latest
@@ -356,7 +358,7 @@ jobs:
          for host in $(cat subdomains-resolved-host.txt) ; do nikto -host $host:443 >> nikto-443-output.txt; done;
          zip nikto-scan.zip nikto-80-output.txt nikto-443-output.txt
       - name: Send Output to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Nikto-Scan -F filename=nikto-scan.zip -F file=@nikto-scan.zip
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Nikto-Scan -F filename=nikto-scan.zip -F file=@nikto-scan.zip
 
 #HeartBleed Scanner
   Heartbleed-Scanner:
@@ -371,4 +373,4 @@ jobs:
         run: for line in $(cat subdomains-resolved-url.txt) ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe >> heartbleed.txt ; done
       - name: Send Files to Slack Channel 
         if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Heartbleed -F file=@heartbleed.txt
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Heartbleed -F file=@heartbleed.txt
