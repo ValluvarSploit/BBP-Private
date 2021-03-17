@@ -5,6 +5,7 @@ env:
       TARGET: ${{ secrets.PUBLIC_LARGE_DOMAIN }}
       EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
       XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
+      HOST: ${{ secrets.NGROK_URL }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
@@ -16,6 +17,7 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
+         wget $HOST/subdomains-manual.txt
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
