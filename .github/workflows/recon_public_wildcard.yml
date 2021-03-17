@@ -13,6 +13,7 @@ env:
       S_CHANNEL: ${{ secrets.SLACK_CN_PUBLIC }}
       HOST: ${{ secrets.NGROK_URL }}
       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PUBLIC }}
+      S_URL: https://slack.com/api/files.upload
 
 jobs:
   Subdomain-Enumeration:
