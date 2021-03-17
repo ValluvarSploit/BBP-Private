@@ -168,6 +168,7 @@ jobs:
          name: nmap-output
       - name: Install Dependencies
         run: |
+         ulimit -s ; ulimit -s 65536
          cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt
          cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt
          sudo apt-get update && sudo apt-get install nmap -y
