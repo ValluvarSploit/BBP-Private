@@ -1,0 +1,14 @@
+#  1. PUBLIC_LARGE_DOMAIN
+#       example.com
+name: Recon Large Scope-Public
+on:
+  workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN_LARGE_PUBLIC }}
+      EXCLUDE_HOST: ${{ secrets.PUBLIC_EXCLUDE_HOST }}
+      XSS_HUNTER_URL_TOKEN: ${{ secrets.XSS_HUNTER }}
+      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
+      GIT_TOKEN: ${{ secrets.TOKEN }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_PUBLIC }}
+      HOST: ${{ secrets.NGROK_URL }}
