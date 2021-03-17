@@ -229,7 +229,7 @@ jobs:
          chmod +x binaries/nuclei   
       - name: Nuclei scan
         run: |
-         ./binaries/nuclei -l subdomains-resolved.txt -c 500 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
+         ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
          xz nuclie-scan.txt
       - name: Send Output to Slack
         if: always()
