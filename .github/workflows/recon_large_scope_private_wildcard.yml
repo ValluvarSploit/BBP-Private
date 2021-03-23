@@ -63,7 +63,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: massdns-artifacts
+         name: subdomain-enumeration-artifacts
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
