@@ -83,7 +83,7 @@ jobs:
          path: subdomains-resolved.txt 
       - name: Send Output to Slack
         run: |
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-httpx -F file=@httpx.zip
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-httpx -F file=@httpx.zip.xz
       - name: Job Failure Slack Notification
         if: failure()
         run: |
