@@ -117,7 +117,7 @@ jobs:
          sort -u live-ips.txt -o live-ips.txt
          zip massdns-output.zip massdns-output.txt live-ips.txt ; xz massdns-output.zip
       - name: Send Output to Slack
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-output.zip
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-output.zip.xz
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
