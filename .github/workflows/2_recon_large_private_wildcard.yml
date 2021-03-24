@@ -458,11 +458,13 @@ jobs:
       - name: Directory Fuzzing
         run: |
          python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
-         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
-         zip -r dirsearch-reports.zip dir-report && xz dirsearch-reports.zip
+
       - name: Send Outputs to Slack
         if: always()
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Fuzzing -F file=@dirsearch-reports.zip.xz
+        run: |
+         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
+         zip -r dirsearch-reports.zip dir-report && xz dirsearch-reports.zip
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Fuzzing -F file=@dirsearch-reports.zip.xz
       - name: Job Failure Slack Notification
         if: failure()
         run: |
