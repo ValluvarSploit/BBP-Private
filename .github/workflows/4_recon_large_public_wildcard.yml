@@ -637,11 +637,11 @@ jobs:
       - name: Subdomanizer
         run: |
          python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
-         zip subdomainizer.zip cloud.txt subdomains.txt secrets.txt
       - name: Send Output to Slack
         if: always()
         run: |
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomainizer -F file=@subdomainizer.zip ; fi
+         zip subdomainizer.zip cloud.txt subdomains.txt secrets.txt
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomainizer -F file=@subdomainizer.zip ;
       - name: Job Failure Slack Notification
         if: failure()
         run: |
