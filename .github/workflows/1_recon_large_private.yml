@@ -47,8 +47,6 @@ jobs:
          ./binaries/findomain -t "$TARGET" -q >> subdomains-auto.txt; 
          cat subdomains-auto.txt >> subdomains-manual.txt
          sort -u subdomains-manual.txt -o subdomains-manual.txt
-         cat subdomains-manual.txt | wc -l
-         cat ips-local.txt | wc -l
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
