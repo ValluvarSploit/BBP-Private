@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2         
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON STARTED FOR LARGE SCOPE (PUBLIC) - '$TARGET'"}' "$S_WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} STARTED - '$TARGET'"}' "$S_WEBHOOK"
          wget $HOST/subdomains-manual.txt       
          sudo apt-get install python3-setuptools
          sudo snap install amass
@@ -836,8 +836,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Slack 
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON PRIVATE LARGE COMPLETED FOR DOMAIN - $TARGET"}' "$S_WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} COMPLETED - '$TARGET'"}' "$S_WEBHOOK"
       - name: Job Failure Slack Notification
         if: failure()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$S_WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$S_WEBHOOK"
