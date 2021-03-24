@@ -158,7 +158,7 @@ jobs:
           live-ips.txt
       - name: Send Output to Slack
         run: |
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-httpx -F file=@httpx.zip
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-httpx -F file=@httpx.zip.xz
       - name: Job Failure Slack Notification
         if: failure()
         run: |
@@ -255,11 +255,11 @@ jobs:
       - name: Nmap Scan
         run: |
          python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt      
-         zip masscan-nmap.zip masscan.xml nmap-masscan.txt 
+         zip masscan-nmap.zip masscan.xml nmap-masscan.txt ; xz masscan-nmap.zip
       - name: Send Output to Slack
         if: always()
         run: |           
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan-nmap.zip
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan-nmap.zip.xz
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -511,7 +511,7 @@ jobs:
       - name: Send Outputs to Slack
         if: always()
         run: |
-         if [[ -f secrets.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip ; fi
+         if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
       - name: Job Failure Slack Notification
         if: failure()
         run: |
