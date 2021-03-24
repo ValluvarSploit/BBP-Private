@@ -225,7 +225,7 @@ jobs:
          zip secrets.zip secret-finder.txt gmapapi.txt; xz secrets.zip
       - name: Send Outputs to Slack
         run: |
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Secret-Finder -F file=@secrets.zip
+         if [[ -f secrets.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Secret-Finder -F file=@secrets.zip ; fi
 
 #Directory Fuzzing
   directory-fuzzing:
