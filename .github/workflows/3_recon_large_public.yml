@@ -1,6 +1,6 @@
 #  1. PUBLIC_LARGE_DOMAIN
 #       example.com
-name: Recon Large Scope-Public
+name: Recon Large Public
 on:
   workflow_dispatch:
 env:
