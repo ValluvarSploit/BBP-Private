@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2         
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON STARTED FOR LARGE SCOPE (PRIVATE) - '$TARGET'"}' "$S_WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} STARTED - '$TARGET'"}' "$S_WEBHOOK"
          wget $HOST/subdomains-manual.txt
          wget $HOST/ips-manual.txt         
          sudo apt-get install python3-setuptools
@@ -735,11 +735,11 @@ jobs:
       - name: Subdomanizer
         run: |
          python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
-         zip subdomainizer.zip cloud.txt subdomains.txt secrets.txt
       - name: Send Output to Slack
         if: always()
         run: |
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomainizer -F file=@subdomainizer.zip ; fi
+         zip subdomainizer.zip cloud.txt subdomains.txt secrets.txt
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomainizer -F file=@subdomainizer.zip ;
       - name: Job Failure Slack Notification
         if: failure()
         run: |
@@ -845,7 +845,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Slack 
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON PRIVATE LARGE COMPLETED FOR DOMAIN - $TARGET"}' "$S_WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} COMPLETED - '$TARGET'"}' "$S_WEBHOOK"
       - name: Job Failure Slack Notification
         if: failure()
         run: |
