@@ -436,7 +436,7 @@ jobs:
       - name: Send Outputs to Slack
         if: always()
         run: |
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip
+         if [[ -f secrets.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip ; fi
       - name: Job Failure Slack Notification
         if: failure()
         run: |
