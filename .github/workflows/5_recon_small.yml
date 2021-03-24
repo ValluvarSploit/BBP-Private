@@ -242,10 +242,11 @@ jobs:
          wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
       - name: Directory Fuzzing
         run: |
-         python3 dirsearch/dirsearch.py -l subdomains-resolved-url.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
-         zip -r dirsearch-dir-reports.zip dirsearch/reports && xz dirsearch-dir-reports.zip 
+         python3 dirsearch/dirsearch.py -l subdomains-resolved-url.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt; 
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Directory-Fuzzing -F filename=dirsearch-dir-reports.zip.xz -F file=@dirsearch-dir-reports.zip.xz
+        run: |
+         zip -r dirsearch-dir-reports.zip dirsearch/reports && xz dirsearch-dir-reports.zip        
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Directory-Fuzzing -F filename=dirsearch-dir-reports.zip.xz -F file=@dirsearch-dir-reports.zip.xz
 
 #Fuzz Sensitive Files
   sensitive-files-fuzzing:
@@ -262,9 +263,10 @@ jobs:
       - name: Directory Fuzzing
         run: |
          python3 dirsearch/dirsearch.py -l subdomains-resolved-url.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
-         zip -r dirsearch-file-reports.zip dirsearch/reports && xz dirsearch-file-reports.zip
       - name: Send Outputs to Slack
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-File-Fuzzing -F filename=dirsearch-file-reports.zip.xz -F file=@dirsearch-file-reports.zip.xz
+        run: |
+         zip -r dirsearch-file-reports.zip dirsearch/reports && xz dirsearch-file-reports.zip
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-File-Fuzzing -F filename=dirsearch-file-reports.zip.xz -F file=@dirsearch-file-reports.zip.xz
 
 #CORS Scanner
   CORS-scanner:
