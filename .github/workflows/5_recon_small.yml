@@ -73,7 +73,7 @@ jobs:
          nmap -Pn -sV -p- --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -iL subdomains-resolved-host.txt -oN nmap-vulnerability-scan.txt 
          xz nmap-vulnerability-scan.txt
       - name: Send Output to Slack
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=-Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt.xz
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt.xz
 
 #NMAP UDP Full Scan
   nmap-udp-scan:
