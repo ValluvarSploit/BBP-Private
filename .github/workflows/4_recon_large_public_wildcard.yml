@@ -724,7 +724,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Slack 
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"RECON PRIVATE LARGE COMPLETED FOR DOMAIN - $TARGET"}' "$S_WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} COMPLETED - '$TARGET'"}' "$S_WEBHOOK"
       - name: Job Failure Slack Notification
         if: failure()
         run: |
