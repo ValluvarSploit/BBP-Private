@@ -47,9 +47,8 @@ jobs:
       - name: Nuclei scan
         run: |
          ./binaries/nuclei -l subdomains-resolved-url.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
-         xz nuclie-scan.txt
       - name: Send Output to Slack
-        run: if [[ -f nuclie-scan.txt.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Nuclei-Template-Scan -F file=@nuclie-scan.txt; fi
+        run: if [[ -f nuclie-scan.txt ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Nuclei-Template-Scan -F file=@nuclie-scan.txt; fi
 
 #NMAP Vulnerability Full Scan
   nmap-vulnerability-scan:
@@ -199,7 +198,7 @@ jobs:
          for url in $(cat subdomains-resolved-url.txt); do python3 LinkFinder/linkfinder.py -d -i "$url" -o cli >> js-endpoints.txt; done;
          cat js-file-links-live.txt | python3 getjswords.py | sort -u > js-words.txt;
          cat js-file-links-live.txt | while read url ; do bash jsvar.sh $url | sort -u | tee js-xss.txt ; done;
-         zip js-endpoints.txt js-words.txt js-file-links-live.txt js-xss.txt ; xz js-scan.zip
+         zip js-scan.zip js-endpoints.txt js-words.txt js-file-links-live.txt js-xss.txt ; xz js-scan.zip
       - name: Send Outputs to Slack
         run: |
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=JS-Scan -F file=@js-scan.zip.xz ; fi;
