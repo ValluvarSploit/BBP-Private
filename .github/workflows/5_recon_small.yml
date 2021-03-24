@@ -340,9 +340,10 @@ jobs:
       - name: Subdomanizer
         run: |
          python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved-url.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
-         zip subdomanizer.zip cloud.txt secrets.txt
       - name: Send Output to Slack
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F filename=subdomanizer.zip -F file=@subdomanizer.zip
+        run: |
+         zip subdomanizer.zip cloud.txt secrets.txt
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F filename=subdomanizer.zip -F file=@subdomanizer.zip
 
   nikto-scan:
     runs-on: ubuntu-latest
