@@ -2,7 +2,7 @@
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
-name: Recon Large Scope-Private
+name: Recon Large Private
 on:
   workflow_dispatch:
 env:
