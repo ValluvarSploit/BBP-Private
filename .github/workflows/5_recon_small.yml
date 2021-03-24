@@ -1,4 +1,4 @@
-name: Recon Small Scope
+name: Recon Small
 on:
   workflow_dispatch:
 env:
