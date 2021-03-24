@@ -194,7 +194,7 @@ jobs:
          ./binaries/subjack -w subdomains-resolved.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt 
       - name: Nuclei
-        run: ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers/subdomain-takeover.yaml -o nuclie-output.txt   
+        run: ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie-output.txt   
       - name: SubOver
         run: cd binaries; chmod +x SubOver; ./SubOver -l subdomains.txt -o subover.txt; cd ..
       - name: Combine Output Files
