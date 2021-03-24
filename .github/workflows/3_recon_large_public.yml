@@ -22,7 +22,8 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} STARTED - '$TARGET'"}' "$S_WEBHOOK"
-         wget $HOST/subdomains-manual.txt       
+         wget $HOST/subdomains-manual.txt
+         wget $HOST/ips-manual.txt
          sudo apt-get install python3-setuptools
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
@@ -48,6 +49,7 @@ jobs:
          name: subdomain-enumeration-artifacts
          path: |
           subdomains-manual.txt
+          ips-manual.txt
       - name: Job Failure Slack Notification
         if: failure()
         run: |
@@ -75,6 +77,7 @@ jobs:
          path: |
           dnsgen-wordlist.txt 
           subdomains-manual.txt
+          ips-manual.txt
       - name: Job Failure Slack Notification
         if: failure()
         run: |
