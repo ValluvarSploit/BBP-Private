@@ -377,9 +377,12 @@ jobs:
         with:
          name: url-collector-artifacts 
       - name: Install Dependencies
-        run: sudo snap install dalfox       
+        run: |
+         wget --quiet https://github.com/hahwul/dalfox/releases/download/v2.3.6/dalfox_2.3.6_linux_amd64.tar.gz
+         gunzip dalfox_2.3.6_linux_amd64.tar.gz ; tar -xvf dalfox_2.3.6_linux_amd64.tar
+       #sudo snap install dalfox       
       - name: Dalfox
-        run: dalfox -b "$XSS_HUNTER" file xss-params.txt > xss-url-collector.txt
+        run: ./dalfox -b "$XSS_HUNTER" file xss-params.txt > xss-url-collector.txt
       - name: Send Outputs to Slack
         if: always()
         run: |
@@ -423,9 +426,12 @@ jobs:
         with:
          name: paramspider-artifacts        
       - name: Install Dependencies
-        run: sudo snap install dalfox       
+        run: |
+         wget --quiet https://github.com/hahwul/dalfox/releases/download/v2.3.6/dalfox_2.3.6_linux_amd64.tar.gz
+         gunzip dalfox_2.3.6_linux_amd64.tar.gz ; tar -xvf dalfox_2.3.6_linux_amd64.tar
+       #sudo snap install dalfox           
       - name: Dalfox
-        run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file paramspider.txt > xss-paramspider.txt
+        run: ./dalfox -b "$XSS_HUNTER" file paramspider.txt > xss-paramspider.txt
       - name: Send Outputs to Slack
         if: always()
         run: if [[ -f xss-paramspider.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-Paramspider -F file=@xss-paramspider.txt; fi
@@ -837,6 +843,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$S_WEBHOOK"
 
   Slack-Notification:
+    if: always()
     runs-on: ubuntu-latest  
     needs: [Subdomain-Enumeration, DNSgen,MassDNS-Resolver, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, Nmap-UDP-Scan, URL-Enumeration, XSS-Hunt-URL-Collector, Parameter-Discovery, XSS-Hunter, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, Directory-Fuzz, File-Fuzz, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC]
     steps:
