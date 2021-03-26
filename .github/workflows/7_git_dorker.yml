@@ -21,9 +21,11 @@ jobs:
          git clone https://github.com/obheda12/GitDorker.git
          pip3 install -r GitDorker/requirements.txt 
       - name: Git-Dorker-ORG
-        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-dorker-org
+        run: |
+         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-dorker-org
+         xz git-dorker-org_gh_dorks.csv
       - name: Send Output Files Slack Channel
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker-ORG -F filename=git-dorker-org.csv -F file=@git-dorker-org_gh_dorks.csv
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker-ORG -F filename=git-dorker-org.csv -F file=@git-dorker-org_gh_dorks.csv.xz
         
 
 #  git-dorker-Users:
@@ -38,9 +40,11 @@ jobs:
 #         pip3 install -r GitDorker/requirements.txt 
 #         echo "$TARGET_USERS_FILE" > git-users.txt
 #      - name: Git-Dorker-Users
-#        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-dorker-Users
+#        run: |
+#         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 --userfile git-users.txt --token "$GITHUB_TOKEN" -o git-dorker-Users
+#         xz git-dorker-Users_gh_dorks.csv
 #      - name: Send Output Files Slack Channel
-#        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker-Users -F filename=git-dorker-Users.csv -F file=@git-dorker-Users_gh_dorks.csv
+#        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker-Users -F filename=git-dorker-Users.csv -F file=@git-dorker-Users_gh_dorks.csv.xz
         
         
 #  git-dorker-Domain:
@@ -54,7 +58,9 @@ jobs:
 #         git clone https://github.com/obheda12/GitDorker.git
 #         pip3 install -r GitDorker/requirements.txt 
 #      - name: Git-Dorker-Domain
-#        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET_DOMAIN"  --token "$GITHUB_TOKEN" -o git-dorker-Domain      
+#        run: |
+#         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET_DOMAIN"  --token "$GITHUB_TOKEN" -o git-dorker-Domain      
+#         xz git-dorker-Domain_gh_dorks.csv
 #      - name: Send Output Files Slack Channel
-#        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_DOMAIN"-Gitdorker-Domain -F filename=git-dorker-Domain.csv -F file=@git-dorker-Domain_gh_dorks.csv   
+#        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_DOMAIN"-Gitdorker-Domain -F filename=git-dorker-Domain.csv -F file=@git-dorker-Domain_gh_dorks.csv.xz   
         
