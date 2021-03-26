@@ -290,10 +290,12 @@ jobs:
          sudo git clone https://github.com/scipag/vulscan
          cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh
       - name: Nmap scan
-        run: exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oN nmap-vulnerability-scan.txt $ip  ; done ;
+        run: |
+         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oN nmap-vulnerability-scan.txt $ip  ; done ;
+         xz nmap-vulnerability-scan.txt
       - name: Send Output to Slack
         if: always()
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt.xz
       - name: Job Failure Slack Notification
         if: failure()
         run: |
