@@ -101,7 +101,7 @@ jobs:
          cd ..
          sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         xz -d dnsgen-wordlist.txt
+         xz -d dnsgen-wordlist.txt.xz
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
