@@ -68,15 +68,15 @@ jobs:
         run: pip3 install dnsgen && cp ~/.local/bin/dnsgen .
       - name: DNSgen
         run: |
-         ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt  
-         cat dnsgen-wordlist.txt | wc -l
+         ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt 
+         xz dnsgen-wordlist.txt
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: dnsgen-artifacts
          path: |
-          dnsgen-wordlist.txt 
+          dnsgen-wordlist.txt.xz
           subdomains-manual.txt
           ips-manual.txt
       - name: Job Failure Slack Notification
@@ -101,6 +101,7 @@ jobs:
          cd ..
          sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         xz -d dnsgen-wordlist.txt
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
