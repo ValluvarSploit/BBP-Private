@@ -27,7 +27,7 @@ jobs:
       - name: Send Output Files Slack Channel
         if: always()
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ gthub.job}} in workflow ${{ github.workflow }} has _*`{{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`{{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
          
         
       
