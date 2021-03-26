@@ -56,42 +56,44 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$S_WEBHOOK"
 
-  DNSgen:
-    runs-on: ubuntu-latest
-    needs: Subdomain-Enumeration
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts
-      - name: Install Dependencies
-        run: pip3 install dnsgen && cp ~/.local/bin/dnsgen .
-      - name: DNSgen
-        run: |
-         ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt 
-         xz dnsgen-wordlist.txt
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: dnsgen-artifacts
-         path: |
-          dnsgen-wordlist.txt.xz
-          subdomains-manual.txt
-          ips-manual.txt
-      - name: Job Failure Slack Notification
-        if: failure()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$S_WEBHOOK"
+#  DNSgen:
+#    runs-on: ubuntu-latest
+#    needs: Subdomain-Enumeration
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/download-artifact@v2
+#        with:
+#         name: subdomain-enumeration-artifacts
+#      - name: Install Dependencies
+#        run: pip3 install dnsgen && cp ~/.local/bin/dnsgen .
+#      - name: DNSgen
+#        run: |
+#         ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt 
+#         xz dnsgen-wordlist.txt
+#      - name: Upload Artifacts
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#         name: dnsgen-artifacts
+#         path: |
+#          dnsgen-wordlist.txt.xz
+#          subdomains-manual.txt
+#          ips-manual.txt
+#      - name: Job Failure Slack Notification
+#        if: failure()
+#        run: |
+#          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }} - '$TARGET'"}' "$S_WEBHOOK"
        
   MassDNS-Resolver:
     runs-on: ubuntu-latest
-    needs: [DNSgen,Subdomain-Enumeration]
+    needs: [Subdomain-Enumeration]
+#    needs: [DNSgen,Subdomain-Enumeration]
     steps:
       - uses: actions/checkout@v2 
       - uses: actions/download-artifact@v2
         with:
-         name: dnsgen-artifacts
+         name: subdomain-enumeration-artifacts
+#         name: dnsgen-artifacts
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt
@@ -101,11 +103,10 @@ jobs:
          cd ..
          sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         xz -d dnsgen-wordlist.txt.xz
+#         xz -d dnsgen-wordlist.txt.xz
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
-         cat dnsgen-wordlist.txt >> wordlist-hugh.txt
          sort -u wordlist-hugh.txt -o wordlist-hugh.txt
          grep -vFf subdomains-exclude.txt wordlist-hugh.txt > wordlist-all.txt
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-all.txt
@@ -114,6 +115,7 @@ jobs:
          cat ips-manual.txt >> live-ips.txt
          sort -u live-ips.txt -o live-ips.txt
          zip massdns-output.zip massdns-output.txt live-ips.txt ; xz massdns-output.zip
+#         cat dnsgen-wordlist.txt >> wordlist-hugh.txt
       - name: Send Output to Slack
         run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-output.zip.xz
       - name: Upload Artifacts
