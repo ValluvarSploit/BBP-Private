@@ -310,7 +310,7 @@ jobs:
       - name: Install Dependencies
         run: |
          sudo apt-get update && sudo apt-get install nmap -y
-         live-ips.txt
+         cat live-ips.txt
       - name: Nmap UDP scan
         run: sudo nmap -Pn -sV -p- -sU -iL live-ips.txt -oA nmap-udp-scan
       - name: Send Output to Slack
