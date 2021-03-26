@@ -29,6 +29,13 @@ jobs:
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Broken Link Checker Light HAS COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: blc-artifacts
+         path: |
+          httpx-out.txt
          
   broken-link-checker-full:
     needs: broken-link-checker-light
@@ -36,10 +43,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: blc-artifacts
       - name: Install Dependencies
         run: |
          sudo npm install broken-link-checker -g    
-         wget $HOST/httpx-out.txt
       - name: Broken Link Checker
         run: |
          for url in $(cat httpx-out.txt) ; do printf **"$url"** | tee -a blh-full.txt; blc -rof --filter-level 3 $url | tee -a blh-full.txt; done ;
