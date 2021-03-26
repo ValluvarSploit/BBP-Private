@@ -7,8 +7,8 @@ env:
        TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
        GITHUB_TOKEN: ${{ secrets.TOKEN }}
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
-       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }} 
+       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
        S_URL: https://slack.com/api/files.upload
 jobs:
   git-dorker-ORG:
@@ -24,8 +24,12 @@ jobs:
         run: |
          python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 --organization "$TARGET_ORG" --token "$GITHUB_TOKEN" -o git-dorker-org
          xz git-dorker-org_gh_dorks.csv
-      - name: Send Output Files Slack Channel
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker-ORG -F filename=git-dorker-org.csv -F file=@git-dorker-org_gh_dorks.csv.xz
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker-ORG -F filename=git-dorker-org.csv -F file=@git-dorker-org_gh_dorks.csv.xz
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} COMPLETED - '$TARGET'"}' "$S_WEBHOOK"
+
         
 
 #  git-dorker-Users:
