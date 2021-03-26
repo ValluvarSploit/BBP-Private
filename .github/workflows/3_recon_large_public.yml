@@ -864,5 +864,5 @@ jobs:
       - name: Slack 
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow} _*`COMPLETED`*_ - '$TARGET'"}' "$S_WEBHOOK"
-      - name: Job Failure Slack Notification
+
 
