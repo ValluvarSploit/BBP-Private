@@ -762,10 +762,12 @@ jobs:
          git clone https://github.com/obheda12/GitDorker.git
          pip3 install -r GitDorker/requirements.txt 
       - name: Git-Dorker-ORG
-        run: python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET"  --token "$GIT_TOKEN" -o git-dorker-domain
+        run: |
+         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET"  --token "$GIT_TOKEN" -o git-dorker-domain
+         xz git-dorker-domain_gh_dorks.csv
       - name: Send Output to Slack
         if: always()
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv
+        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz
       - name: Job Failure Slack Notification
         if: failure()
         run: |
