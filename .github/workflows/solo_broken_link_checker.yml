@@ -17,9 +17,12 @@ jobs:
          wget $HOST/subdomains-manual.txt
       - name: Broken Link Checker
         run: |
-         for url in $(cat subdomains-manual.txt) ; do printf **"$url"** | tee -a blh-full-output.txt; blc -rof --filter-level 3 $url | tee -a blh-full-output.txt; done ;
+         for url in $(cat subdomains-manual.txt) ; do printf **"$url"** | tee -a blh-full.txt; blc -rof --filter-level 3 $url | tee -a blh-full.txt; done ;
       - name: Send Output Files Slack Channel
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Broken-Link-Checker-Full -F file=@blh-full-output.txt
+        run: |
+         cat blh-full.txt | grep -v "├───OK───" > blh-full-broken.txt
+         zip blc-full.zip blh-full.txt blh-full-broken.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Broken-Link-Checker-Full -F file=@blc-full.zip
 
   broken-link-checker-light:
     runs-on: ubuntu-latest
@@ -31,6 +34,9 @@ jobs:
          wget $HOST/subdomains-manual.txt
       - name: Broken Link Checker
         run: |
-         for url in $(cat subdomains-manual.txt) ; do printf **"$url"** | tee -a blh-light-output.txt; blc -of --filter-level 0 $url | tee -a blh-light-output.txt; done ;
+         for url in $(cat subdomains-manual.txt) ; do printf **"$url"** | tee -a blh-light.txt; blc -of --filter-level 0 $url | tee -a blh-light.txt; done ;
       - name: Send Output Files Slack Channel
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Broken-Link-Checker-Light -F file=@blh-light-output.txt
+        run: |
+         cat blh-light.txt | grep -v "├───OK───" > blh-light-broken.txt
+         zip blc-light.zip blh-light.txt blh-light-broken.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=Broken-Link-Checker-Light -F file=@blc-light.zip
