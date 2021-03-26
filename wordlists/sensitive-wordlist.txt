@@ -1,5 +1,9 @@
 /conf
-conf/tomcat-users.xml
+/composer.json
+/.travis.yml
+/composer.lock
+/package.json
+/conf/tomcat-users.xml
 /tomcat-users.xml
 /.access
 /access
