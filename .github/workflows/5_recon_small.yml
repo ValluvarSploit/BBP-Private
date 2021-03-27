@@ -7,7 +7,7 @@ env:
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       S_CHANNEL: ${{ secrets.SLACK_CN_SMALL }}
       S_URL: https://slack.com/api/files.upload
-      S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+      S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SMALL }}
 jobs:
   http-probe:
     runs-on: ubuntu-latest
