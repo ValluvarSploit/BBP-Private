@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
 env:
      TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
-     TARGETS: ${{ secrets.NGROK_URL }}
+     HOST: ${{ secrets.NGROK_URL }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_PRIVATE_BB_CHANNEL_NAME }}
+     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }}
 jobs:
   nuclei-scan:
     runs-on: ubuntu-latest                 
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $TARGETS/http-resolved-url.txt -O targets.txt
+         wget $HOST/http-resolved-url.txt -O targets.txt
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
          tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
