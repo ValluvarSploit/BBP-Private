@@ -190,7 +190,7 @@ jobs:
       - name: Install Dependencies
         run: sudo snap install dalfox       
       - name: Dalfox
-        run: dalfox -b "$XSS_HUNTER_URL_TOKEN" file paramspider.txt > xss-vulnerable-urls.txt
+        run: dalfox -b "$XSS_HUNTER" file paramspider.txt > xss-vulnerable-urls.txt
 
       - name: Output & Slack Notification
         if: always()
