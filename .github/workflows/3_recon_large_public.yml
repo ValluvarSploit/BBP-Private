@@ -177,9 +177,11 @@ jobs:
         run: |
          touch subjack-logs.txt ;
          git clone https://github.com/projectdiscovery/nuclei-templates.git ;
-         cd binaries; chmod +x subjack subzy nuclei; cd .. ;
+         cd binaries; chmod +x subjack subzy; cd .. ;
          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt ;
          cp subdomains.txt binaries/ ;
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Subzy
         run: |
          ./binaries/subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt ;
@@ -189,7 +191,7 @@ jobs:
          ./binaries/subjack -w subdomains-resolved.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json ;
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt ;
       - name: Nuclei
-        run: ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie-output.txt ;
+        run: ./nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie-output.txt ;
       - name: SubOver
         run: cd binaries; chmod +x SubOver; ./SubOver -l subdomains.txt -o subover.txt; cd .. ;
       - name: Combine Output Files
@@ -218,10 +220,11 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/projectdiscovery/nuclei-templates.git ;
-         chmod +x binaries/nuclei ;
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Nuclei scan
         run: |
-         ./binaries/nuclei -l subdomains-resolved.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt ;
+         ./nuclei -l subdomains-resolved.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt ;
          xz nuclie-scan.txt ;
       - name: Output & Slack Notification
         if: always()
