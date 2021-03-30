@@ -780,7 +780,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Slack 
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow} _*`COMPLETED`*_ - '$TARGET'"}' "$S_WEBHOOK" ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow}} _*`COMPLETED`*_ - '$TARGET'"}' "$S_WEBHOOK" ;
 
 #  SQL-Injection:
 #    runs-on: ubuntu-latest   
