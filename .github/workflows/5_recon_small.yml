@@ -47,10 +47,11 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/projectdiscovery/nuclei-templates.git
-         chmod +x binaries/nuclei   
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz  
       - name: Nuclei scan
         run: |
-         ./binaries/nuclei -l subdomains-resolved-url.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
+         ./nuclei -l subdomains-resolved-url.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
       - name: Output & Slack Notification
         if: always()
         run: |
