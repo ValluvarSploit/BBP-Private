@@ -29,12 +29,11 @@ jobs:
          path: |
           subdomains-resolved-url.txt 
           subdomains-resolved-host.txt
-      - name: Send Output to Slack
-        run: curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Scopes -F file=@subdomains-resolved-url.txt
-      - name: Job Stauts Slack Notification
+      - name: Output & Slack Notification
         if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"          
+        run: |        
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Scopes -F file=@subdomains-resolved-url.txt
          
 #Nuclei Template Scan.
   nuclei-scan:
