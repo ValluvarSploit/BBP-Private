@@ -159,7 +159,7 @@ jobs:
          path: |
           subdomains-resolved.txt 
           live-ips.txt
-     - name: Output & Slack Notification
+      - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
