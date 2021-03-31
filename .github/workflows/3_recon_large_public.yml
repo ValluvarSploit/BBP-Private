@@ -772,6 +772,51 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSC -F file=@dnsc.csv ;
 
+#Broken Link Checker
+  broken-link-checker-light:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Install Dependencies
+        run: |
+         sudo npm install broken-link-checker -g    
+      - name: Broken Link Checker
+        run: |
+         for url in $(cat subdomains-resolved.txt) ; do blc -of --filter-level 0 $url | tee -a blc-light.txt; done ;
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         cat blc-light.txt | grep -v "├───OK───" > blc-light-broken.txt ;
+         zip blc-light.zip blc-light.txt blc-light-broken.txt ; xz blc-light.zip
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-BLC-Light -F file=@blc-light.zip.xz ;
+
+  broken-link-checker-full:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Install Dependencies
+        run: |
+         sudo npm install broken-link-checker -g    
+      - name: Broken Link Checker
+        run: |
+         for url in $(cat subdomains-resolved.txt) ; do blc -rof --filter-level 3 $url | tee -a blc-full.txt; done ;
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         cat blc-full.txt | grep -v "├───OK───" > blc-full-broken.txt ;
+         zip blc-full.zip blc-full.txt blc-full-broken.txt ; xz blc-light.zip.xz
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-BLC-Full -F file=@blc-full.zip.xz ;
+
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
