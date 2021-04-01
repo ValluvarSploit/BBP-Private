@@ -15,6 +15,8 @@ jobs:
          sudo snap install amass
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
       - name: Amass 
-        run: amass enum -d "$TARGET" -ip -o amass-no-key.out -rf resolvers.txt
+        run: |
+         amass
+         amass enum -d "$TARGET" -ip -o amass-no-key.out -rf resolvers.txt
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-No-Key -F filename=amass-no-key.out -F file=@amass-no-key.out
