@@ -13,7 +13,7 @@ jobs:
       - name: Install Dependencies
         run: |
          wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip
-         unzip amass_linux_amd64.zip
+         unzip amass_linux_amd64.zip ; mv amass_linux_amd64 amass ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          ls -l
       - name: Amass 
