@@ -12,11 +12,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         sudo snap install amass
+         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         ls -l
       - name: Amass 
         run: |
-         amass
-         amass enum -d "$TARGET" -ip -o amass-no-key.out -rf resolvers.txt
+         ./amass
       - name: Send Output to Slack
         run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-No-Key -F filename=amass-no-key.out -F file=@amass-no-key.out
