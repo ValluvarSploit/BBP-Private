@@ -17,7 +17,6 @@ jobs:
         run: |
          echo "$TARGET" > subdomains.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         chmod +x binaries/httpx; 
          wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
          tar -xzvf httpx_1.0.3_linux_amd64.tar.gz ; mv httpx-linux-amd64 httpx
       - name: HTTP Probe
@@ -35,7 +34,7 @@ jobs:
         if: always()
         run: |        
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Scopes -F file=@subdomains-resolved-url.txt
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Scopes -F file=@subdomains-resolved-url.txt
          
 #Nuclei Template Scan.
   nuclei-scan:
@@ -58,7 +57,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          if [[ -f nuclie-scan.txt ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Nuclei-Template-Scan -F file=@nuclie-scan.txt; fi
+          if [[ -f nuclie-scan.txt ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Nuclei-Template-Scan -F file=@nuclie-scan.txt; fi
 
 #NMAP Vulnerability Full Scan
   nmap-vulnerability-scan:
@@ -85,7 +84,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt.xz
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt.xz
 
 #Collect URLs.
   url-collector:
@@ -133,7 +132,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-URL-Pattern-Collector -F file=@url-collector-artifacts.zip.xz
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-URL-Pattern-Collector -F file=@url-collector-artifacts.zip.xz
 
 #Parameter Discovery
   parameter-discovery:
@@ -159,7 +158,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK" 
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Parameter-Discovery -F file=@paramspider.txt
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Parameter-Discovery -F file=@paramspider.txt
 
 #XSS Automation
   xss-hunter:
@@ -179,7 +178,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK" 
-          if [[ -f xss-vulnerable-urls.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-XSS -F file=@xss-vulnerable-urls.txt; fi
+          if [[ -f xss-vulnerable-urls.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-XSS -F file=@xss-vulnerable-urls.txt; fi
 
 #Javascript Scan
   javascript-scan:
@@ -212,7 +211,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-JS-Scan -F file=@js-scan.zip.xz ; fi;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-JS-Scan -F file=@js-scan.zip.xz ; fi;
 
 #Secrets Finder
   secrets-finder:
@@ -237,8 +236,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          if [[ -f secrets.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Secret-Finder -F file=@secrets.zip ; fi
-
+          if [[ -f secrets.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Secret-Finder -F file=@secrets.zip ; fi
 #Directory Fuzzing
   directory-fuzzing:
     runs-on: ubuntu-latest
@@ -260,7 +258,7 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
           zip -r dirsearch-dir-reports.zip dirsearch/reports && xz dirsearch-dir-reports.zip        
-          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$BATCH"-Directory-Fuzzing -F filename=dirsearch-dir-reports.zip.xz -F file=@dirsearch-dir-reports.zip.xz
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Directory-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
 
 #Fuzz Sensitive Files
   sensitive-files-fuzzing:
@@ -282,7 +280,7 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
           zip -r dirsearch-file-reports.zip dirsearch/reports && xz dirsearch-file-reports.zip
-          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$BATCH"-File-Fuzzing -F filename=dirsearch-file-reports.zip.xz -F file=@dirsearch-file-reports.zip.xz
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-File-Fuzzing -F filename=dirsearch-file-reports.zip.xz -F file=@dirsearch-file-reports.zip.xz
 
 #CORS Scanner
   CORS-scanner:
@@ -305,29 +303,28 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
-
-            #  sql-injection:
-            #    runs-on: ubuntu-latest   
-            #    needs: url-collector        
-            #    steps:
-            #      - uses: actions/checkout@v2
-            #      - uses: actions/download-artifact@v2
-            #        with:
-            #         name: url-collector-artifacts
-            #      - name: Install Dependencies
-            #        run: git clone https://github.com/sqlmapproject/sqlmap.git
-            #      - name: sqlmap
-            #        run: | 
-            #         mkdir sqlmap-output
-            #         python3 sqlmap/sqlmap.py -m sqli-params.txt --batch --banner --dbs --output-dir sqlmap-output
-            #         zip -r sqlmap-output.zip sqlmap-output                         
-            #      - name: Send Files to Slack Channel            
-            #        run: if [[ ! -z $(ls -A sqlmap-output) ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip; fi 
-            #      - name: Job Stauts Slack Notification
-            #        if: always()
-            #        run: |
-            #          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"    
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-CORS-Scanner -F filename=cors.txt -F file=@cors.txt
+ 
+        #  sql-injection:
+        #    runs-on: ubuntu-latest   
+        #    needs: url-collector        
+        #    steps:
+        #      - uses: actions/checkout@v2
+        #      - uses: actions/download-artifact@v2
+        #        with:
+        #         name: url-collector-artifacts
+        #      - name: Install Dependencies 
+        #        run: git clone https://github.com/sqlmapproject/sqlmap.git
+        #      - name: sqlmap
+        #        run: |             
+        #         mkdir sqlmap-output           #         python3 sqlmap/sqlmap.py -m sqli-params.txt --batch --banner --dbs --output-dir sqlmap-output
+        #         zip -r sqlmap-output.zip sqlmap-output                         
+        #      - name: Send Files to Slack Channel            
+        #        run: if [[ ! -z $(ls -A sqlmap-output) ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-sqlmap -F filename=sqlmap-output.zip -F file=@sqlmap-output.zip; fi 
+        #      - name: Job Stauts Slack Notification
+        #        if: always()
+        #        run: |
+        #          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"    
 
   gochopchop:
     runs-on: ubuntu-latest
@@ -349,7 +346,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"  
-          if [[ -f gochopchop-out.json.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-GoChopChop -F filename=gochopchop-out.json.zip -F file=@gochopchop-out.json.zip; fi;
+          if [[ -f gochopchop-out.json.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-GoChopChop -F file=@gochopchop-out.json.zip; fi;
 
   Subdomainizer:
     runs-on: ubuntu-latest              
@@ -371,7 +368,7 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
           zip subdomanizer.zip cloud.txt secrets.txt
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Subdomainizer -F filename=subdomanizer.zip -F file=@subdomanizer.zip
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Subdomainizer -F filename=subdomanizer.zip -F file=@subdomanizer.zip
 
   nikto-scan:
     runs-on: ubuntu-latest
@@ -392,7 +389,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Nikto-Scan -F filename=nikto-scan.zip -F file=@nikto-scan.zip
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Nikto-Scan -F filename=nikto-scan.zip -F file=@nikto-scan.zip
 
 #HeartBleed Scanner
   Heartbleed-Scanner:
@@ -409,4 +406,49 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"          
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$BATCH"-Heartbleed -F file=@heartbleed.txt
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-Heartbleed -F file=@heartbleed.txt
+
+#Broken Link Checker
+  broken-link-checker-light:
+    runs-on: ubuntu-latest
+    needs: http-probe
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: http-probe-artifacts 
+      - name: Install Dependencies
+        run: |
+         sudo npm install broken-link-checker -g    
+      - name: Broken Link Checker
+        run: |
+         for url in $(cat subdomains-resolved-url.txt) ; do blc -of --filter-level 0 $url | tee -a blc-light.txt; done ;
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         cat blc-light.txt | grep -v "├───OK───" > blc-light-broken.txt ;
+         zip blc-light.zip blc-light.txt blc-light-broken.txt ; xz blc-light.zip
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK" ;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BLC-Light -F file=@blc-light.zip.xz ;
+         
+  broken-link-checker-full:
+    runs-on: ubuntu-latest
+    needs: http-probe
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: http-probe-artifacts 
+      - name: Install Dependencies
+        run: |
+         sudo npm install broken-link-checker -g    
+      - name: Broken Link Checker
+        run: |
+         for url in $(cat subdomains-resolved-url.txt) ; do blc -rof --filter-level 3 $url | tee -a blc-full.txt; done ;
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         cat blc-full.txt | grep -v "├───OK───" > blc-full-broken.txt ;
+         zip blc-full.zip blc-full.txt blc-full-broken.txt ; xz blc-light.zip.xz
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK" ;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BLC-Full -F file=@blc-full.zip.xz ;
