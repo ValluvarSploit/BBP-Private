@@ -18,7 +18,7 @@ jobs:
          echo "$TARGET" > subdomains.txt
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
-         tar -xzvf httpx_1.0.3_linux_amd64.tar.gz ; mv httpx-linux-amd64 httpx
+         tar -xzvf httpx_1.0.3_linux_amd64.tar.gz
       - name: HTTP Probe
         run: |
          ./httpx -l subdomains.txt -follow-redirects -status-code -vhost -threads 300 -silent > subdomains-resolved-url.txt 
