@@ -798,7 +798,7 @@ jobs:
         if: always()
         run: |
          cat blc-full.txt | grep -v "├───OK───" > blc-full-broken.txt ;
-         zip blc-full.zip blc-full.txt blc-full-broken.txt ; xz blc-light.zip.xz
+         zip blc-full.zip blc-full.txt blc-full-broken.txt ; xz blc-light.zip
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-BLC-Full -F file=@blc-full.zip.xz ;
 
