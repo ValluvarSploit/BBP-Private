@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"DNSsearch Bruteforce HAS STARTED FOR - '$TARGET'"}' "$WEBHOOK"
          go env -w GOPATH=~/Downloads
          go get github.com/evilsocket/dnssearch
          cp ~/Downloads/bin/dnssearch .
