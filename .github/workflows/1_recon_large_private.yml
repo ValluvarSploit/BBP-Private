@@ -19,7 +19,117 @@ env:
       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
       S_URL: https://slack.com/api/files.upload
 jobs:
-
+  Subdomain-Enumeration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2         
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK"
+         wget $HOST/subdomains-manual.txt
+         wget $HOST/ips-manual.txt         
+         sudo apt-get install python3-setuptools
+         sudo snap install amass
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         cd binaries; chmod +x assetfinder findomain subfinder; cd ..
+         git clone https://github.com/m8r0wn/subscraper
+         cd subscraper; sudo python3 setup.py install; cd ..
+      - name: SubScraper
+        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-auto.txt;
+      - name: Amass
+        run: |
+         amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt
+         cat amass-passive.txt >> subdomains-auto.txt;
+      - name: Assetfinder
+        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;          
+      - name: Findomain
+        run: |
+         ./binaries/findomain -t "$TARGET" -q >> subdomains-auto.txt; 
+         cat subdomains-auto.txt >> subdomains-manual.txt
+         sort -u subdomains-manual.txt -o subdomains-manual.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+         path: |
+          subdomains-manual.txt
+          ips-manual.txt
+      - name: Job Stauts Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          
+  DNSgen:
+    runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+      - name: Install Dependencies
+        run: pip3 install dnsgen && cp ~/.local/bin/dnsgen .
+      - name: DNSgen
+        run: |
+         ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt  
+         xz dnsgen-wordlist.txt
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsgen-artifacts
+         path: |
+          dnsgen-wordlist.txt.xz 
+          subdomains-manual.txt
+          ips-manual.txt
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+   
+  MassDNS-Resolver:
+    runs-on: ubuntu-latest
+    needs: [DNSgen,Subdomain-Enumeration]
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: dnsgen-artifacts
+      - name: Install Dependencies
+        run: |
+         echo "$EXCLUDE_HOST" > subdomains-exclude.txt
+         cd wordlists
+         xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz 
+         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt > ../subdomain-wordlists.txt ;
+         cd ..
+         sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         xz -d dnsgen-wordlist.txt.xz
+      - name: MassDNS
+        run: |
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt
+         cat dnsgen-wordlist.txt >> wordlist-hugh.txt
+         sort -u wordlist-hugh.txt -o wordlist-hugh.txt
+         grep -vFf subdomains-exclude.txt wordlist-hugh.txt > wordlist-all.txt
+         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-all.txt
+         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts.txt
+         cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt
+         cat ips-manual.txt >> live-ips.txt
+         sort -u live-ips.txt -o live-ips.txt
+         zip massdns-output.zip massdns-output.txt live-ips.txt ; xz massdns-output.zip
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: massdns-artifacts
+         path: |
+          live-hosts.txt
+          live-ips.txt
+          subdomains-manual.txt
+      - name: Job Stauts Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-output.zip.xz   
    
   HTTProber:
     runs-on: ubuntu-latest
