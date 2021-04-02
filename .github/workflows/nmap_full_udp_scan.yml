@@ -18,7 +18,7 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} HAS STARTED - '$TARGET'"}' "$S_WEBHOOK" ;
-         sudo apt-get update && sudo apt-get install nmap -y -v
+         sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap UDP scan
         run: sudo nmap -sV -p- -sU -T4 -oA nmap-udp-scan -v "$TARGET" 
       - name: Output & Slack Notification
