@@ -82,11 +82,11 @@ jobs:
           dnsgen-wordlist.txt.xz 
           subdomains-manual.txt
           ips-manual.txt
-      - name: Job Stauts Slack Notification
+      - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-       
+   
   MassDNS-Resolver:
     runs-on: ubuntu-latest
     needs: [DNSgen,Subdomain-Enumeration]
@@ -129,9 +129,110 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-output.zip.xz
-                 
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-output.zip.xz   
+   
+  HTTProber:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, MassDNS-Resolver]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: massdns-artifacts
+      - name: Install Dependencies
+        run: |
+         echo "$EXCLUDE_HOST" > subdomains-exclude.txt
+         cat live-hosts.txt >> subdomains-manual.txt;
+         cat subdomains-manual.txt | sed 's/\*\.//g' | sort -u > subdomains-uniq.txt
+         grep -vFf subdomains-exclude.txt subdomains-uniq.txt > subdomains-uniq2.txt
+         cat subdomains-uniq2.txt | tr A-Z a-z | sort -u > subdomains.txt
+         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.3/httpx_1.0.3_linux_amd64.tar.gz
+         tar -xzvf httpx_1.0.3_linux_amd64.tar.gz
+      - name: HTTProber
+        run: |
+         ./httpx -l subdomains.txt -follow-redirects -status-code -title -cname -vhost -threads 300 -silent -o httpx.log
+         cat httpx.log | cut -d " " -f 1 | sort -u > subdomains-resolved.txt 
+         zip httpx.zip httpx.log subdomains-resolved.txt ; xz httpx.zip
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: httprober-artifacts
+         path: |
+          subdomains-resolved.txt 
+          live-ips.txt
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-httpx -F file=@httpx.zip.xz
 
+#Subdomain Takeover
+  Subdomain-Takeover:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Install Dependencies
+        run: |
+         touch subjack-logs.txt;
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         cd binaries; chmod +x subjack subzy; cd ..
+         cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
+         cp subdomains.txt binaries/
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
+      - name: Subzy
+        run: |
+         ./binaries/subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt
+         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt
+      - name: Subjack
+        run: |
+         ./binaries/subjack -w subdomains-resolved.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json
+         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt 
+      - name: Nuclei
+        run: ./nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie-output.txt   
+      - name: SubOver
+        run: cd binaries; chmod +x SubOver; ./SubOver -l subdomains.txt -o subover.txt; cd ..
+      - name: Combine Output Files
+        run: |
+         cat subzy-logs.txt subjack-logs.txt >> sto.log
+         if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > subdomain-takeovers.txt; cat subzy-output.txt >> subdomain-takeovers.txt; fi
+         if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> subdomain-takeovers.txt; cat subjack-output.txt >> subdomain-takeovers.txt; fi
+         if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> subdomain-takeovers.txt; cat nuclie-output.txt >> subdomain-takeovers.txt; fi
+         if [[ -f subover.txt ]]; then echo "*****SubOver*****" >> subdomain-takeovers.txt; cat subover.txt >> subdomain-takeovers.txt; fi
+         zip subdomain-takeover.zip subdomain-takeovers.txt sto.log ; xz subdomain-takeover.zip;
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Takeover -F file=@subdomain-takeover.zip.xz
+
+#Nuclei Template Scan.
+  Nuclei-Template-Scan:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Install Dependencies
+        run: |
+         git clone https://github.com/projectdiscovery/nuclei-templates.git
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
+         tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz 
+      - name: Nuclei scan
+        run: |
+         ./nuclei -l subdomains-resolved.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
+         xz nuclie-scan.txt
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          if [[ -f nuclie-scan.txt.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nuclei-Template-Scan -F file=@nuclie-scan.txt.xz; fi    
 
   Mass-Nmap-Scan:
     runs-on: ubuntu-latest    
