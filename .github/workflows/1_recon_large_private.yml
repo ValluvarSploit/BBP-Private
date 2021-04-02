@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
-      EXCLUDE_HOST: ${{ secrets.PRI_EXCLUDE_HOST }}
+      EXCLUDE_HOST: ${{ secrets.DOMAIN_PRIVATE_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
       XSS_HUNTER: ${{ secrets.XSS_HUNTER }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
