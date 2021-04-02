@@ -1,4 +1,4 @@
-name: Dev-Test-2
+name: NMAP UDP Scan
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} HAS STARTED - '$TARGET'"}' "$S_WEBHOOK" ;
          sudo apt-get update && sudo apt-get install nmap -y -v
       - name: Nmap UDP scan
-        run: sudo nmap -sV -p- -sU -T4 -oA nmap-udp-scan -v $TARGET 
+        run: sudo nmap -sV -p- -sU -T4 -oA nmap-udp-scan -v "$TARGET" 
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -28,8 +28,3 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-UDP-Scan -F file=@nmap-udp-scan.nmap
          
         
-      
-
-      
-
-                       
