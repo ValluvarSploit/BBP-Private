@@ -524,8 +524,8 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
          mkdir dir-report ; cp -r dirsearch/reports dir-report ;
-         zip -r dirsearch-reports.zip dir-report && xz dirsearch-reports.zip        
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Fuzzing -F file=@dirsearch-reports.zip.xz
+         zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip      
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
 
 #Dirsearch sensitive files
   File-Fuzz:
@@ -546,8 +546,8 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
          mkdir file-report ; cp -r dirsearch/reports file-report ;
-         zip -r dirsearch-reports.zip file-report && xz dirsearch-reports.zip        
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Sensitive-File-Fuzzing -F file=@dirsearch-reports.zip.xz
+         zip -r dirsearch-file-reports.zip file-report && xz dirsearch-file-reports.zip       
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Sensitive-File-Fuzzing -F file=@dirsearch-file-reports.zip
           
 #CORS Scanner
   CORS-Scanner:
