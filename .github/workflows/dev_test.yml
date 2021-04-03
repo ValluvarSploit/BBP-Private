@@ -6,18 +6,20 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
 jobs:
-  DNSsearch:
-    runs-on: ubuntu-latest  
+  HTTProber:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
-      - name: DNSsearch
-        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/commonspeak2-subdomains-2.txt | tee dnssearch.txt ;
-      - name: Send Output to Slack
+         wget $HOST/subdomains-all.txt.xz ; xz -d subdomains-all.txt.xz
+         chmod +x binaries/httpx ;
+      - name: HTTProber
+        run: |
+         ./binaries/httpx -l subdomains-all.txt -follow-redirects -threads 10000 -o httpx.log ;
+         xz httpx.log
+      - name: Output & Slack Notification
         if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch-2 -F filename=dnssearch-2.txt -F file=@dnssearch.txt
-
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-httpx -F file=@httpx.log.xz ;
