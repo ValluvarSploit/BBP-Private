@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2         
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} STARTED - '$TARGET'"}' "$S_WEBHOOK" ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK" ;
          wget $HOST/subdomains-manual.txt && wget $HOST/ips-manual.txt ;
          sudo apt-get install python3-setuptools ;
          wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
