@@ -19,12 +19,12 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains-resolved-url.txt -O targets.txt
+         wget $HOST/httpx.out.xz ; xz -d httpx.out.xz
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
          tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Nuclei scan
         run: |        
-         ./nuclei -l targets.txt -c 100 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
+         ./nuclei -l httpx.out -c 500 -stats -silent -t nuclei-templates/ -o nuclie-scan.txt
          if [[ -f nuclie-scan.txt ]]; then curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET_DOMAIN"-Nuclei-Scan -F file=@nuclie-scan.txt; fi
                  
