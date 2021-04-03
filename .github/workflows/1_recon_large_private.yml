@@ -113,8 +113,8 @@ jobs:
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
          cat dnsgen-wordlist.txt >> wordlist-hugh.txt
-         sort -u wordlist-hugh.txt -o wordlist-hugh.txt ;
-         grep -vFf subdomains-exclude.txt wordlist-hugh.txt > wordlist-all.txt ;
+         cat wordlist-hugh.txt | sed 's/\*\.//g' | sort -u > wordlist-hugh2.txt
+         grep -vFf subdomains-exclude.txt wordlist-hugh2.txt > wordlist-all.txt ;
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-all.txt ;
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts.txt ;
          cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt ;
