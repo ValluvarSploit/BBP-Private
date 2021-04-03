@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
 env:
        TARGET: ${{ secrets.DOMAIN }}
+       HOST: ${{ secrets.NGROK_URL }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
@@ -13,11 +14,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains-all.txt.xz ; xz -d subdomains-all.txt.xz
+         wget $HOST/mass-sploit.txt.xz ; xz -d mass-sploit.txt.xz
          chmod +x binaries/httpx ;
       - name: HTTProber
         run: |
-         ./binaries/httpx -l subdomains-all.txt -follow-redirects -threads 10000 -o httpx.log ;
+         ./binaries/httpx -l mass-sploit.txt -follow-redirects -threads 10000 -o httpx.log ;
          xz httpx.log
       - name: Output & Slack Notification
         if: always()
