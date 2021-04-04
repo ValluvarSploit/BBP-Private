@@ -20,6 +20,8 @@ jobs:
       - name: ShuffleDNS
         run: |
          sed "s/$/.$TARGET/" wordlists/commonspeak2-subdomains.txt > wordlist-hugh.txt ;
+         cat wordlist-hugh.txt 
+         ls -l
          ./binaries/shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
       - name: Output & Slack Notification
         if: always()
