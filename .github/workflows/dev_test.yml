@@ -1,4 +1,4 @@
-name: HTTPX
+name: ShuffleDNS
 on:
   workflow_dispatch:
 env:
