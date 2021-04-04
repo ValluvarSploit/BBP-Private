@@ -8,7 +8,7 @@ env:
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
 jobs:
-  HTTProber:
+  ShuffleDNS:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,10 +17,10 @@ jobs:
          sudo cp binaries/massdns /usr/bin/massdns
          chmod +x binaries/shuffledns ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
-      - name: HTTProber
+      - name: ShuffleDNS
         run: |
          sed "s/$/.$TARGET/" wordlists/commonspeak2-subdomains.txt > wordlist-hugh.txt ;
-         ./shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
+         ./binaries/shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
       - name: Output & Slack Notification
         if: always()
         run: |
