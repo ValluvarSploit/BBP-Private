@@ -2,11 +2,12 @@ name: ShuffleDNS
 on:
   workflow_dispatch:
 env:
-       TARGET: ${{ secrets.DOMAIN }}
+       TARGET: alexamerican.com
        HOST: ${{ secrets.NGROK_URL }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+     #TARGET: ${{ secrets.DOMAIN }}
 jobs:
   ShuffleDNS:
     runs-on: ubuntu-latest
