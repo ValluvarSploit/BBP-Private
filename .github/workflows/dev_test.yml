@@ -15,6 +15,7 @@ jobs:
       - name: Install Dependencies
         run: |
          sudo cp binaries/massdns /usr/bin/massdns
+         sudo chmod +x /usr/bin/massdns
          chmod +x binaries/shuffledns ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
          cd wordlists ;
