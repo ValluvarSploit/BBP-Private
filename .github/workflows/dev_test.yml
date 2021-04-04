@@ -22,7 +22,7 @@ jobs:
          
       - name: ShuffleDNS
         run: |
-         ./puredns bruteforce all.txt "$TARGET" --bin binaries/massdns -r resolvers.txt
+         ./puredns/puredns bruteforce all.txt "$TARGET" --bin binaries/massdns -r resolvers.txt
          ls -l
       - name: Output & Slack Notification
         if: always()
