@@ -2,12 +2,12 @@ name: ShuffleDNS
 on:
   workflow_dispatch:
 env:
-       TARGET: hackerone.com
+       TARGET: ${{ secrets.DOMAIN }}
        HOST: ${{ secrets.NGROK_URL }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
-     #TARGET: ${{ secrets.DOMAIN }}
+     
 jobs:
   ShuffleDNS:
     runs-on: ubuntu-latest
@@ -15,18 +15,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         sudo cp binaries/massdns /usr/bin/massdns
-         sudo chmod +x /usr/bin/massdns
-         chmod +x binaries/shuffledns ;
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
-         cd wordlists ;
-         xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz ;
-         cat subdomains-w{1..2}.txt commonspeak2-subdomains.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt > ../subdomain-wordlists.txt ;
-         cd .. ;
+         sudo apt install -y python3 python3-dnspython pv
+         git clone https://github.com/d3mondev/puredns.git 
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          wget https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
+         
       - name: ShuffleDNS
         run: |
-         ./binaries/shuffledns -d "$TARGET" -w all.txt -r resolvers.txt -o output.txt
+         ./puredns bruteforce all.txt "$TARGET" --bin binaries/massdns -r resolvers.txt
+         ls -l
       - name: Output & Slack Notification
         if: always()
         run: |
