@@ -23,12 +23,10 @@ jobs:
          xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz ;
          cat subdomains-w{1..2}.txt commonspeak2-subdomains.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt > ../subdomain-wordlists.txt ;
          cd .. ;
+         wget https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
       - name: ShuffleDNS
         run: |
-         echo "docs.hackerone.com" > target.txt
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
-         ls -l
-         ./binaries/shuffledns -d "$TARGET" -list target.txt -r resolvers.txt
+         ./binaries/shuffledns -d "$TARGET" -w all.txt -r resolvers.txt
       - name: Output & Slack Notification
         if: always()
         run: |
