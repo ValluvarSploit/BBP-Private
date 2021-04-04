@@ -2,7 +2,7 @@ name: ShuffleDNS
 on:
   workflow_dispatch:
 env:
-       TARGET: alexamerican.com
+       TARGET: hackerone.com
        HOST: ${{ secrets.NGROK_URL }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
