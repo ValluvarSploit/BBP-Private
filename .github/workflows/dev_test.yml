@@ -27,7 +27,7 @@ jobs:
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
          cat wordlist-hugh.txt > target.txt
          ls -l
-         ./binaries/shuffledns -massdns /usr/bin/massdns -d "$TARGET" -list target.txt -r resolvers.txt -o output.txt
+         ./binaries/shuffledns -massdns /usr/bin/massdns -d "$TARGET" -list target.txt -r resolvers.txt -o output.txt -v
       - name: Output & Slack Notification
         if: always()
         run: |
