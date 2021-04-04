@@ -17,12 +17,14 @@ jobs:
          sudo cp binaries/massdns /usr/bin/massdns
          chmod +x binaries/shuffledns ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+         cd wordlists ;
+         xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz ;
+         cat subdomains-w{1..2}.txt commonspeak2-subdomains.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt > ../subdomain-wordlists.txt ;
+         cd .. ;
       - name: ShuffleDNS
         run: |
-         sed "s/$/.$TARGET/" wordlists/commonspeak2-subdomains.txt > wordlist-hugh.txt ;
-         cat wordlist-hugh.txt | head > wordlist-hugh-head.txt
-         ./binaries/shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
-         ls -l
+         ./binaries/shuffledns -d "$TARGET" -w subdomain-wordlists.txt -r resolvers.txt -o output.txt
+       #./binaries/shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
       - name: Output & Slack Notification
         if: always()
         run: |
