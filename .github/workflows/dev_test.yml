@@ -14,6 +14,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
+         sudo cp binaries/massdns /usr/bin/massdns
          chmod +x binaries/shuffledns ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
          cd wordlists ;
@@ -25,7 +26,7 @@ jobs:
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
          cat wordlist-hugh.txt > target.txt
          ls -l
-         ./binaries/shuffledns -d "$TARGET" -list target.txt -r resolvers.txt -massdns binaries/massdns -o output.txt
+         ./binaries/shuffledns -massdns /usr/bin/massdns -d "$TARGET" -list target.txt -r resolvers.txt -o output.txt
       - name: Output & Slack Notification
         if: always()
         run: |
