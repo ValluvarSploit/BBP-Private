@@ -23,8 +23,8 @@ jobs:
          cd .. ;
       - name: ShuffleDNS
         run: |
-         ./binaries/shuffledns -d "$TARGET" -w subdomain-wordlists.txt -r resolvers.txt -o output.txt
-       #./binaries/shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
+         ./binaries/shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
       - name: Output & Slack Notification
         if: always()
         run: |
