@@ -20,11 +20,10 @@ jobs:
       - name: ShuffleDNS
         run: |
          sed "s/$/.$TARGET/" wordlists/commonspeak2-subdomains.txt > wordlist-hugh.txt ;
-         cat wordlist-hugh.txt 
-         ls -l
+         cat wordlist-hugh.txt | head > wordlist-hugh-head.txt
          ./binaries/shuffledns -d "$TARGET" -list wordlist-hugh.txt -r resolvers.txt -o output.txt
+         ls -l
       - name: Output & Slack Notification
         if: always()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Shuffledns -F file=@output.txt
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Shuffledns -F file=@wordlist-hugh-head.txt
