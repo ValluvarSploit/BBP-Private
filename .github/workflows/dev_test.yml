@@ -25,8 +25,8 @@ jobs:
          cd .. ;
       - name: ShuffleDNS
         run: |
+         echo "docs.hackerone.com" > target.txt
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
-         cat wordlist-hugh.txt > target.txt
          ls -l
          ./binaries/shuffledns -d "$TARGET" -list target.txt -r resolvers.txt
       - name: Output & Slack Notification
