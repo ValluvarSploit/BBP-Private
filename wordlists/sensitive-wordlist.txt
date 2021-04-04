@@ -1,3 +1,5 @@
+/wp-content/uploads/file-manager/log.txt
+/wp-config.php
 /conf
 /composer.json
 /.travis.yml
