@@ -1,4 +1,4 @@
-name: PureDNS
+name: Dev
 on:
   workflow_dispatch:
 env:
@@ -9,21 +9,17 @@ env:
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
      
 jobs:
-  ShuffleDNS:
+  Httprobe:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         sudo apt install -y python3 python3-dnspython pv
-         git clone https://github.com/d3mondev/puredns.git 
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         wget https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
-         
-      - name: ShuffleDNS
+         export GOPATH=$HOME/go ; export PATH=$PATH:$GOROOT/bin:$GOPATH/bin ;
+         go get -u github.com/tomnomnom/httprobe
+      - name: Httprobe
         run: |
-         ./puredns/puredns bruteforce all.txt "$TARGET" --bin binaries/massdns -r resolvers.txt
-         ls -l
+         httprobe -h
       - name: Output & Slack Notification
         if: always()
         run: |
