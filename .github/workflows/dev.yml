@@ -1,0 +1,30 @@
+name: PureDNS
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       HOST: ${{ secrets.NGROK_URL }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+     
+jobs:
+  ShuffleDNS:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         sudo apt install -y python3 python3-dnspython pv
+         git clone https://github.com/d3mondev/puredns.git 
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         wget https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
+         
+      - name: ShuffleDNS
+        run: |
+         ./puredns/puredns bruteforce all.txt "$TARGET" --bin binaries/massdns -r resolvers.txt
+         ls -l
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Shuffledns -F file=@output.txt
