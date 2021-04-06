@@ -15,8 +15,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         export GOPATH=$HOME/go ; export PATH=$PATH:$GOROOT/bin:$GOPATH/bin ;
-         go get -u github.com/tomnomnom/httprobe
+         chmod +x binaries/httprobe
       - name: Httprobe
         run: |
          httprobe -h
