@@ -1,4 +1,4 @@
-name: ShuffleDNS
+name: PureDNS
 on:
   workflow_dispatch:
 env:
