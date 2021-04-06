@@ -151,12 +151,11 @@ jobs:
          cat subdomains-manual.txt | sed 's/\*\.//g' | sort -u > subdomains-uniq.txt ;
          grep -vFf subdomains-exclude.txt subdomains-uniq.txt > subdomains-uniq2.txt ;
          cat subdomains-uniq2.txt | tr A-Z a-z | sort -u > subdomains.txt ;
-         chmod +x binaries/httpx ;
+         chmod +x binaries/httprobe
       - name: HTTProber
         run: |
-         ./binaries/httpx -l subdomains.txt -follow-redirects -status-code -title -cname -vhost -threads 300 -silent -o httpx.log ;
-         cat httpx.log | cut -d " " -f 1 | sort -u > subdomains-resolved.txt ;
-         zip httpx.zip httpx.log subdomains-resolved.txt ; xz httpx.zip ;
+         cat subdomains.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
+         xz -k subdomains-resolved.txt 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -168,7 +167,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-httpx -F file=@httpx.zip.xz ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Resolved -F file=@subdomains-resolved.txt.xz ;
 
 #Subdomain Takeover
   Subdomain-Takeover:
