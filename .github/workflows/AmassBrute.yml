@@ -17,7 +17,7 @@ jobs:
          wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip
       - name: Amass
         run: |
-         ./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -rf resolvers.txt -v
+         ./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -v
        #./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -rf resolvers.txt -max-dns-queries 10000
       - name: Send Output to Slack
         if: always()
