@@ -19,7 +19,7 @@ jobs:
          sudo python3 setup.py install --user ; cd ..
       - name: Httprobe
         run: |
-         knockpy -h
+         python3 knock/knockpy/knockpy.py -h
       - name: Output & Slack Notification
         if: always()
         run: |
