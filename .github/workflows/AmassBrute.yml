@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: | 
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt -v
          wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip
       - name: Amass
         run: |
