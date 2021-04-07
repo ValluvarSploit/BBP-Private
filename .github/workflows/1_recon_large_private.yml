@@ -618,7 +618,7 @@ jobs:
       - name: Aquatone
         run: |
          mkdir aquatone-output
-         cat subdomains-resolved.txt | ./binaries/aquatone -out aquatone-output/
+         cat subdomains-resolved.txt | ./binaries/aquatone --ports xlarge -out aquatone-output/
          zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip   
       - name: Output & Slack Notification
         if: always()
