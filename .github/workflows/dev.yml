@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         sudo apt-get install python3-bs4
          git clone https://github.com/guelfoweb/knock.git ; cd knock
+         pip3 install -r requirements.txt
          sudo python3 setup.py install --user ; cd ..
       - name: Httprobe
         run: |
