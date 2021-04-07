@@ -7,7 +7,7 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
-       VT_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+       KNOCKPY_CONFIG: ${{ secrets.KNOCKPY_CONFIG_VT_API }}
      
 jobs:
   Knockpy:
@@ -18,7 +18,7 @@ jobs:
         run: |
          git clone https://github.com/guelfoweb/knock.git ; cd knock
          pip3 install -r requirements.txt
-         sudo python3 setup.py install --user ; cd ..
+         sudo python3 setup.py install --user ; echo "$KNOCKPY_CONFIG" > knockpy/config.json ; cd ..
          wget --quiet https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
          cat all.txt | wc -l
          cat knock/knockpy/wordlist.txt >> all.txt
@@ -26,7 +26,6 @@ jobs:
          mkdir knockpy-results
       - name: Httprobe
         run: |
-         python3 knock/knockpy/knockpy.py --set apikey-virustotal="$VT_API_KEY"
          python3 knock/knockpy/knockpy.py "$TARGET" -w all.txt -o knockpy-results --csv knockpy-results/knockpy_csv.json
          zip knockpy-results.zip knockpy-results
       - name: Output & Slack Notification
