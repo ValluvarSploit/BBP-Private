@@ -25,7 +25,7 @@ jobs:
          mkdir knockpy-results
       - name: Httprobe
         run: |
-         python3 knock/knockpy/knockpy.py "$TARGET" -w all.txt -o knockpy-results
+         python3 knock/knockpy/knockpy.py "$TARGET" -w all.txt -o knockpy-results --set apikey-virustotal=
          zip knockpy-results.zip knockpy-results
       - name: Output & Slack Notification
         if: always()
