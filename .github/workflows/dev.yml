@@ -18,10 +18,16 @@ jobs:
          git clone https://github.com/guelfoweb/knock.git ; cd knock
          pip3 install -r requirements.txt
          sudo python3 setup.py install --user ; cd ..
+         wget --quiet https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
+         cat all.txt | wc -l
+         cat knock/knockpy/wordlist.txt >> all.txt
+         cat all.txt | wc -l
+         mkdir knockpy-results
       - name: Httprobe
         run: |
-         python3 knock/knockpy/knockpy.py -h
+         python3 knock/knockpy/knockpy.py "$TARGET" -w all.txt -o knockpy-results
+         zip knockpy-results.zip knockpy-results
       - name: Output & Slack Notification
         if: always()
         run: |
-          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Shuffledns -F file=@output.txt
+          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Knockpy -F file=@knockpy-results.zip
