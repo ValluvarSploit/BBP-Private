@@ -7,9 +7,10 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       VT_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
      
 jobs:
-  Httprobe:
+  Knockpy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
