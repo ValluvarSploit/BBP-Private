@@ -17,10 +17,10 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster DNS INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
          wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
          7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt
+         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O wordlist.txt
       - name: Gobuster
         run: |
-         ./gobuster dns -d "$TARGET" -w httparchive_subdomains_2021_03_28.txt -o gobuster.txt -q
+         ./gobuster dns -d "$TARGET" -w wordlist.txt -o gobuster.txt -q
       - name: Output & Slack Notification
         if: always()
         run: |
