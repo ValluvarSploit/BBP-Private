@@ -1,0 +1,30 @@
+name: Httprobe
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       HOST: ${{ secrets.NG_ROK }}
+     
+jobs:
+  Httprobe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $HOST/live-hosts-output.txt -O subdomains.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
+         chmod +x binaries/httprobe
+      - name: Gobuster
+        run: |
+         cat subdomains.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
+         xz -k subdomains-resolved.txt 
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Httprobe -F file=@subdomains-resolved.txt.xz
+          
