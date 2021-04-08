@@ -1,4 +1,4 @@
-name: Dev
+name: Knockpy
 on:
   workflow_dispatch:
 env:
