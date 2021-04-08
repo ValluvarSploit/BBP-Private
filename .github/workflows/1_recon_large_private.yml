@@ -495,13 +495,16 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster Files Brute INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
          wget $HOST/subdomains-resolved.txt
+         wgt https://wordlists-cdn.assetnote.io/data/manual/bak.txt
          wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
          7z e gobuster-linux-amd64.7z ; chmod +x gobuster
          mkdir gobuster-files-brute
+         cat bak.txt | sort -u >> sensitive-wordlist.txt
       - name: Gobuster
         run: |
          for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w wordlists/sensitive-wordlist.txt -l -o gobuster-files-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e --wildcard ; done ;
          zip gobuster-files-brute.zip gobuster-files-brute
+       #-x php,asp,bak,sql
       - name: Output & Slack Notification
         if: always()
         run: |
