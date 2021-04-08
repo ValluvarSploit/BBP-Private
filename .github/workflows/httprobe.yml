@@ -6,7 +6,7 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
-       HOST: ${{ secrets.NG_ROK }}
+       HOST: ${{ secrets.NGROK_URL }}
      
 jobs:
   Httprobe:
