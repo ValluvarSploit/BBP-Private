@@ -24,11 +24,12 @@ jobs:
          cat wordlist-hugh.txt | head
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts-output.txt
-         cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt         
+         cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt 
+         xz massdns-output.txt ; xz live-hosts-output.txt ; xz live-ips-output.txt
       - name: Send Output to Slack
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolver COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-IPs -F file=@live-ips-output.txt  
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F file=@massdns-output.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-Hosts -F file=@live-hosts-output.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-IPs -F file=@live-ips-output.txt.xz  
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F file=@massdns-output.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-Hosts -F file=@live-hosts-output.txt.xz
          
