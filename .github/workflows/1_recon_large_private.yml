@@ -487,51 +487,51 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
 
-#Directory Fuzzing
-  Directory-Fuzz:
-    runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts       
-      - name: Install Dependencies
-        run: |
-         git clone https://github.com/maurosoria/dirsearch.git
-         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
-      - name: Directory Fuzzing
-        run: |
-         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
-      - name: Output &  Slack Notification
-        if: always()
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
-         zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip        
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
-
-#Dirsearch sensitive files
-  File-Fuzz:
-    runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts     
-      - name: Install Dependencies
-        run: git clone https://github.com/maurosoria/dirsearch.git
-      - name: Directory Fuzzing
-        run: |
-         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
-      - name: Output &  Slack Notification
-        if: always()
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-         mkdir file-report ; cp -r dirsearch/reports file-report ;
-         zip -r dirsearch-file-reports.zip file-report && xz dirsearch-file-reports.zip     
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Sensitive-File-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
+          ##Directory Fuzzing
+          #  Directory-Fuzz:
+          #    runs-on: ubuntu-latest
+          #    needs: [Subdomain-Enumeration, HTTProber]
+          #    steps:
+          #      - uses: actions/checkout@v2
+          #      - uses: actions/download-artifact@v2
+          #        with:
+          #         name: httprober-artifacts       
+          #      - name: Install Dependencies
+          #        run: |
+          #         git clone https://github.com/maurosoria/dirsearch.git
+          #         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
+          #      - name: Directory Fuzzing
+          #        run: |
+          #         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
+          #      - name: Output &  Slack Notification
+          #        if: always()
+          #        run: |
+          #         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          #         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
+          #         zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip        
+          #         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
+          #
+          ##Dirsearch sensitive files
+          #  File-Fuzz:
+          #    runs-on: ubuntu-latest
+          #    needs: [Subdomain-Enumeration, HTTProber]
+          #    steps:
+          #      - uses: actions/checkout@v2
+          #      - uses: actions/download-artifact@v2
+          #        with:
+          #         name: httprober-artifacts     
+          #      - name: Install Dependencies
+          #        run: git clone https://github.com/maurosoria/dirsearch.git
+          #      - name: Directory Fuzzing
+          #        run: |
+          #         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
+          #      - name: Output &  Slack Notification
+          #        if: always()
+          #        run: |
+          #         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          #         mkdir file-report ; cp -r dirsearch/reports file-report ;
+          #         zip -r dirsearch-file-reports.zip file-report && xz dirsearch-file-reports.zip     
+          #         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Sensitive-File-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
           
 #CORS Scanner
   CORS-Scanner:
