@@ -1,0 +1,32 @@
+name: Gobuster Directory Brute
+on:
+  workflow_dispatch:
+env:
+       HOST: ${{ secrets.NGROK_URL }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+     
+jobs:
+  Gobuster-Dirs-Brute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster Dirs Brute INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
+         wget $HOST/subdomains-resolved.txt
+         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
+         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
+         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
+         mkdir gobuster-dirs-brute
+      - name: Gobuster
+        run: |
+         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w directory-list-2.3-medium.txt -l -o gobuster-dirs-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e ; done ;
+         zip gobuster-dirs-brute.zip gobuster-dirs-brute
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster File Brute COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoBuster-File-Brute -F file=@gobuster-dirs-brute.zip
+          
