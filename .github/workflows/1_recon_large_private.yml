@@ -487,6 +487,50 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
 
+  Gobuster-Files-Brute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster Files Brute INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
+         wget $HOST/subdomains-resolved.txt
+         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
+         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
+         mkdir gobuster-files-brute
+      - name: Gobuster
+        run: |
+         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w wordlists/sensitive-wordlist.txt -l -o gobuster-files-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e --wildcard ; done ;
+         zip gobuster-files-brute.zip gobuster-files-brute
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoBuster-File-Brute -F file=@gobuster-files-brute.zip
+
+  Gobuster-Dirs-Brute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster Dirs Brute INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
+         wget $HOST/subdomains-resolved.txt
+         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
+         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
+         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
+         mkdir gobuster-dirs-brute
+      - name: Gobuster
+        run: |
+         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w directory-list-2.3-medium.txt -l -o gobuster-dirs-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e ; done ;
+         zip gobuster-dirs-brute.zip gobuster-dirs-brute
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoBuster-Dirs-Brute -F file=@gobuster-dirs-brute.zip
+
+
           ##Directory Fuzzing
           #  Directory-Fuzz:
           #    runs-on: ubuntu-latest
