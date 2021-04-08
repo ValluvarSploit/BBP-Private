@@ -20,7 +20,7 @@ jobs:
          wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O wordlist.txt
       - name: Gobuster
         run: |
-         ./gobuster dns -d "$TARGET" -w wordlist.txt -o gobuster.txt -q -t 100 -np
+         ./gobuster dns -d "$TARGET" -w wordlist.txt -o gobuster.txt -q -t 100 -np -i
       - name: Output & Slack Notification
         if: always()
         run: |
