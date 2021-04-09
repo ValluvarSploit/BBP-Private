@@ -24,7 +24,7 @@ jobs:
       - name: Knockpy
         run: |
          python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results
-         zip knockpy-results.zip knockpy-results
+         zip -r knockpy-results.zip knockpy-results
       - name: Output & Slack Notification
         if: always()
         run: |
