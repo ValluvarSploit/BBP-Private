@@ -58,4 +58,4 @@ jobs:
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Httprobe -F file=@subdomains-resolved.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Httprobe -F file=@subdomains-resolved.txt.xz
