@@ -26,6 +26,11 @@ jobs:
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts-output.txt
          cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt 
          xz massdns-output.txt ; xz live-hosts-output.txt ; xz live-ips-output.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: MassDNS-artifacts
+         path: live-hosts-output.txt
       - name: Send Output to Slack
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolver COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
@@ -33,3 +38,24 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F file=@massdns-output.txt.xz
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-Hosts -F file=@live-hosts-output.txt.xz
          
+  Httprobe:
+    runs-on: ubuntu-latest
+    needs: massdns-resolver
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: MassDNS-artifacts
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
+         chmod +x binaries/httprobe
+      - name: Gobuster
+        run: |
+         cat live-hosts-output.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
+         xz -k subdomains-resolved.txt 
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Httprobe -F file=@subdomains-resolved.txt.xz
