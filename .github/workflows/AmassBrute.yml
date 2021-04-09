@@ -17,14 +17,37 @@ jobs:
          wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip
       - name: Amass
         run: |
-         ./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -v
-       #./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -rf resolvers.txt -max-dns-queries 10000
+         ./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -v -max-dns-queries 10000 -rf resolvers.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: Amass-artifacts
+         path: amass-brute.txt
       - name: Send Output to Slack
         if: always()
         run: |
          xz amass-brute.txt
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F file=@amass-brute.txt.xz
-      - name: Slack Notification
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"AMASS Brute COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F file=@amass-brute.txt.xz        
+
+  Httprobe:
+    runs-on: ubuntu-latest
+    needs: amass-brute
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: Amass-artifacts
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
+         chmod +x binaries/httprobe
+      - name: Gobuster
+        run: |
+         cat amass-brute.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
+         xz -k subdomains-resolved.txt 
+      - name: Output & Slack Notification
         if: always()
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"AMASS Brute COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Httprobe -F file=@subdomains-resolved.txt.xz
