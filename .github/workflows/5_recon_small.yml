@@ -116,7 +116,7 @@ jobs:
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap TCP-UDP scan
-        run: sudo nmap -Pn -sV -sU -pT:21,22,23,25,53,80,110,111,139,389,443,445,1433,2049,3389,U:53,69,137,138,161,500 -iL subdomains-resolved-host.txt -oA nmap-tcp-udp-scan -v
+        run: sudo nmap -Pn -sV -sU -pT:21,22,23,25,53,80,81,88,110,111,139,389,443,445,900,1433,2049,2301,2381,3389,4242,7001,7002,7070,8000,8001,8005,8080,8100,8810,8820,8830,8888,9090,10000,U:53,69,137,138,161,500 -iL subdomains-resolved-host.txt -oA nmap-tcp-udp-scan -v
       - name: Output & Slack Notification
         if: always()
         run: |
