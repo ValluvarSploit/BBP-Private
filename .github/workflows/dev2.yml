@@ -1,0 +1,32 @@
+name: Dev
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+
+jobs:
+  massdns-resolver:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2             
+      - name: Install Dependencies
+        run: |
+         git clone https://github.com/blark/aiodnsbrute.git
+         cd aiodnsbrute ; python setup.py install . ; cd ..
+      - name: MassDNS
+        run: |
+         aiodnsbrute --help
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: MassDNS-artifacts
+         path: live-hosts-output.txt
+      - name: Send Output to Slack
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolver has COMPLETED for - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-IPs -F file=@live-ips-output.txt.xz  
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F file=@massdns-output.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-Hosts -F file=@live-hosts-output.txt.xz
