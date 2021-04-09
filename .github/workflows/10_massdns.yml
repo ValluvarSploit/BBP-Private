@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"DNSsearch Bruteforce HAS STARTED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolving has STARTED for - '$TARGET'"}' "$WEBHOOK"
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
          wget --quiet https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make
@@ -33,7 +33,7 @@ jobs:
          path: live-hosts-output.txt
       - name: Send Output to Slack
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolver COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolver has COMPLETED for - '$TARGET'"}' "$WEBHOOK"
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-IPs -F file=@live-ips-output.txt.xz  
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F file=@massdns-output.txt.xz
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-Hosts -F file=@live-hosts-output.txt.xz
