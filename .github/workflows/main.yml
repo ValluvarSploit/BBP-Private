@@ -22,7 +22,7 @@ jobs:
       - name: MassDNS
         run: |
          ls -l
-         ./kr brute subdomains-resolved.txt -w swagger-wordlist.txt -x 10 -d=0  -o dir.txt
+         ./kr brute http://swaggerforyou.myshopify.com -w swagger-wordlist.txt -x 10 -d=0  -o dir.txt
       - name: Send Output to Slack
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Kiterunner has COMPLETED for - '$TARGET'"}' "$WEBHOOK"
