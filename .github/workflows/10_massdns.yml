@@ -1,4 +1,4 @@
-name: S_MassDNS Resolver
+name: MassDNS Resolver
 on:
   workflow_dispatch:
 env:
