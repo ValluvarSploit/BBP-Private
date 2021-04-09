@@ -1,0 +1,29 @@
+name: KiteRunner Swagger
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       HOST: ${{ secrets.NGROK_URL }}
+
+jobs:
+  kite-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2             
+      - name: Install Dependencies
+        run: |
+         wget $HOST/subdomains-resolved.txt
+         wget --quiet https://wordlists-cdn.assetnote.io/data/kiterunner/swagger-wordlist.txt
+         wget --quiet https://github.com/assetnote/kiterunner/releases/download/v1.0.1/kiterunner_1.0.1_linux_amd64.tar.gz
+         tar -xzvf kiterunner_1.0.1_linux_amd64.tar.gz
+      - name: MassDNS
+        run: |
+         ls -l
+         ./kr brute subdomains-resolved.txt -w swagger-wordlist.txt -x 10 -d=0 --ignore-length=34 -ejson,txt -D -o dir.txt
+      - name: Send Output to Slack
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Kiterunner has COMPLETED for - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-KiteRunner-Dir-Brute -F file=@dir.txt
