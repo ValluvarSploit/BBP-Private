@@ -1,4 +1,4 @@
-name: KiteRunner
+name: KiteRunner API 
 on:
   workflow_dispatch:
 env:
@@ -16,17 +16,14 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $HOST/subdomains-resolved.txt
-         wget --quiet https://wordlists-cdn.assetnote.io/data/kiterunner/routes-large.kite.tar.gz
-         tar -xzvf routes-large.kite.tar.gz
-         ls -l
-         wget --quiet https://github.com/assetnote/kiterunner/releases/download/v1.0.1/kiterunner_1.0.1_linux_amd64.tar.gz
-         tar -xzvf kiterunner_1.0.1_linux_amd64.tar.gz
+         wget --quiet https://wordlists-cdn.assetnote.io/data/kiterunner/routes-large.kite.tar.gz ; tar -xzvf routes-large.kite.tar.gz
+         wget --quiet https://github.com/assetnote/kiterunner/releases/download/v1.0.1/kiterunner_1.0.1_linux_amd64.tar.gz ; tar -xzvf kiterunner_1.0.1_linux_amd64.tar.gz
       - name: MassDNS
         run: |
+         ./kr scan subdomains-resolved.txt -w routes-large.kite -x 20 -j 100 --fail-status-codes 400,401,404,403,501,502,426,411 -o kite-runner-api.txt
          ls -l
-         ./kr scan subdomains-resolved.txt -w routes-large.kite -x 20 -j 100 --fail-status-codes 400,401,404,403,501,502,426,411 -o out.txt
       - name: Send Output to Slack
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Kiterunner has COMPLETED for - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-KiteRunner -F file=@out.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-KiteRunner-API -F file=@kite-runner-api.txt
 
