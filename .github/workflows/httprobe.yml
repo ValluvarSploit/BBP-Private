@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/live-hosts-output.txt -O subdomains.txt
+         wget $HOST/amass-brute.txt -O subdomains.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
          chmod +x binaries/httprobe
       - name: Gobuster
