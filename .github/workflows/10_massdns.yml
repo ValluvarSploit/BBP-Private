@@ -21,22 +21,14 @@ jobs:
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" best-dns-wordlist.txt > wordlist-hugh.txt
-         cat wordlist-hugh.txt | head
          ./massdns/bin/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh.txt
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts-output.txt
-         cat massdns-output.txt | awk '{print $3}' | sort -u  > live-ips-output.txt 
-         xz massdns-output.txt ; xz -k live-hosts-output.txt ; xz live-ips-output.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolver has COMPLETED for - '$TARGET'"}' "$WEBHOOK"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: MassDNS-artifacts
          path: live-hosts-output.txt
-      - name: Send Output to Slack
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS Resolver has COMPLETED for - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-IPs -F file=@live-ips-output.txt.xz  
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F file=@massdns-output.txt.xz
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Live-Hosts -F file=@live-hosts-output.txt.xz
          
   Httprobe:
     runs-on: ubuntu-latest
@@ -53,9 +45,8 @@ jobs:
       - name: Gobuster
         run: |
          cat live-hosts-output.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
-         xz -k subdomains-resolved.txt 
       - name: Output & Slack Notification
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Httprobe -F file=@subdomains-resolved.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Httprobe -F file=@subdomains-resolved.txt
