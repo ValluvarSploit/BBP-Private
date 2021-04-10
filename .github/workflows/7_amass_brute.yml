@@ -19,6 +19,7 @@ jobs:
         run: |
          ./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -v -max-dns-queries 10000 -rf resolvers.txt
       - name: Upload Artifacts
+        if: always()
         uses: actions/upload-artifact@v2
         with:
          name: Amass-artifacts
@@ -31,6 +32,7 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F file=@amass-brute.txt.xz        
 
   Httprobe:
+    if: always()
     runs-on: ubuntu-latest
     needs: amass-brute
     steps:
