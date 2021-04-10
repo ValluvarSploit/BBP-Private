@@ -44,12 +44,11 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
          chmod +x binaries/httprobe
-      - name: Gobuster
+      - name: Httprobe
         run: |
-         cat amass-brute.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
-         xz -k subdomains-resolved.txt 
+         cat amass-brute.txt | ./binaries/httprobe | tee amass-httprobe-subdomains.txt ;
       - name: Output & Slack Notification
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Amass - Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Httprobe -F file=@subdomains-resolved.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Httprobe -F file=@amass-httprobe-subdomains.txt
