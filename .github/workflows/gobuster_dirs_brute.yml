@@ -22,7 +22,7 @@ jobs:
          mkdir gobuster-dirs-brute
       - name: Gobuster
         run: |
-         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w directory-list-2.3-medium.txt -l -o gobuster-dirs-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e ; done ;
+         for url in $(cat subdomains-resolved.txt) ; do ./gobuster dir -u $url -w directory-list-2.3-medium.txt -l -o gobuster-dirs-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e ; done ;
          zip gobuster-dirs-brute.zip gobuster-dirs-brute
       - name: Output & Slack Notification
         if: always()
