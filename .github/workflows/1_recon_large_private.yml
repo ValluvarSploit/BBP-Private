@@ -342,7 +342,8 @@ jobs:
         run: |
          ./waybackurls "$TARGET" > waybackurls.txt  ;
          ./binaries/gau "$TARGET" > gau.txt ;
-         cat gau.txt | sort -u >> waybackurls.txt ;
+         cat gau.txt >> waybackurls.txt ;
+         sort -u waybackurls.txt -o waybackurls.txt
       - name: Patterns
         run: |
          mkdir url-collector-artifacts
