@@ -331,11 +331,12 @@ jobs:
         run: |
          go env -w GOPATH=~/Downloads ;
          go get -u github.com/tomnomnom/waybackurls ;
+         go get -u github.com/1ndianl33t/urlprobe ;
          go get -u github.com/tomnomnom/gf ;
          mkdir ~/.gf; cp -r ~/Downloads/src/github.com/tomnomnom/gf/examples ~/.gf ;
          git clone https://github.com/1ndianl33t/Gf-Patterns ;
          mv Gf-Patterns/*.json ~/.gf ;
-         cp ~/Downloads/bin/gf . ; cp ~/Downloads/bin/waybackurls . ;
+         cp ~/Downloads/bin/gf . ; cp ~/Downloads/bin/waybackurls . ; cp ~/Downloads/bin/urlprobe . ;
          chmod +x binaries/gau ;
       - name: waybackurls & gau
         run: |
@@ -354,6 +355,8 @@ jobs:
          cat waybackurls.txt | ./gf rce | sort -u > url-collector-artifacts/rce-params.txt ;
          cat waybackurls.txt | ./gf redirect | sort -u > url-collector-artifacts/redirect-params.txt ;
          cat waybackurls.txt | ./gf img-traversal | sort -u > url-collector-artifacts/img-traversal.txt ;
+         cat waybackurls.txt | ./urlprobe -c 1000 -t 10 | grep 200 | awk '{print $5}' | tee -a urlprobe-sc-200.txt
+         cp urlprobe-sc-200.txt url-collector-artifacts/
          zip -r url-collector-artifacts.zip url-collector-artifacts/ ; xz url-collector-artifacts.zip ;
       - name: Upload URL Collector Artifacts
         uses: actions/upload-artifact@v2
