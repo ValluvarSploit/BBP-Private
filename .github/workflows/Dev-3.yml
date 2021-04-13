@@ -1,0 +1,109 @@
+name: Dev-3
+on:
+  workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN }}
+      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      S_CHANNEL: ${{ secrets.SLACK_CN_PRIVATE }}
+      S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
+      S_URL: https://slack.com/api/files.upload
+jobs:
+  Subdomain-Enumeration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2         
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK" ;
+         sudo apt-get install python3-setuptools ;
+         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+         chmod +x binaries/assetfinder ;
+         wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
+         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
+         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;
+      - name: SubScraper
+        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-auto.txt ;
+      - name: Amass
+        run: |
+         ./amass_linux_amd64/amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt ;
+         cat amass-passive.txt >> subdomains-auto.txt ;
+      - name: Assetfinder
+        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
+      - name: Subfinder
+        run: |
+         ./subfinder -d "$TARGET" -all -o subfinder-key.txt -rL resolvers.txt ; 
+         cat subfinder-key.txt >> subdomains-auto.txt
+      - name: Findomain
+        run: |
+         ./findomain -t "$TARGET" -q >> subdomains-auto.txt; 
+         cat subdomains-auto.txt | sort -u >> subdomains-cleaned.txt ;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+         path: |
+          subdomains-cleaned.txt
+      - name: Job Status Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+
+  Subdomain-Enumeration-3rd-Level:
+    runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts        
+      - name: Install Dependencies
+        run: |
+         sudo apt-get install python3-setuptools ;
+         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+         chmod +x binaries/assetfinder ;
+         wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
+         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
+         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;
+         git clone https://github.com/aboul3la/Sublist3r.git ; sudo pip install -r Sublist3r/requirements.txt
+      - name: Sublist3r
+        run: |
+         mkdir 3rd-sublister
+         for domain in $(cat subdomains-cleaned.txt); do python3 Sublist3r/sublist3r.py -d "$domain" -p 80,443,8080 -o 3rd-sublister/"$domain".txt ; cat 3rd-sublister/"$domain".txt >> 3rd-sublister.txt ; done
+         cat 3rd-sublister.txt | head
+      - name: SubScraper
+        run: |
+         mkdir 3rd-subscraper
+         for domain in $(cat subdomains-cleaned.txt); do python3 subscraper/subscraper.py "$domain" -o subscraper/"$domain".txt ; cat subscraper/"$domain".txt >> 3rd-subscraper.txt ; done
+         cat 3rd-subscraper.txt | head
+      - name: Amass
+        run: |
+         mkdir 3rd-amass
+         for domain in $(cat subdomains-cleaned.txt); do ./amass_linux_amd64/amass enum -passive -d "$domain" -rf resolvers.txt -o 3rd-amass/"$domain".txt ; cat 3rd-amass/"$domain".txt >> 3rd-amass.txt ; done
+         cat 3rd-amass.txt | head
+      - name: Assetfinder
+        run: |
+         for domain in $(cat subdomains-cleaned.txt); do ./binaries/assetfinder --subs-only "$domain" -silent >> 3rd-assetfinder.txt; done
+         cat 3rd-assetfinder.txt | head
+      - name: Subfinder
+        run: |
+         mkdir 3rd-subfinder
+         for domain in $(cat subdomains-cleaned.txt); do ./subfinder -d "$domain" -all -o 3rd-subfinder/"$domain".txt -rL resolvers.txt ; cat 3rd-subfinder/"$domain".txt >> 3rd-subfinder.txt ; done
+         cat 3rd-subfinder.txt | head
+      - name: Findomain
+        run: |
+         mkdir 3rd-findomain
+         for domain in $(cat subdomains-cleaned.txt); do ./findomain -t "$domain" -q -o 3rd-findomain/"$domain".txt ; cat 3rd-findomain/"$domain".txt >> 3rd-findomain.txt ; done
+         cat 3rd-findomain.txt | head
+         cat 3rd-sublister.txt 3rd-subscraper.txt 3rd-amass.txt 3rd-assetfinder.txt 3rd-subfinder.txt 3rd-findomain.txt | sort -u > subdomains-manual.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+         path: |
+          subdomains-manual.txt
+      - name: Job Status Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
