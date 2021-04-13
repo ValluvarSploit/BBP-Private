@@ -19,7 +19,7 @@ jobs:
       - name: DNSx
         run: |
          sed "s/$/.$TARGET/" wordlists/commonspeak2-subdomains.txt > wordlist-hugh.txt ;
-         dnsx -l wordlist-hugh.txt -wd "$TARGET" -o output.txt
+         ./dnsx -l wordlist-hugh.txt -wd "$TARGET" -o output.txt
          cat output.txt | head
         #./dnsx -l host-test.txt -resp-only -silent -o dnsx.out
       - name: Send Output to Slack
