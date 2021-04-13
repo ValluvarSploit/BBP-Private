@@ -68,7 +68,7 @@ jobs:
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
          git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;
          git clone https://github.com/aboul3la/Sublist3r.git ; sudo pip install -r Sublist3r/requirements.txt
-         cat subdomains-cleaned.txt | grep -Po "(\w+\.\w+\.\w)$" | sort -u > third-level-domains.txt
+         cat subdomains-cleaned.txt | grep -Po "(\w+\.\w+\.\w+)$" | sort -u > third-level-domains.txt
          cat third-level-domains.txt | head
       - name: Sublist3r
         run: |
