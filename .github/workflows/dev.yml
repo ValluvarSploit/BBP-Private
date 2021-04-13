@@ -16,11 +16,14 @@ jobs:
         run: |
          wget --quiet https://github.com/projectdiscovery/dnsx/releases/download/v1.0.2/dnsx_1.0.2_linux_amd64.tar.gz
          tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz
-         wget --quiet $HOST/host-test.txt
       - name: DNSx
-        run: ./dnsx -l host-test.txt -resp-only -silent -o dnsx.out
+        run: |
+         sed "s/$/.$TARGET/" wordlists/commonspeak2-subdomains.txt > wordlist-hugh.txt ;
+         dnsx -l wordlist-hugh.txt -wd "$TARGET" -o output.txt
+         cat output.txt | head
+        #./dnsx -l host-test.txt -resp-only -silent -o dnsx.out
       - name: Send Output to Slack
         if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSx -F file=@dnsx.out
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSx -F file=@output.txt
 
          
