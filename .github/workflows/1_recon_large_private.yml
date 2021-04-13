@@ -112,6 +112,7 @@ jobs:
          cd .. ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
          xz -d dnsgen-wordlist.txt.xz
+         wget --quiet https://github.com/projectdiscovery/dnsx/releases/download/v1.0.2/dnsx_1.0.2_linux_amd64.tar.gz ; tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
@@ -120,8 +121,9 @@ jobs:
          grep -vFf subdomains-exclude.txt wordlist-hugh2.txt > wordlist-all.txt ;
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-all.txt ;
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts.txt ;
-         cat massdns-output.txt | awk '{print $3}' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | sort -u  > live-ips.txt ;
-         cat ips-manual.txt | sort -u >> live-ips.txt ;
+         cat subdomains-manual.txt >> live-hosts.txt ; sort -u live-hosts.txt -o live-hosts.txt
+         ./dnsx -l live-hosts.txt -resp-only -silent -r resolvers.txt -o live-ips.txt
+         cat ips-manual.txt >> live-ips.txt ; sort -u live-ips.txt -o live-ips.txt
          zip massdns-output.zip massdns-output.txt live-ips.txt ; xz massdns-output.zip ;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
