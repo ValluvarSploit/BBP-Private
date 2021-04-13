@@ -74,16 +74,13 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
-         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O httparchive.txt
-         cat wordlists/bitquark-subdomains-top100000.txt wordlists/commonspeak2-subdomains.txt > subdomain-wordlists.txt ;
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
          wget --quiet https://github.com/projectdiscovery/dnsx/releases/download/v1.0.2/dnsx_1.0.2_linux_amd64.tar.gz ; tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz
       - name: DNSx
         run: |
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
-         cat wordlist-hugh.txt | sed 's/\*\.//g' | sort -u > wordlist-hugh2.txt
-         grep -vFf subdomains-exclude.txt wordlist-hugh2.txt > wordlist-all.txt ;
-         cat wordlist-all.txt | dnsx -o output.txt (wildcard domain)
+         sed "s/$/.$TARGET/" wordlists/commonspeak2-subdomains.txt > wordlist-hugh.txt ;
+         grep -vFf subdomains-exclude.txt wordlist-hugh.txt > wordlist-all.txt ;
+         dnsx -l wordlist-all.txt -wd "$TARGET" -o output.txt 
          cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts.txt ;
          cat subdomains-manual.txt >> live-hosts.txt ; sort -u live-hosts.txt -o live-hosts.txt
          ./dnsx -l live-hosts.txt -resp-only -silent -r resolvers.txt -o live-ips.txt
