@@ -1,0 +1,24 @@
+name: Dev-2
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       HOST: ${{ secrets.NGROK_URL }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+jobs:
+  HTTPX:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads ;
+          ; cp ~/Downloads/bin/kxss .
+      - name: DNSx
+        run: |
+         waybackurls testphp.vulnweb.com | kxss | kxss.out
+      - name: Send Output to Slack
+        if: always()
+        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSx -F file=@output.txt
