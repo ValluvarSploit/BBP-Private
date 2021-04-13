@@ -33,8 +33,57 @@ jobs:
          chmod +x binaries/assetfinder ;
          wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
          wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
-         git clone https://github.com/m8r0wn/subscraper ;
-         cd subscraper; sudo python3 setup.py install; cd .. ;
+         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;
+      - name: SubScraper
+        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-auto.txt ;
+      - name: Amass
+        run: |
+         ./amass_linux_amd64/amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt ;
+         cat amass-passive.txt >> subdomains-auto.txt ;
+      - name: Assetfinder
+        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
+      - name: Subfinder
+        run: |
+         ./subfinder -d "$TARGET" -all -o subfinder-key.txt -rL resolvers.txt ; 
+         cat subfinder-key.txt >> subdomains-auto.txt
+      - name: Findomain
+        run: |
+         ./findomain -t "$TARGET" -q >> subdomains-auto.txt; 
+         cat subdomains-auto.txt | sort -u >> subdomains-cleaned.txt ;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+         path: |
+          subdomains-cleaned.txt
+          ips-manual.txt
+      - name: Job Status Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+
+  Subdomain-Enumeration-3rd-Level:
+    runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts        
+      - name: Install Dependencies
+        run: |
+         sudo apt-get install python3-setuptools ;
+         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+         chmod +x binaries/assetfinder ;
+         wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
+         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
+         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;
+         git clone https://github.com/aboul3la/Sublist3r.git ; sudo pip install -r Sublist3r/requirements.txt
+         mkdir third-level
+      - name: Sublist3r
+        run: |
+         for domain in $(cat subdomains-cleaned.txt); do python3 Sublist3r/sublist3r.py -d "$domain" -p 80,443,8080 -o third-level/"$domain".txt ; cat third-level/"$domain".txt >> 3rd-sublister.txt ; done
       - name: SubScraper
         run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-auto.txt ;
       - name: Amass
