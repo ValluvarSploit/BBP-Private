@@ -15,7 +15,7 @@ jobs:
       - name: Install Dependencies
         run: |
          wget --quiet https://github.com/projectdiscovery/dnsx/releases/download/v1.0.2/dnsx_1.0.2_linux_amd64.tar.gz
-         tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz ; mv dnsx_1.0.2_linux_amd64 dnsx
+         tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz
          wget --quiet $HOST/host-test.txt
       - name: DNSx
         run: ./dnsx -l host-test.txt -resp-only -silent -o dnsx.out
