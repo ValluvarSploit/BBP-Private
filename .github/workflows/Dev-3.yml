@@ -38,6 +38,7 @@ jobs:
         run: |
          ./findomain -t "$TARGET" -q >> subdomains-auto.txt; 
          cat subdomains-auto.txt | sort -u >> subdomains-cleaned.txt ;
+         cat subdomains-cleaned.txt | wc -l
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -99,6 +100,9 @@ jobs:
          for domain in $(cat third-level-domains.txt); do ./findomain -t "$domain" -q -o 3rd-findomain/"$domain".txt ; cat 3rd-findomain/"$domain".txt >> 3rd-findomain.txt ; done
          cat 3rd-findomain.txt | head
          cat 3rd-sublister.txt 3rd-subscraper.txt 3rd-amass.txt 3rd-assetfinder.txt 3rd-subfinder.txt 3rd-findomain.txt | sort -u > subdomains-manual.txt
+         sort -u subdomains-cleaned.txt -o subdomains-cleaned.txt
+         cat subdomains-manual.txt | wc -l
+         cat subdomains-manual.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
