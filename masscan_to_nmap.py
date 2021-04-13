@@ -6,10 +6,6 @@ from libnmap.parser import NmapParser, NmapParserException
 from time import sleep, strftime, localtime
 from collections import defaultdict
 
-#parser = argparse.ArgumentParser(description='Import masscan results and run an nmap scan against the target.')
-#parser.add_argument('-f', '--scan_file', nargs='?', type=argparse.FileType('r'))
-#args = parser.parse_args()
-
 def do_scan(target, options):
     parsed = None
     nmproc = NmapProcess(target, options)
