@@ -373,7 +373,30 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Pattern-Collector -F file=@url-collector-artifacts.zip.xz ;
 
-  XSS-Hunt-URL-Collector:
+#Collect URLs.
+  KXSS-Enum:
+    runs-on: ubuntu-latest
+    needs: URL-Enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: url-collector-artifacts 
+      - name: Install Dependencies
+        run: |
+         go env -w GOPATH=~/Downloads ;
+         go get -u github.com/tomnomnom/hacks/kxss ; 
+         cp ~/Downloads/bin/kxss . ; 
+      - name: KXSS
+        run: |
+         cat waybackurls.txt | ./kxss | tee -a kxss.out
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-KXSS -F file=@kxss.out ;
+
+  XSS-Hunter:
     runs-on: ubuntu-latest
     needs: [URL-Enumeration, Subdomain-Enumeration, HTTProber]
     steps:
@@ -882,7 +905,7 @@ jobs:
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration,MassDNS-Resolver, DNSgen, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunt-URL-Collector, Parameter-Discovery, XSS-Hunter, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light]
+    needs: [Subdomain-Enumeration,MassDNS-Resolver, DNSgen, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, XSS-Hunter, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
