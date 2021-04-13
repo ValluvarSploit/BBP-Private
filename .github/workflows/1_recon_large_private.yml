@@ -125,6 +125,7 @@ jobs:
          ./dnsx -l live-hosts.txt -resp-only -silent -r resolvers.txt -o live-ips.txt
          cat ips-manual.txt >> live-ips.txt ; sort -u live-ips.txt -o live-ips.txt
          zip massdns-output.zip massdns-output.txt live-ips.txt ; xz massdns-output.zip ;
+       #dnsx -l airbnb-subs.txt -wd airbnb.com -o output.txt (wildcard domain)
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
