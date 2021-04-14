@@ -25,6 +25,7 @@ jobs:
          python3 domain_monitoring.py
          sort -u new_subdomains.txt -o new_subdomains.txt
          cat new_subdomains.txt >> old_subdomains.txt
+         sort -u old_subdomains.txt -o old_subdomains.txt
          cd ..
       - name: Output to Slack
         run: |
