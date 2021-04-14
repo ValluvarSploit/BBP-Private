@@ -1,3 +1,12 @@
+LICENSE.md
+README.md
+changes.txt
+install.txt
+EULA.txt
+eula.txt
+todo.txt
+Readme.txt
+readme.txt~
 wp-content/uploads/file-manager/log.txt
 wp-config.php
 conf
