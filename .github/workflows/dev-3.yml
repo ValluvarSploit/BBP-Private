@@ -65,10 +65,11 @@ jobs:
          sort -u old_subdomains.txt -o old_subdomains.txt
          cp new_subdomains.txt ../
          cd ..
-         curl -H "Authorization: token $G_TOKEN" -o out-of-scopes.txt https://raw.githubusercontent.com/ValluvarSploit/Domain_Monitoring/main/out-of-scopes.txt
-         grep -vFf out-of-scopes.txt new_subdomains.txt > subdomains-clean.txt ;
-         mv subdomains-clean.txt new_subdomains.txt
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP-Subdomains -F file=@new_subdomains.txt
+#         curl -H "Authorization: token $G_TOKEN" -o out-of-scopes.txt https://raw.githubusercontent.com/ValluvarSploit/Domain_Monitoring/main/out-of-scopes.txt
+#         grep -vFf out-of-scopes.txt new_subdomains.txt > subdomains-clean.txt ;
+#         mv subdomains-clean.txt new_subdomains.txt
+         
       - name: Commit Output
         run: |
           cd Domain_Monitoring
