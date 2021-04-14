@@ -20,7 +20,7 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
       - name: DNSx
         run: |
-         echo "dingo.example.com" > Domain_Monitoring/found_subdomains.txt
+         echo "lingo.example.com" > Domain_Monitoring/found_subdomains.txt
          cd Domain_Monitoring
          touch new_subdomains.txt
          python3 domain_monitoring.py
@@ -30,6 +30,7 @@ jobs:
          cd ..
       - name: Output to Slack
         run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hey <@'$MEMBER_ID'>, NEW SUBDOMAINS FOUND!"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP -F file=@Domain_Monitoring/new_subdomains.txt;
       - name: Commit resolvers.txt
         run: |
