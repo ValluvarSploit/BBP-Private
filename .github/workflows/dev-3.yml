@@ -5,7 +5,7 @@ env:
        CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
        CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       S_CHANNEL: ${{ secrets.SLACK_CN_PRIVATE }}
+       S_CHANNEL: ${{ secrets.DOMAIN_MONITORING_FOR_SUBS }}
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
        S_URL: https://slack.com/api/files.upload
 jobs:
