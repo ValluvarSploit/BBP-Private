@@ -28,7 +28,7 @@ jobs:
          cd ..
       - name: Output to Slack
         run: |
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP -F file=@new_subdomains.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP -F file=@Domain_Monitoring/new_subdomains.txt;
       - name: Commit resolvers.txt
         run: |
           cd Domain_Monitoring
