@@ -4,7 +4,7 @@ on:
 env:
    IP: ${{ secrets.TARGET_IP }}
    
-jobs:
+#jobs:
 #  Hydra-RDP:
 #    runs-on: ubuntu-latest
 #    steps:
@@ -26,5 +26,5 @@ jobs:
 #         sudo apt-get update && sudo apt-get install nmap -y
 #      - name: NMAP-RDP-DOS Checker
 #        run: |
-#         nmap -Pn -sV --script=rdp-vuln-ms12-020 -p 3389 "$IP" -v
+#         nmap -Pn -sV --script "rdp-enum-encryption or rdp-vuln-ms12-020 or rdp-ntlm-info" -p 3389 -oN nmap-rdp.txt "$IP"
 
