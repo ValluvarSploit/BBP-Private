@@ -20,8 +20,9 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
       - name: DNSx
         run: |
-         echo "mysecret.example.com" > Domain_Monitoring/found_subdomains.txt
+         echo "bingo.example.com" > Domain_Monitoring/found_subdomains.txt
          cd Domain_Monitoring
+         touch new_subdomains.txt
          python3 domain_monitoring.py
          sort -u new_subdomains.txt -o new_subdomains.txt
          cat new_subdomains.txt >> old_subdomains.txt
