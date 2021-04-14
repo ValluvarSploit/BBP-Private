@@ -35,7 +35,7 @@ jobs:
       - name: Install Dependencies
         run: |
          wget --quiet https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/examples/rdp_check.py
-         wget --quiet https://github.com/SecureAuthCorp/impacket/blob/master/requirements.txt
+         wget --quiet https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/requirements.txt
          pip3 install -r requirements.txt
       - name: NMAP-RDP-DOS Checker
         run: |
