@@ -5,6 +5,7 @@ env:
    IP: ${{ secrets.TARGET_IP }}
    
 #jobs:
+#Bruteforce RDP username:password (Account may get locked)
 #  Hydra-RDP:
 #    runs-on: ubuntu-latest
 #    steps:
@@ -16,7 +17,8 @@ env:
 #      - name: Hydra-RDP
 #        run: |
 #         hydra -V -f -C default.txt rdp://"$IP" 
-         
+    
+#Checks for Encryption, DoS vuln (without causing DoS) and obtains NTLM Windows info (versions).    
 #  NMAP-RDP:
 #    runs-on: ubuntu-latest
 #    steps:
