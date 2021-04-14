@@ -4,9 +4,10 @@ on:
 env:
        CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
        CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
-       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
-       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       S_CHANNEL: ${{ secrets.SLACK_CN_PRIVATE }}
+       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
+       S_URL: https://slack.com/api/files.upload
 jobs:
   Dev-3:
     runs-on: ubuntu-latest  
@@ -22,8 +23,12 @@ jobs:
          echo "secret.example.com" > Domain_Monitoring/found_subdomains.txt
          cd Domain_Monitoring
          python3 domain_monitoring.py
+         sort -u new_subdomains.txt -o new_subdomains.txt
          cat new_subdomains.txt >> old_subdomains.txt
          cd ..
+      - name: Output to Slack
+        run: |
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP -F file=@new_subdomains.txt;
       - name: Commit resolvers.txt
         run: |
           cd Domain_Monitoring
