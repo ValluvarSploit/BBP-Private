@@ -17,13 +17,24 @@ jobs:
 #        run: |
 #         hydra -V -f -C default.txt rdp://"$IP" 
          
-  NMAP-RDP:
+#  NMAP-RDP:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2         
+#      - name: Install Dependencies
+#        run: |
+#         sudo apt-get update && sudo apt-get install nmap -y
+#      - name: NMAP-RDP-DOS Checker
+#        run: |
+#         nmap -Pn -sV --script=rdp-vuln-ms12-020 -p 3389 "$IP" -v
+
+  Impacket-RDP-Check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2         
       - name: Install Dependencies
         run: |
-         sudo apt-get update && sudo apt-get install nmap -y
+         wget --quiet https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/examples/rdp_check.py
       - name: NMAP-RDP-DOS Checker
         run: |
-         nmap -Pn -sV --script=rdp-vuln-ms12-020 -p 3389 "$IP" -v
+         python3 rdp_check.py 96.65.26.181
