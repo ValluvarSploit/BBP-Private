@@ -4,7 +4,7 @@ on:
 env:
        CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
        CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
-       EXCLUDE_HOST: ${{ EXCLUDE_HOST_DOMAIN_MONITOR }}
+       G_TOKEN: ${{ secrets.TOKEN }}
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        S_CHANNEL: ${{ secrets.DOMAIN_MONITORING_FOR_SUBS }}
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
@@ -90,8 +90,8 @@ jobs:
          name: subdomains-artifacts
       - name: Install Dependencies
         run: |
-         echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
-         grep -vFf subdomains-exclude.txt new_subdomains.txt > subdomains-clean.txt ;
+         curl -H "Authorization: token $G_TOKEN" -o out-of-scopes.txt https://raw.githubusercontent.com/ValluvarSploit/Domain_Monitoring/main/out-of-scopes.txt
+         grep -vFf out-of-scopes.txt new_subdomains.txt > subdomains-clean.txt ;
          wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz ; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz ;
       - name: HTTPx
         run: |
