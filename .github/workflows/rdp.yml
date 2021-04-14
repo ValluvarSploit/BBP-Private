@@ -37,6 +37,7 @@ jobs:
          wget --quiet https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/examples/rdp_check.py
          wget --quiet https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/requirements.txt
          pip3 install -r requirements.txt
+         pip3 install impacket
       - name: NMAP-RDP-DOS Checker
         run: |
          python3 rdp_check.py 96.65.26.181
