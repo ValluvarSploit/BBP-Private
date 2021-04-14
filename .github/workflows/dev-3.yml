@@ -1,0 +1,34 @@
+name: Dev-3
+on:
+  workflow_dispatch:
+env:
+       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+jobs:
+  Dev-3:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+      - name: DNSx
+        run: |
+         echo "secret.example.com" > Domain_Monitoring/found_subdomains.txt
+         cd Domain_Monitoring
+         python3 domain_monitoring.py
+         cat new_subdomains.txt >> old_subdomains.txt
+         cd ..
+      - name: Commit resolvers.txt
+        run: |
+          cd Domain_Monitoring
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add old_subdomains.txt
+          git commit -m "Update old_subdomains.txt" -a
+          git push
