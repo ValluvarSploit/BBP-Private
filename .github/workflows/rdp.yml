@@ -29,4 +29,6 @@ env:
 #      - name: NMAP-RDP-DOS Checker
 #        run: |
 #         nmap -Pn -sV --script "rdp-enum-encryption or rdp-vuln-ms12-020 or rdp-ntlm-info" -p 3389 -oN nmap-rdp.txt "$IP"
+curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Knockpy -F file=@knockpy-results.zip
+
 
