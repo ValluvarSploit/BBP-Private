@@ -8,6 +8,7 @@ env:
        S_CHANNEL: ${{ secrets.DOMAIN_MONITORING_FOR_SUBS }}
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
        S_URL: https://slack.com/api/files.upload
+       S_MEMBER_ID: ${{ secrets.S_MEMBERID }}
 jobs:
   Dev-3:
     runs-on: ubuntu-latest  
@@ -18,8 +19,34 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-      - name: DNSx
+         sudo apt-get install python3-setuptools ;
+         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+         chmod +x binaries/assetfinder ;
+         wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
+         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
+         go env -w GOPATH=~/Downloads ;
+         go get -u github.com/tomnomnom/assetfinder ; cp ~/Downloads/bin/assetfinder . ;
+         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;         
+         cp Domain_Monitoring/domains_to_monitor.txt .
+      - name: SubScraper
         run: |
+         for domain in $(cat domains_to_monitor.txt); do python3 subscraper/subscraper.py "$domain" -o "$domain".txt; cat "$domain".txt >> subscraper.txt; done
+         cat subscraper.txt >> subdomains-monitor.txt;
+      - name: Amass
+        run: |
+         ./amass_linux_amd64/amass enum -passive -df domains_to_monitor.txt -rf resolvers.txt -o amass.txt;
+         cat amass.txt >> subdomains-monitor.txt;
+      - name: Assetfinder
+        run: |
+         for domain in $(cat domains_to_monitor.txt); do ./assetfinder --subs-only "$domain" -silent >> assetfinder.txt; done
+         cat assetfinder.txt >> subdomains-monitor.txt;
+      - name: Subfinder
+        run: |
+         ./subfinder -dL domains_to_monitor.txt -all -o subfinder.txt -rL resolvers.txt ; 
+         cat subfinder.txt >> subdomains-monitor.txt;
+         
+         cat subfinder-key.txt >> subdomains-auto.txt
          echo "lingo.example.com" > Domain_Monitoring/found_subdomains.txt
          cd Domain_Monitoring
          touch new_subdomains.txt
@@ -30,7 +57,7 @@ jobs:
          cd ..
       - name: Output to Slack
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hey <@'$MEMBER_ID'>, NEW SUBDOMAINS FOUND!"}' "$S_WEBHOOK"
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hey <@'$S_MEMBER_ID'>, NEW SUBDOMAINS FOUND!"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP -F file=@Domain_Monitoring/new_subdomains.txt;
       - name: Commit resolvers.txt
         run: |
