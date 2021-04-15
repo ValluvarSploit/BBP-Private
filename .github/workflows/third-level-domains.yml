@@ -20,36 +20,35 @@ jobs:
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
          sudo apt-get install python3-setuptools ;
-         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
-         chmod +x binaries/assetfinder ;
          wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
-         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
          go env -w GOPATH=~/Downloads ;
          go get -u github.com/tomnomnom/assetfinder ; cp ~/Downloads/bin/assetfinder . ;
-         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;         
          cp Domain_Monitoring/third-level-domains.txt .
-         git clone https://github.com/aboul3la/Sublist3r.git ; sudo pip install -r Sublist3r/requirements.txt
-      - name: Sublister
-        run: |
-         for domain in $(cat third-level-domains.txt); do touch "$domain".txt; python3 Sublist3r/sublist3r.py -d "$domain" -p 80,443,8080 -o "$domain".txt; cat "$domain".txt | tee -a sublister.txt; done
-         cat sublister.txt >> subdomains-monitor.txt;
-      - name: SubScraper
-        run: |
-         for domain in $(cat third-level-domains.txt); do python3 subscraper/subscraper.py "$domain" -o "$domain".txt; cat "$domain".txt | tee -a subscraper.txt; done
-         cat subscraper.txt >> subdomains-monitor.txt;
-      - name: Amass
-        run: |
-         ./amass_linux_amd64/amass enum -passive -df third-level-domains.txt -rf resolvers.txt -o amass.txt;
-         cat amass.txt >> subdomains-monitor.txt;
+#         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
+#         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz 
+#         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;                 
+#         git clone https://github.com/aboul3la/Sublist3r.git ; sudo pip install -r Sublist3r/requirements.txt
+#      - name: Sublister
+#        run: |
+#         for domain in $(cat third-level-domains.txt); do touch "$domain".txt; python3 Sublist3r/sublist3r.py -d "$domain" -p 80,443,8080 -o "$domain".txt; cat "$domain".txt | tee -a sublister.txt; done
+#         cat sublister.txt >> subdomains-monitor.txt;
+#      - name: SubScraper
+#      run: |
+#         for domain in $(cat third-level-domains.txt); do python3 subscraper/subscraper.py "$domain" -o "$domain".txt; cat "$domain".txt | tee -a subscraper.txt; done
+#         cat subscraper.txt >> subdomains-monitor.txt;
+#      - name: Amass
+#        run: |
+#         ./amass_linux_amd64/amass enum -passive -df third-level-domains.txt -rf resolvers.txt -o amass.txt;
+#         cat amass.txt >> subdomains-monitor.txt;
       - name: Assetfinder
         run: |
          for domain in $(cat third-level-domains.txt); do ./assetfinder --subs-only "$domain" -silent | tee -a assetfinder.txt; done
          cat assetfinder.txt >> subdomains-monitor.txt;
-      - name: Subfinder
-        run: |
-         ./subfinder -dL third-level-domains.txt -all -o subfinder.txt -rL resolvers.txt ; 
-         cat subfinder.txt >> subdomains-monitor.txt;
+#      - name: Subfinder
+#        run: |
+#         ./subfinder -dL third-level-domains.txt -all -o subfinder.txt -rL resolvers.txt ; 
+#         cat subfinder.txt >> subdomains-monitor.txt;
       - name: Findomain
         run: |
          for domain in $(cat third-level-domains.txt); do ./findomain -t "$domain" -q | tee -a findomain.txt; done
