@@ -108,8 +108,9 @@ jobs:
         run: |
          for domain in $(cat domains_to_monitor.txt); do sed "s/$/.$domain/" subdomain-wordlists.txt > wordlist-hugh.txt ; cat wordlist-hugh.txt | sed 's/\*\.//g' | sort -u > wordlist-hugh2.txt ; ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh2.txt ; cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt ; done
          cat found_subdomains.txt | sort -u >> live-hosts-all.txt
-         grep -vFf out-of-scopes.txt live-hosts-all.txt > live-hosts.txt
+       #grep -vFf out-of-scopes.txt live-hosts-all.txt > live-hosts.txt
       - name: Upload Artifacts
+        if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-artifacts
