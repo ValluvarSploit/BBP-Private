@@ -59,6 +59,7 @@ jobs:
         run: |
          sort -u subdomains-monitor.txt -o Domain_Monitoring/found_subdomains.txt
          cd Domain_Monitoring ; touch new_subdomains.txt
+         cp found_subdomains.txt ../
          python3 domain_monitoring.py
          sort -u new_subdomains.txt -o new_subdomains.txt
          cat new_subdomains.txt >> old_subdomains.txt
@@ -69,7 +70,13 @@ jobs:
 #         curl -H "Authorization: token $G_TOKEN" -o out-of-scopes.txt https://raw.githubusercontent.com/ValluvarSploit/Domain_Monitoring/main/out-of-scopes.txt
 #         grep -vFf out-of-scopes.txt new_subdomains.txt > subdomains-clean.txt ;
 #         mv subdomains-clean.txt new_subdomains.txt
-         
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomains-artifacts
+         path: |
+          found_subdomains.txt
+          domains_to_monitor.txt
       - name: Commit Output
         run: |
           cd Domain_Monitoring
@@ -79,24 +86,50 @@ jobs:
           git commit -m "Update old_subdomains.txt" -a
           git push
 
+  MassDNS:
+    runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomains-artifacts
+      - name: Install Dependencies
+        run: |
+         curl -H "Authorization: token $G_TOKEN" -o out-of-scopes.txt https://raw.githubusercontent.com/ValluvarSploit/Domain_Monitoring/main/out-of-scopes.txt
+         cd wordlists ;
+         xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz ;
+         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O httparchive.txt
+         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt httparchive.txt > ../subdomain-wordlists.txt ;
+         cd .. ;
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+      - name: MassDNS
+        run: |
+         for domain in $(cat domains_to_monitor.txt); do sed "s/$/.$domain/" subdomain-wordlists.txt > wordlist-hugh.txt ; cat wordlist-hugh.txt | sed 's/\*\.//g' | sort -u > wordlist-hugh2.txt ; ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-hugh2.txt ; cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt ; done
+         cat found_subdomains.txt | sort -u >> live-hosts-all.txt
+         grep -vFf out-of-scopes.txt live-hosts-all.txt > live-hosts.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: massdns-artifacts
+         path: |
+          live-hosts.txt
 
-#  HTTProber:
-#    runs-on: ubuntu-latest
-#    needs: Subdomain-Enumeration
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions/download-artifact@v2
-#        with:
-#         name: subdomains-artifacts
-#      - name: Install Dependencies
-#        run: |
-         
-#         grep -vFf out-of-scopes.txt new_subdomains.txt > subdomains-clean.txt ;
-#         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz ; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz ;
-#      - name: HTTPx
-#        run: |
-#         ./httpx -l subdomains-clean.txt -no-fallback -follow-host-redirects -threads 300 -silent -timeout 15 -o resolved-subdomains.txt
-#      - name: Output & Slack Notification
-#        run: |
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hey <@'$S_MEMBER_ID'>, NEW SUBDOMAINS FOUND!"}' "$S_WEBHOOK"
-#          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP-Subdomains -F file=@resolved-subdomains.txt
+  HTTProber:
+    runs-on: ubuntu-latest
+    needs: MassDNS
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: massdns-artifacts
+      - name: Install Dependencies
+        run: |
+         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz ; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz ;
+      - name: HTTPx
+        run: |
+         ./httpx -l live-hosts.txt -no-fallback -follow-host-redirects -threads 300 -silent -timeout 15 -o resolved-subdomains.txt
+      - name: Output & Slack Notification
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hey <@'$S_MEMBER_ID'>, NEW SUBDOMAINS FOUND!"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Private-BBP-Subdomains -F file=@resolved-subdomains.txt
