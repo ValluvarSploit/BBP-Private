@@ -1,0 +1,120 @@
+name: Third Level Domain_Monitoring
+on:
+  workflow_dispatch:
+env:
+       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
+       G_TOKEN: ${{ secrets.TOKEN }}
+       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       S_CHANNEL: ${{ secrets.DOMAIN_MONITORING_FOR_SUBS }}
+       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
+       S_URL: https://slack.com/api/files.upload
+jobs:
+  Subdomain-Enumeration:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         sudo apt-get install python3-setuptools ;
+         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+         chmod +x binaries/assetfinder ;
+         wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
+         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
+         go env -w GOPATH=~/Downloads ;
+         go get -u github.com/tomnomnom/assetfinder ; cp ~/Downloads/bin/assetfinder . ;
+         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;         
+         cp Domain_Monitoring/domains_to_monitor.txt .
+         git clone https://github.com/aboul3la/Sublist3r.git ; sudo pip install -r Sublist3r/requirements.txt
+      - name: Sublister
+        run: |
+         for domain in $(cat third_level_domains.txt); do touch "$domain".txt; python3 Sublist3r/sublist3r.py -d "$domain" -p 80,443,8080 -o "$domain".txt; cat "$domain".txt | tee -a sublister.txt; done
+         cat sublister.txt >> subdomains-monitor.txt;
+      - name: SubScraper
+        run: |
+         for domain in $(cat third_level_domains.txt); do python3 subscraper/subscraper.py "$domain" -o "$domain".txt; cat "$domain".txt | tee -a subscraper.txt; done
+         cat subscraper.txt >> subdomains-monitor.txt;
+      - name: Amass
+        run: |
+         ./amass_linux_amd64/amass enum -passive -df third_level_domains.txt -rf resolvers.txt -o amass.txt;
+         cat amass.txt >> subdomains-monitor.txt;
+      - name: Assetfinder
+        run: |
+         for domain in $(cat third_level_domains.txt); do ./assetfinder --subs-only "$domain" -silent | tee -a assetfinder.txt; done
+         cat assetfinder.txt >> subdomains-monitor.txt;
+      - name: Subfinder
+        run: |
+         ./subfinder -dL third_level_domains.txt -all -o subfinder.txt -rL resolvers.txt ; 
+         cat subfinder.txt >> subdomains-monitor.txt;
+      - name: Findomain
+        run: |
+         for domain in $(cat third_level_domains.txt); do ./findomain -t "$domain" -q | tee -a findomain.txt; done
+         cat findomain.txt >> subdomains-monitor.txt;
+      - name: Cleanup Subdomains
+        run: |
+         sort -u subdomains-monitor.txt -o Domain_Monitoring/found_subdomains.txt
+         cd Domain_Monitoring ; touch new_subdomains.txt
+         cp found_subdomains.txt ../
+         python3 domain_monitoring.py
+         sort -u new_subdomains.txt -o new_subdomains.txt
+         cat new_subdomains.txt >> old_subdomains.txt
+         sort -u old_subdomains.txt -o old_subdomains.txt
+         cp new_subdomains.txt ../
+         cd ..
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=third-level-Subdomains -F file=@new_subdomains.txt
+#         curl -H "Authorization: token $G_TOKEN" -o out-of-scopes.txt https://raw.githubusercontent.com/ValluvarSploit/Domain_Monitoring/main/out-of-scopes.txt
+#         grep -vFf out-of-scopes.txt new_subdomains.txt > subdomains-clean.txt ;
+#         mv subdomains-clean.txt new_subdomains.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomains-artifacts
+         path: |
+          found_subdomains.txt
+          domains_to_monitor.txt
+      - name: Commit Output
+        run: |
+          cd Domain_Monitoring
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add old_subdomains.txt
+          git commit -m "Update old_subdomains.txt" -a
+          git push
+
+  HTTProber:
+    runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomains-artifacts
+      - name: Install Dependencies
+        run: |
+         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz ; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz ;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+      - name: HTTPx
+        run: |
+         ./httpx -l live-hosts.txt -no-fallback -follow-host-redirects -threads 300 -silent -timeout 15 -o resolved-subdomains-httpx.txt
+         cp resolved-subdomains-httpx.txt Domain_Monitoring
+         cd Domain_Monitoring
+         touch new_subdomains_resolved.txt
+         python3 resolved_subdomains.py
+         cat new_subdomains_resolved.txt >> resolved-subdomains.txt
+         sort -u resolved-subdomains.txt -o resolved-subdomains.txt
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Resolved-3rd-level-New-Subdomains -F file=@new_subdomains_resolved.txt
+         cd ..
+      - name: Commit Output
+        run: |
+          cd Domain_Monitoring
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add resolved-subdomains.txt
+          git commit -m "Update resolved-subdomains.txt" -a
+          git push
