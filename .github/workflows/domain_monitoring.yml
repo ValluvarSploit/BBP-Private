@@ -9,7 +9,6 @@ env:
        S_CHANNEL: ${{ secrets.DOMAIN_MONITORING_FOR_SUBS }}
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
        S_URL: https://slack.com/api/files.upload
-       S_MEMBER_ID: ${{ secrets.S_MEMBERID }}
 jobs:
   Subdomain-Enumeration:
     runs-on: ubuntu-latest  
