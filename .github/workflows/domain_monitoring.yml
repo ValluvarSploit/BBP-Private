@@ -114,8 +114,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
          name: massdns-artifacts
-         path: |
-          live-hosts.txt
+         path: live-hosts.txt
 
   HTTProber:
     if: always()
