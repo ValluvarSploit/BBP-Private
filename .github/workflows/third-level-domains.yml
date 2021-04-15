@@ -28,31 +28,31 @@ jobs:
          go env -w GOPATH=~/Downloads ;
          go get -u github.com/tomnomnom/assetfinder ; cp ~/Downloads/bin/assetfinder . ;
          git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;         
-         cp Domain_Monitoring/domains_to_monitor.txt .
+         cp Domain_Monitoring/third-level-domains.txt .
          git clone https://github.com/aboul3la/Sublist3r.git ; sudo pip install -r Sublist3r/requirements.txt
       - name: Sublister
         run: |
-         for domain in $(cat third_level_domains.txt); do touch "$domain".txt; python3 Sublist3r/sublist3r.py -d "$domain" -p 80,443,8080 -o "$domain".txt; cat "$domain".txt | tee -a sublister.txt; done
+         for domain in $(cat third-level-domains.txt); do touch "$domain".txt; python3 Sublist3r/sublist3r.py -d "$domain" -p 80,443,8080 -o "$domain".txt; cat "$domain".txt | tee -a sublister.txt; done
          cat sublister.txt >> subdomains-monitor.txt;
       - name: SubScraper
         run: |
-         for domain in $(cat third_level_domains.txt); do python3 subscraper/subscraper.py "$domain" -o "$domain".txt; cat "$domain".txt | tee -a subscraper.txt; done
+         for domain in $(cat third-level-domains.txt); do python3 subscraper/subscraper.py "$domain" -o "$domain".txt; cat "$domain".txt | tee -a subscraper.txt; done
          cat subscraper.txt >> subdomains-monitor.txt;
       - name: Amass
         run: |
-         ./amass_linux_amd64/amass enum -passive -df third_level_domains.txt -rf resolvers.txt -o amass.txt;
+         ./amass_linux_amd64/amass enum -passive -df third-level-domains.txt -rf resolvers.txt -o amass.txt;
          cat amass.txt >> subdomains-monitor.txt;
       - name: Assetfinder
         run: |
-         for domain in $(cat third_level_domains.txt); do ./assetfinder --subs-only "$domain" -silent | tee -a assetfinder.txt; done
+         for domain in $(cat third-level-domains.txt); do ./assetfinder --subs-only "$domain" -silent | tee -a assetfinder.txt; done
          cat assetfinder.txt >> subdomains-monitor.txt;
       - name: Subfinder
         run: |
-         ./subfinder -dL third_level_domains.txt -all -o subfinder.txt -rL resolvers.txt ; 
+         ./subfinder -dL third-level-domains.txt -all -o subfinder.txt -rL resolvers.txt ; 
          cat subfinder.txt >> subdomains-monitor.txt;
       - name: Findomain
         run: |
-         for domain in $(cat third_level_domains.txt); do ./findomain -t "$domain" -q | tee -a findomain.txt; done
+         for domain in $(cat third-level-domains.txt); do ./findomain -t "$domain" -q | tee -a findomain.txt; done
          cat findomain.txt >> subdomains-monitor.txt;
       - name: Cleanup Subdomains
         run: |
@@ -66,16 +66,11 @@ jobs:
          cp new_subdomains.txt ../
          cd ..
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=third-level-Subdomains -F file=@new_subdomains.txt
-#         curl -H "Authorization: token $G_TOKEN" -o out-of-scopes.txt https://raw.githubusercontent.com/ValluvarSploit/Domain_Monitoring/main/out-of-scopes.txt
-#         grep -vFf out-of-scopes.txt new_subdomains.txt > subdomains-clean.txt ;
-#         mv subdomains-clean.txt new_subdomains.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: subdomains-artifacts
-         path: |
-          found_subdomains.txt
-          domains_to_monitor.txt
+         path: found_subdomains.txt
       - name: Commit Output
         run: |
           cd Domain_Monitoring
@@ -101,7 +96,7 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
       - name: HTTPx
         run: |
-         ./httpx -l live-hosts.txt -no-fallback -follow-host-redirects -threads 300 -silent -timeout 15 -o resolved-subdomains-httpx.txt
+         ./httpx -l found_subdomains.txt -no-fallback -follow-host-redirects -threads 300 -silent -timeout 15 -o resolved-subdomains-httpx.txt
          cp resolved-subdomains-httpx.txt Domain_Monitoring
          cd Domain_Monitoring
          touch new_subdomains_resolved.txt
