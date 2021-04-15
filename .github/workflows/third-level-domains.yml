@@ -91,7 +91,6 @@ jobs:
       - name: Install Dependencies
         run: |
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
-         wget --quiet https://raw.githubusercontent.com/guelfoweb/knock/master/knockpy/wordlist.txt ;
       - name: MassDNS
         run: |
          for domain in $(cat third-level-domains.txt); do sed "s/$/.$domain/" wordlist.txt > wordlist-hugh.txt ; ./binaries/massdns -r resolvers.txt -t A -o S -q -w massdns-output.txt wordlist-hugh.txt ; cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | sort -u > live-hosts.txt ; done
