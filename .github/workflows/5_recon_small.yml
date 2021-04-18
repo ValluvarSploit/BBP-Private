@@ -78,7 +78,7 @@ jobs:
          cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh
       - name: Nmap scan
         run: |
-         nmap -Pn -sV -p- --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -iL subdomains-resolved-host.txt -oN nmap-vulnerability-scan.txt 
+         nmap -Pn -sS -sV -sC -p- --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -iL subdomains-resolved-host.txt -oN nmap-vulnerability-scan.txt 
          xz nmap-vulnerability-scan.txt
       - name: Output & Slack Notification
         if: always()
