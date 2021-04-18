@@ -317,7 +317,7 @@ jobs:
          sudo apt-get update && sudo apt-get install nmap -y
          cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt ;
       - name: Nmap TCP-UDP scan
-        run: sudo nmap -Pn -sV -iL subdomains.txt -oA nmap-top-1000 -v
+        run: sudo nmap -Pn -sS -sV -sC -iL subdomains.txt -oA nmap-top-1000 -v
       - name: Output & Slack Notification
         if: always()
         run: |
