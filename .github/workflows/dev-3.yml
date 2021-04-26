@@ -1,0 +1,19 @@
+name: Dev-3
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       HOST: ${{ secrets.NGROK_URL }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+jobs:
+  Dev:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         git clone --recursive https://github.com/screetsec/Sudomy.git
+         python3 -m pip install -r Sudomy/requirements.txt
+         ./Sudomy/sudomy -h
