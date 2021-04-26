@@ -16,4 +16,6 @@ jobs:
         run: |
          git clone --recursive https://github.com/screetsec/Sudomy.git
          python3 -m pip install -r Sudomy/requirements.txt
-         ./Sudomy/sudomy -h
+         ./Sudomy/sudomy -d hackerone.com --no-probe -o out.txt
+         echo "cat"
+         cat out.txt
