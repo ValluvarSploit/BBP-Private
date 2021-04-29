@@ -1,3 +1,15 @@
+wp-config.php
+wp-config.php.save
+kibana-log.txt
+elasticsearch.yml
+kibana.yml
+logstash.yml
+filebeat.yml
+elasticsearch/elasticsearch.yml
+kibana/kibana.yml
+logstash/logstash.yml
+filebeat/filebeat.yml
+sysadmin
 LICENSE.md
 README.md
 changes.txt

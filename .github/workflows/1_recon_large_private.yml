@@ -453,6 +453,7 @@ jobs:
         run: |
          cat subdomains.txt | xargs -I % python3 ParamSpider/paramspider.py -l high --exclude woff,css,js,png,svg,php,jpg -o paramspider-out/% -d %;  
          cat paramspider-out/* > paramspider.txt ; sort -u paramspider.txt -o paramspider.txt;
+         zip -r paramspider-out.zip paramspider-out/
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -462,7 +463,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Parameter-Discovery -F file=@paramspider.txt
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Parameter-Discovery -F file=@paramspider-out.zip
 
   XSS-Hunter:
     runs-on: ubuntu-latest
