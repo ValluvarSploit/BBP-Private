@@ -199,7 +199,7 @@ jobs:
          cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt ;
       - name: Subjack
         run: |
-         ./binaries/subjack -w subdomains-resolved.txt -t 100 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json ;
+         ./binaries/subjack -a -ssl -w subdomains-resolved.txt -t 50 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json ;
          cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt ;
       - name: Nuclei
         run: ./nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie-output.txt ;
@@ -695,7 +695,7 @@ jobs:
          git clone https://github.com/chenjj/CORScanner.git
          sudo pip3 install -r CORScanner/requirements.txt
       - name: CORS Scanner
-        run: python3 CORScanner/cors_scan.py -i subdomains-resolved.txt -t 200 > cors.txt;
+        run: python3 CORScanner/cors_scan.py -v -i subdomains-resolved.txt -t 50 > cors.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
