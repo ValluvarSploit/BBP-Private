@@ -1,4 +1,4 @@
-name: Dev-3
+name: Dev-4
 on:
   workflow_dispatch:
 env:
@@ -8,7 +8,7 @@ env:
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
 jobs:
-  Dev-3:
+  Dev-4:
     runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
