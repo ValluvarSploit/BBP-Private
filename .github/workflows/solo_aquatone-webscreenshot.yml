@@ -18,6 +18,7 @@ jobs:
          go env -w GOPATH=~/Downloads;
          go get github.com/michenriksen/aquatone
          cp ~/Downloads/bin/aquatone .; 
+         sudo snap install chromium
       - name: Aquatone
         run: |
          mkdir aquatone-output
