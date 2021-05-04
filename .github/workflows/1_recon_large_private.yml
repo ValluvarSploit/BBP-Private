@@ -718,11 +718,12 @@ jobs:
         run: |
          go env -w GOPATH=~/Downloads;
          go get github.com/michenriksen/aquatone
-         cp ~/Downloads/bin/aquatone .; 
+         cp ~/Downloads/bin/aquatone .;
+         sudo snap install chromium 
       - name: Aquatone
         run: |
          mkdir aquatone-output
-         cat subdomains-live.txt | ./aquatone --ports xlarge -out aquatone-output/
+         cat subdomains-live.txt | ./aquatone -chrome-path /snap/bin/chromium -threads 50 -silent --ports xlarge -out aquatone-output/ 
          zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip   
       - name: Output & Slack Notification
         if: always()
@@ -740,11 +741,11 @@ jobs:
          name: httprober-artifacts 
       - name: Install Dependencies
         run: |
-         sudo chmod +x binaries/gochopchop
+         wget -q https://github.com/michelin/ChopChop/releases/download/v1.0.0/ChopChop_linux_amd64.tar.gz; tar -xzvf ChopChop_linux_amd64.tar.gz; mv ChopChop_linux_amd64 chopchop
          wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
       - name: GoChopChop
         run: |
-         ./binaries/gochopchop scan --url-file subdomains-resolved.txt --export json --export-filename gochopchop-out
+         ./chopchop scan --url-file subdomains-live.txt --export json --export-filename gochopchop-out
          if [[ -f gochopchop-out.json ]]; then zip gochopchop-out.json.zip gochopchop-out.json; fi;
       - name: Output & Slack Notification
         if: always()
@@ -766,7 +767,7 @@ jobs:
          git clone https://github.com/nsonaniya2010/SubDomainizer.git && pip3 install -r SubDomainizer/requirements.txt            
       - name: Subdomanizer
         run: |
-         python3 SubDomainizer/SubDomainizer.py -l subdomains-resolved.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
+         python3 SubDomainizer/SubDomainizer.py -l subdomains-live.txt -cop cloud.txt -o subdomains.txt -sop secrets.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -806,7 +807,7 @@ jobs:
         run: git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh     
       - name: Eyewitness
         run: |
-         python3 EyeWitness/Python/EyeWitness.py --web -f subdomains-resolved.txt --timeout 120 --no-prompt
+         python3 EyeWitness/Python/EyeWitness.py --web -f subdomains-live.txt --timeout 120 --no-prompt
          mv `date +"%Y"`* eyewitness_output
          zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
       - name: Job Stauts Slack Notification
@@ -830,10 +831,7 @@ jobs:
          cd WhatWeb/ && bundle install    
       - name: Whatweb
         run: |
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > WhatWeb/targets.txt
-         cd WhatWeb/
-         ./whatweb --input-file=targets.txt --verbose --log-json=whatweb-logs.json
-         cp whatweb-logs.json ../  
+         ./WhatWeb/whatweb --input-file=subdomains-host.txt --verbose --log-json=whatweb-logs.json
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -851,10 +849,9 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
          chmod +x dnsc.sh
       - name: DNSC
-        run: ./dnsc.sh -l subdomains.txt -o dnsc.csv
+        run: ./dnsc.sh -l subdomains-host.txt -o dnsc.csv
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -875,7 +872,7 @@ jobs:
          sudo npm install broken-link-checker -g    
       - name: Broken Link Checker
         run: |
-         for url in $(cat subdomains-resolved.txt) ; do blc -of --filter-level 0 $url | tee -a blc-light.txt; done ;
+         for url in $(cat subdomains-live.txt ) ; do blc -of --filter-level 0 $url | tee -a blc-light.txt; done ;
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -886,7 +883,7 @@ jobs:
 
   broken-link-checker-full:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [Subdomain-Enumeration, HTTProber, broken-link-checker-light]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -897,7 +894,7 @@ jobs:
          sudo npm install broken-link-checker -g    
       - name: Broken Link Checker
         run: |
-         for url in $(cat subdomains-resolved.txt) ; do blc -rof --filter-level 3 $url | tee -a blc-full.txt; done ;
+         for url in $(cat subdomains-live.txt) ; do blc -rof --filter-level 3 $url | tee -a blc-full.txt; done ;
       - name: Output & Slack Notification
         if: always()
         run: |
