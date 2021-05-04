@@ -1,2 +1,0 @@
-docs.hackerone.com
-support.hackerone.com

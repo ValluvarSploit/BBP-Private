@@ -1,10 +1,3 @@
-#  1. DOMAIN_LARGE_PRIVATE
-#       example.com
-#  2. NGROK_URL
-#       ngrok.io
-#
-#python3 dirsearch.py -u https://www.dyson.in -e php,asp,aspx,jsp,html,zip,jar,sql -x 500,503 -r --plain-text-report=dir-out.txt.tmp -w ~/Desktop/bugBounty/wordlists/SecLists/Discovery/Web-Content/raft-large-words.txt
-#       
 name: Recon Large Private
 on:
   workflow_dispatch:
@@ -28,37 +21,37 @@ jobs:
       - uses: actions/checkout@v2         
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK" ;
-         wget $HOST/subdomains-manual.txt && wget $HOST/ips-manual.txt ;
-         sudo apt-get install python3-setuptools ;
-         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip 
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
-         chmod +x binaries/assetfinder ;
-         wget --quiet https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux -O findomain ; chmod +x findomain
-         wget --quiet https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz ; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK";
+         wget $HOST/subdomains-manual.txt && wget $HOST/ips-manual.txt; 
+         sudo apt-get install python3-setuptools;
+         wget -q -i requirements/subdomain-enum.txt; unzip amass_linux_amd64.zip; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz;
+         go env -w GOPATH=~/Downloads;
+         go get -u github.com/tomnomnom/assetfinder;
+         cp ~/Downloads/bin/assetfinder .; 
          git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;
       - name: SubScraper
-        run: python3 subscraper/subscraper.py "$TARGET" -o subdomains-auto.txt ;
+        run: 
+         python3 subscraper/subscraper.py "$TARGET" -o subdomains-auto.txt ;
       - name: Amass
         run: |
          ./amass_linux_amd64/amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt ;
-         cat amass-passive.txt >> subdomains-auto.txt ;
       - name: Assetfinder
-        run: ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
+        run: 
+         ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
       - name: Subfinder
         run: |
          ./subfinder -d "$TARGET" -all -o subfinder-key.txt -rL resolvers.txt ; 
-         cat subfinder-key.txt >> subdomains-auto.txt
       - name: Findomain
         run: |
          ./findomain -t "$TARGET" -q >> subdomains-auto.txt; 
-         cat subdomains-auto.txt | sort -u >> subdomains-cleaned.txt ;
+         cat amass-passive.txt subfinder-key.txt subdomains-manual.txt >> subdomains-auto.txt ;
+         cat subdomains-auto.txt | sort -u > subdomains-cleaned.txt ;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: subdomain-enumeration-artifacts
          path: |
-          subdomains-manual.txt
+          subdomains-cleaned.txt 
           ips-manual.txt
       - name: Job Status Slack Notification
         if: always()
@@ -77,7 +70,7 @@ jobs:
         run: pip3 install dnsgen && cp ~/.local/bin/dnsgen . ;
       - name: DNSgen
         run: |
-         ./dnsgen subdomains-manual.txt > dnsgen-wordlist.txt ;
+         ./dnsgen subdomains-cleaned.txt > dnsgen-wordlist.txt ;
          xz dnsgen-wordlist.txt ;
       - name: Upload Artifacts
         if: always()
@@ -86,7 +79,7 @@ jobs:
          name: dnsgen-artifacts
          path: |
           dnsgen-wordlist.txt.xz
-          subdomains-manual.txt
+          subdomains-cleaned.txt 
           ips-manual.txt
       - name: Output & Slack Notification
         if: always()
@@ -107,40 +100,37 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
-         cd wordlists ;
-         xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz ;
-         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O httparchive.txt
-         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt httparchive.txt > ../subdomain-wordlists.txt ;
-         cd .. ;
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt ;
+         wget -q -i requirements/massdns.txt; tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz;
+         cd wordlists ; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;          
+         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_2021_03_28.txt > ../subdomain-wordlists.txt; cd ..;
          xz -d dnsgen-wordlist.txt.xz
-         wget --quiet https://github.com/projectdiscovery/dnsx/releases/download/v1.0.2/dnsx_1.0.2_linux_amd64.tar.gz ; tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
          cat dnsgen-wordlist.txt >> wordlist-hugh.txt
          cat wordlist-hugh.txt | sed 's/\*\.//g' | sort -u > wordlist-hugh2.txt
          grep -vFf subdomains-exclude.txt wordlist-hugh2.txt > wordlist-all.txt ;
-         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns-output.txt wordlist-all.txt ;
-         cat massdns-output.txt | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sort -u > live-hosts.txt ;
-         cat subdomains-manual.txt >> live-hosts.txt ; sort -u live-hosts.txt -o live-hosts.txt
-         ./dnsx -l live-hosts.txt -resp-only -silent -r resolvers.txt -o live-ips.txt
-         cat ips-manual.txt >> live-ips.txt ; sort -u live-ips.txt -o live-ips.txt
-         zip massdns-output.zip massdns-output.txt live-ips.txt ; xz massdns-output.zip ;
+         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-all.txt ;
+         cat massdns.out | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sed 's/\*\.//g' | sort -u > massdns.host;
+         cat massdns.host >> subdomains-cleaned.txt; sort -u subdomains-cleaned.txt -o subdomains-cleaned.txt;
+         ./dnsx -l subdomains-cleaned.txt -resp-only -silent -r resolvers.txt -o dnsx.ip;
+         cat dnsx.ip ips-manual.txt >> ips-live.txt; sort -u ips-live.txt -o ips-live.txt;
+         zip massdns-out.zip massdns.out; xz massdns-out.zip;
+         mv subdomains-cleaned.txt subdomains-cleaned-2.txt; grep -vFf subdomains-exclude.txt subdomains-cleaned-2.txt > subdomains-cleaned.txt
        #dnsx -l airbnb-subs.txt -wd airbnb.com -o output.txt (wildcard domain)
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: massdns-artifacts
          path: |
-          live-hosts.txt
-          subdomains-manual.txt
-          live-ips.txt
+          subdomains-cleaned.txt
+          ips-live.txt
+          subdomains-exclude.txt 
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-output.zip.xz ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
                    
   HTTProber:
     runs-on: ubuntu-latest
@@ -152,31 +142,29 @@ jobs:
          name: massdns-artifacts
       - name: Install Dependencies
         run: |
-         echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
-         cat live-hosts.txt >> subdomains-manual.txt ;
-         cat subdomains-manual.txt | sed 's/\*\.//g' | sort -u > subdomains-uniq.txt ;
-         grep -vFf subdomains-exclude.txt subdomains-uniq.txt > subdomains-uniq2.txt ;
-         cat subdomains-uniq2.txt | tr A-Z a-z | sort -u > subdomains.txt ;
-         chmod +x binaries/httprobe
-         wget --quiet https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz ; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz ;
+         go env -w GOPATH=~/Downloads;
+         go get -u github.com/tomnomnom/httprobe;
+         cp ~/Downloads/bin/httprobe .; 
+         wget -q -i requirements/httprober.txt; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
       - name: HTTProber
         run: |
-         cat subdomains.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
-         xz -k subdomains-resolved.txt 
-         ./httpx -l subdomains.txt -follow-redirects -status-code -vhost -content-length -cname -cdn -csp-probe -ip -web-server -location -websocket -title -tech-detect -no-fallback -threads 300 -silent -timeout 15 -o httpx-enum.txt
+         cat subdomains-cleaned.txt | ./httprobe | tee subdomains-live.txt; 
+         ./httpx -l subdomains-cleaned.txt -follow-redirects -status-code -vhost -content-length -cname -cdn -csp-probe -ip -web-server -location -websocket -title -tech-detect -no-fallback -threads 300 -silent -timeout 15 -o httpx.out
+         cat subdomains-live.txt | cut -d "/" -f 3 > subdomains-host.txt;
+         zip httprober.zip subdomains-live.txt ips-live.txt subdomains-host.txt httpx.out
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: httprober-artifacts
          path: |
-          subdomains-resolved.txt 
-          live-ips.txt
+          subdomains-live.txt
+          ips-live.txt
+          subdomains-host.txt
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Resolved -F file=@subdomains-resolved.txt.xz ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-HTTPX -F file=@httpx-enum.txt ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Live-assets -F file=@httprober.zip;
 
 #Subdomain Takeover
   Subdomain-Takeover:
@@ -190,32 +178,33 @@ jobs:
       - name: Install Dependencies
         run: |
          touch subjack-logs.txt ;
-         git clone https://github.com/projectdiscovery/nuclei-templates.git ;
-         cd binaries; chmod +x subjack subzy; cd .. ;
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt ;
-         cp subdomains.txt binaries/ ;
-         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
-         tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
+         git clone https://github.com/projectdiscovery/nuclei-templates.git;
+         go env -w GOPATH=~/Downloads;
+         go get github.com/haccer/subjack
+         go get github.com/lukasikic/subzy
+         go get github.com/Ice3man543/SubOver
+         cp ~/Downloads/bin/subjack .; cp ~/Downloads/bin/subzy .; cp ~/Downloads/bin/SubOver .; 
+         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz; tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Subzy
         run: |
-         ./binaries/subzy --targets=subdomains-resolved.txt -concurrency 50 | tee subzy-logs.txt ;
-         cat subzy-logs.txt | grep -v "NOT VULNERABLE" > subzy-output.txt ;
+         ./subzy --targets=subdomains-live.txt -concurrency 50 | tee subzy.logs ;
+         cat subzy.logs | grep -v "NOT VULNERABLE" > subzy.out;
       - name: Subjack
         run: |
-         ./binaries/subjack -a -ssl -w subdomains-resolved.txt -t 50 -timeout 30 -o subjack-logs.txt -v -c binaries/subjack_fingerprints.json ;
-         cat subjack-logs.txt | grep -v "Not Vulnerable" | tee subjack-output.txt ;
+         ./subjack -a -ssl -w subdomains-live.txt -t 50 -timeout 30 -o subjack.logs -v -c binaries/subjack_fingerprints.json ;
+         cat subjack.logs | grep -v "Not Vulnerable" | tee subjack.out;
       - name: Nuclei
-        run: ./nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie-output.txt ;
+        run: ./nuclei -l subdomains-live.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie.out ;
       - name: SubOver
-        run: cd binaries; chmod +x SubOver; ./SubOver -l subdomains.txt -o subover.txt; cd .. ;
+        run: ./SubOver -l subdomains-host.txt -o subover.out;
       - name: Combine Output Files
         run: |
-         cat subzy-logs.txt subjack-logs.txt >> sto.log
-         if [[ -f subzy-output.txt ]]; then echo "*****Subzy*****" > subdomain-takeovers.txt; cat subzy-output.txt >> subdomain-takeovers.txt; fi ;
-         if [[ -f subjack-output.txt ]]; then echo "*****Subjack*****" >> subdomain-takeovers.txt; cat subjack-output.txt >> subdomain-takeovers.txt; fi ;
-         if [[ -f nuclie-output.txt ]]; then echo "*****Nuceli*****" >> subdomain-takeovers.txt; cat nuclie-output.txt >> subdomain-takeovers.txt; fi ;
-         if [[ -f subover.txt ]]; then echo "*****SubOver*****" >> subdomain-takeovers.txt; cat subover.txt >> subdomain-takeovers.txt; fi ;
-         zip subdomain-takeover.zip subdomain-takeovers.txt sto.log ; xz subdomain-takeover.zip ;
+         cat subzy.logs subjack.logs >> sto.logs
+         if [[ -f subzy.out ]]; then echo "*****Subzy*****" > subdomain-takeovers.out; cat subzy.out >> subdomain-takeovers.out; fi ;
+         if [[ -f subjack.out ]]; then echo "*****Subjack*****" >> subdomain-takeovers.out; cat subjack.out >> subdomain-takeovers.out; fi ;
+         if [[ -f nuclie.out ]]; then echo "*****Nuceli*****" >> subdomain-takeovers.out; cat nuclie.out >> subdomain-takeovers.out; fi ;
+         if [[ -f subover.out ]]; then echo "*****SubOver*****" >> subdomain-takeovers.out; cat subover.out >> subdomain-takeovers.out; fi ;
+         zip subdomain-takeover.zip subdomain-takeovers.out sto.logs ; xz subdomain-takeover.zip ;
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -233,16 +222,17 @@ jobs:
       - name: Install Dependencies
         run: |
          go env -w GOPATH=~/Downloads ;
+         go get -u github.com/tomnomnom/meg
          cp ~/Downloads/bin/meg . ; 
       - name: MEG
         run: |
-         ./meg -d 10 -c 200 / subdomains-resolved.txt
-         zip -r meg-homepage.zip out/
+         ./meg -d 10 -c 200 / subdomains-live.txt
+         zip -r meg-home.zip out/
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MEG-Homepage -F file=@meg-homepage.zip
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MEG-Homepage -F file=@meg-home.zip
 
 #Nuclei Template Scan.
   Nuclei-Template-Scan:
@@ -260,13 +250,12 @@ jobs:
          tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Nuclei scan
         run: |
-         ./nuclei -l subdomains-resolved.txt -c 100 -stats -t nuclei-templates/ -o nuclie-scan.txt ;
-         xz nuclie-scan.txt ;
+         ./nuclei -l subdomains-live.txt -c 100 -stats -t nuclei-templates/ -o nuclie-scan.out ;
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          if [[ -f nuclie-scan.txt.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nuclei-Template-Scan -F file=@nuclie-scan.txt.xz; fi ;
+          if [[ -f nuclie-scan.out ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nuclei-Template-Scan -F file=@nuclie-scan.out; fi ;
 
   Mass-Nmap-Scan:
     runs-on: ubuntu-latest    
@@ -285,16 +274,16 @@ jobs:
          cd masscan && make -j && cp bin/masscan ../masscanb ;         
       - name: Masscan
         run: |
-         sudo ./masscanb -iL live-ips.txt --rate 10000 -p0-65535 -oX masscan.xml ;
+         sudo ./masscanb -iL ips-live.txt --rate 10000 -p0-65535 -oX masscan.xml ;
       - name: Nmap Scan
         run: |
-         python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.txt ;
-         zip masscan-nmap.zip masscan.xml nmap-masscan.txt ; xz masscan-nmap.zip ;
+         python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.out ;
+         zip masscan-nmap.zip masscan.xml nmap-masscan.out ; xz masscan-nmap.zip ;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: nmap-output
-         path: nmap-masscan.txt         
+         path: nmap-masscan.out         
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -312,22 +301,23 @@ jobs:
       - name: Install Dependencies
         run: |
          ulimit -s ; ulimit -s 65536 ;
-         cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt ;
-         cat nmap-masscan.txt | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt ;
+         cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt ;
+         cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt ;
          sudo apt-get update && sudo apt-get install nmap -y ;
          cd /usr/share/nmap/scripts/ ;
          sudo git clone https://github.com/vulnersCom/nmap-vulners.git ;
          sudo git clone https://github.com/scipag/vulscan ;
          cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh ;
+         mkdir nmap-vuln
       - name: Nmap scan
         run: |
-         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oN nmap-vulnerability-scan.txt $ip  ; done ; 
-         xz nmap-vulnerability-scan.txt ;
+         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln/nmap-vuln-scan $ip  ; done ; 
+         zip nmap-vuln.zip -r nmap-vuln/
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vulnerability-scan.txt.xz ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln.zip;
 
   nmap-top-1000:
     runs-on: ubuntu-latest    
@@ -339,15 +329,19 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
-         sudo apt-get update && sudo apt-get install nmap -y
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt ;
+         sudo apt-get update && sudo apt-get install nmap -y && sudo apt-get install xsltproc -y
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
+         mkdir nmap-1000
       - name: Nmap TCP-UDP scan
-        run: sudo nmap -Pn -sS -sV -sC -iL subdomains.txt -oA nmap-top-1000 -v
+        run: |
+          sudo nmap -Pn -sS -sV -sC -iL ips-live.txt -oA nmap-1000/nmap-top-1000 -v
+          xsltproc -o nmap-1000.html nmap-bootstrap.xsl nmap-1000/nmap-top-1000.xml
+          zip -r nmap-1000.zip nmap-1000/ nmap-1000.html
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Top-1000 -F file=@nmap-top-1000.nmap
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-1000 -F file=@nmap-1000.zip
 
   nmap-tcp-udp-scan:
     runs-on: ubuntu-latest    
@@ -360,14 +354,16 @@ jobs:
       - name: Install Dependencies
         run: |
          sudo apt-get update && sudo apt-get install nmap -y
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt ;
+         mkdir nmap-tcp-udp
       - name: Nmap TCP-UDP scan
-        run: sudo nmap -Pn -sV -sU -pT:21,22,23,25,53,80,81,88,110,111,139,389,443,445,900,1433,2049,2301,2381,3389,4242,7001,7002,7070,8000,8001,8005,8080,8100,8810,8820,8830,8888,9090,10000,U:53,69,137,138,161,500 -iL subdomains.txt -oA nmap-tcp-udp-scan -v
+        run: |
+          sudo nmap -Pn -sV -sU -pT:21,22,23,25,53,80,81,88,110,111,139,389,443,445,900,1433,2049,2301,2381,3389,4242,7001,7002,7070,8000,8001,8005,8080,8100,8810,8820,8830,8888,9090,10000,U:53,69,137,138,161,500 -iL ips-live.txt  -oA nmap-tcp-udp/nmap-tcp-udp-scan -v
+          zip -r nmap-tcp-udp.zip nmap-tcp-udp/
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-TCP-UDP-Scan -F file=@nmap-tcp-udp-scan.nmap
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-TCP-UDP-Scan -F file=@nmap-tcp-udp.zip;
 
 #Collect URLs.
   URL-Enumeration:
@@ -378,18 +374,18 @@ jobs:
       - name: Install Dependencies
         run: |
          go env -w GOPATH=~/Downloads ;
-         go get -u github.com/tomnomnom/waybackurls ;
-         go get -u github.com/1ndianl33t/urlprobe ;
-         go get -u github.com/tomnomnom/gf ;
+         go get -u github.com/tomnomnom/waybackurls;
+         go get -u github.com/1ndianl33t/urlprobe;
+         go get -u github.com/tomnomnom/gf;
+         go get -u github.com/lc/gau;
          mkdir ~/.gf; cp -r ~/Downloads/src/github.com/tomnomnom/gf/examples ~/.gf ;
          git clone https://github.com/1ndianl33t/Gf-Patterns ;
          mv Gf-Patterns/*.json ~/.gf ;
-         cp ~/Downloads/bin/gf . ; cp ~/Downloads/bin/waybackurls . ; cp ~/Downloads/bin/urlprobe . ;
-         chmod +x binaries/gau ;
+         cp ~/Downloads/bin/gf .; cp ~/Downloads/bin/waybackurls .; cp ~/Downloads/bin/urlprobe .; cp ~/Downloads/bin/gau .;
       - name: waybackurls & gau
         run: |
          ./waybackurls "$TARGET" > waybackurls.txt  ;
-         ./binaries/gau "$TARGET" > gau.txt ;
+         ./gau "$TARGET" > gau.txt ;
          cat gau.txt >> waybackurls.txt ;
          sort -u waybackurls.txt -o waybackurls.txt
       - name: Patterns
@@ -472,11 +468,10 @@ jobs:
         run: |
          git clone https://github.com/devanshbatham/ParamSpider
          pip3 install -r ParamSpider/requirements.txt
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > subdomains.txt
          mkdir paramspider-out
       - name: ParamSpider
         run: |
-         cat subdomains.txt | xargs -I % python3 ParamSpider/paramspider.py -l high --exclude woff,css,js,png,svg,php,jpg -o paramspider-out/% -d %;  
+         cat subdomains-host.txt | xargs -I % python3 ParamSpider/paramspider.py -l high --exclude woff,css,js,png,svg,php,jpg -o paramspider-out/% -d %;  
          cat paramspider-out/* > paramspider.txt ; sort -u paramspider.txt -o paramspider.txt;
          zip -r paramspider-out.zip paramspider-out/
       - name: Upload BBP-Public Artifacts
@@ -541,18 +536,20 @@ jobs:
       - name: Install Dependencies
         run: |
          sudo apt-get install python3-setuptools
-         cd binaries; chmod +x gau subjs hakrawler httpx; cd ..
+         go env -w GOPATH=~/Downloads ;
+         go get -u github.com/lc/gau; cp ~/Downloads/bin/gau .;
+         go get -u github.com/lc/subjs; cp ~/Downloads/bin/subjs .; 
+         go get github.com/hakluke/hakrawler; cp ~/Downloads/bin/hakrawler .; 
+         wget -q -i requirements/js-enum.txt; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
          git clone https://github.com/GerbenJavado/LinkFinder.git
          cd LinkFinder; sudo python3 setup.py install; sudo pip3 install -r requirements.txt; cd ..
-         wget https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/getjswords.py
-         wget https://gist.githubusercontent.com/KathanP19/d2cda2f99c0b60d64b76ee6039b37e47/raw/eb105a4de06502b2732df9d682c61189c3703685/jsvar.sh
          touch js-endpoints.txt js-words.txt js-file-links-live.txt js-xss.txt 
       - name: Javascript Scan
         run: |
-         echo "$TARGET" | ./binaries/gau | grep -iE "\.js$" | sort -u > js-file-links.txt
-         echo "$TARGET" | ./binaries/subjs >> js-file-links.txt
-         echo "$TARGET" | ./binaries/hakrawler -js -depth 2 -scope subs -plain >> js-file-links.txt
-         cat js-file-links.txt | ./binaries/httpx -follow-redirects -silent -status-code | grep "[200]" | cut -d ' ' -f1 | sort -u > js-file-links-live.txt;
+         echo "$TARGET" | ./gau | grep -iE "\.js$" | sort -u > js-file-links.txt
+         echo "$TARGET" | ./subjs >> js-file-links.txt
+         echo "$TARGET" | ./hakrawler -js -depth 2 -scope subs -plain >> js-file-links.txt
+         cat js-file-links.txt | ./httpx -follow-redirects -silent -status-code | grep "[200]" | cut -d ' ' -f1 | sort -u > js-file-links-live.txt;
          python3 LinkFinder/linkfinder.py -d -i https://"$TARGET" -o cli >> js-endpoints.txt;
          cat js-file-links-live.txt | python3 getjswords.py | sort -u > js-words.txt;
          cat js-file-links-live.txt | while read url ; do bash jsvar.sh $url | sort -u | tee js-xss.txt ; done;
@@ -563,7 +560,6 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-JS-Scan -F file=@js-scan.zip.xz ;
 
-#Secrets Finder
   Secrets-Finder:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
@@ -580,7 +576,7 @@ jobs:
          touch secret-finder.txt gmapapi.txt
       - name: Secrets Finder
         run: |
-         cat subdomains-resolved.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
+         cat subdomains-live.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
          cat secret-finder.txt | grep 'google_api' -B 1 | sort -u > gmapapi.txt;
          zip secrets.zip secret-finder.txt gmapapi.txt; xz secrets.zip        
       - name: Output & Slack Notification
@@ -589,98 +585,54 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
 
-  Gobuster-Files-Brute:
+  Directory-Fuzz:
     runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, HTTProber]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts       
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster Files Brute INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
-         wget $HOST/subdomains-resolved.txt
-         wgt https://wordlists-cdn.assetnote.io/data/manual/bak.txt
-         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
-         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         mkdir gobuster-files-brute
-         cat bak.txt | sort -u >> sensitive-wordlist.txt
-      - name: Gobuster
-        run: |
-         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w wordlists/sensitive-wordlist.txt -l -o gobuster-files-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e --wildcard -x ; done ;
-         zip gobuster-files-brute.zip gobuster-files-brute
-       #-x php,asp,bak,sql
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoBuster-File-Brute -F file=@gobuster-files-brute.zip
-
-  Gobuster-Dirs-Brute:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster Dirs Brute INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
-         wget $HOST/subdomains-resolved.txt
+         git clone https://github.com/maurosoria/dirsearch.git
          wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
-         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
-         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         mkdir gobuster-dirs-brute
-      - name: Gobuster
+      - name: Directory Fuzzing
         run: |
-         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w directory-list-2.3-medium.txt -l -o gobuster-dirs-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e ; done ;
-         zip gobuster-dirs-brute.zip gobuster-dirs-brute
-      - name: Output & Slack Notification
+         python3 dirsearch/dirsearch.py -l subdomains-live.txt -b -t 100 -e php,asp,aspx,jsp,html,zip,jar,sql -r -w directory-list-2.3-medium.txt;
+      - name: Output &  Slack Notification
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoBuster-Dirs-Brute -F file=@gobuster-dirs-brute.zip
+         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
+         zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip        
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Bruteforcing -F file=@dirsearch-dir-reports.zip.xz
 
-
-          ##Directory Fuzzing
-          #  Directory-Fuzz:
-          #    runs-on: ubuntu-latest
-          #    needs: [Subdomain-Enumeration, HTTProber]
-          #    steps:
-          #      - uses: actions/checkout@v2
-          #      - uses: actions/download-artifact@v2
-          #        with:
-          #         name: httprober-artifacts       
-          #      - name: Install Dependencies
-          #        run: |
-          #         git clone https://github.com/maurosoria/dirsearch.git
-          #         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
-          #      - name: Directory Fuzzing
-          #        run: |
-          #         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w directory-list-2.3-medium.txt;
-          #      - name: Output &  Slack Notification
-          #        if: always()
-          #        run: |
-          #         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          #         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
-          #         zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip        
-          #         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
-          #
-          ##Dirsearch sensitive files
-          #  File-Fuzz:
-          #    runs-on: ubuntu-latest
-          #    needs: [Subdomain-Enumeration, HTTProber]
-          #    steps:
-          #      - uses: actions/checkout@v2
-          #      - uses: actions/download-artifact@v2
-          #        with:
-          #         name: httprober-artifacts     
-          #      - name: Install Dependencies
-          #        run: git clone https://github.com/maurosoria/dirsearch.git
-          #      - name: Directory Fuzzing
-          #        run: |
-          #         python3 dirsearch/dirsearch.py -l subdomains-resolved.txt -t 300 -i 200,201,202,203,204,301,302,303,304 -b -w wordlists/sensitive-wordlist.txt;
-          #      - name: Output &  Slack Notification
-          #        if: always()
-          #        run: |
-          #         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          #         mkdir file-report ; cp -r dirsearch/reports file-report ;
-          #         zip -r dirsearch-file-reports.zip file-report && xz dirsearch-file-reports.zip     
-          #         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Sensitive-File-Fuzzing -F file=@dirsearch-dir-reports.zip.xz
+#Dirsearch sensitive files
+  File-Fuzz:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts     
+      - name: Install Dependencies
+        run: |
+          git clone https://github.com/maurosoria/dirsearch.git
+          wgt https://wordlists-cdn.assetnote.io/data/manual/bak.txt
+          cat bak.txt >>  wordlists/sensitive-wordlist.txt
+          sort -u wordlists/sensitive-wordlist.txt -o wordlists/sensitive-wordlist.txt
+      - name: Directory Fuzzing
+        run: |
+         python3 dirsearch/dirsearch.py -l subdomains-live.txt -b -t 100 -e php,asp,aspx,jsp,html,zip,jar,sql -r -w wordlists/sensitive-wordlist.txt;
+      - name: Output &  Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+         mkdir file-report ; cp -r dirsearch/reports file-report ;
+         zip -r dirsearch-file-reports.zip file-report && xz dirsearch-file-reports.zip     
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Sensitive-File-Fuzzing -F file=@dirsearch-file-reports.zip.xz
           
 #CORS Scanner
   CORS-Scanner:
@@ -698,7 +650,7 @@ jobs:
          git clone https://github.com/chenjj/CORScanner.git
          sudo pip3 install -r CORScanner/requirements.txt
       - name: CORS Scanner
-        run: python3 CORScanner/cors_scan.py -v -i subdomains-resolved.txt -t 50 > cors.txt;
+        run: python3 CORScanner/cors_scan.py -v -i subdomains-live.txt -t 50 > cors.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -715,7 +667,7 @@ jobs:
         with:
          name: httprober-artifacts       
       - name: HeartBleed Scan
-        run: for line in $(cat subdomains-resolved.txt) ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe >> heartbleed.txt ; done
+        run: for line in $(cat subdomains-live.txt) ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe >> heartbleed.txt ; done
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -733,7 +685,6 @@ jobs:
       - name: Install Dependencies
         run: |
          sudo apt-get install python3-setuptools
-         cat subdomains-resolved.txt | cut -d "/" -f 3 > targets-1.txt
          mkdir ~/.aws
          echo "$AWS_CREDS" > ~/.aws/credentials
          git clone https://github.com/sa7mon/S3Scanner.git
@@ -745,7 +696,7 @@ jobs:
          touch buckets-{1..3}.txt
       - name: S3 Scanner
         run: |
-         python3 S3Scanner/s3scanner.py -l targets-1.txt -o buckets-1.txt
+         python3 S3Scanner/s3scanner.py -l subdomains-host.txt -o buckets-1.txt
          python3 S3Scanner/s3scanner.py -l targets-2.txt -o buckets-2.txt
          python3 S3Scanner/s3scanner.py -l targets-3.txt -o buckets-3.txt
          cat buckets-{1..3}.txt | sort -u > buckets.txt
@@ -764,11 +715,14 @@ jobs:
         with:
          name: httprober-artifacts 
       - name: Install Dependencies
-        run: chmod +x ./binaries/aquatone
+        run: |
+         go env -w GOPATH=~/Downloads;
+         go get github.com/michenriksen/aquatone
+         cp ~/Downloads/bin/aquatone .; 
       - name: Aquatone
         run: |
          mkdir aquatone-output
-         cat subdomains-resolved.txt | ./binaries/aquatone --ports xlarge -out aquatone-output/
+         cat subdomains-live.txt | ./aquatone --ports xlarge -out aquatone-output/
          zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip   
       - name: Output & Slack Notification
         if: always()

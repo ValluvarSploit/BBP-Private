@@ -1,0 +1,4 @@
+https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip
+https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt 
+https://github.com/Findomain/Findomain/releases/download/4.0.1/findomain-linux
+https://github.com/projectdiscovery/subfinder/releases/download/v2.4.7/subfinder_2.4.7_linux_amd64.tar.gz 
