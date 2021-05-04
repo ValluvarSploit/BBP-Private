@@ -2,6 +2,9 @@
 #       example.com
 #  2. NGROK_URL
 #       ngrok.io
+#
+#python3 dirsearch.py -u https://www.dyson.in -e php,asp,aspx,jsp,html,zip,jar,sql -x 500,503 -r --plain-text-report=dir-out.txt.tmp -w ~/Desktop/bugBounty/wordlists/SecLists/Discovery/Web-Content/raft-large-words.txt
+#       
 name: Recon Large Private
 on:
   workflow_dispatch:
@@ -601,7 +604,7 @@ jobs:
          cat bak.txt | sort -u >> sensitive-wordlist.txt
       - name: Gobuster
         run: |
-         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w wordlists/sensitive-wordlist.txt -l -o gobuster-files-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e --wildcard ; done ;
+         for url in $(cat subdomains-resolved.txt) ; do gobuster dir -u $url -w wordlists/sensitive-wordlist.txt -l -o gobuster-files-brute/$(date '+%F%T.%N')-output.txt -a Mozilla/5.0 -e --wildcard -x ; done ;
          zip gobuster-files-brute.zip gobuster-files-brute
        #-x php,asp,bak,sql
       - name: Output & Slack Notification
