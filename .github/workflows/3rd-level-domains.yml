@@ -16,10 +16,6 @@ jobs:
       - name: Install Dependencies
         run: |
          wget -q $HOST/third-level-domains.txt
-         git clone https://github.com/guelfoweb/knock.git ; cd knock
-         pip3 install -r requirements.txt
-         sudo python3 setup.py install --user ; echo "$KNOCKPY_CONFIG" > knockpy/config.json ; cd ..
-         mkdir knockpy-results
          sudo apt-get install python3-setuptools;
          wget -q -i requirements/subdomain-enum.txt; mv findomain-linux findomain; unzip amass_linux_amd64.zip; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz;
          go env -w GOPATH=~/Downloads;
@@ -29,12 +25,10 @@ jobs:
          pip3 install -r Sublist3r/requirements.txt
          chmod +x subs.sh
          for domain in $(cat third-level-domains.txt); do ./subs.sh "$domain"; done
-         zip -r knockpy-results.zip knockpy-results
       - name: Output
         if: always()
         run: |
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Recursive-3rd -F file=@recursive-subdomains.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Knockpy-3rd -F file=@knockpy-results.zip;
 
          
          
