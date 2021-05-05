@@ -15,7 +15,7 @@ jobs:
         run: |
          wget -q $HOST/recursive-bruteforce.txt
          sudo apt-get install python3-setuptools;
-         pip3 install -r requirements/requirements.txt
+         pip3 install requests==2.25.1
          wget -q -i requirements/subdomain-enum.txt; mv findomain-linux findomain; unzip amass_linux_amd64.zip; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz;
          go env -w GOPATH=~/Downloads;
          go get -u github.com/tomnomnom/assetfinder;
