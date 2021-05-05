@@ -28,7 +28,7 @@ jobs:
          git clone https://github.com/aboul3la/Sublist3r.git
          pip3 install -r Sublist3r/requirements.txt
          chmod +x subs.sh
-         for domain in $(cat recursive-bruteforce.txt); do ./subs.sh "$domain"; done
+         for domain in $(cat third-level-domains.txt); do ./subs.sh "$domain"; done
          zip -r knockpy-results.zip knockpy-results
       - name: Output
         if: always()
