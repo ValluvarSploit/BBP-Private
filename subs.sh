@@ -2,12 +2,13 @@
 
 TARGET=$1
 
+touch sublist3r.txt assetfinder.txt amass-passive.txt findomain.txt subfinder-key.txt 
+
 #echo 'Subscraper Enumeration'
 #python3 subscraper/subscraper.py "$TARGET" -o subscraper.txt;
 
 echo 'Sublist3r Enumeration'
-#python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null   
-python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v
+python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null   
 
 echo 'Amass Enumeration'
 ./amass_linux_amd64/amass enum -passive -d "$TARGET" -rf resolvers.txt -o amass-passive.txt ;
