@@ -7,7 +7,7 @@ env:
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }}
 jobs:
- 3rd-evel-domains:
+ subdomains:
     runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
