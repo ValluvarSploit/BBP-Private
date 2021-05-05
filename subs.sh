@@ -9,7 +9,7 @@ touch sublist3r.txt assetfinder.txt amass-passive.txt findomain.txt subfinder-ke
 
 echo 'Knockpy Enumeration'
 mkdir knockpy-results/"$TARGET"
-python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results/"$TARGET" -w knockpy-wordslist.txt
+python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results/"$TARGET" -w wordlists/knockpy-wordslist.txt
 
 echo 'Sublist3r Enumeration'
 python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null   
