@@ -16,6 +16,7 @@ jobs:
         run: |
          chmod +x subs.sh
          ./subs.sh stripe.com
+         ls
          
          
          
