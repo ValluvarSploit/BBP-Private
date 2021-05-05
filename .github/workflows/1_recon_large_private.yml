@@ -31,7 +31,7 @@ jobs:
          git clone https://github.com/aboul3la/Sublist3r.git
          pip3 install -r Sublist3r/requirements.txt
          touch subdomains-auto.txt
-         chmod +x assetfinder
+         chmod +x findomain-linux
       - name: Sublist3r
         run: |
          python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null          
@@ -46,7 +46,7 @@ jobs:
          ./subfinder -d "$TARGET" -all -o subfinder-key.txt -rL resolvers.txt ; 
       - name: Findomain
         run: |
-         ./findomain -t "$TARGET" -q >> subdomains-auto.txt; 
+         ./findomain-linux -t "$TARGET" -q >> subdomains-auto.txt; 
          cat amass-passive.txt subfinder-key.txt subdomains-manual.txt sublist3r.txt >> subdomains-auto.txt ;
          cat subdomains-auto.txt | sort -u > subdomains-cleaned.txt ;
       - name: Upload Artifacts
