@@ -49,9 +49,9 @@ jobs:
          chmod +x binaries/httprobe
       - name: Httprobe
         run: |
-         cat live-hosts-output.txt | ./binaries/httprobe | tee massdns-httprobe-subdomains.txt ;
+         cat live-hosts-output.txt | ./binaries/httprobe | tee massdns-httprobe.txt ;
       - name: Output & Slack Notification
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Httprobe -F file=@massdns-httprobe-subdomains.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS-Httprobe -F file=@massdns-httprobe.txt
