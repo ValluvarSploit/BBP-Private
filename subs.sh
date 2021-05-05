@@ -7,6 +7,9 @@ touch sublist3r.txt assetfinder.txt amass-passive.txt findomain.txt subfinder-ke
 #echo 'Subscraper Enumeration'
 #python3 subscraper/subscraper.py "$TARGET" -o subscraper.txt;
 
+echo 'Knockpy Enumeration'
+python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results -w knockpy-wordslist.txt
+
 echo 'Sublist3r Enumeration'
 python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null   
 
