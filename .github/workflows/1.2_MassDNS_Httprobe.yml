@@ -29,6 +29,11 @@ jobs:
         with:
          name: MassDNS-artifacts
          path: live-hosts-output.txt
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"MassDNS COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-MassDNS -F file=@massdns-output.txt
          
   Httprobe:
     runs-on: ubuntu-latest
