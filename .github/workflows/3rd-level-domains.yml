@@ -1,0 +1,28 @@
+name: 3rd-level-domains
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       HOST: ${{ secrets.NGROK_URL }}
+       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }}
+jobs:
+ 3rd-evel-domains:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget -q $HOST/recursive-bruteforce.txt
+         chmod +x subs.sh
+         for domain in $(cat recursive-bruteforce.txt); do ./subs.sh $domain; done
+      - name: Output
+        if: always()
+        run: |
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Recursive -F file=@recursive-subdomains.txt;
+
+         
+         
+         
+
+         
