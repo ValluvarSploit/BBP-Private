@@ -313,13 +313,36 @@ jobs:
          mkdir nmap-vuln
       - name: Nmap scan
         run: |
-         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln/nmap-vuln-scan $ip  ; done ; 
+         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -T3 -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln/nmap-vuln-scan $ip  ; done ; 
          zip nmap-vuln.zip -r nmap-vuln/
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln.zip;
+
+
+  nmap-random-ports:
+    runs-on: ubuntu-latest    
+    needs: [Subdomain-Enumeration, HTTProber, Nmap-Vulnerability-Scan]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Install Dependencies
+        run: |
+         sudo apt-get update && sudo apt-get install nmap -y 
+         mkdir nmap-random
+      - name: Nmap TCP-UDP scan
+        run: |
+          sudo nmap -Pn -sS -sV -sC -p2075,2076,6443,3868,3366,8443,8080,9443,9091,3000,8000,5900,8081,6000,10000,8181,3306,5000,4000,8888,5432,15672,9999,161,4044,7077,4040,9000,8089,443,7447,7080,8880,8983,5673,7443,19000,19080 -iL ips-live.txt -oA nmap-random/nmap-random -v
+          zip -r nmap-random.zip nmap-random/
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Random -F file=@nmap-random.zip
 
   nmap-top-1000:
     runs-on: ubuntu-latest    
