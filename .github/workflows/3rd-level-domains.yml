@@ -6,6 +6,7 @@ env:
        HOST: ${{ secrets.NGROK_URL }}
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }}
+       S_URL: https://slack.com/api/files.upload
 jobs:
  subdomains:
     runs-on: ubuntu-latest  
