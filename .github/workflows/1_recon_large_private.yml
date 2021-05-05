@@ -31,6 +31,7 @@ jobs:
          git clone https://github.com/aboul3la/Sublist3r.git
          pip3 install -r Sublist3r/requirements.txt
          touch subdomains-auto.txt
+         chmod +x assetfinder
       - name: Sublist3r
         run: |
          python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null          
@@ -39,7 +40,7 @@ jobs:
          ./amass_linux_amd64/amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt ;
       - name: Assetfinder
         run: 
-         ./binaries/assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
+         ./assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
       - name: Subfinder
         run: |
          ./subfinder -d "$TARGET" -all -o subfinder-key.txt -rL resolvers.txt ; 
