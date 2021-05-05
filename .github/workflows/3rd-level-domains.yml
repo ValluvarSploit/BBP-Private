@@ -19,7 +19,7 @@ jobs:
          go env -w GOPATH=~/Downloads;
          go get -u github.com/tomnomnom/assetfinder;
          cp ~/Downloads/bin/assetfinder .; 
-         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; sudo python3 setup.py install; cd .. ;
+         git clone https://github.com/m8r0wn/subscraper ; cd subscraper; pip3 install -r requirements.txt; sudo python3 setup.py install; cd .. ;
          git clone https://github.com/aboul3la/Sublist3r.git
          pip3 install -r Sublist3r/requirements.txt
          chmod +x subs.sh
