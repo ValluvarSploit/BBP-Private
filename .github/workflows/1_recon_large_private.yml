@@ -1,4 +1,4 @@
-name: Recon Large Private
+name: Recon *.example.com Scope
 on:
   workflow_dispatch:
 env:
