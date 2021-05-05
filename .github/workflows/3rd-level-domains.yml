@@ -7,6 +7,7 @@ env:
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }}
        S_URL: https://slack.com/api/files.upload
+       KNOCKPY_CONFIG: ${{ secrets.KNOCKPY_CONFIG_VT_API }}
 jobs:
  subdomains:
     runs-on: ubuntu-latest  
@@ -14,7 +15,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget -q $HOST/recursive-bruteforce.txt
+         wget -q $HOST/third-level-domains.txt
+         git clone https://github.com/guelfoweb/knock.git ; cd knock
+         pip3 install -r requirements.txt
+         sudo python3 setup.py install --user ; echo "$KNOCKPY_CONFIG" > knockpy/config.json ; cd ..
+         mkdir knockpy-results
          sudo apt-get install python3-setuptools;
          wget -q -i requirements/subdomain-enum.txt; mv findomain-linux findomain; unzip amass_linux_amd64.zip; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz;
          go env -w GOPATH=~/Downloads;
@@ -24,12 +29,12 @@ jobs:
          pip3 install -r Sublist3r/requirements.txt
          chmod +x subs.sh
          for domain in $(cat recursive-bruteforce.txt); do ./subs.sh "$domain"; done
-#         pip3 install requests==2.25.1
-#         git clone https://github.com/m8r0wn/subscraper ; cp requirements/requirements.txt subscraper; cd subscraper; pip3 install -r requirements.txt; sudo python3 setup.py install; cd .. ;
+         zip -r knockpy-results.zip knockpy-results
       - name: Output
         if: always()
         run: |
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Recursive -F file=@recursive-subdomains.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Recursive-3rd -F file=@recursive-subdomains.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Knockpy-3rd -F file=@knockpy-results.zip;
 
          
          
