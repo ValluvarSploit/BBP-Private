@@ -6,8 +6,9 @@ env:
        HOST: ${{ secrets.NGROK_URL }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
-       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
        AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
+       S_URL: https://slack.com/api/files.upload
 jobs:
   S3-Scanner:
     runs-on: ubuntu-latest
