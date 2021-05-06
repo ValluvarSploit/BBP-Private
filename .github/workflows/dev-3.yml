@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts
       - name: Install Dependencies
         run: |
          mkdir ~/.aws
