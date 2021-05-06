@@ -7,6 +7,7 @@ env:
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
 jobs:
   S3-Scanner:
     runs-on: ubuntu-latest
@@ -17,6 +18,8 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
+         mkdir ~/.aws
+         echo "$AWS_CREDS" > ~/.aws/credentials
          sudo apt-get install python3-setuptools
          git clone https://github.com/sa7mon/S3Scanner.git
          cd S3Scanner
