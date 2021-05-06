@@ -4,8 +4,8 @@ on:
 env:
        TARGET: ${{ secrets.DOMAIN }}
        HOST: ${{ secrets.NGROK_URL }}
-       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }} 
        S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
        AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
        S_URL: https://slack.com/api/files.upload
