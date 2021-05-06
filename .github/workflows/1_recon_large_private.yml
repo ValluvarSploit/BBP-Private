@@ -1,4 +1,4 @@
-name: Recon *.example.com Scope
+name: Recon Broad Scope
 on:
   workflow_dispatch:
 env:
