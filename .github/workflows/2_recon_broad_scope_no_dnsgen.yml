@@ -898,7 +898,7 @@ jobs:
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration,MassDNS-Resolver, DNSgen, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, nmap-top-1000, XSS-Hunt, MEG-HomePage]
+    needs: [Subdomain-Enumeration,MassDNS-Resolver, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, nmap-top-1000, XSS-Hunt, MEG-HomePage]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
