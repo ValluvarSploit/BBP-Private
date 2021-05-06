@@ -8,14 +8,32 @@ env:
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
 jobs:
-  Dev:
-    runs-on: ubuntu-latest  
+  S3-Scanner:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
       - name: Install Dependencies
         run: |
-         git clone --recursive https://github.com/screetsec/Sudomy.git
-         python3 -m pip install -r Sudomy/requirements.txt
-         ./Sudomy/sudomy -d hackerone.com -o out.txt
-         echo "cat"
-         cat out.txt
+         sudo apt-get install python3-setuptools
+         git clone https://github.com/sa7mon/S3Scanner.git
+         cd S3Scanner
+         echo "apt" > wordlist.txt
+         pip3 install -r requirements.txt
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word.$TARGET >> targets-2.txt ; done;
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word-$TARGET >> targets-3.txt ; done;
+#         touch buckets-{1..3}.txt
+      - name: S3 Scanner
+        run: |
+         python3 -m S3Scanner scan --buckets-file wordlist.txt | tee buckets.txt
+#         python3 S3Scanner/s3scanner.py -l subdomains-host.txt -o buckets-1.txt
+#         python3 S3Scanner/s3scanner.py -l targets-2.txt -o buckets-2.txt
+#         python3 S3Scanner/s3scanner.py -l targets-3.txt -o buckets-3.txt
+#         cat buckets-{1..3}.txt | sort -u > buckets.txt
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scanner -F file=@buckets.txt
