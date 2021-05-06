@@ -1,0 +1,27 @@
+name: AWS S3 Bruteforce lazys3
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+jobs:
+  lazys3:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         git clone https://github.com/nahamsec/lazys3.git
+      - name: lazys3
+        run: |
+         cd lazys3/
+         ruby lazys3.rb "$TARGET" | tee lazys3.txt
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK";
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-lazys3 -F file=@lazys3.txt
+
+         
