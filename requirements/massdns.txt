@@ -1,3 +1,2 @@
 https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt
 https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-https://github.com/projectdiscovery/dnsx/releases/download/v1.0.2/dnsx_1.0.2_linux_amd64.tar.gz
