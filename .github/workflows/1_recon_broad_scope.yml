@@ -102,7 +102,7 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
-         wget -q -i requirements/massdns.txt; tar -xzvf dnsx_1.0.2_linux_amd64.tar.gz;
+         wget -q -i requirements/massdns.txt;
          cd wordlists ; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;          
          cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_2021_03_28.txt > ../subdomain-wordlists.txt; cd ..;
          xz -d dnsgen-wordlist.txt.xz
