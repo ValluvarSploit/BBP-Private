@@ -1,4 +1,4 @@
-name: Dev-3
+name: ParamSpider
 on:
   workflow_dispatch:
 env:
