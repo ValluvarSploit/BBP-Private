@@ -31,7 +31,8 @@ jobs:
          python3 -m S3Scanner scan --buckets-file subdomains-host.txt | tee buckets-1.txt
          python3 -m S3Scanner scan --buckets-file targets-2.txt | tee buckets-2.txt
          python3 -m S3Scanner scan --buckets-file targets-3.txt | tee buckets-3.txt
-         cat buckets-{1..3}.txt | sort -u > buckets.txt
+         cat buckets-{1..3}.txt | sort -u > buckets-tmp.txt
+         cat buckets-tmp.txt | grep -v 'bucket_not_exist\|bucket_invalid_name' | tee buckets.txt
       - name: Output & Slack Notification
         if: always()
         run: |
