@@ -152,7 +152,7 @@ jobs:
          go get github.com/haccer/subjack
          go get github.com/lukasikic/subzy
          go get github.com/Ice3man543/SubOver
-         cp ~/Downloads/bin/subjack .; cp ~/Downloads/bin/subzy .; cp ~/Downloads/bin/SubOver .; 
+         cp ~/Downloads/bin/subjack .; cp ~/Downloads/bin/subzy .; cp ~/Downloads/bin/SubOver .; cp binaries/providers.json . 
          wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz; tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Subzy
         run: |
@@ -276,7 +276,7 @@ jobs:
          cd /usr/share/nmap/scripts/ ;
          sudo git clone https://github.com/vulnersCom/nmap-vulners.git ;
          sudo git clone https://github.com/scipag/vulscan ;
-         cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh ;
+         cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh; cd ..;
          mkdir nmap-vuln
       - name: Nmap scan
         run: |
@@ -450,12 +450,14 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f xss-url-collector.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-URL-Collector -F file=@xss-url-collector.txt; fi
 
-#Parameter Discovery
   Parameter-Discovery:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
       - name: Install Dependencies
         run: |
          git clone https://github.com/devanshbatham/ParamSpider
@@ -612,7 +614,7 @@ jobs:
       - name: Install Dependencies
         run: |
           git clone https://github.com/maurosoria/dirsearch.git
-          wgt https://wordlists-cdn.assetnote.io/data/manual/bak.txt
+          wget https://wordlists-cdn.assetnote.io/data/manual/bak.txt
           cat bak.txt >>  wordlists/sensitive-wordlist.txt
           sort -u wordlists/sensitive-wordlist.txt -o wordlists/sensitive-wordlist.txt
       - name: Directory Fuzzing
