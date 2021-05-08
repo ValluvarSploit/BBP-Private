@@ -75,6 +75,7 @@ jobs:
          wget -q -i requirements/massdns.txt;
          cd wordlists ; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;          
          cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_2021_03_28.txt > ../subdomain-wordlists.txt; cd ..;
+
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
