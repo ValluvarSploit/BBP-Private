@@ -75,7 +75,6 @@ jobs:
          wget -q -i requirements/massdns.txt;
          cd wordlists ; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;          
          cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_2021_03_28.txt > ../subdomain-wordlists.txt; cd ..;
-
       - name: MassDNS
         run: |
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
@@ -83,15 +82,46 @@ jobs:
          grep -vFf subdomains-exclude.txt wordlist-hugh2.txt > wordlist-all.txt ;
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-all.txt ;
          cat massdns.out | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sed 's/\*\.//g' | sort -u > massdns.host;
-         cat massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > massdns.ip
-         cat massdns.host >> subdomains-cleaned.txt; sort -u subdomains-cleaned.txt -o subdomains-cleaned.txt;
-         cat massdns.ip ips-manual.txt >> ips-live.txt; sort -u ips-live.txt -o ips-live.txt;
+         cat massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > massdns.ip;
          zip massdns-out.zip massdns.out; xz massdns-out.zip;
-         mv subdomains-cleaned.txt subdomains-cleaned-2.txt; grep -vFf subdomains-exclude.txt subdomains-cleaned-2.txt > subdomains-cleaned.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: massdns-artifacts
+         path: |
+          massdns.host
+          massdns.ip
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
+  
+  DNSx:
+    runs-on: ubuntu-latest
+    needs: [MassDNS-Resolver]
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: massdns-artifacts
+      - name: Install Dependencies
+        run: |
+         wget -q https://github.com/projectdiscovery/dnsx/releases/download/v1.0.3/dnsx_1.0.3_linux_amd64.tar.gz
+         tar -xzvf dnsx_1.0.3_linux_amd64.tar.gz
+      - name: DNSx
+        run: |
+         ./dnsx -l massdns.host -resp -a -r resolvers.txt -o dnsx.txt
+         cat dnsx.txt | awk '{print $1}' | sort -u > dnsx.host
+         cat dnsx.txt | awk '{print $2}' | cut -d "[" -f 2 | cut -d "]" -f 1 | sort -u > dnsx.ip
+         cat dnsx.host >> subdomains-cleaned.txt; sort -u subdomains-cleaned.txt -o subdomains-cleaned.txt;
+         cat dnsx.ip ips-manual.txt >> ips-live.txt; sort -u ips-live.txt -o ips-live.txt;
+         zip dnsx.txt.zip dnsx.txt
+         mv subdomains-cleaned.txt subdomains-cleaned-2.txt; grep -vFf subdomains-exclude.txt subdomains-cleaned-2.txt > subdomains-cleaned.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsx-artifacts
          path: |
           subdomains-cleaned.txt
           ips-live.txt
@@ -100,16 +130,16 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
-                   
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSx -F file=@dnsx.txt.zip ;  
+  
   HTTProber:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, MassDNS-Resolver]
+    needs: [Subdomain-Enumeration, DNSx]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: massdns-artifacts
+         name: dnsx-artifacts
       - name: Install Dependencies
         run: |
          go env -w GOPATH=~/Downloads;
@@ -136,7 +166,6 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Live-assets -F file=@httprober.zip;
 
-#Subdomain Takeover
   Subdomain-Takeover:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
