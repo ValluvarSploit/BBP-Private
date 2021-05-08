@@ -3,12 +3,30 @@ on:
   workflow_dispatch:
 env:
        HOST: ${{ secrets.NGROK_URL }}
-       URL: http://10.10.49.218:3000
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
      
 jobs:
+  Gobuster-Files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
+         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
+         mkdir gobuster-files-brute
+         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt
+      - name: Gobuster
+        run: |
+         ./gobuster dir -u https://www.countertrade.com -w raft-large-files.txt -l -o gobuster-files.txt -a Mozilla/5.0
+#         ./gobuster dir -u https://www.countertrade.com -w wordlists/sensitive-wordlist.txt -l -o gobuster-files.txt -a Mozilla/5.0 -x php,asp,aspx,jsp,html,zip,jar,sql
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoBuster-File-Brute-Single -F file=@wordlists/sensitive-wordlist.txt
+
   #  Gobuster-Files-Brute:
   #    runs-on: ubuntu-latest
   #    steps:
@@ -31,23 +49,4 @@ jobs:
   #        run: |
   #         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster File Brute COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
   #         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoBuster-File-Brute -F file=@gobuster-files-brute
-
   
-  Gobuster-Files-Brute-Single:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
-         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         mkdir gobuster-files-brute
-         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt
-      - name: Gobuster
-        run: |
-         ./gobuster dir -u https://www.countertrade.com -w raft-large-files.txt -o gobuster-files-brute-single.out -a Mozilla/5.0 -e -d -x php,asp,aspx,jsp,html,zip,jar,sql;
-#         ./gobuster dir -u https://www.countertrade.com -w wordlists/sensitive-wordlist.txt -o gobuster-files-brute-single.out -a Mozilla/5.0 -e -x php,asp,aspx,jsp,html,zip,jar,sql;
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoBuster-File-Brute-Single -F file=@wordlists/sensitive-wordlist.txt
