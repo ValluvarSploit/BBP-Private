@@ -579,7 +579,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
 
-  Directory-Fuzz:
+  Dirsearch-Dir:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -590,6 +590,7 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/maurosoria/dirsearch.git
+         cd dirsearch; pip3 install -r requirements.txt; cd ..         
          wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
       - name: Directory Fuzzing
         run: |
@@ -602,8 +603,7 @@ jobs:
          zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip        
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Bruteforcing -F file=@dirsearch-dir-reports.zip.xz
 
-#Dirsearch sensitive files
-  File-Fuzz:
+  Dirsearch-File:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -614,6 +614,7 @@ jobs:
       - name: Install Dependencies
         run: |
           git clone https://github.com/maurosoria/dirsearch.git
+          cd dirsearch; pip3 install -r requirements.txt; cd ..
           wget https://wordlists-cdn.assetnote.io/data/manual/bak.txt
           cat bak.txt >>  wordlists/sensitive-wordlist.txt
           sort -u wordlists/sensitive-wordlist.txt -o wordlists/sensitive-wordlist.txt
