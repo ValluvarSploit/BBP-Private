@@ -44,7 +44,7 @@ jobs:
          mkdir gobuster-files-brute
       - name: Gobuster
         run: |
-         ./gobuster dir -u "$URL" -w wordlists/sensitive-wordlist.txt -o gobuster-files-brute-single.out -a Mozilla/5.0 -e --wildcard;
+         ./gobuster dir -u https://www.countertrade.com -w wordlists/sensitive-wordlist.txt -o gobuster-files-brute-single.out -a Mozilla/5.0 -e -x php,asp,aspx,jsp,html,zip,jar,sql;
       - name: Output & Slack Notification
         if: always()
         run: |
