@@ -8,7 +8,7 @@ env:
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
      
 jobs:
-  Gobuster-Files:
+  Gobuster-Dirs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,15 +16,33 @@ jobs:
         run: |
          wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
          7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt
+         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt
       - name: Gobuster
         run: |
-         ./gobuster dir -u https://www.countertrade.com -w raft-large-files.txt -o gobuster-files.txt -a Mozilla/5.0
-#         ./gobuster dir -u https://www.countertrade.com -w wordlists/sensitive-wordlist.txt -o gobuster-files.txt -a Mozilla/5.0
+         ./gobuster dir -u https://www.countertrade.com -w raft-small-directories.txt -o gobuster-dirs.txt -a Mozilla/5.0
       - name: Slack Output
         if: always()
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoBuster-File-Brute-Single -F file=@gobuster-files.txt
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoBuster-Dirs -F file=@gobuster-dirs.txt
+
+
+#  Gobuster-Files:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install Dependencies
+#        run: |
+#         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
+#         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
+#         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt
+#      - name: Gobuster
+#        run: |
+#         ./gobuster dir -u https://www.countertrade.com -w raft-large-files.txt -o gobuster-files.txt -a Mozilla/5.0
+#         ./gobuster dir -u https://www.countertrade.com -w wordlists/sensitive-wordlist.txt -o gobuster-files.txt -a Mozilla/5.0
+#      - name: Slack Output
+#        if: always()
+#        run: |
+#         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoBuster-File-Brute-Single -F file=@gobuster-files.txt
 
   #  Gobuster-Files-Brute:
   #    runs-on: ubuntu-latest
