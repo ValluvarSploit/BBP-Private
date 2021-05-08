@@ -265,6 +265,8 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
+         sudo apt-get install xsltproc
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
          sudo apt-get update && sudo apt-get install nmap -y ;
          pip install python-libnmap ;
          sudo apt-get install git gcc make libpcap-dev ;
@@ -276,7 +278,8 @@ jobs:
       - name: Nmap Scan
         run: |
          python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.out ;
-         zip masscan-nmap.zip masscan.xml nmap-masscan.out ; xz masscan-nmap.zip ;
+         xsltproc -o masscan.html nmap-bootstrap.xsl masscan.xml
+         xz masscan.html
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -286,7 +289,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan-nmap.zip.xz ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan.html
 
   Nmap-Vulnerability-Scan:
     runs-on: ubuntu-latest    
@@ -298,6 +301,8 @@ jobs:
          name: nmap-output
       - name: Install Dependencies
         run: |
+         sudo apt-get install xsltproc
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
          ulimit -s ; ulimit -s 65536 ;
          cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt ;
          cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt ;
@@ -306,17 +311,16 @@ jobs:
          sudo git clone https://github.com/vulnersCom/nmap-vulners.git ;
          sudo git clone https://github.com/scipag/vulscan ;
          cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh; cd ..;
-         mkdir nmap-vuln
       - name: Nmap scan
         run: |
-         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -T3 -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln/nmap-vuln-scan $ip  ; done ; 
-         zip nmap-vuln.zip -r nmap-vuln/
+         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -T3 -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln-scan $ip  ; done ;  
+         xsltproc -o nmap-vuln-scan.html nmap-bootstrap.xsl nmap-vuln-scan.xml
+         zip nmap-vuln-scan.zip nmap-vuln-scan.html nmap-vuln-scan.nmap
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln.zip;
-
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln-scan.zip
 
   nmap-random-ports:
     runs-on: ubuntu-latest    
@@ -328,17 +332,19 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
+         sudo apt-get install xsltproc
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
          sudo apt-get update && sudo apt-get install nmap -y 
-         mkdir nmap-random
       - name: Nmap TCP-UDP scan
         run: |
-          sudo nmap -Pn -sS -sV -sC -p2075,2076,6443,3868,3366,8443,8080,9443,9091,3000,8000,5900,8081,6000,10000,8181,3306,5000,4000,8888,5432,15672,9999,161,4044,7077,4040,9000,8089,443,7447,7080,8880,8983,5673,7443,19000,19080 -iL ips-live.txt -oA nmap-random/nmap-random -v
-          zip -r nmap-random.zip nmap-random/
+          sudo nmap -Pn -sS -sV -sC -p2075,2076,6443,3868,3366,8443,9443,9091,3000,5900,8081,6000,8181,3306,5000,4000,5432,15672,9999,161,4044,7077,4040,9000,8089,443,7447,7080,8880,8983,5673,7443,19000,19080 -iL ips-live.txt -oA nmap-random-scan -v
+          xsltproc -o nmap-random-scan.html nmap-bootstrap.xsl nmap-random-scan.xml
+          zip nmap-random-scan.zip nmap-random-scan.html nmap-random-scan.nmap
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Random -F file=@nmap-random.zip
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Random -F file=@nmap-random-scan.zip
 
   nmap-top-1000:
     runs-on: ubuntu-latest    
@@ -352,12 +358,11 @@ jobs:
         run: |
          sudo apt-get update && sudo apt-get install nmap -y && sudo apt-get install xsltproc -y
          wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
-         mkdir nmap-1000
       - name: Nmap TCP-UDP scan
         run: |
-          sudo nmap -Pn -sS -sV -sC -iL ips-live.txt -oA nmap-1000/nmap-top-1000 -v
-          xsltproc -o nmap-1000.html nmap-bootstrap.xsl nmap-1000/nmap-top-1000.xml
-          zip -r nmap-1000.zip nmap-1000/ nmap-1000.html
+          sudo nmap -Pn -sS -sV -sC -iL ips-live.txt -oA nmap-1000-scan -v
+          xsltproc -o nmap-1000-scan.html nmap-bootstrap.xsl nmap-1000-scan.xml
+          zip -r nmap-1000-scan.zip nmap-1000-scan.html nmap-1000-scan.nmap
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -374,17 +379,19 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
+         sudo apt-get install xsltproc
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
          sudo apt-get update && sudo apt-get install nmap -y
-         mkdir nmap-tcp-udp
       - name: Nmap TCP-UDP scan
         run: |
-          sudo nmap -Pn -sV -sU -pT:21,22,23,25,53,80,81,88,110,111,139,389,443,445,900,1433,2049,2301,2381,3389,4242,7001,7002,7070,8000,8001,8005,8080,8100,8810,8820,8830,8888,9090,10000,U:53,69,137,138,161,500 -iL ips-live.txt  -oA nmap-tcp-udp/nmap-tcp-udp-scan -v
-          zip -r nmap-tcp-udp.zip nmap-tcp-udp/
+          sudo nmap -Pn -sV -sU -pT:1433,2049,2301,2381,3389,4242,7001,7002,7070,8000,8001,8005,8080,8100,8810,8820,8830,8888,9090,10000,U:69,137,138,161,500 -iL ips-live.txt  -oA nmap-tcp-udp-scan -v
+          xsltproc -o nmap-tcp-udp-scan.html nmap-bootstrap.xsl nmap-tcp-udp-scan.xml
+          zip -r nmap-1000-scan.zip nmap-tcp-udp-scan.html nmap-tcp-udp-scan.nmap
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-TCP-UDP-Scan -F file=@nmap-tcp-udp.zip;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-TCP-UDP-Scan -F file=@nmap-1000-scan.zip
 
 #Collect URLs.
   URL-Enumeration:
