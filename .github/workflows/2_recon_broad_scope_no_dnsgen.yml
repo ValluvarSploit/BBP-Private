@@ -700,7 +700,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scanner -F file=@buckets.txt
 
-  Aquatone-Webshot:
+  Aquatone:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -717,7 +717,7 @@ jobs:
       - name: Aquatone
         run: |
          mkdir aquatone-output
-         cat subdomains-live.txt | ./aquatone -chrome-path /snap/bin/chromium -threads 50 -silent --ports xlarge -out aquatone-output/ 
+         cat subdomains-live.txt | ./aquatone -chrome-path /snap/bin/chromium -threads 40 -silent --ports xlarge -out aquatone-output/ 
          zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip   
       - name: Output & Slack Notification
         if: always()
@@ -789,7 +789,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz ;
         
-  Eyewitness-Webshot:
+  Eyewitness:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -900,7 +900,7 @@ jobs:
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration,MassDNS-Resolver, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, nmap-top-1000, XSS-Hunt, MEG-HomePage]
+    needs: [Subdomain-Enumeration,MassDNS-Resolver, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, nmap-top-1000, XSS-Hunt, MEG-HomePage]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
