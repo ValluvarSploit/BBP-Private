@@ -19,6 +19,7 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"DNSsearch Bruteforce HAS STARTED FOR - '$TARGET'"}' "$S_WEBHOOK"
          wget -q https://805ccc3e58f4.ngrok.io/dnsx.ip
          sudo apt-get update && sudo apt-get install nmap -y
+         mkdir nmap-random
       - name: Nmap UDP scan
         run: |
          sudo nmap -Pn -sS -sV -sC -p2075,2076,6443,3868,3366,8443,8080,9443,9091,3000,8000,5900,8081,6000,10000,8181,3306,5000,4000,8888,5432,15672,9999,161,4044,7077,4040,9000,8089,443,7447,7080,8880,8983,5673,7443,19000,19080 -oA nmap-random/nmap-random -v -iL dnsx.ip
