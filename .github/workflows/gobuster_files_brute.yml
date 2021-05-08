@@ -45,7 +45,7 @@ jobs:
          wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt
       - name: Gobuster
         run: |
-         ./gobuster dir -u https://www.countertrade.com -w raft-large-files.txt -o gobuster-files-brute-single.out -a Mozilla/5.0 -e -l -d -x php,asp,aspx,jsp,html,zip,jar,sql;
+         ./gobuster dir -u https://www.countertrade.com -w raft-large-files.txt -o gobuster-files-brute-single.out -a Mozilla/5.0 -e -d -x php,asp,aspx,jsp,html,zip,jar,sql;
 #         ./gobuster dir -u https://www.countertrade.com -w wordlists/sensitive-wordlist.txt -o gobuster-files-brute-single.out -a Mozilla/5.0 -e -x php,asp,aspx,jsp,html,zip,jar,sql;
       - name: Output & Slack Notification
         if: always()
