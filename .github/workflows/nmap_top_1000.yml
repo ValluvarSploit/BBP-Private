@@ -1,4 +1,4 @@
-name: NMAP Random Ports
+name: NMAP 1000 Ports
 
 on:
   workflow_dispatch:
