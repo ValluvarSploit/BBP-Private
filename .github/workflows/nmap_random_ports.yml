@@ -1,0 +1,31 @@
+name: NMAP Random Ports
+
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }} 
+       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       S_URL: https://slack.com/api/files.upload
+
+jobs:
+  nmap-random-ports:
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} HAS STARTED - '$TARGET'"}' "$S_WEBHOOK" ;
+         wget -q https://https://805ccc3e58f4.ngrok.io/dnsx.ip
+         sudo apt-get update && sudo apt-get install nmap -y
+      - name: Nmap UDP scan
+        run: |
+         sudo nmap -Pn -sS -sV -sC -p2075,2076,6443,3868,3366,8443,8080,9443,9091,3000,8000,5900,8081,6000,10000,8181,3306,5000,4000,8888,5432,15672,9999,161,4044,7077,4040,9000,8089,443,7447,7080,8880,8983,5673,7443,19000,19080 -oA nmap-random/nmap-random -v -iL dnsx.ip
+         zip -r nmap-random.zip nmap-random/
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Random-Ports -F file=@nmap-udp-scan.nmap
+         
