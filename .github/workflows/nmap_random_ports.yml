@@ -16,7 +16,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget -q https://https://805ccc3e58f4.ngrok.io/dnsx.ip
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"DNSsearch Bruteforce HAS STARTED FOR - '$TARGET'"}' "$S_WEBHOOK"
+         wget -q https://805ccc3e58f4.ngrok.io/dnsx.ip
          sudo apt-get update && sudo apt-get install nmap -y
       - name: Nmap UDP scan
         run: |
