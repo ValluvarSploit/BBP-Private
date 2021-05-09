@@ -2,10 +2,9 @@ name: Knockpy
 on:
   workflow_dispatch:
 env:
-       TARGET: ${{ secrets.DOMAIN }}
+       TARGET: ${{ secrets.DOMAIN_KNOCKPY }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
-       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
        KNOCKPY_CONFIG: ${{ secrets.KNOCKPY_CONFIG_VT_API }}
      
 jobs:
@@ -28,5 +27,6 @@ jobs:
       - name: Output & Slack Notification
         if: always()
         run: |
+         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Knockpy COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Knockpy -F file=@knockpy-results.zip
