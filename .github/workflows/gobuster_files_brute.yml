@@ -20,10 +20,8 @@ jobs:
          wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt
       - name: Gobuster
         run: |
-         ./gobuster dir -u "$TARGET" -w wordlists/sensitive-wordlist.txt -o gobuster.txt -a Mozilla/5.0
+         ./gobuster dir -u "$TARGET" -w wordlists/sensitive-wordlist.txt -o gobuster.txt -a Mozilla/5.0 -e
 #         ./gobuster dir -u "$TARGET" -w raft-small-directories.txt -o gobuster.txt -a Mozilla/5.0 -e
-#         ./gobuster dir -u "$TARGET" -w wordlists/sensitive-wordlist.txt -o gobuster.txt -a Mozilla/5.0 
-#         ./gobuster dir -u "$TARGET" -w raft-small-directories.txt -o gobuster-dirs.txt -a Mozilla/5.0 --wildcard
       - name: Slack Output
         if: always()
         run: |
