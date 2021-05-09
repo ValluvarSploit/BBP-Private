@@ -9,7 +9,7 @@ env:
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
      
 jobs:
-  Gobuster-Dirs:
+  Gobuster:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,7 +25,8 @@ jobs:
       - name: Slack Output
         if: always()
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title=GoBuster-Dirs -F file=@gobuster.txt
+         TAR=$(echo "$TARGET" | cut -d "/" -f 3)
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TAR"-GoBuster -F file=@gobuster.txt
 
 
 #  Gobuster-Files:
