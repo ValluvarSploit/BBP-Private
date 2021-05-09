@@ -17,7 +17,7 @@ jobs:
          go env -w GOPATH=~/Downloads;
          go get github.com/zricethezav/gitleaks/v7
          cp ~/Downloads/bin/gitleaks .; 
-         curl -s 'https://api.github.com/orgs/"$ORG"/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
+         curl -s 'https://api.github.com/orgs/"$TARGET"/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
 #         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
 #         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
 #         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
