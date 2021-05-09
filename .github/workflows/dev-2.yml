@@ -25,7 +25,7 @@ jobs:
       - name: gitleaks
         run: |
          cat git_repo_url.txt
-         for url in $(cat git_repo_url.txt); do gitleaks --repo-url=$url -v --report=gitleak-report.json; done
+         for url in $(cat git_repo_url.txt); do ./gitleaks --repo-url=$url -v --report=gitleak-report.json; done
       - name: Send Output to Slack
         if: always()
         run: |
