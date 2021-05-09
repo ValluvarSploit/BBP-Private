@@ -15,7 +15,7 @@ jobs:
       - name: Install Dependencies
         run: |
          go env -w GOPATH=~/Downloads;
-         go get github.com/zricethezav/gitleaks/v7
+         GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
          cp ~/Downloads/bin/gitleaks .; 
          curl -s 'https://api.github.com/orgs/"$TARGET"/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
 #         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
