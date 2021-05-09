@@ -22,7 +22,7 @@ jobs:
 #         wget --quiet https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
       - name: Knockpy
         run: |
-         python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results
+         python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results -w wordlists/knockpy-wordslist.txt
          zip -r knockpy-results.zip knockpy-results
       - name: Output & Slack Notification
         if: always()
