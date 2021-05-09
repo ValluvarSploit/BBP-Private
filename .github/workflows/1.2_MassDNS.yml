@@ -46,10 +46,12 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
-         chmod +x binaries/httprobe
+         go env -w GOPATH=~/Downloads;
+         go get -u github.com/tomnomnom/httprobe;
+         cp ~/Downloads/bin/httprobe .; 
       - name: Httprobe
         run: |
-         cat live-hosts-output.txt | ./binaries/httprobe | tee massdns-httprobe.txt ;
+         cat live-hosts-output.txt | ./httprobe | tee massdns-httprobe.txt ;
       - name: Output & Slack Notification
         if: always()
         run: |
