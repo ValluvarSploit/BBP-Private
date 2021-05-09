@@ -1,4 +1,4 @@
-name: MassDNS / Httprobe
+name: MassDNS
 on:
   workflow_dispatch:
 env:
