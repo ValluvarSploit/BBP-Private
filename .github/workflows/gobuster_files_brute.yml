@@ -2,6 +2,7 @@ name: Gobuster Files Brute
 on:
   workflow_dispatch:
 env:
+       TARGET: ${{ secrets.URL_GOBUSTER }}
        HOST: ${{ secrets.NGROK_URL }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
@@ -19,8 +20,8 @@ jobs:
          wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt
       - name: Gobuster
         run: |
-         ./gobuster dir -u https://sonarqube.dev.grindr.io -w wordlists/sensitive-wordlist.txt -o gobuster.txt -a Mozilla/5.0 --wildcard
-#         ./gobuster dir -u https://www.countertrade.com -w raft-small-directories.txt -o gobuster-dirs.txt -a Mozilla/5.0
+         ./gobuster dir -u "$TARGET" -w wordlists/sensitive-wordlist.txt -o gobuster.txt -a Mozilla/5.0 --wildcard
+#         ./gobuster dir -u "$TARGET" -w raft-small-directories.txt -o gobuster-dirs.txt -a Mozilla/5.0
       - name: Slack Output
         if: always()
         run: |
