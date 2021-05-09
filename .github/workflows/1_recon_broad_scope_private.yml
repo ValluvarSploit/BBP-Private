@@ -1,4 +1,4 @@
-name: Recon Broad Scope
+name: Recon Broad Private Scope
 on:
   workflow_dispatch:
 env:
