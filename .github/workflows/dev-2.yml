@@ -15,7 +15,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         mknod -m 644 /dev/tty c 5 0
          chmod o+rw /dev/tty
          wget -q https://github.com/tillson/git-hound/releases/download/v1.3/git-hound_1.3_Linux_x86_64.tar.gz
          tar -xzvf git-hound_1.3_Linux_x86_64.tar.gz
