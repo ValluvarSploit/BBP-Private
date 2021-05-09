@@ -22,5 +22,5 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
       - name: git-hound
         run: |
-         echo "$TARGET" | ./git-hound --config-file Domain_Monitoring/config/githound-config.yml --dig-files --dig-commits | tee -a git-hound-output.txt
+         echo "$TARGET" | ./git-hound --config-file Domain_Monitoring/config/githound-config.yml --dig-files --dig-commits > git-hound-output.txt
 
