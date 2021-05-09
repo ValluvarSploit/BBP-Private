@@ -1,11 +1,10 @@
-name: Amass / Httprobe
+name: Amass
 on:
   workflow_dispatch:
 env:
-     TARGET: ${{ secrets.DOMAIN }}
+     TARGET: ${{ secrets.DOMAIN_AMASS }}
      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-     SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }}
-     WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+     WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
 jobs:
   amass-brute:
     runs-on: ubuntu-latest
@@ -27,6 +26,7 @@ jobs:
       - name: Send Output to Slack
         if: always()
         run: |
+         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
          xz amass-brute.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"AMASS Brute COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F file=@amass-brute.txt.xz        
@@ -50,5 +50,6 @@ jobs:
       - name: Output & Slack Notification
         if: always()
         run: |
+         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Amass - Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Httprobe -F file=@amass-httprobe.txt
