@@ -5,6 +5,7 @@ env:
        TARGET: ${{ secrets.TARGET_GITHUB_ORG }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }}
 #       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
 #       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
 jobs:
@@ -23,10 +24,11 @@ jobs:
 #         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
       - name: gitleaks
         run: |
+         cat git_repo_url.txt
          for url in $(cat git_repo_url.txt); do gitleaks --repo-url=$url -v --report=gitleak-report.json; done
       - name: Send Output to Slack
         if: always()
         run: |
          SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitleaks -F file=@gitleak-report.json
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitleaks -F file=@gitleak-report.json
          
