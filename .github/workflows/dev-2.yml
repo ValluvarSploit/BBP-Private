@@ -15,10 +15,12 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-      - name: DNSx
-        run: |
+         wget -q https://github.com/tillson/git-hound/releases/download/v1.3/git-hound_1.3_Linux_x86_64.tar.gz
+         tar -xzvf git-hound_1.3_Linux_x86_64.tar.gz
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         ls -la
+      - name: git-hound
+        run: |
+         echo "$TARGET" | ./git-hound --config-file Domain_Monitoring/config/githound-config.yml --dig-files --dig-commits | tee -a git-hound-output.txt
 
