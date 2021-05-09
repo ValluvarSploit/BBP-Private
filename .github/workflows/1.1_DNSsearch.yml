@@ -2,9 +2,9 @@ name: DNSsearch
 on:
   workflow_dispatch:
 env:
-       TARGET: ${{ secrets.DOMAIN }}
+       TARGET: ${{ secrets.DOMAIN_DNSSEARCH }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+#       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
 jobs:
   DNSsearch:
@@ -14,15 +14,16 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"DNSsearch Bruteforce HAS STARTED FOR - '$TARGET'"}' "$WEBHOOK"
-         go env -w GOPATH=~/Downloads
-         go get github.com/evilsocket/dnssearch
-         cp ~/Downloads/bin/dnssearch .
+#         go env -w GOPATH=~/Downloads
+#         go get github.com/evilsocket/dnssearch
+#         cp ~/Downloads/bin/dnssearch .
       - name: DNSsearch
-        run: ./dnssearch -domain "$TARGET" -wordlist wordlists/commonspeak2-subdomains.txt | tee dnssearch.txt ;
+        run: |
+#         ./dnssearch -domain "$TARGET" -wordlist wordlists/commonspeak2-subdomains.txt | tee dnssearch.txt ;
       - name: Send Output to Slack
         if: always()
-        run: curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch -F filename=dnssearch.txt -F file=@dnssearch.txt
-      - name: Slack Notification
-        if: always()
         run: |
+         echo bingo > dnssearch.txt
+         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
          curl -X POST -H 'Content-type: application/json' --data '{"text":"DNSsearch Bruteforce COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-DNSsearch -F filename=dnssearch.txt -F file=@dnssearch.txt
