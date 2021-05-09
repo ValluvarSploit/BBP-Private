@@ -4,7 +4,7 @@ on:
 env:
        TARGET: ${{ secrets.DOMAIN_DNSSEARCH }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
 jobs:
   DNSsearch:
     runs-on: ubuntu-latest  
