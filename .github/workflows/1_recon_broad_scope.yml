@@ -61,33 +61,7 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
-  DNSgen:
-    runs-on: ubuntu-latest
-    needs: Subdomain-Enumeration
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts
-      - name: Install Dependencies
-        run: pip3 install dnsgen && cp ~/.local/bin/dnsgen . ;
-      - name: DNSgen
-        run: |
-         ./dnsgen subdomains-cleaned.txt > dnsgen-wordlist.txt ;
-         xz dnsgen-wordlist.txt ;
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: dnsgen-artifacts
-         path: |
-          dnsgen-wordlist.txt.xz
-          subdomains-cleaned.txt 
-          ips-manual.txt
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+
 
   MassDNS-Resolver:
     runs-on: ubuntu-latest
@@ -133,14 +107,164 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
                    
-  HTTProber:
+ 
+ 
+jobs:
+  Subdomain-Enumeration:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, MassDNS-Resolver]
+    steps:
+      - uses: actions/checkout@v2         
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK";
+         wget $HOST/subdomains-manual.txt && wget $HOST/ips-manual.txt; 
+         sudo apt-get install python3-setuptools;
+         wget -q -i requirements/subdomain-enum.txt; unzip amass_linux_amd64.zip; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz;
+         go env -w GOPATH=~/Downloads;
+         go get -u github.com/tomnomnom/assetfinder;
+         cp ~/Downloads/bin/assetfinder .; 
+         git clone https://github.com/aboul3la/Sublist3r.git
+         pip3 install -r Sublist3r/requirements.txt
+         touch subdomains-auto.txt
+         chmod +x findomain-linux
+      - name: Sublist3r
+        run: |
+         python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null          
+      - name: Amass
+        run: |
+         ./amass_linux_amd64/amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt ;
+      - name: Assetfinder
+        run: 
+         ./assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
+      - name: Subfinder
+        run: |
+         ./subfinder -d "$TARGET" -all -o subfinder-key.txt -rL resolvers.txt ; 
+      - name: Findomain
+        run: |
+         ./findomain-linux -t "$TARGET" -q >> subdomains-auto.txt; 
+         cat amass-passive.txt subfinder-key.txt subdomains-manual.txt sublist3r.txt >> subdomains-auto.txt ;
+         cat subdomains-auto.txt | sort -u > subdomains-cleaned.txt ;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+         path: |
+          subdomains-cleaned.txt 
+          ips-manual.txt
+      - name: Job Status Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+
+  DNSgen:
+    runs-on: ubuntu-latest
+    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
+         name: subdomain-enumeration-artifacts
+      - name: Install Dependencies
+        run: pip3 install dnsgen && cp ~/.local/bin/dnsgen . ;
+      - name: DNSgen
+        run: |
+         ./dnsgen subdomains-cleaned.txt > dnsgen-wordlist.txt ;
+         xz dnsgen-wordlist.txt ;
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsgen-artifacts
+         path: |
+          dnsgen-wordlist.txt.xz
+          subdomains-cleaned.txt 
+          ips-manual.txt
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+
+  MassDNS-Resolver:
+    runs-on: ubuntu-latest
+    needs: [DNSgen, Subdomain-Enumeration]
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomain-enumeration-artifacts
+      - name: Install Dependencies
+        run: |
+         echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
+         wget -q -i requirements/massdns.txt;
+         cd wordlists ; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;          
+         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_2021_03_28.txt > ../subdomain-wordlists.txt; cd ..;
+         xz -d dnsgen-wordlist.txt.xz
+      - name: MassDNS
+        run: |
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
+         cat dnsgen-wordlist.txt >> wordlist-hugh.txt
+         cat wordlist-hugh.txt | sed 's/\*\.//g' > wordlist-hugh2.txt
+         sort -u wordlist-hugh2.txt -o wordlist-hugh2.txt
+         grep -vFf subdomains-exclude.txt wordlist-hugh2.txt > wordlist-all.txt ;
+         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-all.txt ;
+         cat massdns.out | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sed 's/\*\.//g' | sort -u > massdns.host;
+         cat massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > massdns.ip;
+         zip massdns-out.zip massdns.out; xz massdns-out.zip;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
          name: massdns-artifacts
+         path: |
+          massdns.host
+          massdns.ip
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
+  
+  DNSx:
+    runs-on: ubuntu-latest
+    needs: [MassDNS-Resolver]
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: massdns-artifacts
+      - name: Install Dependencies
+        run: |
+         wget -q -i requirements/dnsx.txt; tar -xzvf dnsx_1.0.3_linux_amd64.tar.gz
+      - name: DNSx
+        run: |
+         ./dnsx -l massdns.host -resp -a -r resolvers.txt -o dnsx.txt
+         cat dnsx.txt | awk '{print $1}' | sort -u > dnsx.host
+         cat dnsx.txt | awk '{print $2}' | cut -d "[" -f 2 | cut -d "]" -f 1 | sort -u > dnsx.ip
+         cat dnsx.host >> subdomains-cleaned.txt; sort -u subdomains-cleaned.txt -o subdomains-cleaned.txt;
+         cat dnsx.ip ips-manual.txt >> ips-live.txt; sort -u ips-live.txt -o ips-live.txt;
+         zip dnsx.txt.zip dnsx.txt
+         mv subdomains-cleaned.txt subdomains-cleaned-2.txt; grep -vFf subdomains-exclude.txt subdomains-cleaned-2.txt > subdomains-cleaned.txt
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsx-artifacts
+         path: |
+          subdomains-cleaned.txt
+          ips-live.txt
+          subdomains-exclude.txt 
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSx -F file=@dnsx.txt.zip ;  
+  
+  HTTProber:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Enumeration, DNSx]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: dnsx-artifacts
       - name: Install Dependencies
         run: |
          go env -w GOPATH=~/Downloads;
@@ -167,7 +291,6 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Live-assets -F file=@httprober.zip;
 
-#Subdomain Takeover
   Subdomain-Takeover:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
@@ -184,7 +307,7 @@ jobs:
          go get github.com/haccer/subjack
          go get github.com/lukasikic/subzy
          go get github.com/Ice3man543/SubOver
-         cp ~/Downloads/bin/subjack .; cp ~/Downloads/bin/subzy .; cp ~/Downloads/bin/SubOver .; 
+         cp ~/Downloads/bin/subjack .; cp ~/Downloads/bin/subzy .; cp ~/Downloads/bin/SubOver .; cp binaries/providers.json . 
          wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz; tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Subzy
         run: |
@@ -268,6 +391,8 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
+         sudo apt-get install xsltproc
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
          sudo apt-get update && sudo apt-get install nmap -y ;
          pip install python-libnmap ;
          sudo apt-get install git gcc make libpcap-dev ;
@@ -279,7 +404,8 @@ jobs:
       - name: Nmap Scan
         run: |
          python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.out ;
-         zip masscan-nmap.zip masscan.xml nmap-masscan.out ; xz masscan-nmap.zip ;
+         xsltproc -o masscan.html nmap-bootstrap.xsl masscan.xml
+         xz masscan.html
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -289,7 +415,7 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan-nmap.zip.xz ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan.html
 
   Nmap-Vulnerability-Scan:
     runs-on: ubuntu-latest    
@@ -301,6 +427,8 @@ jobs:
          name: nmap-output
       - name: Install Dependencies
         run: |
+         sudo apt-get install xsltproc
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
          ulimit -s ; ulimit -s 65536 ;
          cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt ;
          cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt ;
@@ -308,68 +436,21 @@ jobs:
          cd /usr/share/nmap/scripts/ ;
          sudo git clone https://github.com/vulnersCom/nmap-vulners.git ;
          sudo git clone https://github.com/scipag/vulscan ;
-         cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh ;
-         mkdir nmap-vuln
+         cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh; cd ..;
       - name: Nmap scan
         run: |
-         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -T3 -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln/nmap-vuln-scan $ip  ; done ; 
-         zip nmap-vuln.zip -r nmap-vuln/
+         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -T3 -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln-scan $ip  ; done ;  
+         xsltproc -o nmap-vuln-scan.html nmap-bootstrap.xsl nmap-vuln-scan.xml
+         zip nmap-vuln-scan.zip nmap-vuln-scan.html nmap-vuln-scan.nmap
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln.zip;
-
-
-  nmap-random-ports:
-    runs-on: ubuntu-latest    
-    needs: [Subdomain-Enumeration, HTTProber, Nmap-Vulnerability-Scan]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         sudo apt-get update && sudo apt-get install nmap -y 
-         mkdir nmap-random
-      - name: Nmap TCP-UDP scan
-        run: |
-          sudo nmap -Pn -sS -sV -sC -p2075,2076,6443,3868,3366,8443,8080,9443,9091,3000,8000,5900,8081,6000,10000,8181,3306,5000,4000,8888,5432,15672,9999,161,4044,7077,4040,9000,8089,443,7447,7080,8880,8983,5673,7443,19000,19080 -iL ips-live.txt -oA nmap-random/nmap-random -v
-          zip -r nmap-random.zip nmap-random/
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Random -F file=@nmap-random.zip
-
-  nmap-top-1000:
-    runs-on: ubuntu-latest    
-    needs: [Subdomain-Enumeration, HTTProber, Nmap-Vulnerability-Scan]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         sudo apt-get update && sudo apt-get install nmap -y && sudo apt-get install xsltproc -y
-         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
-         mkdir nmap-1000
-      - name: Nmap TCP-UDP scan
-        run: |
-          sudo nmap -Pn -sS -sV -sC -iL ips-live.txt -oA nmap-1000/nmap-top-1000 -v
-          xsltproc -o nmap-1000.html nmap-bootstrap.xsl nmap-1000/nmap-top-1000.xml
-          zip -r nmap-1000.zip nmap-1000/ nmap-1000.html
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-1000 -F file=@nmap-1000.zip
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln-scan.zip
 
   nmap-tcp-udp-scan:
     runs-on: ubuntu-latest    
-    needs: [Subdomain-Enumeration, HTTProber, nmap-top-1000]
+    needs: [Subdomain-Enumeration, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -377,17 +458,19 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
+         sudo apt-get install xsltproc
+         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
          sudo apt-get update && sudo apt-get install nmap -y
-         mkdir nmap-tcp-udp
       - name: Nmap TCP-UDP scan
         run: |
-          sudo nmap -Pn -sV -sU -pT:21,22,23,25,53,80,81,88,110,111,139,389,443,445,900,1433,2049,2301,2381,3389,4242,7001,7002,7070,8000,8001,8005,8080,8100,8810,8820,8830,8888,9090,10000,U:53,69,137,138,161,500 -iL ips-live.txt  -oA nmap-tcp-udp/nmap-tcp-udp-scan -v
-          zip -r nmap-tcp-udp.zip nmap-tcp-udp/
+          sudo nmap -Pn -sV -sU -pT:1433,2049,2301,2381,3389,4242,7001,7002,7070,8000,8001,8005,8080,8100,8810,8820,8830,8888,9090,10000,U:69,137,138,161,500 -iL ips-live.txt  -oA nmap-tcp-udp-scan -v
+          xsltproc -o nmap-tcp-udp-scan.html nmap-bootstrap.xsl nmap-tcp-udp-scan.xml
+          zip -r nmap-1000-scan.zip nmap-tcp-udp-scan.html nmap-tcp-udp-scan.nmap
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-TCP-UDP-Scan -F file=@nmap-tcp-udp.zip;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-TCP-UDP-Scan -F file=@nmap-1000-scan.zip
 
 #Collect URLs.
   URL-Enumeration:
@@ -482,12 +565,14 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f xss-url-collector.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-URL-Collector -F file=@xss-url-collector.txt; fi
 
-#Parameter Discovery
   Parameter-Discovery:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
       - name: Install Dependencies
         run: |
          git clone https://github.com/devanshbatham/ParamSpider
@@ -609,7 +694,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
 
-  Directory-Fuzz:
+  Dirsearch-Dir:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -620,6 +705,7 @@ jobs:
       - name: Install Dependencies
         run: |
          git clone https://github.com/maurosoria/dirsearch.git
+         cd dirsearch; pip3 install -r requirements.txt; cd ..         
          wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
       - name: Directory Fuzzing
         run: |
@@ -632,8 +718,7 @@ jobs:
          zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip        
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Bruteforcing -F file=@dirsearch-dir-reports.zip.xz
 
-#Dirsearch sensitive files
-  File-Fuzz:
+  Dirsearch-File:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -644,7 +729,8 @@ jobs:
       - name: Install Dependencies
         run: |
           git clone https://github.com/maurosoria/dirsearch.git
-          wgt https://wordlists-cdn.assetnote.io/data/manual/bak.txt
+          cd dirsearch; pip3 install -r requirements.txt; cd ..
+          wget https://wordlists-cdn.assetnote.io/data/manual/bak.txt
           cat bak.txt >>  wordlists/sensitive-wordlist.txt
           sort -u wordlists/sensitive-wordlist.txt -o wordlists/sensitive-wordlist.txt
       - name: Directory Fuzzing
@@ -709,27 +795,28 @@ jobs:
       - name: Install Dependencies
         run: |
          sudo apt-get install python3-setuptools
-         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
+         mkdir ~/.aws
+         echo "$AWS_CREDS" > ~/.aws/credentials
          git clone https://github.com/sa7mon/S3Scanner.git
-         cd S3Scanner ; pip3 install -r requirements.txt;
-         for word in $(cat ../wordlists/bucket-wordist.txt); do echo $word.$TARGET >> targets-2.txt ; done;
-         for word in $(cat ../wordlists/bucket-wordist.txt); do echo $word-$TARGET >> targets-3.txt ; done;        
+         pip3 install -r S3Scanner/requirements.txt
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word.$TARGET >> targets-2.txt ; done;
+         sort -u targets-2.txt -o targets-2.txt
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word-$TARGET >> targets-3.txt ; done;
+         sort -u targets-3.txt -o targets-3.txt
          touch buckets-{1..3}.txt
       - name: S3 Scanner
         run: |
-         cd S3Scanner
-         python3 -m S3Scanner scan --buckets-file subdomains-host.txt | tee buckets-1.txt
-         python3 -m S3Scanner scan --buckets-file targets-2.txt | tee buckets-2.txt
-         python3 -m S3Scanner scan --buckets-file targets-3.txt | tee buckets-3.txt
-         cat buckets-{1..3}.txt | sort -u > buckets-tmp.txt
-         cat buckets-tmp.txt | grep -v 'bucket_not_exist\|bucket_invalid_name' | tee buckets.txt
+         python3 S3Scanner/s3scanner.py -l subdomains-host.txt -o buckets-1.txt
+         python3 S3Scanner/s3scanner.py -l targets-2.txt -o buckets-2.txt
+         python3 S3Scanner/s3scanner.py -l targets-3.txt -o buckets-3.txt
+         cat buckets-{1..3}.txt | sort -u > buckets.txt
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scanner -F file=@buckets.txt
 
-  Aquatone-Webshot:
+  Aquatone:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -746,7 +833,7 @@ jobs:
       - name: Aquatone
         run: |
          mkdir aquatone-output
-         cat subdomains-live.txt | ./aquatone -chrome-path /snap/bin/chromium -threads 50 -silent --ports xlarge -out aquatone-output/ 
+         cat subdomains-live.txt | ./aquatone -chrome-path /snap/bin/chromium -threads 40 -silent --ports xlarge -out aquatone-output/ 
          zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip   
       - name: Output & Slack Notification
         if: always()
@@ -818,7 +905,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz ;
         
-  Eyewitness-Webshot:
+  Eyewitness:
     runs-on: ubuntu-latest
     needs: [Subdomain-Enumeration, HTTProber]
     steps:
@@ -929,7 +1016,7 @@ jobs:
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration,MassDNS-Resolver, DNSgen, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone-Webshot, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness-Webshot, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, nmap-top-1000, XSS-Hunt, MEG-HomePage]
+    needs: [Subdomain-Enumeration,MassDNS-Resolver, DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG-HomePage]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
