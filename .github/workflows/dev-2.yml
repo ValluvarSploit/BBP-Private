@@ -2,12 +2,11 @@ name: Dev-2
 on:
   workflow_dispatch:
 env:
-       TARGET: ${{ secrets.DOMAIN_DNSSEARCH }}
-       HOST: ${{ secrets.NGROK_URL }}
+       TARGET: ${{ secrets.TARGET_GITHUB_ORG }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
-       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
-       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
+#       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+#       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
 jobs:
   HTTPX:
     runs-on: ubuntu-latest  
@@ -15,13 +14,19 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         sudo chmod o+rw /dev/tty
-         wget -q https://github.com/tillson/git-hound/releases/download/v1.3/git-hound_1.3_Linux_x86_64.tar.gz
-         tar -xzvf git-hound_1.3_Linux_x86_64.tar.gz
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-      - name: git-hound
+         go env -w GOPATH=~/Downloads;
+         go get github.com/zricethezav/gitleaks/v7
+         cp ~/Downloads/bin/gitleaks .; 
+         curl -s 'https://api.github.com/orgs/"$ORG"/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
+#         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+#         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+#         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+      - name: gitleaks
         run: |
-         echo "$TARGET" | ./git-hound --config-file Domain_Monitoring/config/githound-config.yml --dig-files --dig-commits > git-hound-output.txt
-
+         for url in $(cat git_repo_url.txt); do gitleaks --repo-url=$url -v --report=gitleak-report.json; done
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Gitleaks -F file=@gitleak-report.json
+         
