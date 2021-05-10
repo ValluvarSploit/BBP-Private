@@ -1,3 +1,11 @@
+jmxremote.access
+jmxremote.password
+sonar.log
+web.log
+ce.log
+es.log
+conf/sonar.properties
+sonar.properties
 wp-config.php
 wp-config.php.save
 kibana-log.txt
