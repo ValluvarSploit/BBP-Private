@@ -7,6 +7,7 @@ env:
       XSS_HUNTER: ${{ secrets.XSS_HUNTER }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       GIT_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
+      GIT_REPO: ${{ secrets.GIT_REPO_URLS }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       S_CHANNEL: ${{ secrets.SLACK_CN_PRIVATE }}
@@ -838,12 +839,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
+         echo "$GIT_REPO" > git_repo_url.txt
+         cat git_repo_url.txt | head
          go env -w GOPATH=~/Downloads;
          GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
          cp ~/Downloads/bin/gitleaks .; 
-         curl -s 'https://api.github.com/orgs/'"$GIT_ORG"'/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
          cat git_repo_url.txt | cut -d : -f 2 | sed "s/^..//" > git-repo.txt
          mkdir gitleaks-reports
+#         curl -s 'https://api.github.com/orgs/'"$GIT_ORG"'/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
       - name: gitleaks
         run: |
          for url in $(cat git-repo.txt); do touch $url.json $url; ./gitleaks --repo-url=https://$url -v --report=$url.json; mv $url.json gitleaks-reports/; done
