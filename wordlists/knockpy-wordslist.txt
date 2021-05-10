@@ -1,3 +1,4 @@
+0
 01
 02
 03
@@ -190,6 +191,7 @@ auth
 auto
 autoconfig
 autodiscover
+autorun
 av
 aw
 aws
@@ -1271,6 +1273,7 @@ iis
 il
 illinois
 illustration
+ILMI
 im
 image
 images
@@ -1342,6 +1345,7 @@ ipsec
 ipsec-gw
 ipv
 ipv6
+ipv6.teredo
 iq
 ir
 irc
@@ -1677,6 +1681,7 @@ mn
 mngt
 mo
 mobile
+mobilemail
 mobile-rest
 mockup
 mom
@@ -2138,7 +2143,10 @@ press
 preview
 pricing
 print
+printer
 prints
+printserv
+printserver
 priv
 privacidade
 privacy
@@ -2451,6 +2459,8 @@ snoopy
 snort
 snow
 so
+soap
+socal
 social
 software
 sol
@@ -2489,6 +2499,7 @@ sponsor
 sports
 spring
 springfield
+sprint
 sqa
 sql
 sql0
@@ -2622,14 +2633,20 @@ test1
 test2
 test2k
 test3
+testajax
+testasp
+testaspnet
 testbed
 test-blog
 testblog
+testcf
 teste
 testing
+testjsp
 testlab
 testlinux
 testo
+testphp
 testserver
 testshop
 testsite
@@ -2755,6 +2772,7 @@ uy
 uz
 v
 v2
+v6
 va
 vader
 valuation
@@ -2934,6 +2952,7 @@ workwith
 world
 wow
 wp
+wpad
 write
 ws
 ws1
