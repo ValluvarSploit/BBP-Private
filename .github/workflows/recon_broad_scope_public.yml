@@ -122,6 +122,7 @@ jobs:
          path: |
           massdns.host
           massdns.ip
+          ips-manual.txt
       - name: Output & Slack Notification
         if: always()
         run: |
