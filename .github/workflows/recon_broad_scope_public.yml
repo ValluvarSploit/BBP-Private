@@ -123,6 +123,7 @@ jobs:
           massdns.host
           massdns.ip
           ips-manual.txt
+          subdomains-exclude.txt
       - name: Output & Slack Notification
         if: always()
         run: |
