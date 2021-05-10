@@ -965,7 +965,7 @@ jobs:
          mkdir gitleaks-reports
       - name: gitleaks
         run: |
-         for url in $(cat git-repo.txt); do touch $url.json $url; ./gitleaks --repo-url=https://$url -v --report=$url.json; mv $url.json gitleaks-reports/; done
+         for url in $(cat git-repo.txt); do tc_tmp=$(echo $url | sed 's/\///g' | sed 's/\.//g'); touch $tc_tmp.json; ./gitleaks --repo-url=https://$url -v --report=$tc_tmp.json.json; mv $tc_tmp.json.json gitleaks-reports/; done
          zip -r gitleaks-reports.zip gitleaks-reports/
       - name: Send Output to Slack
         if: always()
