@@ -48,7 +48,8 @@ jobs:
         run: |
          ./findomain-linux -t "$TARGET" -q >> subdomains-auto.txt; 
          cat amass-passive.txt subfinder-key.txt subdomains-manual.txt sublist3r.txt >> subdomains-auto.txt ;
-         cat subdomains-auto.txt | sort -u > subdomains-cleaned.txt ;
+         cat subdomains-auto.txt | sort -u > subdomains-cleaned-tmp.txt ;
+         cat subdomains-cleaned-tmp.txt | sed 's/\*\.//g' > subdomains-cleaned.txt 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
