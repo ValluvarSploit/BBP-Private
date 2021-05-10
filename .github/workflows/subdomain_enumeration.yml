@@ -16,7 +16,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"HTTPROBE  STARTEED FOR - '$TARGET'"}' "$WEBHOOK"
          wget $HOST/subdomains-manual.txt
          go env -w GOPATH=~/Downloads;
          go get -u github.com/tomnomnom/httprobe;
