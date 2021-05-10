@@ -42,7 +42,9 @@ jobs:
         run: pip3 install dnsgen && cp ~/.local/bin/dnsgen . ;
       - name: DNSgen
         run: |
-         ./dnsgen httprobe.txt > dnsgen-wordlist.txt ;
+         cat httprobe.txt | cut -d "/" -f 3 > sub-words.txt
+         sort -u sub-words.txt -o sub-words.txt
+         ./dnsgen sub-words.txt > dnsgen-wordlist.txt ;
          xz dnsgen-wordlist.txt ;
       - name: Upload Artifacts
         if: always()
@@ -51,7 +53,7 @@ jobs:
          name: dnsgen-artifacts
          path: |
           dnsgen-wordlist.txt.xz
-          httprobe.txt
+          sub-words.txt
 
   MassDNS-Resolver:
     runs-on: ubuntu-latest
@@ -76,11 +78,12 @@ jobs:
          ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-all.txt ;
          cat massdns.out | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sed 's/\*\.//g' | sort -u > massdns.host;
          zip massdns-out.zip massdns.out; xz massdns-out.zip;
-         xz massdns.host
+         cat sub-words.txt massdns.host > subdomains.txt ; sort -u subdomains.txt -o subdomains.txt
+         xz subdomains.txt
 #         cat massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > massdns.ip;
       - name: Output & Slack Notification
         if: always()
         run: |
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Host -F file=@massdns.host.xz
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Host -F file=@subdomains.txt.xz
   
