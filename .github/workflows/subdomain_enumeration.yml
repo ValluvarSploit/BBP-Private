@@ -29,10 +29,6 @@ jobs:
         with:
          name: httpobe-artifacts
          path: httprobe.txt
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"HTTPROBE COMPLETED FOR - '$TARGET'"}' "$S_WEBHOOK"
 
   DNSgen:
     runs-on: ubuntu-latest
@@ -56,10 +52,6 @@ jobs:
          path: |
           dnsgen-wordlist.txt.xz
           httprobe.txt
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
   MassDNS-Resolver:
     runs-on: ubuntu-latest
@@ -89,7 +81,6 @@ jobs:
       - name: Output & Slack Notification
         if: always()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Host -F file=@massdns.host.xz
   
