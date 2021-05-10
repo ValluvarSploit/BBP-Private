@@ -11,7 +11,6 @@ env:
       GIT_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      S_CHANNEL: ${{ secrets.SLACK_CN_PRIVATE }}
       S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload
 jobs:
