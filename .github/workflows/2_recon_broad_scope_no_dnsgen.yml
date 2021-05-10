@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v2 
       - name: Install Dependencies
         run: |
+         wget $HOST/subdomains.txt
          wget -q -i requirements/dnsx.txt; tar -xzvf dnsx_1.0.3_linux_amd64.tar.gz
       - name: DNSx
         run: |
