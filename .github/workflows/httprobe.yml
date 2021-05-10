@@ -1,0 +1,31 @@
+name: HTTPROBE
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
+       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
+       HOST: ${{ secrets.NGROK_URL }}
+     
+jobs:
+  HTTPROBE:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
+         wget $HOST/amass-brute.txt -O subdomains.txt
+         go env -w GOPATH=~/Downloads;
+         go get -u github.com/tomnomnom/httprobe;
+         cp ~/Downloads/bin/httprobe .; 
+      - name: HTTPX
+        run: |
+         cat subdomains.txt | ./httprobe | tee httprobe.txt
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"HTTPROBE COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-HTTPROBE -F file=@httprobe.txt
+          
