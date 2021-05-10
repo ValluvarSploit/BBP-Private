@@ -75,7 +75,7 @@ jobs:
          cat dnsgen-wordlist.txt >> wordlist-hugh.txt
          cat wordlist-hugh.txt | sed 's/\*\.//g' > wordlist-hugh2.txt
          sort -u wordlist-hugh2.txt -o wordlist-hugh2.txt
-         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-all.txt ;
+         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-hugh2.txt ;
          cat massdns.out | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sed 's/\*\.//g' | sort -u > massdns.host;
          zip massdns-out.zip massdns.out; xz massdns-out.zip;
          cat sub-words.txt massdns.host > subdomains.txt ; sort -u subdomains.txt -o subdomains.txt
