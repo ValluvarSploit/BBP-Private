@@ -1,4 +1,4 @@
-name: Httprobe
+name: HTTPX
 on:
   workflow_dispatch:
 env:
@@ -9,22 +9,22 @@ env:
        HOST: ${{ secrets.NGROK_URL }}
      
 jobs:
-  Httprobe:
+  HTTPX:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/amass-brute.txt -O subdomains.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
-         chmod +x binaries/httprobe
-      - name: Gobuster
+         wget $HOST/amass-brute.txt -O subdomains.txt
+         wget -q -i requirements/httprober.txt; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
+      - name: HTTPX
         run: |
-         cat subdomains.txt | ./binaries/httprobe | tee subdomains-resolved.txt ;
-         xz -k subdomains-resolved.txt 
+         ./httpx -l subdomains.txt -threads 300 -silent -timeout 15 -o httpx.out
+         xz httpx.out
       - name: Output & Slack Notification
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Httprobe -F file=@subdomains-resolved.txt.xz
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-HTTPX -F file=@httpx.out
           
