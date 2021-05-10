@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
-      EXCLUDE_HOST: ${{ secrets.DOMAIN_PRIVATE_EXCLUDE_HOST }}
       HOST: ${{ secrets.NGROK_URL }}
       XSS_HUNTER: ${{ secrets.XSS_HUNTER }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
@@ -164,6 +163,7 @@ jobs:
           if [[ -f nuclie-scan.out ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nuclei-Template-Scan -F file=@nuclie-scan.out; fi ;
 
   Mass-Nmap-Scan:
+    if: always()
     runs-on: ubuntu-latest    
     needs: [Nuclei-Template-Scan, HTTProber]
     steps:
@@ -200,6 +200,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan.html
 
   Nmap-Vulnerability-Scan:
+    if: always()
     runs-on: ubuntu-latest    
     needs: [Mass-Nmap-Scan, HTTProber]
     steps:
@@ -231,6 +232,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln-scan.zip
 
   nmap-tcp-udp-scan:
+    if: always()
     runs-on: ubuntu-latest    
     needs: [Nmap-Vulnerability-Scan, HTTProber]
     steps:
@@ -324,6 +326,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-KXSS -F file=@kxss.out ;
 
   XSS-Hunt:
+    if: always()
     runs-on: ubuntu-latest
     needs: [URL-Enumeration, HTTProber, KXSS-Enum]
     steps:
@@ -345,6 +348,7 @@ jobs:
           if [[ -f xss-url-collector.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-URL-Collector -F file=@xss-url-collector.txt; fi
 
   Parameter-Discovery:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, XSS-Hunt]
     steps:
@@ -374,6 +378,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Parameter-Discovery -F file=@paramspider-out.zip
 
   XSS-Hunter:
+    if: always()
     runs-on: ubuntu-latest
     needs: [Parameter-Discovery, HTTProber]
     steps:
@@ -446,6 +451,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-JS-Scan -F file=@js-scan.zip.xz ;
 
   Secrets-Finder:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, Javascript-Scan]
     steps:
@@ -471,6 +477,7 @@ jobs:
           if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
 
   Dirsearch-Dir:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, Secrets-Finder]
     steps:
@@ -495,6 +502,7 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Bruteforcing -F file=@dirsearch-dir-reports.zip.xz
 
   Dirsearch-File:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, Dirsearch-Dir]
     steps:
@@ -618,6 +626,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Aquatone-Webscreenshot -F file=@aquatone-output.zip.xz
 
   Gochopchop-Scan:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, Aquatone]
     steps:
@@ -640,6 +649,7 @@ jobs:
           if [[ -f gochopchop-out.json.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoChopChop -F file=@gochopchop-out.json; fi;
 
   Subdomainizer:
+    if: always()
     runs-on: ubuntu-latest              
     needs: [HTTProber, Gochopchop-Scan]
     steps:
@@ -662,6 +672,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomainizer -F file=@subdomainizer.zip ;
 
   Git-Dorker-Domain:
+    if: always()
     runs-on: ubuntu-latest  
     needs: [HTTProber, Subdomainizer]
     steps:
@@ -682,6 +693,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz ;
         
   Eyewitness:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, Git-Dorker-Domain]
     steps:
@@ -703,6 +715,7 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Web-Screenshots -F file=@eyewitness_output.zip.xz ;
 
   Whatweb:
+    if: always()
     runs-on: ubuntu-latest  
     needs: [HTTProber, Eyewitness]
     steps:
@@ -724,6 +737,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Whatweb -F file=@whatweb-logs.json
   DNSC:
+    if: always()
     runs-on: ubuntu-latest  
     needs: [HTTProber, Whatweb]
     steps:
@@ -743,6 +757,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSC -F file=@dnsc.csv ;
 
   broken-link-checker-light:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, DNSC]
     steps:
@@ -765,6 +780,7 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-BLC-Light -F file=@blc-light.zip.xz ;
 
   broken-link-checker-full:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber, broken-link-checker-light]
     steps:
@@ -787,6 +803,7 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-BLC-Full -F file=@blc-full.zip.xz ;
 
   Gitleaks:
+    if: always()
     runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
