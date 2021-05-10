@@ -16,13 +16,13 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Httprobe INITIATED FOR - '$TARGET'"}' "$WEBHOOK"
-         wget $HOST/amass-brute.txt -O subdomains.txt
+         wget $HOST/subdomains-manual.txt
          go env -w GOPATH=~/Downloads;
          go get -u github.com/tomnomnom/httprobe;
          cp ~/Downloads/bin/httprobe .; 
       - name: HTTPX
         run: |
-         cat subdomains.txt | ./httprobe | tee httprobe.txt
+         cat subdomains-manual.txt | ./httprobe | tee httprobe.txt
       - name: Output & Slack Notification
         if: always()
         run: |
