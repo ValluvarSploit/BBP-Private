@@ -898,14 +898,17 @@ jobs:
          GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
          cp ~/Downloads/bin/gitleaks .; 
          curl -s 'https://api.github.com/orgs/'"$GIT_ORG"'/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
+         cat git_repo_url.txt | cut -d : -f 2 | sed "s/^..//" > git-repo.txt
+         mkdir gitleaks-reports
       - name: gitleaks
         run: |
-         for url in $(cat git_repo_url.txt); do ./gitleaks --repo-url=$url -v --report=gitleak-report.json; done
+         for url in $(cat git-repo.txt); do touch $url.json $url; ./gitleaks --repo-url=https://$url -v --report=$url.json; mv $url.json gitleaks-reports/; done
+         zip -r gitleaks-reports.zip gitleaks-reports/
       - name: Send Output to Slack
         if: always()
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleak-report.json
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip
 
   Slack-Notification:
     if: always()
