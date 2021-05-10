@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@v2 
       - uses: actions/download-artifact@v2
         with:
-         name: subdomain-enumeration-artifacts
+         name: dnsgen-artifacts
       - name: Install Dependencies
         run: |
          echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
