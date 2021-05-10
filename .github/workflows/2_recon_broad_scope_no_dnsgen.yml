@@ -7,7 +7,6 @@ env:
       HOST: ${{ secrets.NGROK_URL }}
       XSS_HUNTER: ${{ secrets.XSS_HUNTER }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
-        #      GIT_USERS: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
       GIT_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
@@ -15,126 +14,35 @@ env:
       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
       S_URL: https://slack.com/api/files.upload
 jobs:
-  Subdomain-Enumeration:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2         
-      - name: Install Dependencies
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} STARTED - '$TARGET'"}' "$S_WEBHOOK";
-         wget $HOST/subdomains-manual.txt && wget $HOST/ips-manual.txt; 
-         sudo apt-get install python3-setuptools;
-         wget -q -i requirements/subdomain-enum.txt; unzip amass_linux_amd64.zip; tar -xzvf subfinder_2.4.7_linux_amd64.tar.gz;
-         go env -w GOPATH=~/Downloads;
-         go get -u github.com/tomnomnom/assetfinder;
-         cp ~/Downloads/bin/assetfinder .; 
-         git clone https://github.com/aboul3la/Sublist3r.git
-         pip3 install -r Sublist3r/requirements.txt
-         touch subdomains-auto.txt
-         chmod +x findomain-linux
-      - name: Sublist3r
-        run: |
-         python3 Sublist3r/sublist3r.py -d "$TARGET" -t 10 -v -o sublist3r.txt > /dev/null          
-      - name: Amass
-        run: |
-         ./amass_linux_amd64/amass enum -passive -d "$TARGET" -rf resolvers.txt > amass-passive.txt ;
-      - name: Assetfinder
-        run: 
-         ./assetfinder --subs-only "$TARGET" -silent >> subdomains-auto.txt;  
-      - name: Subfinder
-        run: |
-         ./subfinder -d "$TARGET" -all -o subfinder-key.txt -rL resolvers.txt ; 
-      - name: Findomain
-        run: |
-         ./findomain-linux -t "$TARGET" -q >> subdomains-auto.txt; 
-         cat amass-passive.txt subfinder-key.txt subdomains-manual.txt sublist3r.txt >> subdomains-auto.txt ;
-         cat subdomains-auto.txt | sort -u > subdomains-cleaned-tmp.txt
-         cat subdomains-cleaned-tmp.txt | sed 's/\*\.//g' > subdomains-cleaned.txt
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts
-         path: |
-          subdomains-cleaned.txt 
-          ips-manual.txt
-      - name: Job Status Slack Notification
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-
-  MassDNS-Resolver:
-    runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration]
-    steps:
-      - uses: actions/checkout@v2 
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomain-enumeration-artifacts
-      - name: Install Dependencies
-        run: |
-         echo "$EXCLUDE_HOST" > subdomains-exclude.txt ;
-         wget -q -i requirements/massdns.txt;
-         cd wordlists ; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;          
-         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_2021_03_28.txt > ../subdomain-wordlists.txt; cd ..;
-      - name: MassDNS
-        run: |
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
-         cat wordlist-hugh.txt | sed 's/\*\.//g' | sort -u > wordlist-hugh2.txt
-         grep -vFf subdomains-exclude.txt wordlist-hugh2.txt > wordlist-all.txt ;
-         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-all.txt ;
-         cat massdns.out | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sed 's/\*\.//g' | sort -u > massdns.host;
-         cat massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > massdns.ip;
-         zip massdns-out.zip massdns.out; xz massdns-out.zip;
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: massdns-artifacts
-         path: |
-          massdns.host
-          massdns.ip
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
-  
   DNSx:
     runs-on: ubuntu-latest
-    needs: [MassDNS-Resolver]
     steps:
       - uses: actions/checkout@v2 
-      - uses: actions/download-artifact@v2
-        with:
-         name: massdns-artifacts
       - name: Install Dependencies
         run: |
          wget -q -i requirements/dnsx.txt; tar -xzvf dnsx_1.0.3_linux_amd64.tar.gz
       - name: DNSx
         run: |
-         ./dnsx -l massdns.host -resp -a -r resolvers.txt -o dnsx.txt
-         cat dnsx.txt | awk '{print $1}' | sort -u > dnsx.host
-         cat dnsx.txt | awk '{print $2}' | cut -d "[" -f 2 | cut -d "]" -f 1 | sort -u > dnsx.ip
-         cat dnsx.host >> subdomains-cleaned.txt; sort -u subdomains-cleaned.txt -o subdomains-cleaned.txt;
-         cat dnsx.ip ips-manual.txt >> ips-live.txt; sort -u ips-live.txt -o ips-live.txt;
-         zip dnsx.txt.zip dnsx.txt
-         mv subdomains-cleaned.txt subdomains-cleaned-2.txt; grep -vFf subdomains-exclude.txt subdomains-cleaned-2.txt > subdomains-cleaned.txt
+         ./dnsx -l subdomains.txt -resp -a -r resolvers.txt -o dnsx.txt
+         cat dnsx.txt | awk '{print $1}' | sort -u > subdomains-live-1.txt
+         cat dnsx.txt | awk '{print $2}' | cut -d "[" -f 2 | cut -d "]" -f 1 | sort -u > ips-live.txt
+         sort -u subdomains-live-1.txt -o subdomains-live-1.txt; sort -u ips-live.txt -o ips-live.txt;
+         xz -k ips-live.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: dnsx-artifacts
          path: |
-          subdomains-cleaned.txt
+          subdomains-live-1.txt
           ips-live.txt
-          subdomains-exclude.txt 
       - name: Output & Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSx -F file=@dnsx.txt.zip ;  
   
   HTTProber:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, DNSx]
+    needs: [DNSx]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -148,10 +56,10 @@ jobs:
          wget -q -i requirements/httprober.txt; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
       - name: HTTProber
         run: |
-         cat subdomains-cleaned.txt | ./httprobe | tee subdomains-live.txt; 
-         ./httpx -l subdomains-cleaned.txt -follow-redirects -status-code -vhost -content-length -cname -cdn -csp-probe -ip -web-server -location -websocket -title -tech-detect -no-fallback -threads 300 -silent -timeout 15 -o httpx.out
+         cat subdomains-live-1.txt | ./httprobe | tee subdomains-live.txt; 
+         ./httpx -l subdomains-live-1.txt -follow-redirects -status-code -vhost -content-length -cname -cdn -csp-probe -ip -web-server -location -websocket -title -tech-detect -no-fallback -threads 300 -silent -timeout 15 -o httpx.out
          cat subdomains-live.txt | cut -d "/" -f 3 > subdomains-host.txt;
-         zip httprober.zip subdomains-live.txt ips-live.txt subdomains-host.txt httpx.out
+         zip assets-live.zip subdomains-live.txt ips-live.txt subdomains-host.txt httpx.out
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -168,7 +76,7 @@ jobs:
 
   Subdomain-Takeover:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -212,7 +120,7 @@ jobs:
 
   MEG-HomePage:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [Subdomain-Takeover, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -233,10 +141,9 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MEG-Homepage -F file=@meg-home.zip
 
-#Nuclei Template Scan.
   Nuclei-Template-Scan:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [MEG-HomePage, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -258,7 +165,7 @@ jobs:
 
   Mass-Nmap-Scan:
     runs-on: ubuntu-latest    
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [Nuclei-Template-Scan, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -294,7 +201,7 @@ jobs:
 
   Nmap-Vulnerability-Scan:
     runs-on: ubuntu-latest    
-    needs: [Mass-Nmap-Scan, Subdomain-Enumeration, HTTProber]
+    needs: [Mass-Nmap-Scan, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -325,7 +232,7 @@ jobs:
 
   nmap-tcp-udp-scan:
     runs-on: ubuntu-latest    
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [Nmap-Vulnerability-Scan, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -347,10 +254,8 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-TCP-UDP-Scan -F file=@nmap-1000-scan.zip
 
-#Collect URLs.
   URL-Enumeration:
     runs-on: ubuntu-latest
-    needs: Subdomain-Enumeration
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -396,7 +301,6 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Pattern-Collector -F file=@url-collector-artifacts.zip.xz ;
 
-#Collect URLs.
   KXSS-Enum:
     runs-on: ubuntu-latest
     needs: URL-Enumeration
@@ -421,7 +325,7 @@ jobs:
 
   XSS-Hunt:
     runs-on: ubuntu-latest
-    needs: [URL-Enumeration, Subdomain-Enumeration, HTTProber]
+    needs: [URL-Enumeration, HTTProber, KXSS-Enum]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -442,7 +346,7 @@ jobs:
 
   Parameter-Discovery:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, XSS-Hunt]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -471,7 +375,7 @@ jobs:
 
   XSS-Hunter:
     runs-on: ubuntu-latest
-    needs: [Parameter-Discovery, Subdomain-Enumeration, HTTProber]
+    needs: [Parameter-Discovery, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -480,8 +384,7 @@ jobs:
       - name: Install Dependencies
         run: |
          wget --quiet https://github.com/hahwul/dalfox/releases/download/v2.3.6/dalfox_2.3.6_linux_amd64.tar.gz
-         gunzip dalfox_2.3.6_linux_amd64.tar.gz ; tar -xvf dalfox_2.3.6_linux_amd64.tar
-       #sudo snap install dalfox          
+         gunzip dalfox_2.3.6_linux_amd64.tar.gz ; tar -xvf dalfox_2.3.6_linux_amd64.tar         
       - name: Dalfox
         run: ./dalfox -b "$XSS_HUNTER" file paramspider.txt > xss-paramspider.txt
       - name: Output & Slack Notification
@@ -490,10 +393,9 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f xss-paramspider.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-Paramspider -F file=@xss-paramspider.txt; fi
 
-#FavIcon Hash Extraction
   Favicon-Hash-Extraction:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2      
       - name: Install Dependencies
@@ -511,10 +413,9 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-FaviHash -F file=@favihash.txt;
 
-#Javascript Scan
   Javascript-Scan:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2      
       - name: Install Dependencies
@@ -546,7 +447,7 @@ jobs:
 
   Secrets-Finder:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Javascript-Scan]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -571,7 +472,7 @@ jobs:
 
   Dirsearch-Dir:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Secrets-Finder]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -595,7 +496,7 @@ jobs:
 
   Dirsearch-File:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Dirsearch-Dir]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -622,7 +523,7 @@ jobs:
 #CORS Scanner
   CORS-Scanner:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -645,7 +546,7 @@ jobs:
 #HeartBleed Scanner
   Heartbleed-Scanner:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -661,7 +562,7 @@ jobs:
 
   S3-Scanner:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -693,7 +594,7 @@ jobs:
 
   Aquatone:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -718,7 +619,7 @@ jobs:
 
   Gochopchop-Scan:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Aquatone]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -740,7 +641,7 @@ jobs:
 
   Subdomainizer:
     runs-on: ubuntu-latest              
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Gochopchop-Scan]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -762,7 +663,7 @@ jobs:
 
   Git-Dorker-Domain:
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Subdomainizer]
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
@@ -782,7 +683,7 @@ jobs:
         
   Eyewitness:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Git-Dorker-Domain]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -803,7 +704,7 @@ jobs:
 
   Whatweb:
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Eyewitness]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -822,11 +723,9 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Whatweb -F file=@whatweb-logs.json
-
-#Collect CNAME
   DNSC:
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, Whatweb]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -843,10 +742,9 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSC -F file=@dnsc.csv ;
 
-#Broken Link Checker
   broken-link-checker-light:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber, DNSC]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -868,7 +766,7 @@ jobs:
 
   broken-link-checker-full:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber, broken-link-checker-light]
+    needs: [HTTProber, broken-link-checker-light]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -913,7 +811,7 @@ jobs:
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [Subdomain-Enumeration,MassDNS-Resolver, DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG-HomePage]
+    needs: [DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG-HomePage]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
