@@ -273,36 +273,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         go env -w GOPATH=~/Downloads ;
-         go get -u github.com/tomnomnom/waybackurls;
-         go get -u github.com/1ndianl33t/urlprobe;
-         go get -u github.com/tomnomnom/gf;
-         go get -u github.com/lc/gau;
-         mkdir ~/.gf; cp -r ~/Downloads/src/github.com/tomnomnom/gf/examples ~/.gf ;
-         git clone https://github.com/1ndianl33t/Gf-Patterns ;
-         mv Gf-Patterns/*.json ~/.gf ;
-         cp ~/Downloads/bin/gf .; cp ~/Downloads/bin/waybackurls .; cp ~/Downloads/bin/urlprobe .; cp ~/Downloads/bin/gau .;
-      - name: waybackurls & gau
-        run: |
-         ./waybackurls "$TARGET" | tee waybackurls.txt  ;
-         ./gau "$TARGET" | tee gau.txt ;
-         cat gau.txt >> waybackurls.txt ;
-         sort -u waybackurls.txt -o waybackurls.txt
-      - name: Patterns
-        run: |
-         mkdir url-collector-artifacts
-         cp waybackurls.txt url-collector-artifacts/
-         cat waybackurls.txt | ./gf ssrf | sort -u > url-collector-artifacts/ssrf-params.txt ;
-         cat waybackurls.txt | ./gf sqli | sort -u > url-collector-artifacts/sqli-params.txt ;
-         cat waybackurls.txt | ./gf ssti | sort -u > url-collector-artifacts/ssti-params.txt ;
-         cat waybackurls.txt | ./gf xss | sort -u > url-collector-artifacts/xss-params.txt ;
-         cat waybackurls.txt | ./gf lfi | sort -u > url-collector-artifacts/lfi-params.txt ;
-         cat waybackurls.txt | ./gf rce | sort -u > url-collector-artifacts/rce-params.txt ;
-         cat waybackurls.txt | ./gf redirect | sort -u > url-collector-artifacts/redirect-params.txt ;
-         cat waybackurls.txt | ./gf img-traversal | sort -u > url-collector-artifacts/img-traversal.txt ;
-         cat waybackurls.txt | ./urlprobe -c 1000 -t 10 | grep 200 | awk '{print $5}' | tee -a urlprobe-sc-200.txt
-         cp urlprobe-sc-200.txt url-collector-artifacts/
-         zip -r url-collector-artifacts.zip url-collector-artifacts/ ; xz url-collector-artifacts.zip ;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/url-enumeration.sh "$TARGET"
       - name: Upload URL Collector Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -312,8 +286,8 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Pattern-Collector -F file=@url-collector-artifacts.zip.xz ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
   KXSS-Enum:
     runs-on: ubuntu-latest
@@ -325,18 +299,16 @@ jobs:
          name: url-collector-artifacts 
       - name: Install Dependencies
         run: |
-         go env -w GOPATH=~/Downloads ;
-         go get -u github.com/tomnomnom/hacks/kxss ; 
-         cp ~/Downloads/bin/kxss . ; 
-      - name: KXSS
-        run: |
-         cat waybackurls.txt | ./kxss | tee -a kxss.out
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/kxss.sh waybackurls.txt
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-KXSS -F file=@kxss.out ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
   XSS-Hunt:
     if: always()
@@ -372,14 +344,10 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
-         git clone https://github.com/devanshbatham/ParamSpider
-         pip3 install -r ParamSpider/requirements.txt
-         mkdir paramspider-out
-      - name: ParamSpider
-        run: |
-         cat subdomains-host.txt | xargs -I % python3 ParamSpider/paramspider.py -l high --exclude woff,css,js,png,svg,php,jpg -o paramspider-out/% -d %;  
-         cat paramspider-out/* > paramspider.txt ; sort -u paramspider.txt -o paramspider.txt;
-         zip -r paramspider-out.zip paramspider-out/
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/parameter-discover.sh subdomains-host.txt
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -389,8 +357,8 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Parameter-Discovery -F file=@paramspider-out.zip
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
 
   XSS-Hunter:
     if: always()
@@ -403,16 +371,16 @@ jobs:
          name: paramspider-artifacts        
       - name: Install Dependencies
         run: |
-         wget --quiet https://github.com/hahwul/dalfox/releases/download/v2.3.6/dalfox_2.3.6_linux_amd64.tar.gz
-         gunzip dalfox_2.3.6_linux_amd64.tar.gz ; tar -xvf dalfox_2.3.6_linux_amd64.tar         
-      - name: Dalfox
-        run: ./dalfox -b "$XSS_HUNTER" file paramspider.txt > xss-paramspider.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/xss-hunt-paramspider.sh paramspider.txt "$XSS_HUNTER"
       - name: Output & Slack Notification
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          if [[ -f xss-paramspider.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-Paramspider -F file=@xss-paramspider.txt; fi
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         if [[ -f xss-paramspider.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-Paramspider -F file=@xss-paramspider.txt; fi
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
 
   Favicon-Hash-Extraction:
     runs-on: ubuntu-latest
@@ -421,19 +389,16 @@ jobs:
       - uses: actions/checkout@v2      
       - name: Install Dependencies
         run: |
-         sudo apt-get install python3-setuptools
-         git clone https://github.com/devanshbatham/FavFreak
-         pip3 install -r FavFreak/requirements.txt
-      - name: FavFreak
-        run: |
-         echo https://$TARGET | python3 FavFreak/favfreak.py > favers.txt
-         cat favers.txt | grep 'h]' | cut -d ] -f2 | cut -d " " -f2 > favihash.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/favicon.sh "$TARGET"
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-FaviHash -F file=@favihash.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
 
   Javascript-Scan:
     runs-on: ubuntu-latest
@@ -442,31 +407,16 @@ jobs:
       - uses: actions/checkout@v2      
       - name: Install Dependencies
         run: |
-         sudo apt-get install python3-setuptools
-         go env -w GOPATH=~/Downloads ;
-         go get -u github.com/lc/gau; cp ~/Downloads/bin/gau .;
-         go get -u github.com/lc/subjs; cp ~/Downloads/bin/subjs .; 
-         go get github.com/hakluke/hakrawler; cp ~/Downloads/bin/hakrawler .; 
-         wget -q -i requirements/js-enum.txt; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
-         git clone https://github.com/GerbenJavado/LinkFinder.git
-         cd LinkFinder; sudo python3 setup.py install; sudo pip3 install -r requirements.txt; cd ..
-         touch js-endpoints.txt js-words.txt js-file-links-live.txt js-xss.txt 
-      - name: Javascript Scan
-        run: |
-         echo "$TARGET" | ./gau | grep -iE "\.js$" | sort -u > js-file-links.txt
-         echo "$TARGET" | ./subjs >> js-file-links.txt
-         echo "$TARGET" | ./hakrawler -js -depth 2 -scope subs -plain >> js-file-links.txt
-         cat js-file-links.txt | ./httpx -follow-redirects -silent -status-code | grep "[200]" | cut -d ' ' -f1 | sort -u > js-file-links-live.txt;
-         python3 LinkFinder/linkfinder.py -d -i https://"$TARGET" -o cli >> js-endpoints.txt;
-         cat js-file-links-live.txt | python3 getjswords.py | sort -u > js-words.txt;
-         cat js-file-links-live.txt | while read url ; do bash jsvar.sh $url | sort -u | tee js-xss.txt ; done;
-         zip js-scan.zip js-endpoints.txt js-words.txt js-file-links-live.txt js-xss.txt ; xz js-scan.zip          
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/js-scan.sh
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-JS-Scan -F file=@js-scan.zip.xz ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
 
   Secrets-Finder:
     if: always()
@@ -479,21 +429,16 @@ jobs:
          name: httprober-artifacts      
       - name: Install Dependencies
         run: |
-         sudo apt-get install python3-setuptools
-         git clone https://github.com/m4ll0k/SecretFinder.git
-         cd SecretFinder; pip3 install -r requirements.txt
-         touch secret-finder.txt gmapapi.txt
-      - name: Secrets Finder
-        run: |
-         cat subdomains-live.txt | xargs -I %% bash -c 'python3 SecretFinder/SecretFinder.py -i %% -e -o cli' > secret-finder.txt; 
-         cat secret-finder.txt | grep 'google_api' -B 1 | sort -u > gmapapi.txt;
-         zip secrets.zip secret-finder.txt gmapapi.txt; xz secrets.zip        
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/secret_finder.sh subdomains-live.txt        
       - name: Output & Slack Notification
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
 
   Dirsearch-Dir:
     if: always()
@@ -504,22 +449,18 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts       
-      - name: Install Dependencies
+      - name: Dirsearch
         run: |
-         git clone https://github.com/maurosoria/dirsearch.git
-         cd dirsearch; pip3 install -r requirements.txt; cd ..         
-         wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt
-      - name: Directory Fuzzing
-        run: |
-         python3 dirsearch/dirsearch.py -l subdomains-live.txt -b -t 100 -e php,asp,aspx,jsp,html,zip,jar,sql -r -w directory-list-2.3-medium.txt;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/dirsearch-dir.sh subdomains-live.txt
       - name: Output &  Slack Notification
         if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')    
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Dirsearch-Dirs -F file=@dirsearch-dir-reports.zip.xz
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-         mkdir dir-report ; cp -r dirsearch/reports dir-report ;
-         zip -r dirsearch-dir-reports.zip dir-report && xz dirsearch-dir-reports.zip        
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Directory-Bruteforcing -F file=@dirsearch-dir-reports.zip.xz
 
   Dirsearch-File:
     if: always()
@@ -532,22 +473,17 @@ jobs:
          name: httprober-artifacts     
       - name: Install Dependencies
         run: |
-          git clone https://github.com/maurosoria/dirsearch.git
-          cd dirsearch; pip3 install -r requirements.txt; cd ..
-          wget https://wordlists-cdn.assetnote.io/data/manual/bak.txt
-          cat bak.txt >>  wordlists/sensitive-wordlist.txt
-          sort -u wordlists/sensitive-wordlist.txt -o wordlists/sensitive-wordlist.txt
-      - name: Directory Fuzzing
-        run: |
-         python3 dirsearch/dirsearch.py -l subdomains-live.txt -b -t 100 -e php,asp,aspx,jsp,html,zip,jar,sql -r -w wordlists/sensitive-wordlist.txt;
+         wget $HOST/subdomains-live.txt 
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/dirsearch-file.sh subdomains-live.txt
       - name: Output &  Slack Notification
         if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')   
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Dirsearch-File -F file=@dirsearch-file-reports.zip.xz
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-         mkdir file-report ; cp -r dirsearch/reports file-report ;
-         zip -r dirsearch-file-reports.zip file-report && xz dirsearch-file-reports.zip     
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Sensitive-File-Fuzzing -F file=@dirsearch-file-reports.zip.xz
           
   CORS-Scanner:
     runs-on: ubuntu-latest
