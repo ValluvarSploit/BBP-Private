@@ -1,4 +1,4 @@
-name: MEG
+name: Dev-2
 on:
   workflow_dispatch:
 env:
@@ -17,9 +17,7 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $HOST/subdomains-live.txt
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+
          bash Domain_Monitoring/scripts/meg.sh subdomains-live.txt 
       - name: Output & Slack Notification
         if: always()
