@@ -2,7 +2,7 @@ name: Nuclei Scan
 on:
   workflow_dispatch:
 env:
-     TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
+     TARGET: ${{ secrets.DOMAIN }} 
      HOST: ${{ secrets.NGROK_URL }}
      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
