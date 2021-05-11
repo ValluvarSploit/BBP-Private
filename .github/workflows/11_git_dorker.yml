@@ -4,6 +4,7 @@ on:
 env:
        #TARGET_DOMAIN: ${{ secrets.TARGET_GITHUB_DOMAIN }}
        #TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
+       TARGET: ${{ secrets.DOMAIN }}
        TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
        GITHUB_TOKEN: ${{ secrets.TOKEN }}
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
