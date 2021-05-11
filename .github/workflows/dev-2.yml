@@ -2,32 +2,25 @@ name: Dev-2
 on:
   workflow_dispatch:
 env:
-       TARGET: ${{ secrets.TARGET_GITHUB_ORG }}
-       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
-       S_CHANNEL: ${{ secrets.SLACK_CN_SOLO }}
-#       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
-#       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
+      TARGET: ${{ secrets.DOMAIN }}
+      HOST: ${{ secrets.NGROK_URL }}
+      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
+      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+      S_URL: https://slack.com/api/files.upload
 jobs:
-  HTTPX:
-    runs-on: ubuntu-latest  
+  S3-Scanner:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         go env -w GOPATH=~/Downloads;
-         GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
-         cp ~/Downloads/bin/gitleaks .; 
-         curl -s 'https://api.github.com/orgs/'"$TARGET"'/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
-#         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-#         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-#         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-      - name: gitleaks
-        run: |
-         cat git_repo_url.txt
-         for url in $(cat git_repo_url.txt); do ./gitleaks --repo-url=$url -v --report=gitleak-report.json; done
-      - name: Send Output to Slack
+         wget $HOST/subdomains-host.txt
+         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
+         echo "$AWS_CREDS" > creds.txt
+      - name: Output & Slack Notification
         if: always()
         run: |
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitleaks -F file=@gitleak-report.json
-         
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scanner -F file=@creds.txt
