@@ -714,7 +714,7 @@ jobs:
 
   S3-Scanner:
     runs-on: ubuntu-latest
-    needs: [Subdomain-Enumeration, HTTProber]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -722,21 +722,17 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
-         sudo apt-get install python3-setuptools
-         mkdir ~/.aws
-         echo "$AWS_CREDS" > ~/.aws/credentials
-         git clone https://github.com/sa7mon/S3Scanner.git
-         pip3 install -r S3Scanner/requirements.txt
-         for word in $(cat wordlists/bucket-wordist.txt); do echo $word.$TARGET >> targets-2.txt ; done;
-         sort -u targets-2.txt -o targets-2.txt
-         for word in $(cat wordlists/bucket-wordist.txt); do echo $word-$TARGET >> targets-3.txt ; done;
-         sort -u targets-3.txt -o targets-3.txt
+         wget $HOST/subdomains-host.txt
+         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
+         pip3 install s3scanner
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word.$TARGET >> targets-2.txt ; done; sort -u targets-2.txt -o targets-2.txt
+         for word in $(cat wordlists/bucket-wordist.txt); do echo $word-$TARGET >> targets-3.txt ; done; sort -u targets-3.txt -o targets-3.txt
          touch buckets-{1..3}.txt
       - name: S3 Scanner
         run: |
-         python3 S3Scanner/s3scanner.py -l subdomains-host.txt -o buckets-1.txt
-         python3 S3Scanner/s3scanner.py -l targets-2.txt -o buckets-2.txt
-         python3 S3Scanner/s3scanner.py -l targets-3.txt -o buckets-3.txt
+         s3scanner scan --buckets-file subdomains-host.txt | tee buckets-1.txt
+         s3scanner scan --buckets-file targets-2.txt | tee buckets-2.txt
+         s3scanner scan --buckets-file targets-3.txt | tee buckets-3.txt
          cat buckets-{1..3}.txt | sort -u > buckets.txt
       - name: Output & Slack Notification
         if: always()
