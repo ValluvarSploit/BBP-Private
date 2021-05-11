@@ -284,8 +284,8 @@ jobs:
          cp ~/Downloads/bin/gf .; cp ~/Downloads/bin/waybackurls .; cp ~/Downloads/bin/urlprobe .; cp ~/Downloads/bin/gau .;
       - name: waybackurls & gau
         run: |
-         ./waybackurls "$TARGET" > waybackurls.txt  ;
-         ./gau "$TARGET" > gau.txt ;
+         ./waybackurls "$TARGET" | tee waybackurls.txt  ;
+         ./gau "$TARGET" | tee gau.txt ;
          cat gau.txt >> waybackurls.txt ;
          sort -u waybackurls.txt -o waybackurls.txt
       - name: Patterns
