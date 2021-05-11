@@ -559,21 +559,16 @@ jobs:
          name: httprober-artifacts 
       - name: Install Dependencies
         run: |
-         go env -w GOPATH=~/Downloads;
-         go get github.com/michenriksen/aquatone
-         cp ~/Downloads/bin/aquatone .;
-         sudo snap install chromium 
-      - name: Aquatone
-        run: |
-         mkdir aquatone-output
-         cat subdomains-live.txt | ./aquatone -chrome-path /snap/bin/chromium -threads 40 -silent --ports xlarge -out aquatone-output/ 
-         zip -r aquatone-output.zip aquatone-output/ && xz aquatone-output.zip   
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/aquatone.sh subdomains-live.txt
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Aquatone-Webscreenshot -F file=@aquatone-output.zip.xz
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Aquatone -F file=@aquatone-output.zip.xz ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
   Gochopchop-Scan:
     if: always()
@@ -586,18 +581,16 @@ jobs:
          name: httprober-artifacts 
       - name: Install Dependencies
         run: |
-         wget -q https://github.com/michelin/ChopChop/releases/download/v1.0.0/ChopChop_linux_amd64.tar.gz; tar -xzvf ChopChop_linux_amd64.tar.gz; mv ChopChop_linux_amd64 chopchop
-         wget https://raw.githubusercontent.com/michelin/ChopChop/master/chopchop.yml
-      - name: GoChopChop
-        run: |
-         ./chopchop scan --url-file subdomains-live.txt --export json --export-filename gochopchop-out
-         if [[ -f gochopchop-out.json ]]; then zip gochopchop-out.json.zip gochopchop-out.json; fi;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/gochopchop.sh subdomains-live.txt
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           if [[ -f gochopchop-out.json.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoChopChop -F file=@gochopchop-out.json; fi;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
 
   Subdomainizer:
     if: always()
@@ -651,88 +644,41 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: httprober-artifacts 
-      - name: Install Dependencies
-        run: git clone https://github.com/FortyNorthSecurity/EyeWitness.git && cd EyeWitness/Python/setup && sudo ./setup.sh     
+         name: httprober-artifacts
       - name: Eyewitness
         run: |
-         python3 EyeWitness/Python/EyeWitness.py --web -f subdomains-live.txt --timeout 120 --no-prompt
-         mv `date +"%Y"`* eyewitness_output
-         zip -r eyewitness_output.zip eyewitness_output && xz eyewitness_output.zip
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/eyewitness.sh subdomains-live.txt
       - name: Job Stauts Slack Notification
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Web-Screenshots -F file=@eyewitness_output.zip.xz ;
-
-  Whatweb:
-    if: always()
-    runs-on: ubuntu-latest  
-    needs: [HTTProber, Eyewitness]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         git clone https://github.com/urbanadventurer/WhatWeb.git
-         sudo gem install bundler
-         cd WhatWeb/ && bundle install    
-      - name: Whatweb
-        run: |
-         ./WhatWeb/whatweb --input-file=subdomains-host.txt --verbose --log-json=whatweb-logs.json
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Whatweb -F file=@whatweb-logs.json
-  DNSC:
-    if: always()
-    runs-on: ubuntu-latest  
-    needs: [HTTProber, Whatweb]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         chmod +x dnsc.sh
-      - name: DNSC
-        run: ./dnsc.sh -l subdomains-host.txt -o dnsc.csv
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSC -F file=@dnsc.csv ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
   broken-link-checker-light:
     if: always()
     runs-on: ubuntu-latest
-    needs: [HTTProber, DNSC]
+    needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         sudo npm install broken-link-checker -g    
+         name: httprober-artifacts   
       - name: Broken Link Checker
         run: |
-         for url in $(cat subdomains-live.txt ) ; do blc -of --filter-level 0 $url | tee -a blc-light.txt; done ;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/blc.sh subdomains-live.txt 0 blc-light
       - name: Output & Slack Notification
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         cat blc-light.txt | grep -v "├───OK───" > blc-light-broken.txt ;
-         zip blc-light.zip blc-light.txt blc-light-broken.txt ; xz blc-light.zip
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-BLC-Light -F file=@blc-light.zip.xz ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
   broken-link-checker-full:
     if: always()
@@ -742,21 +688,19 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         sudo npm install broken-link-checker -g    
+         name: httprober-artifacts   
       - name: Broken Link Checker
         run: |
-         for url in $(cat subdomains-live.txt) ; do blc -rof --filter-level 3 $url | tee -a blc-full.txt; done ;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/blc.sh subdomains-live.txt 3 blc-full
       - name: Output & Slack Notification
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         cat blc-full.txt | grep -v "├───OK───" > blc-full-broken.txt ;
-         zip blc-full.zip blc-full.txt blc-full-broken.txt ; xz blc-full.zip
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-BLC-Full -F file=@blc-full.zip.xz ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
   Gitleaks:
     if: always()
@@ -784,10 +728,32 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip
 
+  Other-Script:
+    if: always()
+    runs-on: ubuntu-latest  
+    needs: [HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Install Dependencies
+        run: |
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/other_scripts.sh subdomains-live.txt subdomains-host.txt
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
+
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, Whatweb, DNSC, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG-HomePage]
+    needs: [DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG-HomePage]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
