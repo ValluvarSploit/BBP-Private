@@ -1,4 +1,4 @@
-name: Subdomain Takeover
+name: Subdomain Takeover Workflow
 on:
   workflow_dispatch:
 env:
@@ -8,7 +8,7 @@ env:
       S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload
 jobs:
-  Subdomain-Takeover:
+  takeovers-job:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -48,5 +48,5 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Takeover -F file=@subdomain-takeover.zip.xz ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.job}} in ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
