@@ -14,13 +14,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains-live.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git        
          git clone https://github.com/projectdiscovery/nuclei-templates.git
          wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
          tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Nuclei scan
         run: |        
-         ./nuclei -l subdomains-live.txt -c 100 -stats -t nuclei-templates/ -o nuclie-scan.out ;
+         ./nuclei -l Domain_Monitoring/resolved-subdomains.txt -c 100 -stats -t nuclei-templates/ -o nuclie-scan.out ;
       - name: Output & Slack Notification
         if: always()
         run: |
