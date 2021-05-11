@@ -50,16 +50,10 @@ jobs:
          name: dnsx-artifacts
       - name: Install Dependencies
         run: |
-         go env -w GOPATH=~/Downloads;
-         go get -u github.com/tomnomnom/httprobe;
-         cp ~/Downloads/bin/httprobe .; 
-         wget -q -i requirements/httprober.txt; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
-      - name: HTTProber
-        run: |
-         cat subdomains-live-1.txt | ./httprobe | tee subdomains-live.txt; 
-         ./httpx -l subdomains-live.txt -follow-redirects -status-code -vhost -content-length -cname -cdn -csp-probe -ip -web-server -location -websocket -title -tech-detect -no-fallback -threads 300 -silent -timeout 15 -o httpx.out
-         cat subdomains-live.txt | cut -d "/" -f 3 > subdomains-host.txt; sort -u subdomains-host.txt -o subdomains-host.txt
-         zip assets-live.zip subdomains-live.txt ips-live.txt subdomains-host.txt httpx.out
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/httprobe.sh subdomains-live-1.txt subdomains-live.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
