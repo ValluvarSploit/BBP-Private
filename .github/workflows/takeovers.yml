@@ -13,6 +13,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
+         wget $HOST/subdomains-live.txt 
+         wget $HOST/subdomains-host.txt
          touch subjack-logs.txt ;
          git clone https://github.com/projectdiscovery/nuclei-templates.git;
          go env -w GOPATH=~/Downloads;
