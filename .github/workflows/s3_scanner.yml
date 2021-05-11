@@ -24,9 +24,9 @@ jobs:
 #         sudo apt-get install python3-setuptools
       - name: S3 Scanner
         run: |
-         s3scanner scan --buckets-file subdomains-host.txt | tee buckets-1.txt
-         s3scanner scan --buckets-file targets-2.txt | tee buckets-2.txt
-         s3scanner scan --buckets-file targets-3.txt | tee buckets-3.txt
+         s3scanner scan --buckets-file subdomains-host.txt | grep -v "bucket_not_exist" | tee buckets-1.txt
+         s3scanner scan --buckets-file targets-2.txt | grep -v "bucket_not_exist" | tee buckets-2.txt
+         s3scanner scan --buckets-file targets-3.txt | grep -v "bucket_not_exist" | tee buckets-3.txt
          cat buckets-{1..3}.txt | sort -u > buckets.txt
       - name: Output & Slack Notification
         if: always()
