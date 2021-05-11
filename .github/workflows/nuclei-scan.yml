@@ -4,7 +4,7 @@ on:
 env:
      TARGET_DOMAIN: ${{ secrets.DOMAIN }} 
      HOST: ${{ secrets.NGROK_URL }}
-     SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
 jobs:
   nuclei-scan:
