@@ -74,9 +74,10 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Live-assets -F file=@httprober.zip;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Live-assets -F file=@assets-live.zip;
 
   Subdomain-Takeover:
+    if: always()
     runs-on: ubuntu-latest
     needs: [HTTProber]
     steps:
@@ -122,6 +123,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Takeover -F file=@subdomain-takeover.zip.xz ;
 
   MEG-HomePage:
+    if: always()
     runs-on: ubuntu-latest
     needs: [Subdomain-Takeover, HTTProber]
     steps:
@@ -146,6 +148,7 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MEG-Homepage -F file=@meg-home.zip
 
   Nuclei-Template-Scan:
+    if: always()
     runs-on: ubuntu-latest
     needs: [MEG-HomePage, HTTProber]
     steps:
