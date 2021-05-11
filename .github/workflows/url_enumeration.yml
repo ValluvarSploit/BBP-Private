@@ -1,4 +1,4 @@
-name: URL Enumeration
+name: URL Enumeration Workflow
 on:
   workflow_dispatch:
 env:
@@ -8,7 +8,7 @@ env:
       S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload
 jobs:
-  URL-Enumeration:
+  url-enumeration-jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
