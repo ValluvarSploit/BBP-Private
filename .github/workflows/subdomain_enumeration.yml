@@ -22,7 +22,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/subs.sh subdomains-live.txt 
+         bash Domain_Monitoring/scripts/subs.sh "$TARGET"
          cat subs.* > subdomains-tool.txt
          cat subdomains-tool.txt >> subdomains-manual.txt
          sort -u subdomains-manual.txt -o subdomains-manual.txt
