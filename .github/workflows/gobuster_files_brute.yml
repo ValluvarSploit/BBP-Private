@@ -23,7 +23,7 @@ jobs:
 #         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt -O wordlist.txt
       - name: Gobuster
         run: |
-         ./gobuster dir -u "$TARGET" -w wordlist.txt -o gobuster.txt -a Mozilla/5.0 -e
+         ./gobuster dir -u "$TARGET" -w wordlist.txt -o gobuster.txt -a Mozilla/5.0 -e -k
       - name: Slack Output
         if: always()
         run: |
