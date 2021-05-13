@@ -20,22 +20,18 @@ jobs:
       - name: Install Dependencies
         run: |
          wget $HOST/subdomains.txt
-         wget -q -i requirements/dnsx.txt; tar -xzvf dnsx_1.0.3_linux_amd64.tar.gz
-      - name: DNSx
-        run: |
-         ./dnsx -l subdomains.txt -resp -a -r resolvers.txt -o dnsx.txt
-         cat dnsx.txt | awk '{print $1}' | sort -u > subdomains-live-1.txt
-         cat dnsx.txt | awk '{print $2}' | cut -d "[" -f 2 | cut -d "]" -f 1 | sort -u > ips-live.txt
-         sort -u subdomains-live-1.txt -o subdomains-live-1.txt; sort -u ips-live.txt -o ips-live.txt;
-         xz -k ips-live.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/dnsx.sh subdomains.txt
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: dnsx-artifacts
          path: |
-          subdomains-live-1.txt
+          dnsx.host
           ips-live.txt
-      - name: Output & Slack Notification
+      - name: Slack Notification
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
@@ -53,7 +49,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/httprobe.sh subdomains-live-1.txt subdomains-live.txt
+         bash Domain_Monitoring/scripts/httprobe.sh dnsx.host
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -67,7 +63,7 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Live-assets -F file=@assets-live.zip;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Assets-Live -F file=@assets-live.zip;
 
   Subdomain-Takeover:
     if: always()
@@ -78,44 +74,20 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
+      - name: Subdomain Takeover
         run: |
-         touch subjack-logs.txt ;
-         git clone https://github.com/projectdiscovery/nuclei-templates.git;
-         go env -w GOPATH=~/Downloads;
-         go get github.com/haccer/subjack
-         go get github.com/lukasikic/subzy
-         go get github.com/Ice3man543/SubOver
-         cp ~/Downloads/bin/subjack .; cp ~/Downloads/bin/subzy .; cp ~/Downloads/bin/SubOver .; cp binaries/providers.json . 
-         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz; tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
-      - name: Subzy
-        run: |
-         ./subzy --targets=subdomains-live.txt -concurrency 50 | tee subzy.logs ;
-         cat subzy.logs | grep -v "NOT VULNERABLE" > subzy.out;
-      - name: Subjack
-        run: |
-         ./subjack -a -ssl -w subdomains-live.txt -t 50 -timeout 30 -o subjack.logs -v -c binaries/subjack_fingerprints.json ;
-         cat subjack.logs | grep -v "Not Vulnerable" | tee subjack.out;
-      - name: Nuclei
-        run: ./nuclei -l subdomains-live.txt -c 100 -stats -t nuclei-templates/takeovers -o nuclie.out ;
-      - name: SubOver
-        run: ./SubOver -l subdomains-host.txt -o subover.out;
-      - name: Combine Output Files
-        run: |
-         cat subzy.logs subjack.logs >> sto.logs
-         if [[ -f subzy.out ]]; then echo "*****Subzy*****" > subdomain-takeovers.out; cat subzy.out >> subdomain-takeovers.out; fi ;
-         if [[ -f subjack.out ]]; then echo "*****Subjack*****" >> subdomain-takeovers.out; cat subjack.out >> subdomain-takeovers.out; fi ;
-         if [[ -f nuclie.out ]]; then echo "*****Nuceli*****" >> subdomain-takeovers.out; cat nuclie.out >> subdomain-takeovers.out; fi ;
-         if [[ -f subover.out ]]; then echo "*****SubOver*****" >> subdomain-takeovers.out; cat subover.out >> subdomain-takeovers.out; fi ;
-         zip subdomain-takeover.zip subdomain-takeovers.out sto.logs ; xz subdomain-takeover.zip ;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/subdomain_takeover.sh subdomains-live.txt subdomains-host.txt 
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Takeover -F file=@subdomain-takeover.zip.xz ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
-  MEG-HomePage:
+  MEG:
     if: always()
     runs-on: ubuntu-latest
     needs: [Subdomain-Takeover, HTTProber]
@@ -124,45 +96,40 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         go env -w GOPATH=~/Downloads ;
-         go get -u github.com/tomnomnom/meg
-         cp ~/Downloads/bin/meg . ; 
       - name: MEG
         run: |
-         ./meg -d 10 -c 200 / subdomains-live.txt
-         zip -r meg-home.zip out/
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/meg.sh subdomains-live.txt    
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MEG-Homepage -F file=@meg-home.zip
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MEG -F file=@meg-home.zip
 
   Nuclei-Template-Scan:
     if: always()
     runs-on: ubuntu-latest
-    needs: [MEG-HomePage, HTTProber]
+    needs: [MEG, HTTProber]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         git clone https://github.com/projectdiscovery/nuclei-templates.git ;
-         wget --quiet https://github.com/projectdiscovery/nuclei/releases/download/v2.3.2/nuclei_2.3.2_linux_amd64.tar.gz
-         tar -xzvf nuclei_2.3.2_linux_amd64.tar.gz
       - name: Nuclei scan
         run: |
-         ./nuclei -l subdomains-live.txt -c 100 -stats -t nuclei-templates/ -o nuclie-scan.out ;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/nuclei-templat-scan.sh subdomains-live.txt   
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          if [[ -f nuclie-scan.out ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nuclei-Template-Scan -F file=@nuclie-scan.out; fi ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nuclei-Template-Scan -F file=@nuclie-scan.out;
 
   Mass-Nmap-Scan:
     if: always()
