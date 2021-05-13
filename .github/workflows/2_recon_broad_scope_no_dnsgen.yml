@@ -200,23 +200,12 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: nmap-output
-      - name: Install Dependencies
+      - name: Nmap-Vulnerability-Scan
         run: |
-         sudo apt-get install xsltproc
-         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
-         ulimit -s ; ulimit -s 65536 ;
-         cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 5 > ips.txt ;
-         cat nmap-masscan.out | grep "Getting ready to scan" | cut -d " " -f 8 > ports.txt ;
-         sudo apt-get update && sudo apt-get install nmap -y ;
-         cd /usr/share/nmap/scripts/ ;
-         sudo git clone https://github.com/vulnersCom/nmap-vulners.git ;
-         sudo git clone https://github.com/scipag/vulscan ;
-         cd vulscan/utilities/updater/ ; sudo chmod +x updateFiles.sh ; sudo ./updateFiles.sh; cd ..;
-      - name: Nmap scan
-        run: |
-         exec 3<ips.txt ; exec 4<ports.txt ; while IFS= read -r ip <&3 ; IFS= read -r port <&4 ; do nmap -Pn -T3 -sV -p $port --script nmap-vulners,vulscan --script-args vulscandb=scipvuldb.csv -oA nmap-vuln-scan $ip  ; done ;  
-         xsltproc -o nmap-vuln-scan.html nmap-bootstrap.xsl nmap-vuln-scan.xml
-         zip nmap-vuln-scan.zip nmap-vuln-scan.html nmap-vuln-scan.nmap
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/nmap-vuln-scan.sh nmap-masscan.out
       - name: Output & Slack Notification
         if: always()
         run: |
