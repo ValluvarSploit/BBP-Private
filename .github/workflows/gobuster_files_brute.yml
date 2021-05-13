@@ -17,11 +17,12 @@ jobs:
         run: |
          wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
          7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt
-#         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt
+         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-directories.txt -O wordlist.txt
+#         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt -O wordlist.txt
+#         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt -O wordlist.txt
       - name: Gobuster
         run: |
-         ./gobuster dir -u "$TARGET" -w raft-large-files.txt -o gobuster.txt -a Mozilla/5.0 -e
+         ./gobuster dir -u "$TARGET" -w wordlist.txt -o gobuster.txt -a Mozilla/5.0 -e
       - name: Slack Output
         if: always()
         run: |
