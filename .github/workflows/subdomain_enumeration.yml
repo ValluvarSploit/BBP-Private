@@ -23,16 +23,12 @@ jobs:
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
          bash Domain_Monitoring/scripts/subs.sh "$TARGET"
-         cat subs.* > subdomains-tool.txt
-         cat subdomains-tool.txt >> subdomains-manual.txt
-         sort -u subdomains-manual.txt -o subdomains-manual.txt
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: subdomains-artifacts
-         path: |
-          subdomains-manual.txt
+         path: subdomains-manual.txt
 
   HTTPROBE:
     needs: Subdomains
@@ -42,14 +38,12 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: subdomains-artifacts    
-      - name: Install Dependencies
-        run: |         
-         go env -w GOPATH=~/Downloads;
-         go get -u github.com/tomnomnom/httprobe;
-         cp ~/Downloads/bin/httprobe .; 
-      - name: HTTPX
+      - name: HTTPROBE
         run: |
-         cat subdomains-manual.txt | ./httprobe | tee httprobe.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git        
+         bash Domain_Monitoring/scripts/httprobe.sh subdomains-manual.txt
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -65,14 +59,12 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httpobe-artifacts
-      - name: Install Dependencies
-        run: pip3 install dnsgen && cp ~/.local/bin/dnsgen . ;
       - name: DNSgen
         run: |
-         cat httprobe.txt | cut -d "/" -f 3 > sub-words.txt
-         sort -u sub-words.txt -o sub-words.txt
-         ./dnsgen sub-words.txt > dnsgen-wordlist.txt ;
-         xz dnsgen-wordlist.txt ;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git         
+         bash Domain_Monitoring/scripts/dnsgen.sh
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -90,27 +82,15 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: dnsgen-artifacts
-      - name: Install Dependencies
-        run: |
-         wget -q -i requirements/massdns.txt;
-         cd wordlists ; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;          
-         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_2021_03_28.txt > ../subdomain-wordlists.txt; cd ..;
-         xz -d dnsgen-wordlist.txt.xz
       - name: MassDNS
         run: |
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt ;
-         cat dnsgen-wordlist.txt >> wordlist-hugh.txt
-         cat wordlist-hugh.txt | sed 's/\*\.//g' > wordlist-hugh2.txt
-         sort -u wordlist-hugh2.txt -o wordlist-hugh2.txt
-         ./binaries/massdns -r resolvers.txt -t A -o S -w massdns.out wordlist-hugh2.txt ;
-         cat massdns.out | awk '{print $1}' | sed 's/.$//' | tr A-Z a-z | sed 's/\*\.//g' | sort -u > massdns.host;
-         zip massdns-out.zip massdns.out; xz massdns-out.zip;
-         cat sub-words.txt massdns.host > subdomains.txt ; sort -u subdomains.txt -o subdomains.txt
-         xz subdomains.txt
-#         cat massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > massdns.ip;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git         
+         bash Domain_Monitoring/scripts/massdns.sh "$TARGET"
       - name: Output & Slack Notification
         if: always()
         run: |
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS -F file=@massdns-out.zip.xz ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Host -F file=@subdomains.txt.xz
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Host -F file=@subdomains.txt.xz
   
