@@ -15,21 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
+      - name: S3 Scanner
         run: |
+         wget $HOST/subdomains-host.txt         
+         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         cat Domain_Monitoring/resolved-subdomains.txt | cut -d "/" -f 3 > subdomains-host.txt
-         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
-         pip3 install s3scanner
-#wget $HOST/subdomains-host.txt         
-      - name: S3 Scanner
-        run: |
-         s3scanner scan --buckets-file subdomains-host.txt | grep -v "bucket_not_exist" | tee buckets.txt
+         bash Domain_Monitoring/scripts/s3_scanner.sh subdomains-host.txt
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scanner -F file=@buckets.txt
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scanner -F file=@s3-scan.txt
