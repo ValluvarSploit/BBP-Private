@@ -457,47 +457,6 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Dirsearch-File -F file=@dirsearch-file-reports.zip.xz
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
           
-  CORS-Scanner:
-    runs-on: ubuntu-latest
-    needs: [HTTProber]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts      
-      - name: Install Dependencies
-        run: |
-         pip3 install wheel
-         sudo apt-get install python3-setuptools
-         git clone https://github.com/chenjj/CORScanner.git
-         sudo pip3 install -r CORScanner/requirements.txt
-      - name: CORS Scanner
-        run: python3 CORScanner/cors_scan.py -v -i subdomains-live.txt -t 50 > cors.txt;
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-CORS-Scanner -F file=@cors.txt
-
-#HeartBleed Scanner
-  Heartbleed-Scanner:
-    runs-on: ubuntu-latest
-    needs: [HTTProber]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts       
-      - name: HeartBleed Scan
-        run: for line in $(cat subdomains-live.txt) ; do echo "QUIT"|openssl s_client -connect $line:443 2>&1|grep 'server extension "heartbeat" (id=15)' || echo $line- safe >> heartbleed.txt ; done
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Heartbleed -F file=@heartbleed.txt
-
   S3-Scanner:
     runs-on: ubuntu-latest
     needs: [HTTProber]
@@ -506,26 +465,19 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
-        run: |
-         wget $HOST/subdomains-host.txt
-         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
-         pip3 install s3scanner
-         for word in $(cat wordlists/bucket-wordist.txt); do echo $word.$TARGET >> targets-2.txt ; done; sort -u targets-2.txt -o targets-2.txt
-         for word in $(cat wordlists/bucket-wordist.txt); do echo $word-$TARGET >> targets-3.txt ; done; sort -u targets-3.txt -o targets-3.txt
-         touch buckets-{1..3}.txt
       - name: S3 Scanner
         run: |
-         s3scanner scan --buckets-file subdomains-host.txt | grep -v "bucket_not_exist" | tee buckets-1.txt
-         s3scanner scan --buckets-file targets-2.txt | grep -v "bucket_not_exist" | tee buckets-2.txt
-         s3scanner scan --buckets-file targets-3.txt | grep -v "bucket_not_exist" | tee buckets-3.txt
-         cat buckets-{1..3}.txt | sort -u > buckets.txt
+         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/s3_scanner.sh subdomains-host.txt
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scanner -F file=@buckets.txt
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-S3-Scan -F file=@s3-scan.txt
 
   Aquatone:
     runs-on: ubuntu-latest
@@ -598,15 +550,12 @@ jobs:
     needs: [HTTProber, Subdomainizer]
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         sudo apt-get install python3-setuptools
-         git clone https://github.com/obheda12/GitDorker.git
-         pip3 install -r GitDorker/requirements.txt 
       - name: Git-Dorker-ORG
         run: |
-         python3 GitDorker/GitDorker.py --dorks GitDorker/Dorks/alldorksv3 -q "$TARGET"  --token "$GIT_TOKEN" -o git-dorker-domain
-         xz git-dorker-domain_gh_dorks.csv
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET" "$GIT_TOKEN"      
       - name: Output & Slack Notification
         if: always()
         run: |
@@ -688,17 +637,10 @@ jobs:
       - name: Install Dependencies
         run: |
          echo "$GIT_REPO" > git_repo_url.txt
-         cat git_repo_url.txt | head
-         go env -w GOPATH=~/Downloads;
-         GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
-         cp ~/Downloads/bin/gitleaks .; 
-         cat git_repo_url.txt | cut -d : -f 2 | sed "s/^..//" > git-repo.txt
-         mkdir gitleaks-reports
-#         curl -s 'https://api.github.com/orgs/'"$GIT_ORG"'/repos?per_page=100&page=1' | jq '.[]|.clone_url' | cut -d '"' -f2 > git_repo_url.txt
-      - name: gitleaks
-        run: |
-         for url in $(cat git-repo.txt); do tc_tmp=$(echo $url | sed 's/\///g' | sed 's/\.//g'); touch $tc_tmp.json; ./gitleaks --repo-url=https://$url -v --report=$tc_tmp.json.json; mv $tc_tmp.json gitleaks-reports/; done
-         zip -r gitleaks-reports.zip gitleaks-reports/
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/gitleaks.sh git_repo_url.txt
       - name: Send Output to Slack
         if: always()
         run: |
@@ -706,7 +648,7 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip
 
-  Other-Script:
+  DNSC:
     if: always()
     runs-on: ubuntu-latest  
     needs: [HTTProber]
@@ -720,18 +662,85 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/other_scripts.sh subdomains-live.txt subdomains-host.txt
+         bash Domain_Monitoring/scripts/dnsc.sh subdomains-host.txt
       - name: Send Output to Slack
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-DNSC -F file=@dnsc.csv
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
+
+
+  HeartBleed-Scan:
+    if: always()
+    runs-on: ubuntu-latest  
+    needs: [HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Heartbleed Scan
+        run: |
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/heartbleed.sh subdomains-host.txt
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-HeartBleed -F file=@heartbleed.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
+
+  Whatweb:
+    if: always()
+    runs-on: ubuntu-latest  
+    needs: [HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: Whatweb Scan
+        run: |
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/whatweb.sh subdomains-host.txt
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Whatweb-Scan -F file=@whatweb-logs.json
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
+
+  CORS-Scanner:
+    if: always()
+    runs-on: ubuntu-latest  
+    needs: [HTTProber]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: httprober-artifacts
+      - name: CORS Scan
+        run: |
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/cors-scan.sh subdomains-live.txt
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-CORS-Scan -F file=@cors_scan.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
 
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, Heartbleed-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG-HomePage]
+    needs: [DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG-HomePage]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
