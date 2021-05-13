@@ -22,8 +22,6 @@ jobs:
       - name: Gobuster
         run: |
          ./gobuster dir -u "$TARGET" -w raft-large-files.txt -o gobuster.txt -a Mozilla/5.0 -e
-# wordlists/sensitive-wordlist.txt
-# raft-small-directories.txt
       - name: Slack Output
         if: always()
         run: |
