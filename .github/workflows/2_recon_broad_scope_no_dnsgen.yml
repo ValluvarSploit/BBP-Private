@@ -175,21 +175,10 @@ jobs:
          name: httprober-artifacts
       - name: Install Dependencies
         run: |
-         sudo apt-get install xsltproc
-         wget -q https://raw.githubusercontent.com/honze-net/nmap-bootstrap-xsl/stable/nmap-bootstrap.xsl
-         sudo apt-get update && sudo apt-get install nmap -y ;
-         pip install python-libnmap ;
-         sudo apt-get install git gcc make libpcap-dev ;
-         git clone https://github.com/robertdavidgraham/masscan ;
-         cd masscan && make -j && cp bin/masscan ../masscanb ;         
-      - name: Masscan
-        run: |
-         sudo ./masscanb -iL ips-live.txt --rate 10000 -p0-65535 -oX masscan.xml ;
-      - name: Nmap Scan
-        run: |
-         python masscan_to_nmap.py masscan.xml | tee -a nmap-masscan.out ;
-         xsltproc -o masscan.html nmap-bootstrap.xsl masscan.xml
-         xz masscan.html
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/masscan-nmap.sh ips-live.txt      
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -200,7 +189,7 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Masscan -F file=@masscan.html
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Mass-Nmap-Scan -F file=@mass-nmap-scan.zip
 
   Nmap-Vulnerability-Scan:
     if: always()
