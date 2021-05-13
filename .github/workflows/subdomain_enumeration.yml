@@ -8,15 +8,42 @@ env:
       S_CHANNEL: ${{ secrets.SLACK_CN_PRIVATE }}
       S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
       S_URL: https://slack.com/api/files.upload
+      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }} 
 
 jobs:
-  HTTPROBE:
+  Subdomains:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
+      - name: Subdomains
         run: |
          wget $HOST/subdomains-manual.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/subs.sh "$TARGET"
+         cat subs.* > subdomains-tool.txt
+         cat subdomains-tool.txt >> subdomains-manual.txt
+         sort -u subdomains-manual.txt -o subdomains-manual.txt
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: subdomains-artifacts
+         path: |
+          subdomains-manual.txt
+
+  HTTPROBE:
+    needs: Subdomains
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomains-artifacts    
+      - name: Install Dependencies
+        run: |         
          go env -w GOPATH=~/Downloads;
          go get -u github.com/tomnomnom/httprobe;
          cp ~/Downloads/bin/httprobe .; 

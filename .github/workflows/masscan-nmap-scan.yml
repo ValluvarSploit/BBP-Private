@@ -1,4 +1,4 @@
-name: Aquatone
+name: Masscan-Nmap-Scan
 on:
   workflow_dispatch:
 env:
@@ -8,22 +8,23 @@ env:
       S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload
       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
-      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }} 
 jobs:
-  aquatone:
-    runs-on: ubuntu-latest
+  Mass-Nmap-Scan:
+    if: always()
+    runs-on: ubuntu-latest    
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains-live.txt
+         wget $HOST/ips-live.txt
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/aquatone.sh subdomains-live.txt
+         bash Domain_Monitoring/scripts/masscan-nmap.sh ips-live.txt           
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Aquatone -F file=@aquatone-output.zip.xz ;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Mass-Nmap-Scan -F file=@mass-nmap-scan.zip
