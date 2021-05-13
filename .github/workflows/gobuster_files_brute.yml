@@ -17,7 +17,8 @@ jobs:
         run: |
          wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
          7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         cp wordlists/sensitive-wordlist.txt wordlist.txt
+         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt -O wordlist.txt
+#         cp wordlists/sensitive-wordlist.txt wordlist.txt
 #         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-directories.txt -O wordlist.txt
 #         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-large-files.txt -O wordlist.txt
 #         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt -O wordlist.txt
