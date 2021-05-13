@@ -44,12 +44,17 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: dnsx-artifacts
-      - name: Install Dependencies
+      - name: HTTProber
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
          bash Domain_Monitoring/scripts/httprobe.sh dnsx.host
+         cp httprober.txt subdomains-live.txt
+         bash Domain_Monitoring/scripts/httpx.sh httprober.txt
+         cat httprober.txt | cut -d "/" -f 3 > subdomains-host.txt;
+         sort -u subdomains-host.txt -o subdomains-host.txt
+         zip assets-live.zip subdomains-live.txt ips-live.txt subdomains-host.txt httpx.out         
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -96,7 +101,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
+      - name: DNSC
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -184,7 +189,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts 
-      - name: Install Dependencies
+      - name: GoChopChop Scan
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -194,7 +199,7 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          if [[ -f gochopchop-out.json.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoChopChop -F file=@gochopchop-out.json; fi;
+          if [[ -f gochopchop-out.json ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoChopChop -F file=@gochopchop-out.json; fi;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
 
   S3-Scanner:
@@ -234,7 +239,7 @@ jobs:
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
          bash Domain_Monitoring/scripts/whatweb.sh subdomains-host.txt
-      - name: Send Output to Slack
+      - name: Output to Slack Notification
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
@@ -268,7 +273,7 @@ jobs:
     needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2      
-      - name: Install Dependencies
+      - name: Favicon
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -309,7 +314,7 @@ jobs:
     needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2
-      - name: Git-Dorker-ORG
+      - name: Git-Dorker-Domain
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -328,7 +333,7 @@ jobs:
     needs: [Git-Dorker-Domain]
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
+      - name: Gitleaks
         run: |
          echo "$GIT_REPO" > git_repo_url.txt
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
@@ -346,7 +351,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
+      - name: URL Enumeration
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -369,7 +374,7 @@ jobs:
     needs: [HTTProber]
     steps:
       - uses: actions/checkout@v2      
-      - name: Install Dependencies
+      - name: Javascript Scan
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -391,7 +396,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts      
-      - name: Install Dependencies
+      - name: Secret Finder
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -412,7 +417,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: url-collector-artifacts 
-      - name: Install Dependencies
+      - name: KXSS Enumeration
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -445,7 +450,7 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          if [[ -f xss-url-collector.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-URL -F file=@xss-urls.txt; fi
+          if [[ -f xss-urls.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-URL -F file=@xss-urls.txt; fi
 
   Parameter-Discovery:
     if: always()
@@ -456,7 +461,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
+      - name: Parameter Discovery
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -483,7 +488,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: paramspider-artifacts        
-      - name: Install Dependencies
+      - name: XSS Hunter
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -505,7 +510,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
+      - name: Masscan-Nmap 
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -553,7 +558,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts 
-      - name: Install Dependencies
+      - name: Aquatone
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -575,7 +580,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts
-      - name: Install Dependencies
+      - name: Subdomainizer
         run: |
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
@@ -619,9 +624,8 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: httprober-artifacts     
-      - name: Install Dependencies
+      - name: Dirsearch
         run: |
-         wget $HOST/subdomains-live.txt 
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
