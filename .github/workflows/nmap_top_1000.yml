@@ -27,6 +27,7 @@ jobs:
       - name: Output & Slack Notification
         if: always()
         run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-1000-Ports -F file=@nmap-1000-scan.zip
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_"}' "$S_WEBHOOK"
          
