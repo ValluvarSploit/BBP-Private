@@ -2,10 +2,10 @@ name: Gobuster Files Brute
 on:
   workflow_dispatch:
 env:
-       TARGET: ${{ secrets.URL_GOBUSTER }}
+       URL: ${{ secrets.URL_GOBUSTER }}
+       TARGET: ${{ secrets.DOMAIN }}
        HOST: ${{ secrets.NGROK_URL }}
        SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       SLACK_CHANNEL_NAME: ${{ secrets.SLACK_CN_SOLO }} 
        WEBHOOK: ${{ secrets.SLACK_WEBHOOK_SOLO }}
      
 jobs:
@@ -25,12 +25,12 @@ jobs:
 #         wget -q https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-directories.txt -O wordlist.txt
       - name: Gobuster
         run: |
-         ./gobuster dir -u "$TARGET" -w wordlist.txt -o gobuster.txt -a Mozilla/5.0 -e -k --wildcard
+         ./gobuster dir -u "$URL" -w wordlist.txt -o gobuster.txt -a Mozilla/5.0 -e -k --wildcard
       - name: Slack Output
         if: always()
         run: |
-         TAR=$(echo "$TARGET" | cut -d "/" -f 3)
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TAR"-GoBuster -F file=@gobuster.txt
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoBuster -F file=@gobuster.txt
 
 
 #  Gobuster-Files:
