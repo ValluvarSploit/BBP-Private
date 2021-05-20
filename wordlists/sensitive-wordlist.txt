@@ -1,3 +1,8 @@
+saml2
+auth
+.gem
+.gem/credentials
+credentials
 jmxremote.access
 jmxremote.password
 sonar.log
