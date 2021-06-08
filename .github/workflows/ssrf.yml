@@ -1,0 +1,25 @@
+name: SSRF Check
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
+       BURP_SERVER: ${{ secrets.BURP_COLLAOB_SERVER}}
+       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+       S_URL: https://slack.com/api/files.upload
+jobs:
+  SSRF:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         wget $HOST/subdomains.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/ssrf.sh "$TARGET" subdomains.txt "$BURP_SERVER"
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"SSRF CHECK HAS COMPLETED FOR - '$TARGET'"}' "$S_WEBHOOK"
