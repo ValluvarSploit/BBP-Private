@@ -17,5 +17,5 @@ jobs:
       - name: Teemo
         run: |
           git clone https://github.com/bit4woo/teemo.git
-          pip install -r requirements.txt
+          pip install -r teemo/requirements.txt
           python teemo/teemo.py -h
