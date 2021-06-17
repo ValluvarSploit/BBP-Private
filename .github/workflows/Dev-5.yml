@@ -13,4 +13,6 @@ jobs:
       - name: OneForAll
         run: |
           git clone https://github.com/shmilylty/OneForAll.git; pip3 install -r OneForAll/requirements.txt
-          python3 OneForAll/oneforall.py -h
+          ls -l
+          python3 OneForAll/oneforall.py --target "$TARGET" run
+          ls -l
