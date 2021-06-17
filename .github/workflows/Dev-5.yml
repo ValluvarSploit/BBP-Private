@@ -13,6 +13,11 @@ jobs:
       - name: OneForAll
         run: |
           git clone https://github.com/shmilylty/OneForAll.git; cd OneForAll; pip3 install -r requirements.txt
-          ls -l
-          python3 oneforall.py --target "$TARGET" run
-          ls -l
+          python3 oneforall.py --target "$TARGET" run; 
+          zip -r one-for-all.zip results/
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g');
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"OneForAll COMPLETED FOR - '$TARGET'"}' "$WEBHOOK";
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-OneForAll -F file=@one-for-all.zip
