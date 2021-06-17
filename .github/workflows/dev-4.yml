@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Teemo
         run: |
-          curl -s https://bootstrap.pypa.io/get-pip.py --output get-pip.py
+          curl -s https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
           sudo python2 get-pip.py
           pip -V
           git clone https://github.com/bit4woo/teemo.git
