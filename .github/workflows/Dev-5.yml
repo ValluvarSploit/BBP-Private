@@ -12,9 +12,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: OneForAll
         run: |
-          git clone https://github.com/shmilylty/OneForAll.git; cd OneForAll; pip3 install -r requirements.txt
-          python3 oneforall.py --target "$TARGET" run; 
-          zip -r one-for-all.zip results/
+          touch one-for-all.zip
+#          git clone https://github.com/shmilylty/OneForAll.git; cd OneForAll; pip3 install -r requirements.txt
+#          python3 oneforall.py --target "$TARGET" run; 
+#          zip -r one-for-all.zip results/
       - name: Send Output to Slack
         if: always()
         run: |
