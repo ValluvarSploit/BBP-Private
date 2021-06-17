@@ -1,0 +1,16 @@
+name: Dev-5
+on:
+  workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}     
+jobs:
+  oneforall-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: OneForAll
+        run: |
+          git clone https://github.com/shmilylty/OneForAll.git; pip3 install -r OneForAll/requirements.txt
+          python3 OneForAll/oneforall.py -h
