@@ -22,4 +22,4 @@ jobs:
         run: |
          SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g');
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Teemo COMPLETED FOR - '$TARGET'"}' "$WEBHOOK";
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Teemo -F file=@teemo.out
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Teemo -F file=@teemo/output/teemo.out
