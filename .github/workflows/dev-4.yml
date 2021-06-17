@@ -15,7 +15,7 @@ jobs:
           curl -s https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py; sudo python2 get-pip.py
           git clone https://github.com/bit4woo/teemo.git; pip install -r teemo/requirements.txt
           ls -l
-          python2 teemo/teemo.py -d allegro.pl -o teemo.out
+          python2 teemo/teemo.py -d "$TARGET" -o teemo.out
           ls -l
       - name: Send Output to Slack
         if: always()
