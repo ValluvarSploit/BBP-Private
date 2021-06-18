@@ -22,7 +22,7 @@ jobs:
          GO111MODULE=on go get github.com/jaeles-project/jaeles
          cp ~/Downloads/bin/jaeles .;
          git clone --depth=1 https://github.com/jaeles-project/jaeles-signatures /tmp/jaeles-signatures/
-         jaeles config -a reload --signDir /tmp/jaeles-signatures
+         ./jaeles config -a reload --signDir /tmp/jaeles-signatures
          ./jaeles scan -c 50 -s /tmp/jaeles-signatures/{cves,common,passive,sensitive} -U subdomain.txt -L 50 -v -G --html jaeles-report
          ls -l
 
