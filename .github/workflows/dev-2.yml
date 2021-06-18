@@ -10,20 +10,16 @@ env:
       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
 jobs:
-  meg-job:
+  s3-teh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains-live.txt
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/gochopchop.sh subdomains-live.txt
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          if [[ -f gochopchop-out.json.zip ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoChopChop -F file=@gochopchop-out.json; fi;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials
+         git clone https://github.com/tomdev/teh_s3_bucketeers.git
+         ./bucketeer.sh instacart
+         cp results* s3-result.txt
+         cat s3-result.txt
+      #   ./bucketeer.sh instacart
+
