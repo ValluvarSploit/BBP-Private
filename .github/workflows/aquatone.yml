@@ -27,3 +27,14 @@ jobs:
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Aquatone -F file=@aquatone-output.zip.xz ;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+
+
+# Aquatone: bash Domain_Monitoring/scripts/aquatone.sh subdomains-live.txt  => aquatone-output.zip.xz
+# HTTPX: bash Domain_Monitoring/scripts/httpx.sh subdomains.txt  => httpx.out
+# Meg: bash Domain_Monitoring/scripts/meg.sh subdomains-live.txt  => meg-home.zip
+# S3Scanner: bash Domain_Monitoring/scripts/s3_scanner.sh subdomains-host.txt  => s3-scan.txt
+# DNSgen: bash Domain_Monitoring/scripts/dnsgen.sh subdomains.txt  => dnsgen-wordlist.txt.xz
+# FFUF: bash Domain_Monitoring/scripts/ffuf.sh subdomains.txt  => ffuf-output.zip
+# Dirsearch: bash Domain_Monitoring/scripts/dirsearch-file.sh subdomains-live.txt => dirsearch-file-reports.zip.xz
+# Vhost Scanner: bash Domain_Monitoring/scripts/vhost-scan.sh "$TARGET"  => gobsuter-vhosts.txt
+
