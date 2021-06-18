@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.DOMAIN }}
+      AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       HOST: ${{ secrets.NGROK_URL }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
