@@ -19,7 +19,7 @@ jobs:
         run: |
          wget "$HOST"/subdomain.txt
          go env -w GOPATH=~/Downloads;
-         go get -u github.com/jaeles-project/jaeles;
+         GO111MODULE=on go get github.com/jaeles-project/jaeles
          cp ~/Downloads/bin/jaeles .;
          git clone --depth=1 https://github.com/jaeles-project/jaeles-signatures /tmp/jaeles-signatures/
          jaeles config -a reload --signDir /tmp/jaeles-signatures
