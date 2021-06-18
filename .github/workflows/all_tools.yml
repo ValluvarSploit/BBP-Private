@@ -47,6 +47,7 @@ jobs:
 # Httprob: bash Domain_Monitoring/scripts/httprobe.sh subdomains.txt  => httprober.txt
 # Nuclei Scan: bash Domain_Monitoring/scripts/nuclei-templat-scan.sh subdomains.txt  => nuclie-scan.out
 # KiteRunner API: bash Domain_Monitoring/scripts/kiterunner-api.sh subdomains.txt  => kite-runner-api.txt
-
-
-
+# URL Enumeration: bash Domain_Monitoring/scripts/url-enumeration.sh "$TARGET"  => url-collector-artifacts.zip.xz
+# Subdomainizer: bash Domain_Monitoring/scripts/subdomainizer.sh subdomains-live.txt  => subdomainizer.txt.xz
+# Gospider: bash Domain_Monitoring/scripts/gospider-crawler.sh subdomains-live.txt  => gospider_out.zip.xz
+# KiteRunner Dir: bash Domain_Monitoring/scripts/kiterunner-dir.sh "$TARGET"  => kite-runner-dir-brute.txt
