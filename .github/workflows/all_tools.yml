@@ -37,4 +37,11 @@ jobs:
 # FFUF: bash Domain_Monitoring/scripts/ffuf.sh subdomains.txt  => ffuf-output.zip
 # Dirsearch: bash Domain_Monitoring/scripts/dirsearch-file.sh subdomains-live.txt => dirsearch-file-reports.zip.xz
 # Vhost Scanner: bash Domain_Monitoring/scripts/vhost-scan.sh "$TARGET"  => gobsuter-vhosts.txt
+# Subdomain Takevoer: bash Domain_Monitoring/scripts/subdomain_takeover.sh 
+# NMAP Full Scan: bash Domain_Monitoring/scripts/nmap-full-scan.sh target-ips.txt  => nmap-vulnerability-scan.txt.xz
+# NMAP Top 1000: bash Domain_Monitoring/scripts/nmap-1000-scan.sh ips-live.txt  => nmap-1000-scan.zip
+# Httprob: bash Domain_Monitoring/scripts/httprobe.sh subdomains.txt  => httprober.txt
+# Nuclei Scan: bash Domain_Monitoring/scripts/nuclei-templat-scan.sh subdomains.txt  => nuclie-scan.out
+
+
 
