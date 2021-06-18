@@ -39,9 +39,14 @@ jobs:
 # Vhost Scanner: bash Domain_Monitoring/scripts/vhost-scan.sh "$TARGET"  => gobsuter-vhosts.txt
 # Subdomain Takevoer: bash Domain_Monitoring/scripts/subdomain_takeover.sh 
 # NMAP Full Scan: bash Domain_Monitoring/scripts/nmap-full-scan.sh target-ips.txt  => nmap-vulnerability-scan.txt.xz
+# NMAP Vulnerability Scan: bash Domain_Monitoring/scripts/nmap-vuln-scan.sh nmap-masscan.out  => nmap-vuln-scan.zip
+# NMAP Random Ports: bash Domain_Monitoring/scripts/nmap-random-scan.sh ips-live.txt  => nmap-random-scan.zip
 # NMAP Top 1000: bash Domain_Monitoring/scripts/nmap-1000-scan.sh ips-live.txt  => nmap-1000-scan.zip
+# NMAP UDP Scan: bash Domain_Monitoring/scripts/nmap-udp-scan.sh ips-live.txt  => nmap-udp-scan.zip
+# Masscan-NMAP-Scan: bash Domain_Monitoring/scripts/masscan-nmap.sh ips-live.txt  => mass-nmap-scan.zip
 # Httprob: bash Domain_Monitoring/scripts/httprobe.sh subdomains.txt  => httprober.txt
 # Nuclei Scan: bash Domain_Monitoring/scripts/nuclei-templat-scan.sh subdomains.txt  => nuclie-scan.out
+# KiteRunner API: bash Domain_Monitoring/scripts/kiterunner-api.sh subdomains.txt  => kite-runner-api.txt
 
 
 
