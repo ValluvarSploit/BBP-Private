@@ -1,0 +1,26 @@
+name: AltDNS
+on:
+  workflow_dispatch:
+env:
+       TARGET: ${{ secrets.DOMAIN_DNSSEARCH }}
+       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+jobs:
+  AltDNS:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"AltDNS HAS STARTED FOR - '$TARGET'"}' "$WEBHOOK"
+         wget $HOST/subdomains-live.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/altdns.sh subdomains-live.txt
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"AltDNS has COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-AltDNS -F file=@altdns.zip
