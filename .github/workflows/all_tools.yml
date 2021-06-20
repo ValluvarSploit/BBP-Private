@@ -1,4 +1,4 @@
-name: Aquatone
+name: All Tools
 on:
   workflow_dispatch:
 env:
@@ -10,7 +10,7 @@ env:
       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
 jobs:
-  aquatone:
+  all-by-one:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
