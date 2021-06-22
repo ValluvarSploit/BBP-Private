@@ -20,8 +20,9 @@ jobs:
          bash Domain_Monitoring/scripts/subdomain-manitor.sh "$DOMAIN"
       - name: Commit Output
         run: |
+         cd Domain_Monitoring/subdomain-monitoring/
          git config --local user.email "action@github.com"
          git config --local user.name "GitHub Action"
-         git add Domain_Monitoring/subdomain-monitoring/anew-subdomains.txt
+         git add anew-subdomains.txt
          git commit -m "Update subdomains" -a
          git push
