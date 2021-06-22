@@ -1,0 +1,27 @@
+name: Subdomain Monitor
+on:
+  workflow_dispatch:
+env:
+      DOMAIN: ${{ secrets.DOMAIN }}
+      CONFIG: ${{ secrets.NOTIFY_CONFIG }}
+      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
+jobs:
+  subdomain-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+         mkdir ~/.config/notify; echo "$CONFIG" > ~/.config/notify/notify.conf;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         bash Domain_Monitoring/scripts/subdomain-manitor.sh "$DOMAIN"
+      - name: Commit Output
+        run: |
+         git config --local user.email "action@github.com"
+         git config --local user.name "GitHub Action"
+         git add Domain_Monitoring/subdomain-monitoring/anew-subdomains.txt
+         git commit -m "Update subdomains" -a
+         git push
