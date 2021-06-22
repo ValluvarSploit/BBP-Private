@@ -19,12 +19,12 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/subdomain-manitor.sh "$DOMAIN"
+         bash Domain_Monitoring/scripts/subdomain-manitor.sh
       - name: Commit Output
         run: |
-         cd Domain_Monitoring/subdomain-monitoring/
+         cd Domain_Monitoring/subdomain-monitoring/output/
          git config --local user.email "action@github.com"
          git config --local user.name "GitHub Action"
-         git add anew-subdomains.txt
+         git add .
          git commit -m "Update subdomains" -a
          git push
