@@ -16,8 +16,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/js-monitor.sh ""
-         for domain in $(cat Domain_Monitoring/subdomain-monitoring/monitored_domains.txt); do bash Domain_Monitoring/scripts/js-monitor.sh -d "$domain" -l Domain_Monitoring/subdomain-monitoring/output/resolved/"$domain".txt ; done;
+         for domain in $(cat Domain_Monitoring/subdomain-monitoring/monitored_domains.txt); do bash Domain_Monitoring/scripts/js-monitor.sh -d "$domain" -l Domain_Monitoring/subdomain-monitoring/output/resolved/"$domain".txt ; sleep 2; done;
       - name: Commit Output
         run: |
          cd Domain_Monitoring/js-monitoring/output/
