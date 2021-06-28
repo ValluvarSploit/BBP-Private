@@ -29,6 +29,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
 
+# Robots Waybackurls: bash Domain_Monitoring/scripts/robots-txt-waybackurl.sh "$TARGET"  => robots.waybackurl.xz
 # Aquatone: bash Domain_Monitoring/scripts/aquatone.sh subdomains-live.txt  => aquatone-output.zip.xz
 # HTTPX: bash Domain_Monitoring/scripts/httpx.sh subdomains.txt  => httpx.out
 # Meg: bash Domain_Monitoring/scripts/meg.sh subdomains-live.txt  => meg-home.zip
