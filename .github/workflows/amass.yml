@@ -1,4 +1,4 @@
-name: Amass
+name: Amass Brute
 on:
   workflow_dispatch:
 env:
