@@ -2,9 +2,10 @@ name: Gobuster DNS
 on:
   workflow_dispatch:
 env:
-       TARGET: ${{ secrets.DOMAIN_GOBUSTER }}
-       SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+     TARGET: ${{ secrets.DOMAIN }}
+     S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+     S_URL: https://slack.com/api/files.upload
      
 jobs:
   Gobuster-DNS:
@@ -13,17 +14,17 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster DNS STARTED FOR - '$TARGET'"}' "$WEBHOOK"
-         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z
-         7z e gobuster-linux-amd64.7z ; chmod +x gobuster
-         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O wordlist.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z;
+         7z e gobuster-linux-amd64.7z ; chmod +x gobuster;
+         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O wordlist.txt;
       - name: Gobuster
         run: |
          ./gobuster dns -d "$TARGET" -w wordlist.txt -o gobuster.txt -q -t 100 -i
-      - name: Output & Slack Notification
+      - name: Slack
         if: always()
         run: |
-         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"Gobuster DNS COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-GoBuster-DNS -F file=@gobuster.txt
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoBuster-DNS -F file=@gobuster.txt;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";         
           
