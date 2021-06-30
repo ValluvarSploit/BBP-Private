@@ -18,7 +18,6 @@ jobs:
          wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z;
          7z e gobuster-linux-amd64.7z ; chmod +x gobuster;
          wget https://wordlists-cdn.assetnote.io/data/manual/2m-subdomains.txt -O wordlist.txt;
-         cat wordlist.txt;
       - name: Gobuster
         run: |
          ./gobuster dns -d "$TARGET" -w wordlist.txt -o gobuster.txt -q -t 100 -i
