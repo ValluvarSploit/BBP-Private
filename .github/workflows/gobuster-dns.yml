@@ -17,7 +17,7 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          wget https://github.com/OJ/gobuster/releases/download/v3.1.0/gobuster-linux-amd64.7z;
          7z e gobuster-linux-amd64.7z ; chmod +x gobuster;
-         wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O wordlist.txt;
+         wget https://github.com/fuzz-security/SuperWordlist/blob/master/SubDomain.txt -O wordlist.txt;
       - name: Gobuster
         run: |
          ./gobuster dns -d "$TARGET" -w wordlist.txt -o gobuster.txt -q -t 100 -i
@@ -27,4 +27,7 @@ jobs:
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-GoBuster-DNS -F file=@gobuster.txt;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";         
-          
+
+# Wordlist
+#   wget https://github.com/fuzz-security/SuperWordlist/blob/master/SubDomain.txt -O wordlist.txt;
+#   wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O wordlist.txt;
