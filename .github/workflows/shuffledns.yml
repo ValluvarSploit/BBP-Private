@@ -16,13 +16,11 @@ jobs:
       - uses: actions/checkout@v2             
       - name: Install Dependencies
         run: |
-          wget https://github.com/projectdiscovery/shuffledns/releases/download/v1.0.4/shuffledns_1.0.4_linux_amd64.tar.gz
-          tar -xzvf shuffledns_1.0.4_linux_amd64.tar.gz; ls -la; chmod +x shuffledns; ./shuffledns
-#         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-#         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
-#         wget https://gist.github.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt;
-#         git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make; sudo cp bin/massdns /usr/local/bin/;
-#         go env -w GOPATH=~/Downloads; go get -v github.com/projectdiscovery/shuffledns/cmd/shuffledns; cp ~/Downloads/bin/shuffledns .;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
+         wget https://gist.github.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt;
+         git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make; sudo cp bin/massdns /usr/local/bin/;
+         wget https://github.com/projectdiscovery/shuffledns/releases/download/v1.0.4/shuffledns_1.0.4_linux_amd64.tar.gz; tar -xzvf shuffledns_1.0.4_linux_amd64.tar.gz;
       - name: ShuffleDNS
         run: |
          ./shuffledns -d "$TARGET" -w all.txt -r resolvers.txt -o shuffledns.txt
