@@ -23,7 +23,7 @@ jobs:
          wget https://github.com/projectdiscovery/shuffledns/releases/download/v1.0.4/shuffledns_1.0.4_linux_amd64.tar.gz; tar -xzvf shuffledns_1.0.4_linux_amd64.tar.gz;
       - name: ShuffleDNS
         run: |
-         ./shuffledns -d "$TARGET" -w all.txt -r resolvers.txt -o shuffledns.txt
+         echo "$TARGET" | ./shuffledns -w all.txt -r resolvers.txt -o shuffledns.txt -v
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
