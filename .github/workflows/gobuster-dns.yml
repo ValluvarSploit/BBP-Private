@@ -30,5 +30,5 @@ jobs:
 
 # Wordlist
 #   wget https://raw.githubusercontent.com/fuzz-security/SuperWordlist/master/SubDomain.txt -O wordlist.txt;
-#   wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_03_28.txt -O wordlist.txt;
+#   wget https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_2021_06_28.txt -O wordlist.txt;
 #   wget https://raw.githubusercontent.com/internetwache/CT_subdomains/master/top-100000.txt -O ct_top-100000.txt; cat ct_top-100000.txt | cut -d "," -f 2 > wordlist.txt;
