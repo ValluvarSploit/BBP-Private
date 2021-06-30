@@ -17,7 +17,7 @@ jobs:
         run: | 
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip;,193.203.222.0/23,91.194.188.0/23
+         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip;
       - name: Amass
         run: |
          ./amass_linux_amd64/amass enum -d "$TARGET" -active -cidr 5.134.208.0/21,91.207.14.0/23,193.203.222.0/23,91.194.188.0/23,178.21.152.0/21,193.23.48.0/24,185.31.24.0/22,194.0.251.0/24 -asn 42656,31621 -rf resolvers.txt -o amass.txt
