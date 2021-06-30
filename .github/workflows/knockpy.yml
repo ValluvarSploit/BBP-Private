@@ -19,7 +19,6 @@ jobs:
          git clone https://github.com/guelfoweb/knock.git ; cd knock; pip3 install -r requirements.txt;
          sudo python3 setup.py install --user ; echo "$KNOCKPY_CONFIG" > knockpy/config.json ; cd ..
          mkdir knockpy-results
-#         wget --quiet https://gist.githubusercontent.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt
       - name: Knockpy
         run: |
          python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results -w wordlists/knockpy-wordslist.txt;
