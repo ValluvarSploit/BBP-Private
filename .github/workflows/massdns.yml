@@ -5,9 +5,7 @@ env:
      TARGET: ${{ secrets.DOMAIN }}
      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
-     S_URL: https://slack.com/api/files.upload
-     CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
-     CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}     
+     S_URL: https://slack.com/api/files.upload 
 
 jobs:
   MassDNS:
@@ -50,8 +48,6 @@ jobs:
          wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
       - name: HTTPX
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
-         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
          ./httpx -l live-hosts-output.txt -follow-redirects -threads 300 -silent -timeout 15 -o httpx.out;
          cat httpx.out | cut -d "/" -f 3 > subs.massdns;
       - name: Slack
