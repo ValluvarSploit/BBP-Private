@@ -6,8 +6,7 @@ env:
      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
      S_URL: https://slack.com/api/files.upload
-     CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
-     CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
+     
 jobs:
   Amass-brute:
     runs-on: ubuntu-latest
@@ -30,12 +29,6 @@ jobs:
       - name: Slack
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK"
-#        if: always()
-#        run: |
-#         SLACK_CHANNEL_NAME=$(echo $TARGET | sed 's/\./_/g')
-#         xz amass-brute.txt
-#         curl -X POST -H 'Content-type: application/json' --data '{"text":"AMASS Brute COMPLETED FOR - '$TARGET'"}' "$WEBHOOK"
-#         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$SLACK_CHANNEL_NAME" -F title="$TARGET"-Amass-Brute -F file=@amass-brute.txt.xz        
 
   HTTPX:
     if: always()
@@ -46,17 +39,17 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: Amass-artifacts
-      - name: HTTPX
+      - name: Install Dependecies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh amass-brute.txt;
-         xz httpx.out;
+         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
+      - name: HTTPX
+        run: |
+         ./httpx -l amass-brute.txt -follow-redirects -threads 300 -silent -timeout 15 -o httpx.out;
+         cat httpx.out | cut -d "/" -f 3 > subs.amass_brute;        
       - name: Slack
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Amass-HTTPX -F file=@httpx.out.xz;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Amass-Brute -F file=@subs.amass_brute;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK"
