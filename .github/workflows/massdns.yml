@@ -48,7 +48,7 @@ jobs:
          wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;
       - name: HTTPX
         run: |
-         ./httpx -l live-hosts-output.txt -follow-redirects -threads 300 -silent -timeout 15 -o httpx.out;
+         ./httpx -l live-hosts-output.txt -threads 300 -silent -timeout 15 -o httpx.out;
          cat httpx.out | cut -d "/" -f 3 > subs.massdns;
       - name: Slack
         if: always()
