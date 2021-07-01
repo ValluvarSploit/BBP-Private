@@ -19,13 +19,16 @@ jobs:
       - name: Amass
         run: |
          ./amass_linux_amd64/amass enum -d "$TARGET" -active -cidr x.x.x.x/24,x.x.x.x/24 -asn xxxxx,xxxxx -rf resolvers.txt -o amass.txt
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK"
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: Amass-artifacts
          path: amass.txt
+      - name: Slack
+        if: always()
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   HTTPX:
     if: always()
