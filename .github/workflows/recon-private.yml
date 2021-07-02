@@ -106,7 +106,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/dnsc.sh subdomains-host.txt
+         bash Domain_Monitoring/scripts/dnsc.sh -l subdomains-host.txt -o dnsc.csv
       - name: Send Output to Slack
         if: always()
         run: |
