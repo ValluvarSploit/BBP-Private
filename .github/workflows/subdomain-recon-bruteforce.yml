@@ -11,74 +11,19 @@ env:
       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }} 
 
 jobs:
-  Subdomain-enum:
+  DNSgen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Subdomains
+      - name: DNSgen
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          wget -q $HOST/subdomains-reliable.txt -O subdomains-manual.txt;
          GREEN='\033[0;32m'; cat subdomains-manual.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/subs.sh "$TARGET";
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: subdomains-artifacts
-         path: all-subdomains.txt
-      - name: Slack
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
-  HTTPX-1:
-    needs: Subdomain-enum
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomains-artifacts    
-      - name: Install Dependencies
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         GREEN='\033[0;32m'; cat all-subdomains.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh all-subdomains.txt;
-         cat httpx.out | cut -d "/" -f 3 > all-subdomains-resolved.txt   
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: httpx-artifacts
-         path: all-subdomains-resolved.txt
-      - name: Slack
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
-  DNSgen:
-    runs-on: ubuntu-latest
-    needs: HTTPX-1
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httpx-artifacts
-      - name: DNSgen
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         GREEN='\033[0;32m'; cat all-subdomains-resolved.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;       
-         bash Domain_Monitoring/scripts/dnsgen.sh all-subdomains-resolved.txt;
+         bash Domain_Monitoring/scripts/dnsgen.sh subdomains-manual.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -86,7 +31,7 @@ jobs:
          name: dnsgen-artifacts
          path: |
           dnsgen-wordlist.txt.xz
-          all-subdomains-resolved.txt
+          subdomains-manual.txt
       - name: Slack
         if: always()
         run: |
