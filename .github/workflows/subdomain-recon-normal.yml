@@ -17,13 +17,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Subdomains
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget -q $HOST/subdomains-reliable.txt -O subdomains-manual.txt;
-         GREEN='\033[0;32m'; cat subdomains-manual.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/subs.sh "$TARGET";
+#         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+#         wget -q $HOST/subdomains-reliable.txt -O subdomains-manual.txt;
+#         GREEN='\033[0;32m'; cat subdomains-manual.txt | head | xargs -n1 echo -e ${GREEN} snipped;
+#         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+#         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+#         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+#         bash Domain_Monitoring/scripts/subs.sh "$TARGET";
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -37,6 +37,7 @@ jobs:
 
   HTTPX:
     needs: Subdomain-enum
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -45,6 +46,7 @@ jobs:
          name: subdomains-artifacts    
       - name: Install Dependencies
         run: |
+         echo "github.com" > all-subdomains.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          GREEN='\033[0;32m'; cat all-subdomains.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
@@ -69,6 +71,7 @@ jobs:
 
   DNSx:
     runs-on: ubuntu-latest
+    if: always()
     needs: HTTPX    
     steps:
       - uses: actions/checkout@v2 
