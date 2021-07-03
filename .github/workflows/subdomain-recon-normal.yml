@@ -51,10 +51,48 @@ jobs:
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/httpx.sh all-subdomains.txt;
-         cat httpx.out | cut -d "/" -f 3 > subdomains-reliable-resolved.txt
-         xz -k subdomains-reliable-resolved.txt;
+         cp httpx.out subdomains-reliable-resolved.txt;
+         cat subdomains-reliable-resolved.txt | cut -d "/" -f 3 > subdomains-reliable-resolved-host.txt;
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: httpx-artifacts
+         path: |
+           subdomains-reliable-resolved.txt
+           subdomains-reliable-resolved-host.txt
       - name: Slack
         if: always()
         run: |
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomains-Reliable-Resolved -F file=@subdomains-reliable-resolved.txt.xz;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomains-Reliable-Resolved -F file=@subdomains-reliable-resolved.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
+
+  DNSx:
+    runs-on: ubuntu-latest
+    needs: HTTPX    
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: httpx-artifacts       
+      - name: DNSx
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         GREEN='\033[0;32m'; cat subdomains-reliable-resolved.txt | head | xargs -n1 echo -e ${GREEN} snipped;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/dnsx.sh subdomains-reliable-resolved-host.txt;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsx-artifacts
+         path: |
+          dnsx-host-live.txt
+          dnsx-ip-live.txt
+      - name: Slack Notification
+        if: always()
+        run: |
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Host -F file=@dnsx-host-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IP -F file=@dnsx-ip-live.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
