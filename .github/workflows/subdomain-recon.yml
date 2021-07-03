@@ -35,7 +35,7 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
-  HTTPX:
+  HTTPX-1:
     needs: Subdomain-enum
     runs-on: ubuntu-latest
     steps:
@@ -64,7 +64,7 @@ jobs:
 
   DNSgen:
     runs-on: ubuntu-latest
-    needs: HTTPX
+    needs: HTTPX-1
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -106,11 +106,38 @@ jobs:
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git   ;      
          bash Domain_Monitoring/scripts/massdns.sh "$TARGET";
-      - name: Output & Slack Notification
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsgen-artifacts
+         path: |
+          dnsgen-wordlist.txt.xz
+          httpx-resolved.txt
+      - name: Slack
         if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Logs -F file=@massdns-out.zip.xz ;
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Hosts -F file=@subdomains.txt.xz;
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-  
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
+
+  HTTPX-2:
+    needs: MassDNS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomains-artifacts    
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;       
+         xz -d subdomains.txt.xz;
+      - name: HTTPX
+        run: |
+         ./httpx -l subdomains.txt -threads 300 -silent -timeout 15 -o resolved-subdomains.txt;
+         xz resolved-subdomains.txt
+      - name: Slack
+        if: always()
+        run: |
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Hosts -F file=@resolved-subdomains.txt.xz;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
