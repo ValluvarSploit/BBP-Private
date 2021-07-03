@@ -53,12 +53,6 @@ jobs:
          bash Domain_Monitoring/scripts/httpx.sh all-subdomains.txt;
          cat httpx.out | cut -d "/" -f 3 > subdomains-reliable-resolved.txt
          xz -k subdomains-reliable-resolved.txt;
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: httpx-artifacts
-         path: subdomains-reliable-resolved.txt
       - name: Slack
         if: always()
         run: |
