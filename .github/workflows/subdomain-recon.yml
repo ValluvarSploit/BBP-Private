@@ -18,7 +18,7 @@ jobs:
       - name: Subdomains
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget -q $HOST/subdomains-manual.txt;
+         wget -q $HOST/subdomains-reliable.txt -O subdomains-manual.txt;
          GREEN='\033[0;32m'; cat subdomains-manual.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
@@ -47,16 +47,17 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          GREEN='\033[0;32m'; cat all-subdomains.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;       
-      - name: HTTPX
-        run: |
-         ./httpx -l all-subdomains.txt -threads 300 -silent -timeout 15 -o httpx.out;     
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/httpx.sh all-subdomains.txt;
+         cat httpx.out | cut -d "/" -f 3 > all-subdomains-resolved.txt   
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: httpx-artifacts
-         path: httpx.out
+         path: all-subdomains-resolved.txt
       - name: Slack
         if: always()
         run: |
@@ -73,11 +74,11 @@ jobs:
       - name: DNSgen
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         GREEN='\033[0;32m'; cat httpx.out | head | xargs -n1 echo -e ${GREEN} snipped;
+         GREEN='\033[0;32m'; cat all-subdomains-resolved.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;       
-         bash Domain_Monitoring/scripts/dnsgen.sh httpx.out;
+         bash Domain_Monitoring/scripts/dnsgen.sh all-subdomains-resolved.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -85,7 +86,7 @@ jobs:
          name: dnsgen-artifacts
          path: |
           dnsgen-wordlist.txt.xz
-          httpx-resolved.txt
+          all-subdomains-resolved.txt
       - name: Slack
         if: always()
         run: |
@@ -102,6 +103,9 @@ jobs:
       - name: MassDNS
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         xz -d dnsgen-wordlist.txt.xz;
+         GREEN='\033[0;32m'; cat all-subdomains-resolved.txt | head | xargs -n1 echo -e ${GREEN} snipped;
+         GREEN='\033[0;32m'; cat dnsgen-wordlist.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git   ;      
@@ -112,8 +116,8 @@ jobs:
         with:
          name: dnsgen-artifacts
          path: |
-          dnsgen-wordlist.txt.xz
-          httpx-resolved.txt
+          all-subdomains-resolved.txt
+          subdomains.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -130,12 +134,14 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;       
          xz -d subdomains.txt.xz;
-      - name: HTTPX
-        run: |
-         ./httpx -l subdomains.txt -threads 300 -silent -timeout 15 -o resolved-subdomains.txt;
-         xz resolved-subdomains.txt
+         GREEN='\033[0;32m'; cat subdomains.txt | head | xargs -n1 echo -e ${GREEN} snipped;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/httpx.sh subdomains.txt;
+         cat httpx.out | cut -d "/" -f 3 > resolved-subdomains.txt;
+         xz -k resolved-subdomains.txt;
       - name: Slack
         if: always()
         run: |
