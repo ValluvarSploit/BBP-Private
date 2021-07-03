@@ -1,0 +1,1 @@
+https://github.com/projectdiscovery/nuclei/releases/download/v2.3.8/nuclei_2.3.8_linux_amd64.tar.gz

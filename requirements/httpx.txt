@@ -1,0 +1,1 @@
+https://github.com/projectdiscovery/httpx/releases/download/v1.1.0/httpx_1.1.0_linux_amd64.tar.gz

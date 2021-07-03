@@ -1,0 +1,1 @@
+https://github.com/Findomain/Findomain/releases/download/4.3.0/findomain-linux

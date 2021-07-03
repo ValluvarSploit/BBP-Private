@@ -1,0 +1,1 @@
+https://github.com/OWASP/Amass/releases/download/v3.13.2/amass_linux_amd64.zip
