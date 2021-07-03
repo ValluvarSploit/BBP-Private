@@ -68,8 +68,8 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain -F file=@subdomain-urls-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain -F file=@subdomain-hosts-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain-URLs-Live -F file=@subdomain-urls-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain-Hosts-Live -F file=@subdomain-hosts-live.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
   DNSx:
