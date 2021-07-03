@@ -54,21 +54,22 @@ jobs:
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/httpx.sh all-subdomains.txt;
-         cp httpx.out subdomains-reliable-resolved.txt;
-         cat subdomains-reliable-resolved.txt | cut -d "/" -f 3 > subdomains-reliable-resolved-host.txt;
+         cp httpx.out subdomain-urls-live.txt;
+         cat subdomain-urls-live.txt | cut -d "/" -f 3 > subdomain-hosts-live.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: httpx-artifacts
          path: |
-           subdomains-reliable-resolved.txt
-           subdomains-reliable-resolved-host.txt
+           subdomain-urls-live.txt
+           subdomain-hosts-live.txt
       - name: Slack
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomains-Reliable-Resolved -F file=@subdomains-reliable-resolved.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain -F file=@subdomain-urls-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain -F file=@subdomain-hosts-live.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
   DNSx:
@@ -83,11 +84,11 @@ jobs:
       - name: DNSx
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         GREEN='\033[0;32m'; cat subdomains-reliable-resolved-host.txt | head | xargs -n1 echo -e ${GREEN} snipped;
+         GREEN='\033[0;32m'; cat subdomain-hosts-live.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/dnsx.sh subdomains-reliable-resolved-host.txt;
+         bash Domain_Monitoring/scripts/dnsx.sh subdomain-hosts-live.txt;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
