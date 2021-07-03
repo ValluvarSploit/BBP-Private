@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
 env:
      TARGET: ${{ secrets.DOMAIN }}
+     CIDR: x.x.x.x/24,x.x.x.x/24
+     ASN: 1111,2222
      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
      S_URL: https://slack.com/api/files.upload
@@ -13,18 +15,17 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: | 
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip;
-      - name: Amass
-        run: |
-         ./amass_linux_amd64/amass enum -d "$TARGET" -active -cidr x.x.x.x/24,x.x.x.x/24 -asn xxxxx,xxxxx -rf resolvers.txt -o amass.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/amass.sh "$TARGET" CIDR "$CIDR" "$ASN";
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: Amass-artifacts
-         path: amass.txt
+         path: amass-cidr.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -43,14 +44,16 @@ jobs:
       - name: HTTPX
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";       
+         xz -d amass-cidr.txt.xz
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh amass.txt;
+         bash Domain_Monitoring/scripts/httpx.sh amass-cidr.txt;
          cat httpx.out | cut -d "/" -f 3 > subs.amass_cidr_asn;
+         xz subs.amass_cidr_asn;
       - name: Slack
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Amass-CIRD-ASN -F file=@subs.amass_cidr_asn;                                                                        
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Amass-CIRD-ASN -F file=@subs.amass_cidr_asn.xz;                                                                        
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";

@@ -12,20 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
+      - name: Amass
         run: | 
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt
-         wget --quiet https://github.com/OWASP/Amass/releases/download/v3.11.13/amass_linux_amd64.zip ; unzip amass_linux_amd64.zip;
-      - name: Amass
-        run: |
-         ./amass_linux_amd64/amass enum -brute -d "$TARGET" -o amass-brute.txt -v -max-dns-queries 10000 -rf resolvers.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/amass.sh "$TARGET" BRUTE;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: Amass-artifacts
-         path: amass-brute.txt
+         path: amass-brute.txt.xz
       - name: Slack
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK"
@@ -42,10 +41,11 @@ jobs:
       - name: HTTPX
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         xz -d amass-brute.txt.xz
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh shuffledns.txt;		 
+         bash Domain_Monitoring/scripts/httpx.sh amass-brute.txt;		 
          cat httpx.out | cut -d "/" -f 3 > subs.amass_brute;        
       - name: Slack
         if: always()
