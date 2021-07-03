@@ -18,7 +18,7 @@ jobs:
       - name: Subdomains
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget -q $HOST/subdomains-reliable.txt -O subdomains-manual.txt;
+         wget -q $HOST/subdomains-unresolved.txt -O subdomains-manual.txt;
          GREEN='\033[0;32m'; cat subdomains-manual.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
@@ -94,11 +94,11 @@ jobs:
          name: dnsx-artifacts
          path: |
           dnsx-hosts-live.txt
-          dnsx-ips-live.txt
+          subdomain-ips-live.txt
       - name: Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Hosts-Live -F file=@dnsx-hosts-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IPs-Live -F file=@dnsx-ips-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IPs-Live -F file=@subdomain-ips-live.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
