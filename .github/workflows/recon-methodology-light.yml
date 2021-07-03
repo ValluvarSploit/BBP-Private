@@ -1,4 +1,4 @@
-name: Recon Methodology
+name: Recon Methodology Light (Being Nice to the Server)
 on:
   workflow_dispatch:
 env:
@@ -10,7 +10,7 @@ env:
       GIT_REPO: ${{ secrets.GIT_REPO_URLS }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
+      WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
       S_URL: https://slack.com/api/files.upload
 jobs:
   Subdomain-Takeover:
@@ -19,10 +19,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Subdomain Takeover
         run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/subdomain_takeover.sh subdomains-live.txt subdomains-host.txt 
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/subdomain_takeover.sh subdomains-live.txt subdomains-host.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
