@@ -8,25 +8,23 @@ env:
       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload      
 jobs:
-  HTTPX-2:
+
+  HTTPX:
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         wget $HOST/subdomains.txt.xz
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget https://github.com/projectdiscovery/httpx/releases/download/v1.0.5/httpx_1.0.5_linux_amd64.tar.gz; tar -xzvf httpx_1.0.5_linux_amd64.tar.gz;       
-         xz -d subdomains.txt.xz;
       - name: HTTPX
         run: |
-         ./httpx -l subdomains.txt -threads 300 -silent -timeout 15 -o resolved-subdomains.txt;
-         xz resolved-subdomains.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget $HOST/subdomains.txt.xz; xz resolved-subdomains.txt
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/httpx.sh subdomains.txt;                 
       - name: Slack
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Hosts -F file=@resolved-subdomains.txt.xz;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
-
+         S_CHANNEL=$(echo "$TARGET" | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX -F file=@httpx.out.xz;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";

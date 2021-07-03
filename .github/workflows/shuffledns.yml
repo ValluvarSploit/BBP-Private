@@ -37,7 +37,7 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS -F file=@shuffledns.txt.xz;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
          
-  ShuffleDNS-HTTPX:
+  HTTPX:
     if: always()
     runs-on: ubuntu-latest
     needs: ShuffleDNS-Bruteforce
@@ -53,10 +53,9 @@ jobs:
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/httpx.sh shuffledns.txt;
-         xz httpx.out;
       - name: Slack
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS-HTTPX -F file=@httpx.out.xz;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS -F file=@httpx.out.xz;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK"
