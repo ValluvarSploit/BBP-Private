@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/domains-reliable-resolved-host.txt -O file.txt;
+         wget $HOST/subdomains-reliable-resolved-host.txt -O file.txt;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
