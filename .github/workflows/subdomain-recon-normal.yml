@@ -93,12 +93,12 @@ jobs:
         with:
          name: dnsx-artifacts
          path: |
-          dnsx-host-live.txt
-          dnsx-ip-live.txt
+          dnsx-hosts-live.txt
+          dnsx-ips-live.txt
       - name: Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Hosts-Live -F file=@dnsx-host-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IPs-Live -F file=@dnsx-ip-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Hosts-Live -F file=@dnsx-hosts-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IPs-Live -F file=@dnsx-ips-live.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
