@@ -20,7 +20,7 @@ jobs:
          wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
          wget https://gist.github.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt;
          git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make; sudo cp bin/massdns /usr/local/bin/; cd ..
-         wget -q -i requirements/shuffledns.txt; tar -xzvf shuffledns_1.0.4_linux_amd64.tar.gz;
+         wget -q -i requirements/shuffledns.txt; tar -xzvf shuffledns*.tar.gz;
       - name: ShuffleDNS
         run: |
          echo "$TARGET" | ./shuffledns -w all.txt -r resolvers.txt -o shuffledns.txt -v
