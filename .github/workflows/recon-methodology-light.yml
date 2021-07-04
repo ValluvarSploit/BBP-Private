@@ -9,7 +9,7 @@ env:
       GIT_REPO: ${{ secrets.GIT_REPO_URLS }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
+      WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
       S_URL: https://slack.com/api/files.upload
 jobs:
   Subdomain-Takeover:
@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Subdomain Takeover
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          wget -q $HOST/subdomain-urls-live.txt -O subdomains-live.txt;
          wget -q $HOST/subdomain-hosts-live.txt -O subdomains-host.txt;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
@@ -38,7 +38,7 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain-Takeover -F file=@subdomain-takeover.zip;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK";
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   DNSC:
     if: always()
@@ -51,7 +51,7 @@ jobs:
          name: subdomains-artifacts
       - name: DNSC
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
@@ -61,7 +61,7 @@ jobs:
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title=DNSC -F file=@dnsc.csv
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
 
   Eyewitness:
@@ -75,7 +75,7 @@ jobs:
          name: subdomains-artifacts
       - name: Eyewitness
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
@@ -85,7 +85,7 @@ jobs:
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Eyewitness-Screenshots -F file=@eyewitness_output.zip.xz;
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   S3-Scanner:
     runs-on: ubuntu-latest
@@ -97,7 +97,7 @@ jobs:
          name: subdomains-artifacts
       - name: S3 Scanner
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
@@ -108,7 +108,7 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=S3-Scan -F file=@s3-scan.txt;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   Whatweb:
     if: always()
@@ -121,7 +121,7 @@ jobs:
          name: subdomains-artifacts
       - name: Whatweb Scan
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
@@ -131,7 +131,7 @@ jobs:
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title=Whatweb-Scan -F file=@whatweb-logs.json;
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   CORS-Scanner:
     if: always()
@@ -144,7 +144,7 @@ jobs:
          name: subdomains-artifacts
       - name: CORS Scan
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
@@ -154,7 +154,7 @@ jobs:
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title=CORS-Scan -F file=@cors_scan.txt
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
 
   Git-Dorker-Domain:
@@ -165,7 +165,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Git-Dorker-Domain
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
@@ -175,7 +175,7 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz ;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   Gitleaks:
     if: always()
@@ -185,7 +185,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Gitleaks
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$GIT_REPO" > git_repo_url.txt;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
@@ -196,7 +196,7 @@ jobs:
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip;
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
 
   Slack-Notification:
@@ -207,5 +207,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: Slack 
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow}} _*`COMPLETED`*_ - '$TARGET'"}' "$S_WEBHOOK" ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The workflow ${{ github.workflow }} has _*`Completed`*_  - '$TARGET'"}' "$WEBHOOK";
 
