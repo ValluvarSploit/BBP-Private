@@ -10,21 +10,20 @@ env:
       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
 jobs:
-  all-by-one:
-    runs-on: ubuntu-latest
+  DNSC:
+    runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
-      - name: Running All Tools
+      - name: DNSC
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
-         wget $HOST/subdomain-urls-live.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/eyewitness.sh subdomain-urls-live.txt;      
-      - name: Output & Slack Notification
+         bash Domain_Monitoring/scripts/dnsc.sh -l subdomains-host.txt -o dnsc.csv;
+      - name: Send Output to Slack
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Eyewitness-Screenshot -F file=@eyewitness_output.zip.xz;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSC -F file=@dnsc.csv;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
