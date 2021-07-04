@@ -17,10 +17,11 @@ jobs:
       - name: DNSC
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget $HOST/subdomain-hosts-live.txt
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/dnsc.sh -l subdomains-host.txt -o dnsc.csv;
+         bash Domain_Monitoring/scripts/dnsc.sh -l subdomain-hosts-live.txt -o dnsc.csv;
       - name: Send Output to Slack
         if: always()
         run: |
