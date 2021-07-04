@@ -1,0 +1,31 @@
+name: S3 Scanner
+on:
+  workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN }}
+      HOST: ${{ secrets.NGROK_URL }}
+      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+      S_URL: https://slack.com/api/files.upload
+      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
+jobs:
+  s3-scanner:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: DNSC
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget $HOST/subdomain-hosts-live.txt;
+         mkdir ~/.aws; echo "$AWS_CREDS" > ~/.aws/credentials;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/s3_scanner.sh subdomain-hosts-live.txt;
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=S3-Scanner -F file=@s3-scan.txt;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
