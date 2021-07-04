@@ -1,0 +1,31 @@
+name: GitDorker Domain
+on:
+  workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN }}
+      HOST: ${{ secrets.NGROK_URL }}
+      GIT_TOKEN: ${{ secrets.TOKEN }}
+      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+      S_URL: https://slack.com/api/files.upload
+      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
+jobs:
+  Gitdorker-Domain:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: DNSC
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget $HOST/subdomain-hosts-live.txt;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/gitdorker-domain.sh "$TARGET" "$GIT_TOKEN"; 
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Gitdorker-Domain -F file=@git-dorker-domain_gh_dorks.csv.xz;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
