@@ -2,9 +2,8 @@ name: Recon Methodology Light (Being Nice to the Server)
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
+      TARGET: ${{ secrets.DOMAIN }}
       HOST: ${{ secrets.NGROK_URL }}
-      XSS_HUNTER: ${{ secrets.XSS_HUNTER }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       GIT_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
       GIT_REPO: ${{ secrets.GIT_REPO_URLS }}
