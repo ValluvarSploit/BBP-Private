@@ -1,4 +1,5 @@
-name: Recon Methodology Light (Being Nice to the Server)
+# Being Nice to the Server
+name: Recon Methodology Light 
 on:
   workflow_dispatch:
 env:
