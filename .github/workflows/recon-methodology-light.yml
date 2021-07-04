@@ -12,6 +12,8 @@ env:
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload
+      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }} 
 jobs:
   Subdomain-Takeover:
     runs-on: ubuntu-latest
@@ -19,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Subdomain Takeover
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          wget -q $HOST/subdomain-urls-live.txt -O subdomains-live.txt;
          wget -q $HOST/subdomain-hosts-live.txt -O subdomains-host.txt;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
