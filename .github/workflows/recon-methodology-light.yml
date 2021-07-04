@@ -91,6 +91,7 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   S3-Scanner:
+    if: always()
     runs-on: ubuntu-latest
     needs: [Subdomain-Takeover, Eyewitness]
     steps:
