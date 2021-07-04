@@ -10,7 +10,7 @@ env:
       GIT_REPO: ${{ secrets.GIT_REPO_URLS }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
+      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload
 jobs:
   Subdomain-Takeover:
