@@ -16,11 +16,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Running All Tools
         run: |
-         wget $HOST/eyewitness.sh -O file.txt;
+         wget $HOST/subdomain-urls-live.txt -O file.txt;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/dnsx.sh file.txt;      
+         bash Domain_Monitoring/scripts/eyewitness.sh file.txt;      
       - name: Output & Slack Notification
         if: always()
         run: |
