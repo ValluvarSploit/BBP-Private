@@ -25,7 +25,7 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Host-Live -F file=@eyewitness_output.zip;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Host-Live -F file=@eyewitness_output.zip.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
 
