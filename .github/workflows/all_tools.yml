@@ -14,19 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
+      - name: Running All Tools
         run: |
-         wget $HOST/subdomains-reliable-resolved-host.txt -O file.txt;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
+         wget $HOST/eyewitness.sh -O file.txt;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/dnsx.sh file.txt;      
       - name: Output & Slack Notification
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Host-Live -F file=@dnsx-host-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IP-Live -F file=@dnsx-ip-live.txt;
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Host-Live -F file=@eyewitness_output.zip;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
 
 
@@ -53,3 +52,4 @@ jobs:
 # Subdomainizer: bash Domain_Monitoring/scripts/subdomainizer.sh subdomains-live.txt  => subdomainizer.txt.xz
 # Gospider: bash Domain_Monitoring/scripts/gospider-crawler.sh subdomains-live.txt  => gospider_out.zip.xz
 # KiteRunner Dir: bash Domain_Monitoring/scripts/kiterunner-dir.sh "$TARGET"  => kite-runner-dir-brute.txt
+# Eyewitness: bash Domain_Monitoring/scripts/eyewitness.sh subdomains-live.txt
