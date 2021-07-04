@@ -1,4 +1,4 @@
-name: Recon Methodology
+name: Recon Methodology Noisy
 on:
   workflow_dispatch:
 env:
