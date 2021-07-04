@@ -157,70 +157,26 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title=CORS-Scan -F file=@cors_scan.txt
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;         
 
-  Nuclei-Template-Scan:
-    if: always()
-    runs-on: ubuntu-latest
-    needs: Favicon-Hash-Extraction
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts
-      - name: Nuclei scan
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/nuclei-templat-scan.sh subdomains-live.txt   
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nuclei-Template-Scan -F file=@nuclie-scan.out;
-
-
-  Jaeles-Signature-Scan:
-    if: always()
-    runs-on: ubuntu-latest
-    needs: Nuclei-Template-Scan
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: httprober-artifacts
-      - name: Nuclei scan
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/jaeles.sh subdomains-live.txt   
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          if [ -f jaeles.zip ]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Jaeles-Signature-Scan -F file=@jaeles.zip;
-
 
   Git-Dorker-Domain:
     if: always()
     runs-on: ubuntu-latest  
-    needs: Jaeles-Signature-Scan
+    needs: CORS-Scanner
     steps:
       - uses: actions/checkout@v2
       - name: Git-Dorker-Domain
         run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET" "$GIT_TOKEN"      
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET" "$GIT_TOKEN";   
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz ;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz ;
 
   Gitleaks:
     if: always()
@@ -230,58 +186,18 @@ jobs:
       - uses: actions/checkout@v2
       - name: Gitleaks
         run: |
-         echo "$GIT_REPO" > git_repo_url.txt
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/gitleaks.sh git_repo_url.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
+         echo "$GIT_REPO" > git_repo_url.txt;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/gitleaks.sh git_repo_url.txt;
       - name: Send Output to Slack
         if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip
-
-  URL-Enumeration:
-    runs-on: ubuntu-latest
-    needs: Gitleaks
-    steps:
-      - uses: actions/checkout@v2
-      - name: URL Enumeration
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/url-enumeration.sh "$TARGET"
-      - name: Upload URL Collector Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: url-collector-artifacts
-         path: url-collector-artifacts/
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Pattern-Collector -F file=@url-collector-artifacts.zip.xz ;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-
-  Javascript-Scan:
-    runs-on: ubuntu-latest
-    needs: URL-Enumeration
-    steps:
-      - uses: actions/checkout@v2      
-      - name: Javascript Scan
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/js-scan.sh
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-JS-Scan -F file=@js-scan.zip.xz ;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title="$GIT_ORG"-Gitleaks -F file=@gitleaks-reports.zip;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK";
 
   Secrets-Finder:
     if: always()
