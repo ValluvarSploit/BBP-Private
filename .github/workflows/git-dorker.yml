@@ -9,6 +9,8 @@ env:
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
        S_URL: https://slack.com/api/files.upload
+       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}  
 jobs:
   git-dorker:
     runs-on: ubuntu-latest               
