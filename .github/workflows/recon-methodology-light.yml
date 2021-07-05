@@ -172,13 +172,13 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/gitdorker-domain.sh "$TARGET" "$GIT_TOKEN";   
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;  
+         bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET" DOMAIN "$GIT_TOKEN";
       - name: Output & Slack Notification
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Gitdorker-DOMAIN -F file=@git-dorker-domain_gh_dorks.csv.xz ;
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DOMAIN-Gitdorker -F file=@git-dorker-domain_gh_dorks.csv.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   url-enumeration:
