@@ -1,0 +1,22 @@
+name: DNSC
+on:
+  workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN }}
+      HOST: ${{ secrets.NGROK_URL }}
+      S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+      S_URL: https://slack.com/api/files.upload
+      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}        
+jobs:
+  DNSC:
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - name: DNSC
+        run: |
+         git clone https://github.com/initstring/cloud_enum.git
+         cd cloud_enum
+         pip3 install -r ./requirements.txt
+         ./cloudenum.py -h
