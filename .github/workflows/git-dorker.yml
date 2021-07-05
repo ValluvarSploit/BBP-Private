@@ -20,7 +20,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/gitdorker.sh "$DOMAIN" DOMAIN GITHUB_TOKEN;
+         bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET" DOMAIN GITHUB_TOKEN;
       - name: Send Output to Slack
         if: always()
         run: |
@@ -28,6 +28,14 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker -F file=@git-dorker-domain_gh_dorks.csv.xz;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} COMPLETED - '$TARGET'"}' "$S_WEBHOOK";
 
-# curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker -F file=@git-dorker-domain_gh_dorks.csv.xz
-# curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker -F file=@git-dorker-org_gh_dorks.csv.xz
-# curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Users-Gitdorker -F file=@git-dorker-users_gh_dorks.csv.xz
+# DOMAIN:
+#   bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET" DOMAIN GITHUB_TOKEN;
+#   curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker -F file=@git-dorker-domain_gh_dorks.csv.xz;
+
+# ORG:
+#   bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET_ORG" ORG GITHUB_TOKEN;
+#   curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker -F file=@git-dorker-org_gh_dorks.csv.xz
+
+# USERS:
+#   bash Domain_Monitoring/scripts/gitdorker.sh "$TARGET_USERS" USER GITHUB_TOKEN;
+#   curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Users-Gitdorker -F file=@git-dorker-users_gh_dorks.csv.xz
