@@ -20,17 +20,21 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/waybackurls.sh "$TARGET";  
+         bash Domain_Monitoring/scripts/gau.sh "$TARGET";  
 #         wget "$HOST"/subdomain-urls-live.txt;         
       - name: Output & Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=WaybackURLs -F file=@waybackurls.txt.xz;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=GAU -F file=@gau.txt.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
 
 # Robots Waybackurls: bash Domain_Monitoring/scripts/robots-txt-waybackurl.sh "$TARGET"  => robots.waybackurl.xz
+# WaybackURLS: bash Domain_Monitoring/scripts/waybackurls.sh "$TARGET"; => waybackurls.txt.xz
+# GAU
+#bash Domain_Monitoring/scripts/gau.sh "$TARGET";  
+#curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=GAU -F file=@gau.txt.xz;
 # Aquatone: bash Domain_Monitoring/scripts/aquatone.sh subdomains-live.txt  => aquatone-output.zip.xz
 # HTTPX: bash Domain_Monitoring/scripts/httpx.sh subdomains.txt  => httpx.out
 # Meg: bash Domain_Monitoring/scripts/meg.sh subdomains-live.txt  => meg-home.zip
