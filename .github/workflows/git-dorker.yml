@@ -2,13 +2,12 @@ name: Git Dorker
 on:
   workflow_dispatch:
 env:
-       #TARGET_DOMAIN: ${{ secrets.TARGET_GITHUB_DOMAIN }}
-       #TARGET_USERS_FILE: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
-       DOMAIN: ${{ secrets.DOMAIN }}
+       #TARGET_USERS: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
+       TARGET: ${{ secrets.DOMAIN }}
        TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
        GITHUB_TOKEN: ${{ secrets.TOKEN }}
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-       S_WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
        S_URL: https://slack.com/api/files.upload
 jobs:
   git-dorker:
@@ -17,18 +16,18 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-         wget $HOST/subdomains-live.txt
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/gitdorker-org.sh "$DOMAIN"
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/gitdorker.sh "$DOMAIN" DOMAIN GITHUB_TOKEN;
       - name: Send Output to Slack
         if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker-ORG -F file=@git-dorker-org_gh_dorks.csv.xz
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} COMPLETED - '$TARGET'"}' "$S_WEBHOOK"
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker -F file=@git-dorker-domain_gh_dorks.csv.xz;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.repository }} COMPLETED - '$TARGET'"}' "$S_WEBHOOK";
 
-# bash Domain_Monitoring/scripts/gitdorker-org.sh "$DOMAIN" => git-dorker-domain_gh_dorks.csv.xz
-# bash Domain_Monitoring/scripts/gitdorker-domain.sh "$ORG" => git-dorker-org_gh_dorks.csv.xz
-# bash Domain_Monitoring/scripts/gitdorker-user.sh "$USERS" => git-dorker-users_gh_dorks.csv.xz
+# curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Gitdorker -F file=@git-dorker-domain_gh_dorks.csv.xz
+# curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET_ORG"-Gitdorker -F file=@git-dorker-org_gh_dorks.csv.xz
+# curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Users-Gitdorker -F file=@git-dorker-users_gh_dorks.csv.xz
