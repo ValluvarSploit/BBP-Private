@@ -198,8 +198,7 @@ jobs:
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=URL-Enum -F file=@url-collector-artifacts.zip;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
-
-
+          
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
