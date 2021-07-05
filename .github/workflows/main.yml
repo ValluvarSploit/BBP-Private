@@ -20,4 +20,5 @@ jobs:
          cd cloud_enum
          pip3 install -r ./requirements.txt
          ls -la
-         python3 cloud_enum.py -h
+         python3 cloud_enum.py -k allegro.pl allegro -l buckets.txt
+         cat buckets.txt
