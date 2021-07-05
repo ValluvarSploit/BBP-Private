@@ -2,9 +2,9 @@ name: Git Dorker
 on:
   workflow_dispatch:
 env:
-       #TARGET_USERS: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
        TARGET: ${{ secrets.DOMAIN }}
        TARGET_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
+       TARGET_USERS: ${{ secrets.TARGET_GITHUB_USERS_LIST }}
        GITHUB_TOKEN: ${{ secrets.TOKEN }}
        S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
        WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
