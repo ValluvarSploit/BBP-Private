@@ -20,5 +20,11 @@ jobs:
          cd cloud_enum
          pip3 install -r ./requirements.txt
          ls -la
-         python3 cloud_enum.py -k allegro.pl allegro -l buckets.txt
+         python3 cloud_enum.py -k allegro.pl -k allegro -l cloud-enum.txt
          cat buckets.txt
+      - name: Send Output to Slack
+        if: always()
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Cloud-Enum -F file=@cloud-enum.txt;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
