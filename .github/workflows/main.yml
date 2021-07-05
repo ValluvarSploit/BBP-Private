@@ -20,4 +20,4 @@ jobs:
          cd cloud_enum
          pip3 install -r ./requirements.txt
          ls -la
-         python3 cloudenum.py -h
+         python3 cloud_enum.py -h
