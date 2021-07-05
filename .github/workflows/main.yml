@@ -19,7 +19,6 @@ jobs:
          git clone https://github.com/initstring/cloud_enum.git
          cd cloud_enum
          pip3 install -r ./requirements.txt
-         ls -la
          python3 cloud_enum.py -k allegro.pl -k allegro -l cloud-enum.txt
          cat buckets.txt
       - name: Send Output to Slack
