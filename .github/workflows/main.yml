@@ -1,4 +1,4 @@
-name: DNSC
+name: Cloud Enum
 on:
   workflow_dispatch:
 env:
