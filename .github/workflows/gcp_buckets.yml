@@ -19,7 +19,7 @@ jobs:
           git clone https://github.com/RhinoSecurityLabs/GCPBucketBrute.git;
           cd GCPBucketBrute/;
           pip3 install -r requirements.txt;
-          python3 gcpbucketbrute.py -k allegro.pl -o gcp-buckets.txt;
+          python3 gcpbucketbrute.py -k allegro.pl -o gcp-buckets.txt --unauthenticated;
       - name: Output & Slack Notification
         if: always()
         run: |
