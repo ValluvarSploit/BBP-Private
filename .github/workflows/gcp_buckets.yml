@@ -19,10 +19,10 @@ jobs:
           git clone https://github.com/RhinoSecurityLabs/GCPBucketBrute.git;
           cd GCPBucketBrute/;
           pip3 install -r requirements.txt;
-          python3 gcpbucketbrute.py -h
-#      - name: Output & Slack Notification
-#        if: always()
-#        run: |
-#          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-#          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CORS-Scanner -F file=@cors-scan.json;
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
+          python3 gcpbucketbrute.py -k allegro.pl -o gcp-buckets.txt;
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Google-Cloud-Bucket -F file=@gcp-buckets.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
