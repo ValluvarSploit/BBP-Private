@@ -17,7 +17,8 @@ jobs:
       - name: Cloud-Enum
         run: |
          docker pull valluvarsploit/cloud_enum:latest;
-         docker run --rm -v `pwd`:`pwd`/binaries valluvarsploit/cloud_enum -k allegro.pl -qs -l binaries/cloud-scan.txt;
+         ls -l /tmp
+         docker run --rm -v `pwd`:/tmp valluvarsploit/cloud_enum -k allegro.pl -qs -l /tmp/cloud-scan.txt;
          ls -la
          cat binaries/cloud-scan.txt
 #         git clone https://github.com/airman604/cloud_enum.git;
