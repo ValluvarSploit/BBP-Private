@@ -18,7 +18,7 @@ jobs:
         run: |
          git clone https://github.com/airman604/cloud_enum.git;
          cd cloud_enum;
-         docker build -t cloud_enum .;
+         docker build -t cloud_enum cloud_enum;
          docker run --rm cloud_enum -h
 #      - name: Send Output to Slack
 #        if: always()
