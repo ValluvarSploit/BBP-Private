@@ -19,6 +19,7 @@ jobs:
          docker pull valluvarsploit/cloud_enum:latest;
          ls -la
          mkdir bingo
+         docker images
          docker run --rm -v `pwd`:/bingo cloud_enum -k allegro.pl -qs -l /bingo/out.txt;
          cat /bingo/out.txt
 #         git clone https://github.com/airman604/cloud_enum.git;
