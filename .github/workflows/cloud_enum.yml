@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Cloud-Enum
         run: |
-         git clone https://github.com/initstring/cloud_enum.git;
+         git clone https://github.com/airman604/cloud_enum.git;
          cd cloud_enum;
          docker build -t cloud_enum .;
          docker run --rm -it cloud_enum -h
