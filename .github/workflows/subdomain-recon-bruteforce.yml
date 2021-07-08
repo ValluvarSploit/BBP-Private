@@ -35,6 +35,7 @@ jobs:
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
   MassDNS:
+    if: always()
     runs-on: ubuntu-latest
     needs: DNSgen
     steps:
@@ -99,6 +100,7 @@ jobs:
 
 
   HTTPX:
+    if: always()
     needs: DNSx
     runs-on: ubuntu-latest
     steps:
