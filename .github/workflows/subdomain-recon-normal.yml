@@ -37,69 +37,71 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Enum -F file=@all-subdomains.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
-  HTTPX:
-    needs: Subdomain-enum
-    if: always()
+
+  DNSx:
     runs-on: ubuntu-latest
+    if: always()
+    needs: Subdomain-enum  
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2 
       - uses: actions/download-artifact@v2
         with:
          name: subdomains-artifacts    
-      - name: Install Dependencies
+      - name: DNSx
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          GREEN='\033[0;32m'; cat all-subdomains.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh all-subdomains.txt;
-         cp httpx.out subdomain-urls-live.txt;
-         cat subdomain-urls-live.txt | cut -d "/" -f 3 > subdomain-hosts-live.txt;
+         bash Domain_Monitoring/scripts/dnsx.sh all-subdomains.txt;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsx-artifacts
+         path: |
+          hosts-live.txt
+          ips-live.txt
+      - name: Slack Notification
+        if: always()
+        run: |
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Hosts-Live -F file=@hosts-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IPs-Live -F file=@ips-live.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
+
+
+  HTTPX:
+    needs: DNSx
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: dnsx-artifacts   
+      - name: Install Dependencies
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         GREEN='\033[0;32m'; cat hosts-live.txt | head | xargs -n1 echo -e ${GREEN} snipped;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
+         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/httpx.sh hosts-live.txt;
+         cp httpx.out httpx-resolved-url.txt;
+         cat httpx-resolved-url.txt | cut -d "/" -f 3 > httpx-resolved-host.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: httpx-artifacts
          path: |
-           subdomain-urls-live.txt
-           subdomain-hosts-live.txt
+           httpx-resolved-url.txt
+           httpx-resolved-host.txt
       - name: Slack
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain-URLs-Live -F file=@subdomain-urls-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain-Hosts-Live -F file=@subdomain-hosts-live.txt;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
-  DNSx:
-    runs-on: ubuntu-latest
-    if: always()
-    needs: HTTPX    
-    steps:
-      - uses: actions/checkout@v2 
-      - uses: actions/download-artifact@v2
-        with:
-         name: httpx-artifacts       
-      - name: DNSx
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         GREEN='\033[0;32m'; cat subdomain-hosts-live.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/dnsx.sh subdomain-hosts-live.txt;
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: dnsx-artifacts
-         path: |
-          dnsx-hosts-live.txt
-          subdomain-ips-live.txt
-      - name: Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Hosts-Live -F file=@dnsx-hosts-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-IPs-Live -F file=@subdomain-ips-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-URL -F file=@httpx-resolved-url.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTPPX-Host -F file=@httpx-resolved-host.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
