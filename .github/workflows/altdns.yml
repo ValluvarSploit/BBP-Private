@@ -17,11 +17,11 @@ jobs:
       - name: AltDNS
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         wget $HOST/subdomain-hosts-live.txt;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/altdns.sh subdomains-live.txt;      
-#         wget $HOST/subdomain-urls-live.txt;
+         bash Domain_Monitoring/scripts/altdns.sh "$TARGET" subdomain-hosts-live.txt;      
       - name: Output & Slack Notification
         if: always()
         run: |
