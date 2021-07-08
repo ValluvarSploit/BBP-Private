@@ -18,12 +18,10 @@ jobs:
       - name: DNSgen
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget -q $HOST/subdomains-reliable.txt -O subdomains-manual.txt;
-         GREEN='\033[0;32m'; cat subdomains-manual.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         wget -q $HOST/hosts-live.txt;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;       
-         bash Domain_Monitoring/scripts/dnsgen.sh subdomains-manual.txt;
+         bash Domain_Monitoring/scripts/dnsgen.sh hosts-live.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -31,7 +29,6 @@ jobs:
          name: dnsgen-artifacts
          path: |
           dnsgen-wordlist.txt.xz
-          subdomains-manual.txt
       - name: Slack
         if: always()
         run: |
@@ -48,47 +45,79 @@ jobs:
       - name: MassDNS
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         xz -d dnsgen-wordlist.txt.xz;
-         GREEN='\033[0;32m'; cat all-subdomains-resolved.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         GREEN='\033[0;32m'; cat dnsgen-wordlist.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git   ;      
-         bash Domain_Monitoring/scripts/massdns.sh "$TARGET";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
+         FILE_DATE=$(date --date="$(date +%Y-%m-28) -1 month" +'%Y_%m_28');
+         wget -q https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_"$FILE_DATE".txt;
+         cd wordlists; xz -d subdomains-w{1..2}.txt.xz subdomains-1m-{1..13}.txt.xz;
+         cat subdomains-w{1..2}.txt bitquark-subdomains-top100000.txt subdomains-1m-{1..13}.txt ../httparchive_subdomains_"$FILE_DATE".txt > ../subdomain-wordlists.txt; cd ..;
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-hugh.txt;
+         xz -d dnsgen-wordlist.txt.xz; cat dnsgen-wordlist.txt >> wordlist-hugh.txt; sort -u wordlist-hugh.txt -o wordlist-hugh.txt;
+         cat wordlist-hugh.txt | sed 's/\*\.//g' | sort -u > wordlist-hugh2.txt; cp wordlist-hugh2.txt wordlists.txt;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/massdns.sh;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
-         name: dnsgen-artifacts
+         name: massdns-artifacts
          path: |
-          all-subdomains-resolved.txt
-          subdomains.txt.xz
+          hosts-massdns.txt
       - name: Slack
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
-  HTTPX-2:
-    needs: MassDNS
+  DNSx:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: MassDNS 
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: massdns-artifacts   
+      - name: DNSx
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/dnsx.sh hosts-massdns.txt;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsx-artifacts
+         path: |
+          hosts-live.txt
+          ips-live.txt
+      - name: Slack Notification
+        if: always()
+        run: |
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-Hosts-Live -F file=@hosts-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-IPs-Live -F file=@ips-live.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
+
+
+  HTTPX:
+    needs: DNSx
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: subdomains-artifacts    
+         name: dnsx-artifacts    
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         xz -d subdomains.txt.xz;
-         GREEN='\033[0;32m'; cat subdomains.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh subdomains.txt;
-         cat httpx.out | cut -d "/" -f 3 > resolved-subdomains.txt;
+         bash Domain_Monitoring/scripts/httpx.sh hosts-live.txt;
+         cp httpx.out httpx-brute-resolved-url.txt;
+         cat httpx-brute-resolved-url.txt | cut -d "/" -f 3 > httpx-brute-resolved-host.txt;
          xz -k resolved-subdomains.txt;
       - name: Slack
         if: always()
         run: |
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-MassDNS-Hosts -F file=@resolved-subdomains.txt.xz;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-URL -F file=@httpx-brute-resolved-url.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-Host -F file=@httpx-brute-resolved-host.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
