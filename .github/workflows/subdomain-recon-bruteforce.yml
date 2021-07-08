@@ -83,6 +83,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/dnsx.sh hosts-massdns.txt;
+         cp hosts-live.txt brute-hosts-live.txt; cp ips-live.txt brute-ips-live.txt;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -94,8 +95,8 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-Hosts-Live -F file=@hosts-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-IPs-Live -F file=@ips-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-Hosts-Live -F file=@brute-hosts-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-IPs-Live -F file=@brute-ips-live.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
 
@@ -113,10 +114,9 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh hosts-live.txt;
+         bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt;
          cp httpx.out httpx-brute-resolved-url.txt;
          cat httpx-brute-resolved-url.txt | cut -d "/" -f 3 > httpx-brute-resolved-host.txt;
-         xz -k resolved-subdomains.txt;
       - name: Slack
         if: always()
         run: |
