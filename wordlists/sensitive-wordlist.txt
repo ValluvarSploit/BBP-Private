@@ -8,6 +8,8 @@ credentials
 jmxremote.access
 jmxremote.password
 sonar.log
+.docker
+.docker/config.json
 web.log
 ce.log
 es.log
