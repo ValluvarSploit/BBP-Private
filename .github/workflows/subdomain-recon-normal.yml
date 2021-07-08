@@ -18,7 +18,7 @@ jobs:
       - name: Subdomains
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget -q $HOST/subdomains-unresolved.txt -O subdomains-manual.txt;
+         wget -q $HOST/subdomains-manual.txt;
          GREEN='\033[0;32m'; cat subdomains-manual.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
@@ -29,12 +29,12 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
          name: subdomains-artifacts
-         path: all-subdomains.txt
+         path: subdomains-normal.txt
       - name: Slack
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomain-Enum -F file=@all-subdomains.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomains-Normal -F file=@subdomains-normal.txt;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
 
@@ -50,11 +50,11 @@ jobs:
       - name: DNSx
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         GREEN='\033[0;32m'; cat all-subdomains.txt | head | xargs -n1 echo -e ${GREEN} snipped;
+         GREEN='\033[0;32m'; cat subdomains-normal.txt | head | xargs -n1 echo -e ${GREEN} snipped;
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
          echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/dnsx.sh all-subdomains.txt;
+         bash Domain_Monitoring/scripts/dnsx.sh subdomains-normal.txt;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -83,13 +83,10 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         GREEN='\033[0;32m'; cat hosts-live.txt | head | xargs -n1 echo -e ${GREEN} snipped;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/httpx.sh hosts-live.txt;
-         cp httpx.out httpx-resolved-url.txt;
-         cat httpx-resolved-url.txt | cut -d "/" -f 3 > httpx-resolved-host.txt;
+         cp httpx.out httpx-resolved-url.txt; cat httpx-resolved-url.txt | cut -d "/" -f 3 > httpx-resolved-host.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
