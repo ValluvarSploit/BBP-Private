@@ -1,0 +1,16 @@
+name: Docker Image Creation
+on:
+  workflow_dispatch:
+env:
+      TARGET: ${{ secrets.DOMAIN }}       
+jobs:
+  Docker-Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Eyewitness Screenshot
+        run: |
+         git clone https://github.com/ValluvarSploit/subscraper.git; cd subscraper;
+         docker build -t valluvarsploit/subscraper .;
+         docker pull valluvarsploit/subscraper:latest;
+         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper example.pl -o /tmp/subs.subscrap;
