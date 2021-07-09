@@ -16,12 +16,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Eyewitness Screenshot
         run: |
-         git clone https://github.com/ValluvarSploit/subscraper.git;
-         cd subscraper;
-         docker build -t valluvarsploit/subscraper .
-         docker run --rm valluvarsploit/subscraper -h
-         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper allegro.pl -o /tmp/subs.txt
+         docker pull valluvarsploit/subscraper:latest
+         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper allegro.pl -o /tmp/subs.subscrap
          ls -la
+#         git clone https://github.com/ValluvarSploit/subscraper.git;
+#         cd subscraper;
+#         docker build -t valluvarsploit/subscraper .
+#         docker run --rm valluvarsploit/subscraper -h
+#         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper allegro.pl -o /tmp/subs.txt
+#         ls -la
 #         docker pull valluvarsploit/subscraper:latest
 #         docker run --rm -v `pwd`:/subscraper valluvarsploit/subscraper allegro.pl -o /subscraper/subs.subscrap
 #         docker run --rm valluvarsploit/subscraper -h
