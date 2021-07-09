@@ -373,8 +373,10 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          echo "$EXCLUDE_HOST" > exclude-host.txt;
-         cat hosts-massdns-1.txt hosts-massdns-2.txt hosts-massdns-3.txt hosts-massdns-4.txt hosts-massdns-5.txt hosts-massdns-6.txt hosts-massdns-7.txt hosts-massdns-8.txt > hosts-massdns-temp.txt; sort -u hosts-massdns-temp.txt -o hosts-massdns-temp.txt
-         grep -vFf exclude-host.txt hosts-massdns-temp.txt > hosts-massdns.txt;
+         cat hosts-massdns-{1..9}.txt > hosts-massdns-temp.txt; 
+         cat hosts-massdns-temp.txt | sed 's/\*\.//g' > subdomains-temp-2.txt;
+         sort -u subdomains-temp-2.txt -o subdomains-temp-2.txt;
+         grep -vFf exclude-host.txt subdomains-temp-2.txt > hosts-massdns.txt;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/dnsx.sh hosts-massdns.txt;
          cp dnsx.txt dnsx-brute.txt; cp hosts-live.txt brute-hosts-live.txt; cp ips-live.txt brute-ips-live.txt;
