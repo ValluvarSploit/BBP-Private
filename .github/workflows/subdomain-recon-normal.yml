@@ -19,9 +19,13 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          wget -q $HOST/subdomains-manual.txt;
+         echo "$EXCLUDE_HOST" > exclude-host.txt
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/subs.sh "$TARGET";
+         mv subdomains-normal.txt subdomains-temp.txt;
+         grep -vFf exclude-host.txt subdomains-temp.txt > subdomains-normal.txt;
+         echo "[+] Total Number of inscope subdomains is `cat subdomains-normal.txt | wc -l`";
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
