@@ -27,6 +27,7 @@ jobs:
          cat subdomains-normal.txt | sed 's/\*\.//g' > subdomains-temp.txt;
          grep -vFf exclude-host.txt subdomains-temp.txt > subdomains-normal.txt;
          echo "[+] Total Number of inscope subdomains is `cat subdomains-normal.txt | wc -l`";
+         xz -k subdomains-normal.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -37,7 +38,7 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomains-Normal -F file=@subdomains-normal.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomains-Normal -F file=@subdomains-normal.txt.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
 
