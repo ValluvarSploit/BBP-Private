@@ -1,4 +1,4 @@
-name: Subdomain Recon Normal
+name: Subdomain Normal Recon
 on:
   workflow_dispatch:
 env:
