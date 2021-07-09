@@ -55,13 +55,14 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-1.txt;
+         xz hosts-massdns-1.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-1-artifacts
          path: |
-          hosts-massdns-1.txt
+          hosts-massdns-1.txt..xz
           dnsgen-wordlist-2.txt.xz
       - name: Slack
         if: always()
@@ -86,14 +87,15 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-2.txt;
+         xz hosts-massdns-2.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-2-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -120,15 +122,16 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-3.txt;
+         xz hosts-massdns-3.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-3-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
-          hosts-massdns-3.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
+          hosts-massdns-3.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -154,16 +157,17 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-4.txt;
+         xz hosts-massdns-4.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-4-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
-          hosts-massdns-3.txt
-          hosts-massdns-4.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
+          hosts-massdns-3.txt.xz
+          hosts-massdns-4.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -192,17 +196,18 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-5.txt;
+         xz hosts-massdns-5.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-5-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
-          hosts-massdns-3.txt
-          hosts-massdns-4.txt
-          hosts-massdns-5.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
+          hosts-massdns-3.txt.xz
+          hosts-massdns-4.txt.xz
+          hosts-massdns-5.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -227,18 +232,19 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-6.txt;
+         xz hosts-massdns-6.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-6-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
-          hosts-massdns-3.txt
-          hosts-massdns-4.txt
-          hosts-massdns-5.txt
-          hosts-massdns-6.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
+          hosts-massdns-3.txt.xz
+          hosts-massdns-4.txt.xz
+          hosts-massdns-5.txt.xz
+          hosts-massdns-6.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -264,19 +270,20 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-7.txt;
+         xz hosts-massdns-7.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-7-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
-          hosts-massdns-3.txt
-          hosts-massdns-4.txt
-          hosts-massdns-5.txt
-          hosts-massdns-6.txt
-          hosts-massdns-7.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
+          hosts-massdns-3.txt.xz
+          hosts-massdns-4.txt.xz
+          hosts-massdns-5.txt.xz
+          hosts-massdns-6.txt.xz
+          hosts-massdns-7.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -301,20 +308,21 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-8.txt;
+         xz hosts-massdns-8.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-8-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
-          hosts-massdns-3.txt
-          hosts-massdns-4.txt
-          hosts-massdns-5.txt
-          hosts-massdns-6.txt
-          hosts-massdns-7.txt
-          hosts-massdns-8.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
+          hosts-massdns-3.txt.xz
+          hosts-massdns-4.txt.xz
+          hosts-massdns-5.txt.xz
+          hosts-massdns-6.txt.xz
+          hosts-massdns-7.txt.xz
+          hosts-massdns-8.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -339,21 +347,22 @@ jobs:
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-9.txt;
+         xz hosts-massdns-9.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
          name: massdns-9-artifacts
          path: |
-          hosts-massdns-1.txt
-          hosts-massdns-2.txt
-          hosts-massdns-3.txt
-          hosts-massdns-4.txt
-          hosts-massdns-5.txt
-          hosts-massdns-6.txt
-          hosts-massdns-7.txt
-          hosts-massdns-8.txt
-          hosts-massdns-9.txt
+          hosts-massdns-1.txt.xz
+          hosts-massdns-2.txt.xz
+          hosts-massdns-3.txt.xz
+          hosts-massdns-4.txt.xz
+          hosts-massdns-5.txt.xz
+          hosts-massdns-6.txt.xz
+          hosts-massdns-7.txt.xz
+          hosts-massdns-8.txt.xz
+          hosts-massdns-9.txt.xz
       - name: Slack
         if: always()
         run: |
@@ -374,13 +383,14 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          echo "$EXCLUDE_HOST" > exclude-host.txt;
-         cat hosts-massdns-{1..9}.txt > hosts-massdns-temp.txt; 
+         xz -d hosts-massdns-{1..9}.txt.xz; cat hosts-massdns-{1..9}.txt > hosts-massdns-temp.txt; 
          cat hosts-massdns-temp.txt | sed 's/\*\.//g' > subdomains-temp-2.txt;
          sort -u subdomains-temp-2.txt -o subdomains-temp-2.txt;
          grep -vFf exclude-host.txt subdomains-temp-2.txt > hosts-massdns.txt;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/dnsx.sh hosts-massdns.txt;
          cp dnsx.txt dnsx-brute.txt; cp hosts-live.txt brute-hosts-live.txt; cp ips-live.txt brute-ips-live.txt;
+         xz hosts-live.txt ips-live.txt dnsx-brute.txt;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -392,9 +402,9 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute -F file=@dnsx-brute.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-Hosts-Live -F file=@brute-hosts-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-IPs-Live -F file=@brute-ips-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute -F file=@dnsx-brute.txt.xz;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-Hosts-Live -F file=@brute-hosts-live.txt.xz;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSx-Brute-IPs-Live -F file=@brute-ips-live.txt.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
 
@@ -415,9 +425,10 @@ jobs:
          bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt;
          cp httpx.out httpx-brute-resolved-url.txt;
          cat httpx-brute-resolved-url.txt | cut -d "/" -f 3 > httpx-brute-resolved-host.txt;
+         xz httpx-brute-resolved-url.txt httpx-brute-resolved-host.txt;
       - name: Slack
         if: always()
         run: |
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-URL -F file=@httpx-brute-resolved-url.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-Host -F file=@httpx-brute-resolved-host.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-URL -F file=@httpx-brute-resolved-url.txt.xz;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-Host -F file=@httpx-brute-resolved-host.txt.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
