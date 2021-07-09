@@ -11,9 +11,9 @@ jobs:
       - name: Docker
         run: |
          wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
-         cp resolvers.txt /root/.config/subfinder; 
+         cp resolvers.txt $HOME/.config/subfinder; 
          docker pull projectdiscovery/subfinder
-         docker run -v /root/.config/subfinder:/root/.config/subfinder projectdiscovery/subfinder -d allegro.pl -recursive -rL resolvers.txt > uber.com.txt
+         docker run -v $HOME/.config/subfinder:/root/.config/subfinder projectdiscovery/subfinder -d allegro.pl -recursive -rL resolvers.txt > uber.com.txt
          ls -l uber.com.txt
 #         git clone https://github.com/ValluvarSploit/subscraper.git; cd subscraper;
 #         docker build -t valluvarsploit/subscraper .;
