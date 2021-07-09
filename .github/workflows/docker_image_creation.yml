@@ -10,9 +10,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Eyewitness Screenshot
         run: |
-         git clone https://github.com/ValluvarSploit/subscraper.git; cd subscraper;
-         docker build -t valluvarsploit/subscraper .;
-         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper example.pl -o /tmp/subs.subscrap;
-         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-         docker push valluvarsploit/subscraper
-         docker pull valluvarsploit/subscraper:latest;
+         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
+         cp resolvers.txt $HOME/.config/subfinder; 
+         docker pull projectdiscovery/subfinder
+         docker run -v $HOME/.config/subfinder:/root/.config/subfinder projectdiscovery/subfinder -d allegro.pl -recursive -rL resolvers.txt > uber.com.txt
+#         git clone https://github.com/ValluvarSploit/subscraper.git; cd subscraper;
+#         docker build -t valluvarsploit/subscraper .;
+#         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper example.pl -o /tmp/subs.subscrap;
+#         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
+#         docker push valluvarsploit/subscraper
+#         docker pull valluvarsploit/subscraper:latest;
