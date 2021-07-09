@@ -1,14 +1,14 @@
-name: Docker Image Creation
+name: Docker
 on:
   workflow_dispatch:
 env:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 jobs:
-  Docker-Build:
+  Docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Eyewitness Screenshot
+      - name: Docker
         run: |
          wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
          cp resolvers.txt $HOME/.config/subfinder; 
