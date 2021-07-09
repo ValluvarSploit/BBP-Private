@@ -92,6 +92,7 @@ jobs:
         with:
          name: massdns-2-artifacts
          path: |
+          hosts-massdns-1.txt
           hosts-massdns-2.txt
       - name: Slack
         if: always()
