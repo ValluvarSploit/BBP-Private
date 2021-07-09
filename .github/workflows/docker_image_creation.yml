@@ -2,7 +2,7 @@ name: Docker Image Creation
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.DOMAIN }}       
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 jobs:
   Docker-Build:
     runs-on: ubuntu-latest
@@ -12,5 +12,7 @@ jobs:
         run: |
          git clone https://github.com/ValluvarSploit/subscraper.git; cd subscraper;
          docker build -t valluvarsploit/subscraper .;
-         docker pull valluvarsploit/subscraper:latest;
          docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper example.pl -o /tmp/subs.subscrap;
+         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
+         docker push valluvarsploit/subscraper
+         docker pull valluvarsploit/subscraper:latest;
