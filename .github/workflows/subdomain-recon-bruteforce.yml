@@ -1,4 +1,4 @@
-name: Subdomain Recon Bruteforce
+name: Subdomain Bruteforce Recon
 on:
   workflow_dispatch:
 env:
