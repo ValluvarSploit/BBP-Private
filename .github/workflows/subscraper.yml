@@ -18,6 +18,7 @@ jobs:
         run: |
          docker pull valluvarsploit/subscraper
          docker run --rm valluvarsploit/subscraper -h
+         docker run --rm -v `pwd`:/subscraper valluvarsploit/subscraper "$1" -o /subscraper/subs.subscrap;
 #         git clone https://github.com/ValluvarSploit/subscraper.git; pip3 install -r subscraper/requirements.txt
 #         python3 subscraper/subscraper.py -h
         #; cd subscraper ; sudo python3 setup.py install; cd ..
