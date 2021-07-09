@@ -17,7 +17,7 @@ jobs:
       - name: Eyewitness Screenshot
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         git clone https://github.com/m8r0wn/subscraper ; cd subscraper ; sudo python3 setup.py install; cd ..
+         git clone https://github.com/ValluvarSploit/subscraper.git ; cd subscraper ; sudo python3 setup.py install; cd ..
          subscraper -h
       - name: Output & Slack Notification
         if: always()
