@@ -13,7 +13,7 @@ jobs:
       - name: Dev
         run: |
          docker pull valluvarsploit/linkfinder;
-         docker run --rm valluvarsploit/linkfinder i https://allegro.pl -d -o cli >> js-endpoints.txt;
+         docker run --rm valluvarsploit/linkfinder -d -i https://google.com -o cli >> js-endpoints.txt;
          xz js-endpoints.txt;
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Docker-Test -F file=@js-endpoints.txt.xz;
