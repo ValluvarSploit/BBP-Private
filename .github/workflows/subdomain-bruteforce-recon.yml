@@ -62,7 +62,7 @@ jobs:
         with:
          name: massdns-1-artifacts
          path: |
-          hosts-massdns-1.txt..xz
+          hosts-massdns-1.txt.xz
           dnsgen-wordlist-2.txt.xz
       - name: Slack
         if: always()
