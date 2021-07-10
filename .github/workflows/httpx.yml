@@ -19,11 +19,10 @@ jobs:
       - name: HTTPX
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         wget $HOST/brute-hosts-live.txt.xz; xz -d brute-hosts-live.txt.xz;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh subdomains.txt; 
-#         wget $HOST/subdomains.txt.xz; xz resolved-subdomains.txt
+         bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt full;
       - name: Slack
         if: always()
         run: |
