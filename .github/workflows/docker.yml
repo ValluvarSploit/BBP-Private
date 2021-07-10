@@ -15,7 +15,7 @@ jobs:
         run: |
          git clone https://github.com/ValluvarSploit/hakrawler.git; cd hakrawler;
          docker build -t valluvarsploit/hakrawler .;
-         docker run --rm valluvarsploit/hakrawler -h;
+         echo github.com | docker run --rm valluvarsploit/hakrawler;
 #         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
 #         docker push valluvarsploit/golinkfinder;
          
