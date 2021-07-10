@@ -10,11 +10,12 @@ jobs:
       - uses: actions/checkout@v2
       - name: Docker
         run: |
-         git clone https://github.com/GerbenJavado/LinkFinder.git; cd LinkFinder;
-         docker build -t valluvarsploit/linkfinder .;
-         docker run --rm -v `pwd`:/linkfinder/output valluvarsploit/linkfinder -i https://allegro.pl -o /linkfinder/output/output.html;
-         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-         docker push valluvarsploit/linkfinder;
+         git clone https://github.com/ValluvarSploit/GoLinkFinder.git; cd GoLinkFinder;
+         docker build -t valluvarsploit/golinkfinder .;
+         docker run --rm valluvarsploit/golinkfinder -h;
+#         docker run --rm -v `pwd`:/linkfinder/output valluvarsploit/linkfinder -i https://allegro.pl -o /linkfinder/output/output.html;
+#         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
+#         docker push valluvarsploit/linkfinder;
 #         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper example.pl -o /tmp/subs.subscrap;
 #         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
 #         docker push valluvarsploit/subscraper
