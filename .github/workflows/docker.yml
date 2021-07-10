@@ -12,7 +12,7 @@ jobs:
         run: |
          git clone https://github.com/ValluvarSploit/GoLinkFinder.git; cd GoLinkFinder;
          docker build -t valluvarsploit/golinkfinder .;
-         docker run --rm valluvarsploit/golinkfinder -d allegro.pl > js.txt;
+         docker run --rm valluvarsploit/golinkfinder -d github.com > js.txt;
          ls -la;
          cat js.txt;
 #         docker run --rm valluvarsploit/golinkfinder -h;
