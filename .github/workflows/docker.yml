@@ -13,11 +13,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Docker
         run: |
-         git clone https://github.com/ValluvarSploit/GoLinkFinder.git; cd GoLinkFinder;
-         docker build -t valluvarsploit/golinkfinder .;
-         docker run --rm valluvarsploit/golinkfinder -d github.com > js.txt;
-         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-         docker push valluvarsploit/golinkfinder;
+         git https://github.com/ValluvarSploit/hakrawler.git; cd hakrawler;
+         docker build -t valluvarsploit/hakrawler .;
+         docker run --rm valluvarsploit/hakrawler -h;
+#         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
+#         docker push valluvarsploit/golinkfinder;
          
 #         docker run --rm valluvarsploit/golinkfinder -h;
 #         docker run --rm -v `pwd`:/golinkfinder/ valluvarsploit/golinkfinder -d allegro.pl -o /golinkfinder/golinkfinder-js-end-urls.txt;
