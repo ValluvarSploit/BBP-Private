@@ -12,9 +12,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Dev
         run: |
-         go env -w GOPATH=~/Downloads;
-         go get -u -v https://github.com/0xsha/GoLinkFinder
-         ls -l ~/Downloads/bin/
+         git clone https://github.com/0xsha/GoLinkFinder.git
+
          cp ~/Downloads/bin/GoLinkFinder .
          GoLinkFinder -h
 #         docker pull valluvarsploit/linkfinder;
