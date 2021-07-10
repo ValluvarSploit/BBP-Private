@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.DOMAIN }}
-      HOST: ${{ secrets.NGROK_URL }}
       EXCLUDE_HOST: ${{ secrets.EXCLUDE_HOST }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
