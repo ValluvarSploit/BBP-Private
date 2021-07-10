@@ -12,9 +12,9 @@ jobs:
         run: |
          git clone https://github.com/GerbenJavado/LinkFinder.git; cd LinkFinder;
          docker build -t valluvarsploit/linkfinder .;
-         docker run --rm -v `pwd`:/linkfinder/output valluvarsploit/linkfinder -i http://example.com/1.js -o /linkfinder/output/output.html;
+         docker run --rm -v `pwd`:/linkfinder/output valluvarsploit/linkfinder -i https://allegro.pl -o /linkfinder/output/output.html;
          echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-         docker push valluvarsploit/subscraper;
+         docker push valluvarsploit/linkfinder;
 #         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper example.pl -o /tmp/subs.subscrap;
 #         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
 #         docker push valluvarsploit/subscraper
