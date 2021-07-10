@@ -2,6 +2,7 @@ name: Docker
 on:
   workflow_dispatch:
 env:
+      TARGET: ${{ secrets.DOMAIN }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       S_URL: https://slack.com/api/files.upload      
@@ -17,7 +18,6 @@ jobs:
          docker run --rm valluvarsploit/golinkfinder -d github.com > js.txt;
          echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
          docker push valluvarsploit/golinkfinder;
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Docker-Test -F file=@js.txt;
          
 #         docker run --rm valluvarsploit/golinkfinder -h;
 #         docker run --rm -v `pwd`:/golinkfinder/ valluvarsploit/golinkfinder -d allegro.pl -o /golinkfinder/golinkfinder-js-end-urls.txt;
