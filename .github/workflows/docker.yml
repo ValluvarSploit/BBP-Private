@@ -12,7 +12,9 @@ jobs:
         run: |
          git clone https://github.com/ValluvarSploit/GoLinkFinder.git; cd GoLinkFinder;
          docker build -t valluvarsploit/golinkfinder .;
-         docker run --rm valluvarsploit/golinkfinder -d allegro.pl;
+         docker run --rm valluvarsploit/golinkfinder -d allegro.pl > js.txt;
+         ls -la;
+         cat js.txt;
 #         docker run --rm valluvarsploit/golinkfinder -h;
 #         docker run --rm -v `pwd`:/golinkfinder/ valluvarsploit/golinkfinder -d allegro.pl -o /golinkfinder/golinkfinder-js-end-urls.txt;
 #         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
