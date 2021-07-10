@@ -22,7 +22,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          wget $HOST/brute-hosts-live.txt.xz; xz -d brute-hosts-live.txt.xz;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt beast;
+         bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt light;
       - name: Slack
         if: always()
         run: |
