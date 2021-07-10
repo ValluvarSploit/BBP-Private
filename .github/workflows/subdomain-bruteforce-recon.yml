@@ -389,15 +389,15 @@ jobs:
          grep -vFf exclude-host.txt subdomains-temp-2.txt > hosts-massdns.txt;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/dnsx.sh hosts-massdns.txt;
-         cp dnsx.txt dnsx-brute.txt; cp hosts-live.txt brute-hosts-live.txt; cp ips-live.txt brute-ips-live.txt;
-         xz hosts-live.txt ips-live.txt dnsx-brute.txt;
+         mv dnsx.txt dnsx-brute.txt; mv hosts-live.txt brute-hosts-live.txt; mv ips-live.txt brute-ips-live.txt;
+         xz -k dnsx-brute.txt brute-hosts-live.txt brute-ips-live.txt;
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: dnsx-artifacts
          path: |
-          hosts-live.txt
-          ips-live.txt
+          brute-hosts-live.txt.xz
+          brute-ips-live.txt.xz
       - name: Slack Notification
         if: always()
         run: |
@@ -421,6 +421,7 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         xz -d brute-hosts-live.txt.xz
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt;
          cp httpx.out httpx-brute-resolved-url.txt;
