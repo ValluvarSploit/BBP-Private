@@ -9,7 +9,7 @@ env:
      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
 jobs:
-  robots.txt:
+  robots_txt:
     runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
