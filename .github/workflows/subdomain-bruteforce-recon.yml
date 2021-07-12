@@ -267,25 +267,6 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
-#  DNSsearch:
-#    needs: MassDNS-1
-#    runs-on: ubuntu-latest  
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Install Dependencies
-#        run: |
-#         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-#         go env -w GOPATH=~/Downloads; go get github.com/evilsocket/dnssearch; cp ~/Downloads/bin/dnssearch .;
-#      - name: DNSsearch
-#        run: |
-#         ./dnssearch -domain "$TARGET" -wordlist wordlists/commonspeak2-subdomains.txt | tee dnssearch.txt;
-#      - name: Slack
-#       if: always()
-#        run: |
-#         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-#         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSsearch -F file=@dnssearch.txt;
-#         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
-
   DNSx:
     runs-on: ubuntu-latest
     if: always()
