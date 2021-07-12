@@ -16,6 +16,7 @@ jobs:
       - name: WaybackURLs robots.txt
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          bash Domain_Monitoring/scripts/robots-txt-waybackurl.sh "$TARGET"
       - name: Slack
         if: always()
