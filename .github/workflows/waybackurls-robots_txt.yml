@@ -23,5 +23,5 @@ jobs:
         if: always()
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=WaybackURL-robots.txt -F file=@robots.waybackurl.xz;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=WaybackURL-robots.txt -F file=@robots_txt_waybackurl.txt.xz;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
