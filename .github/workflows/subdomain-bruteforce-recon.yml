@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 env:
       TARGET: ${{ secrets.DOMAIN }}
-      HOST: ${{ secrets.NGROK_URL }}
       EXCLUDE_HOST: ${{ secrets.EXCLUDE_HOST }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
@@ -11,47 +10,22 @@ env:
       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
       CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }} 
 
-jobs:
-  DNSgen:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: DNSgen
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         wget -q $HOST/hosts-live.txt; cp wordlists/top-vulnerable-subdomains.txt .;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;       
-         bash Domain_Monitoring/scripts/dnsgen.sh hosts-live.txt; mv dnsgen-wordlist.txt.xz dnsgen-wordlist-1.txt.xz;
-         bash Domain_Monitoring/scripts/dnsgen.sh top-vulnerable-subdomains.txt; mv dnsgen-wordlist.txt.xz dnsgen-wordlist-2.txt.xz;
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: dnsgen-artifacts
-         path: |
-          dnsgen-wordlist-1.txt.xz
-          dnsgen-wordlist-2.txt.xz
-      - name: Slack
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
+jobs:     
   MassDNS-1:
     if: always()
     runs-on: ubuntu-latest
-    needs: DNSgen
     steps:
       - uses: actions/checkout@v2 
-      - uses: actions/download-artifact@v2
-        with:
-         name: dnsgen-artifacts
       - name: MassDNS
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         xz -d dnsgen-wordlist-1.txt.xz;
-         cat dnsgen-wordlist-1.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;   
+         xz -d wordlists/subdomains-w{1..2}.txt.xz;
+         cat wordlists/subdomains-w{1..2}.txt > subdomain-wordlists.txt;
+         echo "[+] Wordlist count is `cat subdomain-wordlists.txt`"
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlists-temp.txt;
+         cat wordlists-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-1.txt;
@@ -63,16 +37,15 @@ jobs:
          name: massdns-1-artifacts
          path: |
           hosts-massdns-1.txt.xz
-          dnsgen-wordlist-2.txt.xz
       - name: Slack
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-  
+
   MassDNS-2:
     if: always()
     runs-on: ubuntu-latest
-    needs: [DNSgen,MassDNS-1]
+    needs: MassDNS-1
     steps:
       - uses: actions/checkout@v2 
       - uses: actions/download-artifact@v2
@@ -82,8 +55,11 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         xz -d dnsgen-wordlist-2.txt.xz;
-         cat dnsgen-wordlist-2.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         xz -d wordlists/subdomains-1m-{1..13}.txt.xz;
+         cat wordlists/subdomains-1m-{1..13}.txt > subdomain-wordlists.txt;
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlists-temp.txt;
+         cat wordlists-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-2.txt;
@@ -101,7 +77,7 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
-          
+
   MassDNS-3:
     if: always()
     runs-on: ubuntu-latest
@@ -115,10 +91,13 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         xz -d wordlists/subdomains-w{1..2}.txt.xz;
-         cat wordlists/subdomains-w{1..2}.txt > subdomain-wordlists.txt;
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlists-temp.txt;
-         cat wordlists-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         FILE_DATE=$(date --date="$(date +%Y-%m-28) -1 month" +'%Y_%m_28');
+         wget -q https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_"$FILE_DATE".txt;
+         cat wordlists/bitquark-subdomains-top100000.txt httparchive_subdomains_"$FILE_DATE".txt > subdomain-wordlists.txt; 
+         sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt; 
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-temp.txt;
+         cat wordlist-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-3.txt;
@@ -150,10 +129,10 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         xz -d wordlists/subdomains-1m-{1..13}.txt.xz;
-         cat wordlists/subdomains-1m-{1..13}.txt > subdomain-wordlists.txt;
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlists-temp.txt;
-         cat wordlists-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         wget -q https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -O subdomain-wordlists.txt; 
+         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-temp.txt;
+         cat wordlist-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-4.txt;
@@ -187,12 +166,10 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         FILE_DATE=$(date --date="$(date +%Y-%m-28) -1 month" +'%Y_%m_28');
-         wget -q https://wordlists-cdn.assetnote.io/data/automated/httparchive_subdomains_"$FILE_DATE".txt;
-         cat wordlists/bitquark-subdomains-top100000.txt httparchive_subdomains_"$FILE_DATE".txt > subdomain-wordlists.txt; 
-         sort -u subdomain-wordlists.txt -o subdomain-wordlists.txt; 
+         wget -q https://wordlists-cdn.assetnote.io/data/manual/2m-subdomains.txt -O subdomain-wordlists.txt; 
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-temp.txt;
          cat wordlist-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-5.txt;
@@ -226,9 +203,10 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         wget -q https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -O subdomain-wordlists.txt; 
+         wget -q https://raw.githubusercontent.com/internetwache/CT_subdomains/master/top-100000.txt -O ct_top-100000.txt; cat ct_top-100000.txt | cut -d "," -f 2 > subdomain-wordlists.txt
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-temp.txt;
          cat wordlist-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-6.txt;
@@ -237,7 +215,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-         name: massdns-6-artifacts
+         name: massdns-8-artifacts
          path: |
           hosts-massdns-1.txt.xz
           hosts-massdns-2.txt.xz
@@ -249,7 +227,6 @@ jobs:
         if: always()
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
 
   MassDNS-7:
     if: always()
@@ -264,9 +241,10 @@ jobs:
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         wget -q https://wordlists-cdn.assetnote.io/data/manual/2m-subdomains.txt -O subdomain-wordlists.txt; 
+         wget -q https://raw.githubusercontent.com/fuzz-security/SuperWordlist/master/SubDomain.txt -O subdomain-wordlists.txt;
          sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-temp.txt;
          cat wordlist-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/massdns.sh;
          cp hosts-massdns.txt hosts-massdns-7.txt;
@@ -289,101 +267,40 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
-  MassDNS-8:
-    if: always()
+#  DNSsearch:
+#    needs: MassDNS-1
+#    runs-on: ubuntu-latest  
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install Dependencies
+#        run: |
+#         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+#         go env -w GOPATH=~/Downloads; go get github.com/evilsocket/dnssearch; cp ~/Downloads/bin/dnssearch .;
+#      - name: DNSsearch
+#        run: |
+#         ./dnssearch -domain "$TARGET" -wordlist wordlists/commonspeak2-subdomains.txt | tee dnssearch.txt;
+#      - name: Slack
+#       if: always()
+#        run: |
+#         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+#         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=DNSsearch -F file=@dnssearch.txt;
+#         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
+
+  DNSx:
     runs-on: ubuntu-latest
+    if: always()
     needs: MassDNS-7
     steps:
       - uses: actions/checkout@v2 
       - uses: actions/download-artifact@v2
         with:
          name: massdns-7-artifacts
-      - name: MassDNS
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         wget -q https://raw.githubusercontent.com/internetwache/CT_subdomains/master/top-100000.txt -O ct_top-100000.txt; cat ct_top-100000.txt | cut -d "," -f 2 > subdomain-wordlists.txt
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-temp.txt;
-         cat wordlist-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/massdns.sh;
-         cp hosts-massdns.txt hosts-massdns-8.txt;
-         xz hosts-massdns-8.txt;
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: massdns-8-artifacts
-         path: |
-          hosts-massdns-1.txt.xz
-          hosts-massdns-2.txt.xz
-          hosts-massdns-3.txt.xz
-          hosts-massdns-4.txt.xz
-          hosts-massdns-5.txt.xz
-          hosts-massdns-6.txt.xz
-          hosts-massdns-7.txt.xz
-          hosts-massdns-8.txt.xz
-      - name: Slack
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
-  MassDNS-9:
-    if: always()
-    runs-on: ubuntu-latest
-    needs: MassDNS-8
-    steps:
-      - uses: actions/checkout@v2 
-      - uses: actions/download-artifact@v2
-        with:
-         name: massdns-8-artifacts
-      - name: MassDNS
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
-         wget -q https://raw.githubusercontent.com/fuzz-security/SuperWordlist/master/SubDomain.txt -O subdomain-wordlists.txt;
-         sed "s/$/.$TARGET/" subdomain-wordlists.txt > wordlist-temp.txt;
-         cat wordlist-temp.txt | sed 's/\*\.//g' | sort -u > wordlists.txt;
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/massdns.sh;
-         cp hosts-massdns.txt hosts-massdns-9.txt;
-         xz hosts-massdns-9.txt;
-      - name: Upload Artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-         name: massdns-9-artifacts
-         path: |
-          hosts-massdns-1.txt.xz
-          hosts-massdns-2.txt.xz
-          hosts-massdns-3.txt.xz
-          hosts-massdns-4.txt.xz
-          hosts-massdns-5.txt.xz
-          hosts-massdns-6.txt.xz
-          hosts-massdns-7.txt.xz
-          hosts-massdns-8.txt.xz
-          hosts-massdns-9.txt.xz
-      - name: Slack
-        if: always()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
-
-
-  DNSx:
-    runs-on: ubuntu-latest
-    if: always()
-    needs: MassDNS-9
-    steps:
-      - uses: actions/checkout@v2 
-      - uses: actions/download-artifact@v2
-        with:
-         name: massdns-9-artifacts
       - name: DNSx
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          echo "$EXCLUDE_HOST" > exclude-host.txt;
-         xz -d hosts-massdns-{1..9}.txt.xz; cat hosts-massdns-{1..9}.txt > hosts-massdns-temp.txt; 
+         xz -d hosts-massdns-{1..7}.txt.xz; cat hosts-massdns-{1..7}.txt > hosts-massdns-temp.txt; 
          cat hosts-massdns-temp.txt | sed 's/\*\.//g' > subdomains-temp-2.txt;
          sort -u subdomains-temp-2.txt -o subdomains-temp-2.txt;
          grep -vFf exclude-host.txt subdomains-temp-2.txt > hosts-massdns.txt;
@@ -397,7 +314,6 @@ jobs:
          name: dnsx-artifacts
          path: |
           brute-hosts-live.txt.xz
-          brute-ips-live.txt.xz
       - name: Slack Notification
         if: always()
         run: |
@@ -423,7 +339,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          xz -d brute-hosts-live.txt.xz
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt;
+         bash Domain_Monitoring/scripts/httpx.sh brute-hosts-live.txt light;
          cp httpx.out httpx-brute-resolved-url.txt;
          cat httpx-brute-resolved-url.txt | cut -d "/" -f 3 > httpx-brute-resolved-host.txt;
          xz httpx-brute-resolved-url.txt httpx-brute-resolved-host.txt;
