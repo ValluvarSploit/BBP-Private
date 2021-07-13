@@ -20,7 +20,7 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
          wget -q $HOST/httpx-resolved-url.txt; wget -q $HOST/httpx-resolved-host.txt;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/subdomain_takeover.sh httpx-resolved-host.txt;
+         bash Domain_Monitoring/scripts/subdomain_takeover.sh httpx-resolved-url.txt httpx-resolved-host.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
