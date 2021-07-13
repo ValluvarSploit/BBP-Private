@@ -61,7 +61,6 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
 
-
   DNSx:
     runs-on: ubuntu-latest
     if: always()
@@ -78,19 +77,10 @@ jobs:
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/dnsx.sh hosts-massdns.txt;
-         cp dnsx.txt dnsx-normal.txt;
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: dnsx-artifacts
-         path: |
-          hosts-live.txt
-          ips-live.txt
+         mv hosts-live.txt subs.cewl;
       - name: Slack Notification
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CEWL-DNSx-Normal -F file=@dnsx-normal.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CEWL-DNSx-Hosts-Live -F file=@hosts-live.txt;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CEWL-DNSx-IPs-Live -F file=@ips-live.txt;
+          curl "$S_URL" -F token="$S_-TOKEN" -F channels="$S_CHANNEL" -F title=cewl-subdomains -F file=@subs.cewl;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
