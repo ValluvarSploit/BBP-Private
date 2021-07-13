@@ -215,7 +215,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-         name: massdns-8-artifacts
+         name: massdns-6-artifacts
          path: |
           hosts-massdns-1.txt.xz
           hosts-massdns-2.txt.xz
