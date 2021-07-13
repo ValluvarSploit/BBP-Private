@@ -16,16 +16,18 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         git clone https://github.com/guelfoweb/knock.git ; cd knock; pip3 install -r requirements.txt;
-         sudo python3 setup.py install --user ; echo "$KNOCKPY_CONFIG" > knockpy/config.json ; cd ..
-         mkdir knockpy-results
+         echo "$KNOCKPY_CONFIG" > config.txt
+#         git clone https://github.com/guelfoweb/knock.git ; cd knock; pip3 install -r requirements.txt;
+#         sudo python3 setup.py install --user ; echo "$KNOCKPY_CONFIG" > knockpy/config.json ; cd ..
+#         mkdir knockpy-results
       - name: Knockpy
         run: |
-         python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results -w wordlists/knockpy-wordslist.txt;
-         zip -r knockpy-results.zip knockpy-results;
+#         python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results -w wordlists/knockpy-wordslist.txt;
+#         zip -r knockpy-results.zip knockpy-results;
       - name: Output & Slack Notification
         if: always()
         run: |         
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Knockpy -F file=@config.txt;         
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Knockpy -F file=@knockpy-results.zip;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
