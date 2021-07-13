@@ -18,7 +18,7 @@ jobs:
         run: | 
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
          sudo apt install cewl;
-         cewl -m 4 -w cewl.txt https://www.$TARGET;
+         cewl -m 4 -w cewl.txt https://$TARGET;
          xz cewl.txt;
       - name: Upload Artifacts
         if: always()
