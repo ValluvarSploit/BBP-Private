@@ -32,25 +32,64 @@ jobs:
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS -F file=@shuffledns.txt.xz;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
          
-  HTTPX:
+  MassDNS:
     if: always()
     runs-on: ubuntu-latest
     needs: ShuffleDNS-Bruteforce
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2 
       - uses: actions/download-artifact@v2
         with:
          name: ShuffleDNS-artifacts
-      - name: HTTPX
+      - name: MassDNS
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
-         xz -d shuffledns.txt.xz;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;  
+         xz -d shuffledns.txt.xz; mv shuffledns.txt wordlists.txt;
+         echo "[+] Wordlist count is `cat wordlists.txt`";
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/httpx.sh shuffledns.txt;
+         bash Domain_Monitoring/scripts/massdns.sh;
+         xz hosts-massdns.txt;
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: massdns-artifacts
+         path: |
+          hosts-massdns.txt.xz
       - name: Slack
         if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS -F file=@httpx.out.xz;
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK"
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
+  DNSx:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: MassDNS
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: massdns-artifacts
+      - name: DNSx
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         xz -d hosts-massdns.txt.xz;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/dnsx.sh hosts-massdns.txt;
+         cp dnsx.txt dnsx-normal.txt;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsx-artifacts
+         path: |
+          hosts-live.txt
+          ips-live.txt
+      - name: Slack Notification
+        if: always()
+        run: |
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS-DNSx-Normal -F file=@dnsx-normal.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS-DNSx-Hosts-Live -F file=@hosts-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS-DNSx-IPs-Live -F file=@ips-live.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
