@@ -17,23 +17,18 @@ jobs:
       - name: Install Dependencies
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         wget --quiet https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
-         wget https://gist.github.com/jhaddix/f64c97d0863a78454e44c2f7119c2a6a/raw/96f4e51d96b2203f19f6381c8c545b278eaa0837/all.txt;
-         git clone https://github.com/blechschmidt/massdns.git && cd massdns/ && make; sudo cp bin/massdns /usr/local/bin/; cd ..
-         wget -q -i requirements/shuffledns.txt; tar -xzvf shuffledns*.tar.gz;
-      - name: ShuffleDNS
-        run: |
-         echo "$TARGET" | ./shuffledns -w all.txt -r resolvers.txt -o shuffledns.txt -v
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/shuffledns.sh "$TARGET";
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
          name: ShuffleDNS-artifacts
-         path: shuffledns.txt
+         path: shuffledns.txt.xz
       - name: Slack
         if: always()
         run: |
-         xz shuffledns.txt
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         S_CHANNEL=$(echo "$TARGET" | sed 's/\./_/g');
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=ShuffleDNS -F file=@shuffledns.txt.xz;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
          
@@ -49,8 +44,8 @@ jobs:
       - name: HTTPX
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         xz -d shuffledns.txt.xz;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
          bash Domain_Monitoring/scripts/httpx.sh shuffledns.txt;
       - name: Slack
