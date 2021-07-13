@@ -1,0 +1,64 @@
+name: CEWL
+on:
+  workflow_dispatch:
+env:
+     TARGET: ${{ secrets.DOMAIN }}
+     S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
+     WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+     S_URL: https://slack.com/api/files.upload
+     CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+     CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
+     
+jobs:
+  cewl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Amass
+        run: | 
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK"
+         sudo apt install cewl
+         cewl -m 4 -w cewl.txt https://$TARGET;
+         xz cewl.txt;
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+         name: cewl-artifacts
+         path: cewl.txt.xz
+      - name: Slack
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK"
+
+  DNSx:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: cewl
+    steps:
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@v2
+        with:
+         name: cewl-artifacts
+      - name: DNSx
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         xz -d cewl.txt.xz;
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/dnsx.sh cewl.txt;
+         cp dnsx.txt dnsx-normal.txt;
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: dnsx-artifacts
+         path: |
+          hosts-live.txt
+          ips-live.txt
+      - name: Slack Notification
+        if: always()
+        run: |
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CEWL-DNSx-Normal -F file=@dnsx-normal.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CEWL-DNSx-Hosts-Live -F file=@hosts-live.txt;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=CEWL-DNSx-IPs-Live -F file=@ips-live.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
