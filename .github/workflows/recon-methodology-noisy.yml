@@ -1,17 +1,18 @@
-name: Recon Methodology Noisy
+name: Recon Noisy Methodology
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.DOMAIN_LARGE_PRIVATE }}
+      TARGET: ${{ secrets.DOMAIN }}
       HOST: ${{ secrets.NGROK_URL }}
-      XSS_HUNTER: ${{ secrets.XSS_HUNTER }}
       AWS_CREDS: ${{ secrets.AWS_CREDENTIALS }}
       GIT_ORG: ${{ secrets.TARGET_GITHUB_ORG }}
       GIT_REPO: ${{ secrets.GIT_REPO_URLS }}
       GIT_TOKEN: ${{ secrets.TOKEN }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      S_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_PRIVATE }}
+      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
       S_URL: https://slack.com/api/files.upload
+      CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}
 jobs:
   Subdomain-Takeover:
     runs-on: ubuntu-latest
@@ -19,13 +20,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Subdomain Takeover
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$S_WEBHOOK";
-         wget -q $HOST/subdomain-urls-live.txt -O subdomains-live.txt;
-         wget -q $HOST/subdomain-hosts-live.txt -O subdomains-host.txt;
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials;
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
+         wget $HOST/httpx-resolved-url.txt; wget $HOST/httpx-resolved-host.txt;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/subdomain_takeover.sh subdomains-live.txt subdomains-host.txt;
+         bash Domain_Monitoring/scripts/subdomain_takeover.sh httpx-resolved-url.txt httpx-resolved-host.txt;
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -39,8 +38,7 @@ jobs:
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomain-Takeover -F file=@subdomain-takeover.zip;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK";
-
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
   DNSC:
     if: always()
     runs-on: ubuntu-latest  
