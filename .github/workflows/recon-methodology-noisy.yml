@@ -84,6 +84,8 @@ jobs:
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=MEG -F file=@meg-home.zip;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
+
+
   HeartBleed-Scan:
     if: always()
     runs-on: ubuntu-latest  
@@ -106,10 +108,32 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title=HeartBleed-Scan -F file=@heartbleed-scan.txt;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
+
+  Aquatone:
+    runs-on: ubuntu-latest
+    needs: [Subdomain-Takeover, HeartBleed-Scan]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomains-artifacts
+      - name: Aquatone
+        run: |
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/aquatone.sh httpx-resolved-url.txt;
+      - name: Output & Slack Notification
+        if: always()
+        run: |
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Aquatone -F file=@aquatone-output.zip.xz ;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
+
   Eyewitness:
     if: always()
     runs-on: ubuntu-latest
-    needs: [Subdomain-Takeover, HeartBleed-Scan]
+    needs: [Subdomain-Takeover, Aquatone]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -127,6 +151,7 @@ jobs:
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Web-Screenshots -F file=@eyewitness_output.zip.xz ;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
+
 
   Gochopchop-Scan:
     if: always()
@@ -284,7 +309,6 @@ jobs:
 
   URL-Enumeration:
     runs-on: ubuntu-latest
-    needs: Gitleaks
     steps:
       - uses: actions/checkout@v2
       - name: URL Enumeration
@@ -301,97 +325,58 @@ jobs:
       - name: Output & Slack Notification
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Pattern-Collector -F file=@url-collector-artifacts.zip.xz ;
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=URL-Enumeration -F file=@url-collector-artifacts.zip.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   Javascript-Scan:
     runs-on: ubuntu-latest
-    needs: URL-Enumeration
+    needs: [Subdomain-Takeover,URL-Enumeration]
     steps:
-      - uses: actions/checkout@v2      
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+         name: subdomains-artifacts     
       - name: Javascript Scan
         run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/js-scan.sh
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/js-scan.sh "$TARGET" httpx-resolved-url.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-JS-Scan -F file=@js-scan.zip.xz ;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-JS-Scan -F file=@js-scan.zip.xz;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
   Secrets-Finder:
     if: always()
     runs-on: ubuntu-latest
-    needs: Javascript-Scan
+    needs: [Subdomain-Takeover,Javascript-Scan]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
-         name: httprober-artifacts      
+         name: subdomains-artifacts     
       - name: Secret Finder
         run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/secret_finder.sh subdomains-live.txt        
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/secret_finder.sh httpx-resolved-url.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Secret-Finder -F file=@secrets.zip.xz ; fi
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         if [[ -f secrets.zip.xz ]]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Secret-Finder -F file=@secrets.zip; fi
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
-  KXSS-Enum:
-    runs-on: ubuntu-latest
-    needs: [URL-Enumeration, Secrets-Finder]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: url-collector-artifacts 
-      - name: KXSS Enumeration
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/kxss.sh waybackurls.txt
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-KXSS -F file=@kxss.out ;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-
-  XSS-Hunt:
-    if: always()
-    runs-on: ubuntu-latest
-    needs: [URL-Enumeration, KXSS-Enum]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: url-collector-artifacts         
-      - name: Dalfox
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/xss-hunt.sh xss-params.txt "$XSS_HUNTER"      
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-          if [[ -f xss-urls.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-URL -F file=@xss-urls.txt; fi
 
   Parameter-Discovery:
     if: always()
     runs-on: ubuntu-latest
-    needs: [HTTProber, XSS-Hunt]
+    needs: [Subdomain-Takeover,Secrets-Finder]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -399,10 +384,10 @@ jobs:
          name: subdomains-artifacts
       - name: Parameter Discovery
         run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/parameter-discover.sh subdomains-host.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/parameter-discover.sh httpx-resolved-host.txt;
       - name: Upload BBP-Public Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -412,105 +397,15 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Parameter-Discovery -F file=@paramspider-out.zip
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-
-  XSS-Hunter:
-    if: always()
-    runs-on: ubuntu-latest
-    needs: [Parameter-Discovery, HTTProber]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: paramspider-artifacts        
-      - name: XSS Hunter
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/xss-hunt-paramspider.sh paramspider.txt "$XSS_HUNTER"
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-         if [[ -f xss-paramspider.txt ]] ; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-XSS-Paramspider -F file=@xss-paramspider.txt; fi
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK"
-
-  Mass-Nmap-Scan:
-    if: always()
-    runs-on: ubuntu-latest    
-    needs: [Nuclei-Template-Scan, HTTProber]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomains-artifacts
-      - name: Masscan-Nmap 
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/masscan-nmap.sh ips-live.txt      
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-         name: nmap-output
-         path: nmap-masscan.out         
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Mass-Nmap-Scan -F file=@mass-nmap-scan.zip
-
-  Nmap-Vulnerability-Scan:
-    if: always()
-    runs-on: ubuntu-latest    
-    needs: [Mass-Nmap-Scan, HTTProber]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: nmap-output
-      - name: Nmap-Vulnerability-Scan
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/nmap-vuln-scan.sh nmap-masscan.out
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Nmap-Vulnerability-Scan -F file=@nmap-vuln-scan.zip
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Parameter-Discovery -F file=@paramspider.txt;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
           
-  Aquatone:
-    runs-on: ubuntu-latest
-    needs: [HTTProber, Nmap-Vulnerability-Scan]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-         name: subdomains-artifacts
-      - name: Aquatone
-        run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/aquatone.sh subdomains-live.txt
-      - name: Output & Slack Notification
-        if: always()
-        run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Aquatone -F file=@aquatone-output.zip.xz ;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+
 
   Subdomainizer:
     if: always()
     runs-on: ubuntu-latest              
-    needs: [HTTProber, Gochopchop-Scan]
+    needs: [Subdomain-Takeover,Parameter-Discovery]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -518,25 +413,25 @@ jobs:
          name: subdomains-artifacts
       - name: Subdomainizer
         run: |
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials
-         echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig
-         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git
-         bash Domain_Monitoring/scripts/subdomainizer.sh subdomains-live.txt
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/subdomainizer.sh httpx-resolved-url.txt;
       - name: Output & Slack Notification
         if: always()
         run: |
-          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g')
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title="$TARGET"-Subdomainizer -F file=@subdomainizer.zip ;
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$S_WEBHOOK" ;
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer.zip;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
      
      
   Slack-Notification:
     if: always()
     runs-on: ubuntu-latest  
-    needs: [DNSx, HTTProber, Subdomain-Takeover, Nuclei-Template-Scan, Mass-Nmap-Scan, Nmap-Vulnerability-Scan, URL-Enumeration, XSS-Hunter, Parameter-Discovery, Favicon-Hash-Extraction, Javascript-Scan, Secrets-Finder, CORS-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, broken-link-checker-full, broken-link-checker-light, KXSS-Enum, XSS-Hunt, MEG, Nmap-UDP-Scan]
+    needs: [Subdomain-Takeover, Nuclei-Template-Scan, URL-Enumeration, Parameter-Discovery, Javascript-Scan, Secrets-Finder, CORS-Scanner, S3-Scanner, Aquatone, Gochopchop-Scan, Subdomainizer, Git-Dorker-Domain, Eyewitness, MEG]
     steps:
       - uses: actions/checkout@v2
       - name: Slack 
         run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow}} _*`COMPLETED`*_ - '$TARGET'"}' "$S_WEBHOOK" ;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow}} _*`COMPLETED`*_ - '$TARGET'"}' "$WEBHOOK" ;
 
