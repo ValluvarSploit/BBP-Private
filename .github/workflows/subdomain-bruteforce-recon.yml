@@ -327,6 +327,7 @@ jobs:
       - name: Slack
         if: always()
         run: |
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-URL -F file=@httpx-brute-resolved-url.txt.xz;
           curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=HTTPX-Brute-Host -F file=@httpx-brute-resolved-host.txt.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK" ;
