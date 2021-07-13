@@ -7,27 +7,23 @@ env:
      WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
      S_URL: https://slack.com/api/files.upload
      KNOCKPY_CONFIG: ${{ secrets.KNOCKPY_CONFIG_VT_API }}
+     CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
+     CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}      
      
 jobs:
   Knockpy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         echo "$KNOCKPY_CONFIG" > config.txt
-#         git clone https://github.com/guelfoweb/knock.git ; cd knock; pip3 install -r requirements.txt;
-#         sudo python3 setup.py install --user ; echo "$KNOCKPY_CONFIG" > knockpy/config.json ; cd ..
-#         mkdir knockpy-results
       - name: Knockpy
         run: |
-#         python3 knock/knockpy/knockpy.py "$TARGET" -o knockpy-results -w wordlists/knockpy-wordslist.txt;
-#         zip -r knockpy-results.zip knockpy-results;
+         curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;         
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/knockpy.sh "$TARGET" "$KNOCKPY_CONFIG";         
       - name: Output & Slack Notification
         if: always()
         run: |         
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Knockpy -F file=@config.txt;         
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');        
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Knockpy -F file=@knockpy-results.zip;
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job ${{ github.job}} in workflow ${{ github.workflow }} has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
