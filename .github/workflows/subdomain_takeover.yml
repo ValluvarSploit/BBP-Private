@@ -1,4 +1,4 @@
-name: Subdomin Takeover
+name: Subdomain Takeover
 on:
   workflow_dispatch:
 env:
