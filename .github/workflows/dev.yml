@@ -29,5 +29,6 @@ jobs:
       - name: Slack
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         cd SubDomainizer
          ls -la
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@SubDomainizer/subdomainizer.txt.xz;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer.txt.xz;
