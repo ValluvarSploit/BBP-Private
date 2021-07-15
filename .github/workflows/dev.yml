@@ -21,7 +21,7 @@ jobs:
          git clone https://github.com/nsonaniya2010/SubDomainizer.git; cd SubDomainizer
          pip3 install -r requirements.txt;
          python3 SubDomainizer.py -u https://www.grindr.com -o subdomainier.txt
-         cat subdomainier.txt| wc -l
+         xz subdomainier.txt;
          
 #         wget $HOST/httpx-resolved-url.txt -O SubDomainizer/httpx-resolved-url.txt;
 #         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
