@@ -23,5 +23,4 @@ jobs:
          bash Domain_Monitoring/scripts/subdomainizer.sh httpx-resolved-url.txt;
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer.txt.xz;
-
          
