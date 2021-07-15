@@ -19,10 +19,10 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;  
          wget $HOST/httpx-resolved-url.txt;
-         git clone https://github.com/nsonaniya2010/SubDomainizer.git; cd SubDomainizer;
+         git clone https://github.com/nsonaniya2010/SubDomainizer.git;
          pip3 install -r SubDomainizer/requirements.txt;
-         cat httpx-resolved-url.txt | xargs -I %% bash -c 'python3 SubDomainizer/SubDomainizer.py -u %% -o subdomainizer.txt;
-         xz subdomainizer.txt;
+         cat httpx-resolved-url.txt | xargs -I %% bash -c 'python3 SubDomainizer/SubDomainizer.py -u %% -o `echo %% | cut -d "/" -f3`.out'
+         mv *.out subdomainizer-result; zip -r subdomainizer-result.zip subdomainizer-result; xz subdomainizer-result.zip;
          
 #         wget $HOST/httpx-resolved-url.txt -O SubDomainizer/httpx-resolved-url.txt;
 #         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
@@ -30,4 +30,4 @@ jobs:
       - name: Slack
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer.txt.xz;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer-result.zip.xz;
