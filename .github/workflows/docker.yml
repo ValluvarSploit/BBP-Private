@@ -21,5 +21,7 @@ jobs:
 #         docker push valluvarsploit/subdomainizer;
       - name: Slack
         run: |
+         ls -la
+         pwd
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer.txt;
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@SubDomainizer/subdomainizer.txt;
