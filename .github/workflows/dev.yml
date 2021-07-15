@@ -1,33 +1,30 @@
-name: Dev
+name: Jaeles Signature Scan
 on:
   workflow_dispatch:
 env:
-      TARGET: ${{ secrets.DOMAIN }}    
+      TARGET: ${{ secrets.DOMAIN }}
       HOST: ${{ secrets.NGROK_URL }}
       S_TOKEN: ${{ secrets.SLACK_OAUTH_USER_TOKEN }}
-      S_URL: https://slack.com/api/files.upload
       WEBHOOK: ${{ secrets.WHOOK_JOB_ALERTS }}
+      S_URL: https://slack.com/api/files.upload
       CUSTOM_GIT_CREDS : ${{ secrets.CUSTOM_GIT_CREDENTIALS }}
-      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}      
+      CUSTOM_GIT_CONFIG : ${{ secrets.CUSTOM_GIT_CONFIG }}  
 jobs:
-  Dev:
+  Jaeles-Signature-Scan:
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Dev
+      - name: Jaeles Signature Scan
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
-         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;  
+         echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          wget $HOST/httpx-resolved-url.txt;
-         git clone https://github.com/nsonaniya2010/SubDomainizer.git;
-         pip3 install -r SubDomainizer/requirements.txt;
-         cat httpx-resolved-url.txt | xargs -I %% bash -c 'python3 SubDomainizer/SubDomainizer.py -k -u %% -o `echo %% | cut -d "/" -f3`.out'
-         mv *.out subdomainizer-result; zip -r subdomainizer-result.zip subdomainizer-result; xz subdomainizer-result.zip;
-         
-#         wget $HOST/httpx-resolved-url.txt -O SubDomainizer/httpx-resolved-url.txt;
-#         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-#         bash Domain_Monitoring/scripts/subdomainizer.sh httpx-resolved-url.txt;
-      - name: Slack
+         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
+         bash Domain_Monitoring/scripts/jaeles.sh httpx-resolved-url.txt;
+      - name: Output & Slack Notification
+        if: always()
         run: |
-         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer-result.zip.xz;
+          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+          if [ -f jaeles.zip ]; then curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Jaeles-Signature-Scan -F file=@jaeles.zip; fi;
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
