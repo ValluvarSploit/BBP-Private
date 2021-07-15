@@ -22,6 +22,7 @@ jobs:
          pip3 install -r requirements.txt;
          python3 SubDomainizer.py -u https://www.grindr.com -o subdomainier.txt
          xz subdomainier.txt;
+         ls -la
          
 #         wget $HOST/httpx-resolved-url.txt -O SubDomainizer/httpx-resolved-url.txt;
 #         git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
@@ -29,4 +30,5 @@ jobs:
       - name: Slack
         run: |
          S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@SubDomainizer/subdomainizer.txt.xz;
+         ls -la
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@subdomainizer.txt.xz;
