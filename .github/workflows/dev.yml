@@ -21,7 +21,7 @@ jobs:
          wget $HOST/httpx-resolved-url.txt;
          git clone https://github.com/nsonaniya2010/SubDomainizer.git;
          pip3 install -r SubDomainizer/requirements.txt;
-         cat httpx-resolved-url.txt | xargs -I %% bash -c 'python3 SubDomainizer/SubDomainizer.py -u %% -o `echo %% | cut -d "/" -f3`.out'
+         cat httpx-resolved-url.txt | xargs -I %% bash -c 'python3 SubDomainizer/SubDomainizer.py -k -u %% -o `echo %% | cut -d "/" -f3`.out'
          mv *.out subdomainizer-result; zip -r subdomainizer-result.zip subdomainizer-result; xz subdomainizer-result.zip;
          
 #         wget $HOST/httpx-resolved-url.txt -O SubDomainizer/httpx-resolved-url.txt;
