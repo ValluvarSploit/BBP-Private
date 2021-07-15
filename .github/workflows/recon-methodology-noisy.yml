@@ -252,7 +252,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
          name: subdomains-artifacts
-      - name: Nuclei scan
+      - name: Jaeles scan
         run: |
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
