@@ -100,7 +100,7 @@ jobs:
          curl -X POST -H 'Content-type: application/json' --data '{"text":"Job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`Started`*_  - '$TARGET'"}' "$WEBHOOK";
          echo "$CUSTOM_GIT_CREDS" > ~/.git-credentials; echo "$CUSTOM_GIT_CONFIG" > ~/.gitconfig;
          git clone https://github.com/ValluvarSploit/Domain_Monitoring.git;
-         bash Domain_Monitoring/scripts/heartbleed.sh httpx-resolved-host.txt;
+         bash Domain_Monitoring/scripts/heartbleed-scan.sh httpx-resolved-host.txt;
       - name: Send Output to Slack
         if: always()
         run: |
