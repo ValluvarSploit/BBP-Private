@@ -19,16 +19,3 @@ jobs:
          cat subdomainizer.txt | head;
 #         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
 #         docker push valluvarsploit/subdomainizer;
-         
-#         docker run --rm valluvarsploit/golinkfinder -h;
-#         docker run --rm -v `pwd`:/golinkfinder/ valluvarsploit/golinkfinder -d allegro.pl -o /golinkfinder/golinkfinder-js-end-urls.txt;
-#         
-#         docker push valluvarsploit/golinkfinder;
-#         docker run --rm -v `pwd`:/linkfinder/output valluvarsploit/linkfinder -i https://allegro.pl -o /linkfinder/output/output.html;
-#         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-#         docker push valluvarsploit/linkfinder;
-#         docker run --rm -v `pwd`:/tmp valluvarsploit/subscraper example.pl -o /tmp/subs.subscrap;
-#         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-#         docker push valluvarsploit/subscraper
-#         docker pull valluvarsploit/subscraper:latest;
-#         wget https://raw.githubusercontent.com/ValluvarSploit/Resolver/main/resolvers.txt;
