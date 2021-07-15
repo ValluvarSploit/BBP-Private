@@ -17,5 +17,9 @@ jobs:
          docker build -t valluvarsploit/subdomainizer .;
          docker run --rm -v `pwd`:/subdomainizer valluvarsploit/subdomainizer -u https://www.grindr.com -o /subdomainizer/subdomainizer.txt;
          cat subdomainizer.txt | wc -l;
-         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-         docker push valluvarsploit/subdomainizer;
+#         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
+#         docker push valluvarsploit/subdomainizer;
+      - name: Slack
+        run: |
+         S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
+         curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=Subdomainizer -F file=@SubDomainizer/subdomainizer.txt.xz;
