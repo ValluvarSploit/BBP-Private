@@ -15,10 +15,10 @@ jobs:
         run: |
          git clone https://github.com/ValluvarSploit/SubDomainizer.git; cd SubDomainizer;
          docker build -t valluvarsploit/subdomainizer .;
-         docker run --rm valluvarsploit/subdomainizer -u https://www.grindr.com -o subdomainizer.txt;
+         docker run --rm -v `pwd`:/subdomainizer valluvarsploit/subdomainizer -u https://www.grindr.com -o subdomainizer/subdomainizer.txt;
          cat subdomainizer.txt | head;
-         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
-         docker push valluvarsploit/subdomainizer;
+#         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
+#         docker push valluvarsploit/subdomainizer;
          
 #         docker run --rm valluvarsploit/golinkfinder -h;
 #         docker run --rm -v `pwd`:/golinkfinder/ valluvarsploit/golinkfinder -d allegro.pl -o /golinkfinder/golinkfinder-js-end-urls.txt;
