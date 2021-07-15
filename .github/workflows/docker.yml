@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Docker
         run: |
-         git clone https://github.com/ValluvarSploit/SubDomainizer.git; cd SubDomainizer;
-         docker build -t valluvarsploit/subdomainizer .;
+         git clone https://github.com/ValluvarSploit/SubDomainizer.git;
+         docker build -t valluvarsploit/subdomainizer SubDomainizer/;
          docker run --rm -v `pwd`:/subdomainizer valluvarsploit/subdomainizer -u https://www.grindr.com -o /subdomainizer/subdomainizer.txt;
          cat subdomainizer.txt | wc -l;
 #         echo "$DOCKER_PASSWORD" | docker login --username=valluvarsploit --password-stdin;
