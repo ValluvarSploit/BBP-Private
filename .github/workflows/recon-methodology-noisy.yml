@@ -62,6 +62,7 @@ jobs:
          curl https://slack.com/api/files.upload -F token="$SLACK_OAUTH_TOKEN" -F channels="$S_CHANNEL" -F title=DNSC -F file=@dnsc.csv
          curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
+
   MEG:
     if: always()
     runs-on: ubuntu-latest
@@ -81,7 +82,7 @@ jobs:
         if: always()
         run: |
           S_CHANNEL=$(echo $TARGET | sed 's/\./_/g');
-          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=MEG -F file=@meg-home.zip;
+          curl "$S_URL" -F token="$S_TOKEN" -F channels="$S_CHANNEL" -F title=MEG -F file=@meg-home.zip.xz;
           curl -X POST -H 'Content-type: application/json' --data '{"text":"The job *${{ github.job}}* in workflow *${{ github.workflow }}* has _*`${{ job.status }}`*_  - '$TARGET'"}' "$WEBHOOK";
 
 
